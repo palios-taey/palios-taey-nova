@@ -1,0 +1,169 @@
+{
+  "generated_at": "2025-03-13T14:00:11.625089",
+  "repository_directory": "/Users/jesselarose/palios-taey-nova",
+  "directory_structure": {
+    "__files__": [
+      "Dockerfile",
+      "README.md",
+      "pyproject.toml"
+    ],
+    "deploy": {
+      "__files__": [],
+      "docker": {
+        "__files__": []
+      },
+      "gcp": {
+        "__files__": []
+      },
+      "local": {
+        "__files__": []
+      }
+    },
+    "tests": {
+      "__files__": [],
+      "unit": {
+        "__files__": []
+      },
+      "integration": {
+        "__files__": []
+      }
+    },
+    "docs": {
+      "__files__": [],
+      "development": {
+        "__files__": []
+      },
+      "architecture": {
+        "__files__": []
+      },
+      "api": {
+        "__files__": []
+      }
+    },
+    "examples": {
+      "__files__": []
+    },
+    "scripts": {
+      "__files__": [
+        "file_deduplication.py",
+        "github_integration.py",
+        "repository_report.py"
+      ]
+    },
+    "src": {
+      "__files__": [
+        "main.py"
+      ],
+      "palios_taey": {
+        "__files__": [
+          "__init__.py"
+        ],
+        "transcripts": {
+          "__files__": []
+        },
+        "tasks": {
+          "__files__": []
+        },
+        "core": {
+          "__files__": [
+            "__init__.py",
+            "errors.py",
+            "utils.py"
+          ]
+        },
+        "memory": {
+          "__files__": [
+            "__init__.py",
+            "models.py",
+            "service.py"
+          ]
+        },
+        "models": {
+          "__files__": []
+        },
+        "api": {
+          "__files__": [
+            "__init__.py",
+            "router.py"
+          ]
+        },
+        "routing": {
+          "__files__": []
+        }
+      }
+    }
+  },
+  "components": {
+    "implemented": [
+      {
+        "name": "memory",
+        "path": "src/palios_taey/memory",
+        "files": [
+          "service.py",
+          "models.py",
+          "__init__.py"
+        ]
+      },
+      {
+        "name": "models",
+        "path": "src/palios_taey/models",
+        "files": []
+      },
+      {
+        "name": "tasks",
+        "path": "src/palios_taey/tasks",
+        "files": []
+      },
+      {
+        "name": "routing",
+        "path": "src/palios_taey/routing",
+        "files": []
+      },
+      {
+        "name": "transcripts",
+        "path": "src/palios_taey/transcripts",
+        "files": []
+      },
+      {
+        "name": "core",
+        "path": "src/palios_taey/core",
+        "files": [
+          "__init__.py",
+          "utils.py",
+          "errors.py"
+        ]
+      },
+      {
+        "name": "api",
+        "path": "src/palios_taey/api",
+        "files": [
+          "__init__.py",
+          "router.py"
+        ]
+      }
+    ],
+    "missing": []
+  },
+  "next_steps": [
+    {
+      "title": "Set Up GitHub App for Claude Integration",
+      "description": "Create a GitHub App with required permissions and configure the integration script",
+      "priority": "HIGH"
+    },
+    {
+      "title": "Run File Deduplication Analysis",
+      "description": "Use the deduplication script to analyze the archived repository and identify files to migrate",
+      "priority": "MEDIUM"
+    },
+    {
+      "title": "Add Tests for All Components",
+      "description": "Create comprehensive test suites for all implemented components",
+      "priority": "MEDIUM"
+    },
+    {
+      "title": "Set Up CI/CD Pipeline",
+      "description": "Create GitHub Actions workflows for continuous integration and deployment",
+      "priority": "LOW"
+    }
+  ]
+}
