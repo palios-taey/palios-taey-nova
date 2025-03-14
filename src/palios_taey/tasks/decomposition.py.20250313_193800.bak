@@ -1,0 +1,8 @@
+def get_task_decomposition_engine(**kwargs):
+    """Mock implementation"""
+    from types import SimpleNamespace
+    return SimpleNamespace(
+        decompose_task=lambda task: [],
+        get_dependency_graph=lambda subtasks: {"nodes": [], "edges": []},
+        get_status=lambda: {"status": "active"}
+    )

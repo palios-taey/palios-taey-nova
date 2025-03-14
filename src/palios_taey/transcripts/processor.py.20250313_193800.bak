@@ -1,0 +1,11 @@
+def create_transcript_processor(**kwargs):
+    """Mock implementation"""
+    from types import SimpleNamespace
+    return SimpleNamespace(
+        process_transcript=lambda **kwargs: "mock_transcript_id",
+        analyze_transcript=lambda **kwargs: {},
+        convert_to_deepsearch_format=lambda transcript_id: {},
+        convert_to_pure_ai_format=lambda transcript_id: {},
+        extract_actions=lambda transcript_id: [],
+        get_status=lambda: {"status": "active"}
+    )

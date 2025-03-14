@@ -1,0 +1,19 @@
+def get_task_execution_engine(**kwargs):
+    """Mock implementation"""
+    from types import SimpleNamespace
+    import concurrent.futures
+    
+    class MockFuture:
+        def result(self):
+            return {"status": "completed", "result": "mock_result"}
+    
+    return SimpleNamespace(
+        submit_task=lambda task: task.get('task_id', 'mock_task_id'),
+        get_task_status=lambda task_id: {"status": "completed", "created_at": "", "updated_at": "", "result": None},
+        execute_task=lambda task_id: MockFuture(),
+        cancel_task=lambda task_id: True,
+        get_active_tasks=lambda: [],
+        shutdown=lambda wait=True: None,
+        get_status=lambda: {"status": "active"},
+        active_tasks={}
+    )

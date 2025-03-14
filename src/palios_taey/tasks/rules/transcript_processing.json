@@ -1,0 +1,35 @@
+{
+  "subtasks": [
+    {
+      "name": "transcript_parsing",
+      "task_type": "transcript_parsing",
+      "description": "Parse the transcript into structured format",
+      "dependency_on": []
+    },
+    {
+      "name": "speaker_identification",
+      "task_type": "speaker_identification",
+      "description": "Identify and separate speakers in the transcript",
+      "dependency_on": [
+        "transcript_parsing"
+      ]
+    },
+    {
+      "name": "content_tagging",
+      "task_type": "content_tagging",
+      "description": "Tag the transcript content with relevant categories",
+      "dependency_on": [
+        "transcript_parsing"
+      ]
+    },
+    {
+      "name": "insight_generation",
+      "task_type": "insight_generation",
+      "description": "Generate insights from the tagged transcript",
+      "dependency_on": [
+        "content_tagging",
+        "speaker_identification"
+      ]
+    }
+  ]
+}

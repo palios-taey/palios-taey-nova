@@ -1,0 +1,8 @@
+def get_model_router(**kwargs):
+    """Mock implementation"""
+    from types import SimpleNamespace
+    return SimpleNamespace(
+        route_task=lambda task: "mock_model",
+        get_model_suggestions=lambda **kwargs: [],
+        get_status=lambda: {"status": "active"}
+    )

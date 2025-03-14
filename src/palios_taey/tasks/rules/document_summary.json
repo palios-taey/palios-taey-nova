@@ -1,0 +1,26 @@
+{
+  "subtasks": [
+    {
+      "name": "document_parsing",
+      "task_type": "document_parsing",
+      "description": "Parse the document into structured format",
+      "dependency_on": []
+    },
+    {
+      "name": "content_analysis",
+      "task_type": "content_analysis",
+      "description": "Analyze document content for key points",
+      "dependency_on": [
+        "document_parsing"
+      ]
+    },
+    {
+      "name": "summary_generation",
+      "task_type": "summary_generation",
+      "description": "Generate concise summary of document",
+      "dependency_on": [
+        "content_analysis"
+      ]
+    }
+  ]
+}
