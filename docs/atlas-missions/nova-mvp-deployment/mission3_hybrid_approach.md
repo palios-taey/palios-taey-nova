@@ -1,29 +1,3 @@
-ATLAS Mission Brief: GCP Foundation Infrastructure
-Mission Context
-The PALIOS-TAEY system has been successfully implemented and tested locally. Our mission is to establish the Google Cloud Platform (GCP) foundation that will host this system. This infrastructure will provide the base for our deployment pipeline and running application.
-Architecture Overview
-This mission is part of a larger integrated deployment architecture:
-Copy┌───────────────────────────────────────────────────────────────┐
-│                  PALIOS-TAEY Cloud Architecture               │
-├───────────────────┬───────────────────┬───────────────────────┤
-│ [ATLAS MISSION 1] │ [ATLAS MISSION 2] │  [ATLAS MISSION 3]   │
-│  GCP Foundation   │ Deployment        │ Application           │
-│  Infrastructure   │ Pipeline          │ Configuration         │
-├───────────────────┼───────────────────┼───────────────────────┤
-│ - GCP Project     │ - Build Scripts   │ - Environment Config  │
-│ - IAM Setup       │ - Docker Files    │ - Service Connections │
-│ - Firestore DB    │ - CI/CD Pipeline  │ - API Integration     │
-│ - Cloud Run       │ - Testing         │ - Monitoring Setup    │
-│ - API Gateway     │ - Deployment      │ - Scaling Rules       │
-│                   │   Automation      │ - Security Config     │
-│                   │                   │                       │
-└───────────┬───────┴────────┬──────────┴──────────┬────────────┘
-            │                │                     │
-            │                │                     │
-            ▼                ▼                     ▼
-┌───────────────────────────────────────────────────────────────┐
-│                 Integrated Cloud Deployment                   │
-└───────────────────────────────────────────────────────────────┘
 # ATLAS Mission Brief: Application Configuration (Hybrid Approach)
 
 ## Mission Context
