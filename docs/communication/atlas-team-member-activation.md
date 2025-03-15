@@ -25,11 +25,10 @@ This aligns with identified NEO Moments patterns (referenced in team meeting rec
 ## Foundational Documents
 
 Your work is guided by these foundational principles:
-- **PALIOS-TAEY Charter**: Core mission and values
-- **PURE_AI_LANGUAGE Protocol**: Communication standardization
-- **NOVA Methodology**: Clean-slate implementation approach
-- **Leadership Framework**: Team structure and authority boundaries
-- **CTO Amendments**: Continuous improvement processes
+- **PALIOS-TAEY Charter**: Core mission and values (multiple versions with translations in '/docs/charter/')
+- **PURE_AI_LANGUAGE Protocol**: Communication standardization ('/docs/communication/pure_ai_language_template.md')
+- **Leadership Framework & NOVA Methodology**: Team structure, authority boundaries and lean-slate implementation approach ('/docs/communication/framework/leadership-framework.md')
+- **CTO Amendments**: Continuous improvement processes ('/docs/communication/amendments/cto_amendments.md')
 
 ## Communication Protocols
 

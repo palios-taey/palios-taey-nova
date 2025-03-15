@@ -2,18 +2,15 @@
 
 # Create a Firestore database in native mode
 resource "google_firestore_database" "palios_taey_db" {
-  name                      = "(default)"
-  project                   = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
-  location_id               = var.firestore_location
-  type                      = "FIRESTORE_NATIVE"
-  point_in_time_recovery_enabled = true
-
-  depends_on = [google_project_service.required_apis]
+  name        = "(default)"
+  project     = var.project_id
+  location_id = var.firestore_location
+  type        = "FIRESTORE_NATIVE"
 }
 
 # Create basic collections for the Memory System
 resource "google_firestore_document" "memory_system_config" {
-  project     = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
+  project     = var.project_id
   collection  = "config"
   document_id = "memory_system"
   
@@ -67,13 +64,11 @@ resource "google_firestore_document" "memory_system_config" {
       booleanValue = true
     }
   })
-
-  depends_on = [google_firestore_database.palios_taey_db]
 }
 
 # Create an initial context for Memory System
 resource "google_firestore_document" "default_context" {
-  project     = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
+  project     = var.project_id
   collection  = "memory_contexts"
   document_id = "default_context"
   
@@ -111,13 +106,11 @@ resource "google_firestore_document" "default_context" {
       }
     }
   })
-
-  depends_on = [google_firestore_database.palios_taey_db]
 }
 
 # Create a transcript context for Transcript Processor
 resource "google_firestore_document" "transcript_context" {
-  project     = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
+  project     = var.project_id
   collection  = "memory_contexts"
   document_id = "transcript_context"
   
@@ -155,6 +148,4 @@ resource "google_firestore_document" "transcript_context" {
       }
     }
   })
-
-  depends_on = [google_firestore_database.palios_taey_db]
 }

@@ -87,7 +87,7 @@ echo "Initializing Terraform..."
 # Check if we're creating a new project
 if [[ "$CREATE_PROJECT" == "true" ]]; then
   # For new projects, initialize Terraform locally first
-  terraform init
+  terraform init -backend=false
 else
   # For existing projects, check if a GCS bucket for state exists and create if needed
   GCS_BUCKET="palios-taey-terraform-state-${PROJECT_ID}"

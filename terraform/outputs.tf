@@ -27,7 +27,7 @@ output "cloud_run_service_account_email" {
 
 output "api_gateway_endpoint" {
   description = "The API Gateway endpoint"
-  value       = google_api_gateway_gateway.api_gateway.default_hostname
+  value       = var.use_api_gateway ? google_api_gateway_gateway.api_gateway[0].default_hostname : ""
 }
 
 output "vpc_network_id" {

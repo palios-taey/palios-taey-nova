@@ -140,3 +140,9 @@ variable "artifact_registry_name" {
   type        = string
   default     = "palios-taey-repo"
 }
+
+variable "use_api_gateway" {
+  description = "Whether to create API Gateway resources"
+  type        = bool
+  default     = false
+}

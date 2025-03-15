@@ -7,8 +7,6 @@ resource "google_service_account" "developer_service_account" {
   project      = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
   
   description = "Service account for developers working on PALIOS-TAEY"
-  
-  depends_on = [google_project_service.required_apis]
 }
 
 # Grant developer service account necessary roles
@@ -37,8 +35,6 @@ resource "google_service_account" "cicd_service_account" {
   project      = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
   
   description = "Service account for CI/CD pipelines to deploy PALIOS-TAEY"
-  
-  depends_on = [google_project_service.required_apis]
 }
 
 # Grant CI/CD service account necessary roles
@@ -73,8 +69,6 @@ resource "google_project_iam_custom_role" "monitoring_role" {
     "cloudtrace.traces.patch",
     "cloudtrace.traces.list"
   ]
-  
-  depends_on = [google_project_service.required_apis]
 }
 
 # Create service account for monitoring
@@ -84,8 +78,6 @@ resource "google_service_account" "monitoring_service_account" {
   project      = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
   
   description = "Service account for monitoring PALIOS-TAEY"
-  
-  depends_on = [google_project_service.required_apis]
 }
 
 # Grant monitoring service account roles
@@ -113,8 +105,6 @@ resource "google_service_account" "admin_service_account" {
   project      = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
   
   description = "Service account for administrators of PALIOS-TAEY"
-  
-  depends_on = [google_project_service.required_apis]
 }
 
 # Grant admin service account roles
@@ -147,8 +137,6 @@ resource "google_secret_manager_secret" "api_key_secret" {
     environment = var.environment
     managed-by  = "terraform"
   }
-  
-  depends_on = [google_project_service.required_apis]
 }
 
 # Create a random API key

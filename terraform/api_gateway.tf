@@ -7,8 +7,6 @@ resource "google_service_account" "api_gateway_service_account" {
   project      = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
   
   description = "Service account for PALIOS-TAEY API Gateway with access to Cloud Run service"
-  
-  depends_on = [google_project_service.required_apis]
 }
 
 # Grant the API Gateway service account access to invoke Cloud Run
@@ -22,18 +20,18 @@ resource "google_cloud_run_service_iam_member" "api_gateway_run_invoker" {
 
 # Create an API Gateway API
 resource "google_api_gateway_api" "api" {
+  count    = var.use_api_gateway ? 1 : 0
   provider = google-beta
-  project  = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
+  project  = var.project_id
   api_id   = var.api_id
-  
-  depends_on = [google_project_service.required_apis]
 }
 
 # Create a basic OpenAPI specification for the API Gateway
 resource "google_api_gateway_api_config" "api_config" {
+  count         = var.use_api_gateway ? 1 : 0  
   provider      = google-beta
   project       = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
-  api           = google_api_gateway_api.api.api_id
+  api           = var.use_api_gateway ? google_api_gateway_api.api[0].api_id : ""
   api_config_id = "${var.api_config_name}-${formatdate("YYYYMMDDhhmmss", timestamp())}"
   
   openapi_documents {
@@ -227,7 +225,7 @@ resource "google_api_gateway_api_config" "api_config" {
   }
   
   depends_on = [
-    google_api_gateway_api.api,
+    google_api_gateway_api.api[0],
     google_cloud_run_service.palios_taey_service,
     google_service_account.api_gateway_service_account
   ]
@@ -235,13 +233,14 @@ resource "google_api_gateway_api_config" "api_config" {
 
 # Create an API Gateway
 resource "google_api_gateway_gateway" "api_gateway" {
+  count        = var.use_api_gateway ? 1 : 0
   provider     = google-beta
   project      = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
-  api_config   = google_api_gateway_api_config.api_config.id
+  api_config = google_api_gateway_api_config.api_config[0].id
   gateway_id   = var.api_gateway_name
   region       = var.region
   
   display_name = "PALIOS-TAEY API Gateway"
   
-  depends_on = [google_api_gateway_api_config.api_config]
+  depends_on = [google_api_gateway_api_config.api_config[0]]
 }

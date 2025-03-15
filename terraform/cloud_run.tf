@@ -7,8 +7,6 @@ resource "google_service_account" "cloud_run_service_account" {
   project      = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id
   
   description = "Service account for PALIOS-TAEY Cloud Run service with access to Firestore and other GCP services"
-  
-  depends_on = [google_project_service.required_apis]
 }
 
 # Grant the Cloud Run service account access to Firestore
@@ -37,8 +35,6 @@ resource "google_artifact_registry_repository" "palios_taey_repo" {
   repository_id = var.artifact_registry_name
   description   = "Docker repository for PALIOS-TAEY images"
   format        = "DOCKER"
-  
-  depends_on = [google_project_service.required_apis]
 }
 
 # Grant the Cloud Run service account access to Artifact Registry
@@ -59,7 +55,7 @@ resource "google_cloud_run_service" "palios_taey_service" {
   
   metadata {
     annotations = {
-      "run.googleapis.com/ingress" = "internal-and-cloud-load-balancing"
+      "run.googleapis.com/ingress" = "all"
     }
     labels = {
       "environment" = var.environment
@@ -73,7 +69,7 @@ resource "google_cloud_run_service" "palios_taey_service" {
       annotations = {
         "autoscaling.knative.dev/minScale" = var.min_instance_count
         "autoscaling.knative.dev/maxScale" = var.max_instance_count
-        "run.googleapis.com/vpc-access-connector" = google_vpc_access_connector.connector.name
+        "run.googleapis.com/vpc-access-connector" = "palios-taey-vpc-connector"
         "run.googleapis.com/vpc-access-egress" = "private-ranges-only"
         "run.googleapis.com/cloudsql-instances" = ""
       }
@@ -123,8 +119,6 @@ resource "google_cloud_run_service" "palios_taey_service" {
   autogenerate_revision_name = true
   
   depends_on = [
-    google_project_service.required_apis,
-    google_vpc_access_connector.connector,
     google_service_account.cloud_run_service_account
   ]
 }
