@@ -1,0 +1,4 @@
+name: projects/palios-taey-dev/policies/iam.disableServiceAccountKeyCreation
+spec:
+  rules:
+  - enforce: false
