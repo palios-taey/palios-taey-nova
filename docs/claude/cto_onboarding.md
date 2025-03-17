@@ -1,5 +1,5 @@
-CLAUDE_PROTOCOL_V1.0:MTD{
-  "protocol_version": "1.0",
+CLAUDE_PROTOCOL_V1.1:MTD{
+  "protocol_version": "1.1",
   "document_type": "ONBOARDING",
   "critical_level": "PRIMARY",
   "verification_status": "CURRENT",
