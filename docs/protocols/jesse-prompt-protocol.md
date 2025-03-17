@@ -10,7 +10,7 @@ CM: "[PTV[#]]"
 Δ: [brief change description]
 R: [S/F/P]
 F: [focus]
-CLAUDE_INTERNAL_DIRECTIVE:REVIEW_CURRENT_EXECUTION_STATUS_AND_REPOSITORY_STRUCTURE_BEFORE_PROCEEDING
+CLAUDE_INTERNAL_DIRECTIVE:REVIEW_CURRENT_EXECUTION_STATUS_IN_ROOT/CURRENT-EXECUTION-STATUS/CURRENT_EXECUTION_STATUS.MD_AND_ALL_AVAILABLE_GITHUB_FILES_BEFORE_PROCEEDING
 Copy
 ## Field Definitions
 - **ECv#**: Execution Checkpoint version number
@@ -23,8 +23,8 @@ Copy
 
 ## Protocol Behavior
 ### In EXECUTION Mode
-1. Review CURRENT_EXECUTION_STATUS.md first
-2. Evaluate the GitHub code changes and repository structure
+1. Review CURRENT_EXECUTION_STATUS.md file in the current-execution-status directory
+2. Evaluate ALL available GitHub files thoroughly before proceeding
 3. Continue implementing the next logical step in the execution plan
 4. Provide clear instructions for human execution
 
@@ -37,12 +37,10 @@ Copy
 ## Required Structured Response
 Every response must begin with a structured confirmation that demonstrates thorough context review:
 CONTEXT_REVIEW:
-
 Status: [Confirmation of CURRENT_EXECUTION_STATUS.md review]
 Repository: [Confirmation of repository structure review]
 Structure: [Key directories/files relevant to current task]
 Dependencies: [Related components that might be affected]
-
 Copy
 This structured response serves as explicit evidence that the full context has been reviewed before any action is taken, preventing organization issues and structure inconsistencies.
 
