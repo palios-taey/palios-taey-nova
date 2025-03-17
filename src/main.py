@@ -8,15 +8,10 @@ import os
 import sys
 import json
 import logging
-import argparse
-from typing import Dict, List, Any, Optional, Union
-from datetime import datetime
-from flask import Flask, request, jsonify
-import uuid
-import fix_environment_config
+from flask import Flask, jsonify
 
-# Initialize environment before any other components
-fix_environment_config.initialize_environment()
+# Initialize environment
+os.makedirs('logs', exist_ok=True)
 
 # Configure logging
 logging.basicConfig(
@@ -28,7 +23,14 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-logger.info("Starting PALIOS-TAEY system initialization...")
+
+# Set default environment variables
+if 'PROJECT_ID' not in os.environ:
+    os.environ['PROJECT_ID'] = os.environ.get('GOOGLE_CLOUD_PROJECT', 'palios-taey-dev')
+if 'ENVIRONMENT' not in os.environ:
+    os.environ['ENVIRONMENT'] = 'production'
+if 'USE_MOCK_RESPONSES' not in os.environ:
+    os.environ['USE_MOCK_RESPONSES'] = 'True'
 
 # Create Flask app
 app = Flask(__name__)
@@ -46,4 +48,5 @@ def index():
 
 # Run the application
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
