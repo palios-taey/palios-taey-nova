@@ -1,71 +1,54 @@
 #!/bin/bash
-
 # Script to update verification strings in all Claude-to-Claude documents
-# Usage: ./update_all_verifications.sh -c VERIFICATION_CODE
+# Usage: ./update_all_verifications.sh -c [NEW_VERIFICATION_CODE]
 
-# Display help
-show_help() {
-    echo "Usage: $0 -c VERIFICATION_CODE"
-    echo ""
-    echo "Options:"
-    echo "  -c VERIFICATION_CODE   Verification code to use (REQUIRED)"
-    echo ""
-    echo "Example: $0 -c NOVA_IMPLEMENTATION_DEPLOYMENT_20250317"
-    exit 1
-}
-
-# Check if no arguments provided
-if [ $# -eq 0 ]; then
-    show_help
-fi
-
-# Parse arguments
-while getopts "c:h" opt; do
-    case $opt in
-        c) VERIFICATION_CODE=$OPTARG ;;
-        h) show_help ;;
-        *) show_help ;;
-    esac
+# Process command line arguments
+while getopts "c:" opt; do
+  case $opt in
+    c) NEW_VERIFICATION_CODE="$OPTARG"
+      ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
 done
 
-# Validate verification code
-if [ -z "$VERIFICATION_CODE" ]; then
-    echo "Error: Verification code must be specified"
-    show_help
+# Check if verification code is provided
+if [ -z "$NEW_VERIFICATION_CODE" ]; then
+  echo "Error: Verification code is required. Usage: $0 -c [VERIFICATION_CODE]"
+  exit 1
 fi
 
-# Current date for updating LAST_UPDATED field
-CURRENT_DATE=$(date +%Y-%m-%d)
+# Get current date in YYYY-MM-DD format
+CURRENT_DATE=$(date +"%Y-%m-%d")
 
-# Function to update a single document
-update_document() {
-    local doc="$1"
-    echo "Updating verification strings in: $doc"
-    
-    # Update VERIFICATION_STRING
-    sed -i "s/VERIFICATION_STRING:.*$/VERIFICATION_STRING: $VERIFICATION_CODE/" "$doc"
-    
-    # Update VERIFICATION_CONFIRMATION
-    sed -i "s/VERIFICATION_CONFIRMATION:.*$/VERIFICATION_CONFIRMATION: $VERIFICATION_CODE/" "$doc"
-    
-    # Update LAST_UPDATED date
-    sed -i "s/LAST_UPDATED:.*$/LAST_UPDATED: $CURRENT_DATE/" "$doc"
-    
-    echo "  - Updated verification strings to: $VERIFICATION_CODE"
-    echo "  - Updated last modified date to: $CURRENT_DATE"
-}
+echo "Searching for Claude-to-Claude documents..."
 
 # Find all Claude-to-Claude documents
-echo "Searching for Claude-to-Claude documents..."
-claude_docs=$(grep -l "CLAUDE_PROTOCOL" $(find docs -name "*.md"))
+CLAUDE_DOCS=$(find docs -type f -name "*.md" | xargs grep -l "CLAUDE_PROTOCOL" | sort)
+
+# Count documents
+DOC_COUNT=$(echo "$CLAUDE_DOCS" | wc -l | xargs)
+
+echo "Found $DOC_COUNT Claude-to-Claude documents."
+echo "Updating all documents with verification code: $NEW_VERIFICATION_CODE"
 
 # Update each document
-echo "Found $(echo "$claude_docs" | wc -l) Claude-to-Claude documents."
-echo "Updating all documents with verification code: $VERIFICATION_CODE"
-
-for doc in $claude_docs; do
-    update_document "$doc"
+for DOC in $CLAUDE_DOCS; do
+  echo "Updating verification strings in: $DOC"
+  
+  # Update VERIFICATION_STRING
+  sed -i '' "s/\*\*VERIFICATION_STRING:\*\* [A-Z0-9_]*/**VERIFICATION_STRING:** $NEW_VERIFICATION_CODE/g" "$DOC"
+  
+  # Update VERIFICATION_CONFIRMATION
+  sed -i '' "s/VERIFICATION_CONFIRMATION: [A-Z0-9_]*/VERIFICATION_CONFIRMATION: $NEW_VERIFICATION_CODE/g" "$DOC"
+  
+  # Update LAST_UPDATED date
+  sed -i '' "s/\*\*LAST_UPDATED:\*\* [0-9-]*/**LAST_UPDATED:** $CURRENT_DATE/g" "$DOC"
+  
+  echo "  - Updated verification strings to: $NEW_VERIFICATION_CODE"
+  echo "  - Updated last modified date to: $CURRENT_DATE"
 done
 
 echo "Verification update complete!"
-echo "All Claude-to-Claude documents now use verification code: $VERIFICATION_CODE"
+echo "All Claude-to-Claude documents now use verification code: $NEW_VERIFICATION_CODE"

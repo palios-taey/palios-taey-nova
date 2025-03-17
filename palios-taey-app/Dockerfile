@@ -1,7 +1,23 @@
 FROM python:3.9-slim
+
 WORKDIR /app
+
+# Copy requirements first
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
+
+# Copy project structure
+COPY src/ /app/src/
+COPY config/ /app/config/
+COPY *.py .
+COPY templates/ templates/
+
+# Set environment variables
 ENV PORT=8080
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 main:app
+ENV PYTHONPATH=/app
+
+# Expose the port
+EXPOSE 8080
+
+# Command to run the application
+CMD ["python", "app.py"]

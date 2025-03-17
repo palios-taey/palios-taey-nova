@@ -21,7 +21,7 @@ This guide provides instructions for integrating the 6-Sigma Quality Framework w
    Create verification string in all key documents:
    
    \`\`\`bash
-   ./scripts/documentation/update_document.sh -f docs/README.md -s "## Overview" -c "This directory contains the complete documentation for the PALIOS-TAEY system, organized in an audience-aware structure that optimizes for both AI and human consumption.\n\n**VERIFICATION_STRING:** PALIOS_TAEY_DOCUMENTATION_SYSTEM_VERIFIED" -r
+   ./scripts/documentation/update_document.sh -f docs/README.md -s "## Overview" -c "This directory contains the complete documentation for the PALIOS-TAEY system, organized in an audience-aware structure that optimizes for both AI and human consumption.\n\n**VERIFICATION_STRING:** NOVA_DEPLOYMENT_PHASE1_20250317" -r
    \`\`\`
 
 3. **Implement Human Error Prevention**
