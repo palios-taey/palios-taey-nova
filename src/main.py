@@ -16,7 +16,7 @@ import uuid
 import fix_environment_config
 
 # Initialize environment before any other components
-environment_config.initialize_environment()
+fix_environment_config.initialize_environment()
 
 # Try to import dotenv for environment variables
 try:

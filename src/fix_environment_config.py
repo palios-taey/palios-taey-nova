@@ -1,8 +1,3 @@
-#!/bin/bash
-set -e
-
-# Create a minimal environment_config.py file
-cat > src/environment_config.py << 'EOL'
 """
 Environment configuration for PALIOS-TAEY
 This module handles environment setup and configuration
@@ -27,6 +22,3 @@ def initialize_environment():
         os.environ['USE_MOCK_RESPONSES'] = 'True'
     
     logging.info(f"Environment initialized: {os.environ.get('ENVIRONMENT')}")
-EOL
-
-echo "Created environment_config.py"
