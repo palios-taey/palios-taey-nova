@@ -1,5 +1,5 @@
 """
-Environment configuration for PALIOS-TAEY
+Environment configuration helper for PALIOS-TAEY
 This module handles environment setup and configuration
 """
 

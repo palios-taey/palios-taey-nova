@@ -2,9 +2,9 @@
 
 # Create environment_config.py if it doesn't exist
 mkdir -p src
-cat > src/fix_environment_config.py << 'EOF'
+cat > src/environment_config.py << 'EOF'
 """
-Environment configuration helper for PALIOS-TAEY
+Environment configuration for PALIOS-TAEY
 This module handles environment setup and configuration
 """
 
@@ -29,5 +29,4 @@ def initialize_environment():
     logging.info(f"Environment initialized: {os.environ.get('ENVIRONMENT')}")
 EOF
 
-chmod +x src/fix_environment_config.py
-echo "Environment config fix script created successfully"
+echo "Environment config module created successfully at src/environment_config.py"

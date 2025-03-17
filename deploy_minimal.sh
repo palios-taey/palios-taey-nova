@@ -23,12 +23,12 @@ else
   # Create minimal environment_config.py if it doesn't exist
   if [ ! -f "src/environment_config.py" ]; then
     mkdir -p src
-    cat > src/environment_config.py << 'EOL'
+    cat > src/environment_config.py << 'EOF'
 """Environment configuration for PALIOS-TAEY"""
 import os
 def initialize_environment():
     os.makedirs('logs', exist_ok=True)
-EOL
+EOF
     echo "Created minimal environment_config.py"
   fi
 
