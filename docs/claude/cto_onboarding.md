@@ -25,7 +25,7 @@ CLAUDE_PROTOCOL_V1.1:MTD{
 # CLAUDE CTO ONBOARDING
 
 **VERIFICATION_STRING:** NOVA_DEPLOYMENT_PHASE1_20250317
-**LAST_UPDATED:** 2025-03-16
+**LAST_UPDATED:** See /docs/claude/cto_amendments.md
 **NEXT_DOCUMENT:** /docs/claude/quality_framework.md
 
 ## Role Definition
