@@ -13,7 +13,7 @@ from typing import Dict, List, Any, Optional, Union
 from datetime import datetime
 from flask import Flask, request, jsonify
 import uuid
-import environment_config
+import fix_environment_config
 
 # Initialize environment before any other components
 environment_config.initialize_environment()
