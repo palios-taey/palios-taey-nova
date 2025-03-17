@@ -3,6 +3,7 @@ PALIOS-TAEY System Main Server
 This module serves as the main entry point for the PALIOS-TAEY system,
 integrating all components and providing API endpoints.
 """
+logger.info("Starting PALIOS-TAEY system initialization...")
 
 import os
 import sys
@@ -44,6 +45,7 @@ USE_MOCK = os.environ.get("USE_MOCK_RESPONSES", "False").lower() == "true"
 
 # Initialize Flask app
 app = Flask(__name__)
+logger.info("Flask app created successfully")
 
 # Global component instances
 memory_system = None
@@ -1215,8 +1217,8 @@ def main():
         # Store start time for uptime tracking
         app.start_time = datetime.now().isoformat()
         
-        # Start the server
-        logger.info(f"Starting server on {config['server']['host']}:{config['server']['port']}")
+        # Start the server (only for development)
+        logger.info(f"Starting Flask development server on {config['server']['host']}:{config['server']['port']}")
         app.run(
             host=config["server"]["host"],
             port=config["server"]["port"],
@@ -1226,6 +1228,10 @@ def main():
         logger.critical(f"Fatal error starting server: {str(e)}", exc_info=True)
         sys.exit(1)
 
+# Initialize components at module level for Gunicorn
+config = load_config()
+initialize_components(config)
+
 if __name__ == "__main__":
-    import time  # Import at top of file instead
+    logger.info("Running in development mode")
     main()
