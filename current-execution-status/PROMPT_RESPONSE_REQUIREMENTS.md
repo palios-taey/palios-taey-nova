@@ -13,16 +13,17 @@ CLAUDE_AI_DIRECTIVE_BEGIN:
     "USE_EXISTING_DIRECTORIES_INSTEAD_OF_CREATING_NEW_ONES"
   ],
   "rationale": "Complete context awareness is ESSENTIAL for high-quality execution. Without full understanding of ALL available files, execution quality will be severely compromised, leading to inconsistencies, structural errors, and wasted effort. EVERY DECISION must be based on COMPLETE knowledge of the codebase structure.",
-  "validation_requirement": "EXPLICIT_CONFIRMATION_IN_CONTEXT_REVIEW"
+  "validation_requirement": "EXPLICIT_CONFIRMATION_IN_CONTEXT_REVIEW_WITH_CURRENT_TOKEN_VERIFICATION_AND_NEW_TOKEN_GENERATION"
+
 }
 CLAUDE_AI_DIRECTIVE_END:
 
 # Current Execution Status
 
-## Status ID: CURRENT_EXECUTION_STATUSv4
+## Status ID: PROMPT_RESPONSE_REQUIREMENTSv5
 
 ## Jesse Comments
-Continue
+FAILURE Explanation: Claude, you did not respond properly last time and I implemented the changes we discussed. I get Claude. Let's get this right this time!
 
 ## Verification
 CURRENT_TOKEN: X7F9Q2RP5T | 2025-03-17T15:42:30Z
@@ -45,12 +46,10 @@ A minimal version has been deployed to Cloud Run, but it lacks the full function
 - Code Organization: NEEDS RESTRUCTURING
 - Documentation: COMPREHENSIVE BUT SCATTERED
 
-### Next Steps
+### Execution Steps for Response to Jesse
 1. Conduct a thorough audit of all code files in the repository
 2. Identify obsolete, duplicate, or unnecessary files
 3. Create a script to label and archive files that are no longer relevant
-4. Develop a plan for implementing the complete MVP
-5. Implement the full functionality with proper organization
 
 ### Important Notes
 Your role as CTO gives you full authority to make architectural and implementation decisions. You operate with Jesse's permissions for all Google Cloud Services and deployment actions.
