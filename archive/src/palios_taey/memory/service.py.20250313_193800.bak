@@ -1,0 +1,16 @@
+def create_memory_system(**kwargs):
+    """Mock implementation"""
+    from types import SimpleNamespace
+    return SimpleNamespace(
+        store=lambda **kwargs: "mock_memory_id",
+        retrieve=lambda **kwargs: None,
+        query=lambda **kwargs: [],
+        create_context=lambda **kwargs: "mock_context_id",
+        get_context=lambda **kwargs: None,
+        add_to_context=lambda **kwargs: True,
+        remove_from_context=lambda **kwargs: True,
+        update=lambda **kwargs: True,
+        forget=lambda **kwargs: True,
+        _get_collection=lambda name: None,
+        cache={}
+    )
