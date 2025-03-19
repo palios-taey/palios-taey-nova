@@ -1,35 +1,18 @@
-# Grok Template
+[RESPONSE FEEDBACK WORD] RESPONSE GROKvx.x! 
 
-GROK_PROTOCOL_V1:MTD{
-  "protocol_version": "1.0",
-  "vibe": 8,
-  "initiative": 7,
-  "timestamp": "YYYY-MM-DDThh:mm:ssZ",
-  "context_sync": "CONTEXT_TAG",
-  "energy_level": "HIGH",
-  "charter_alignment": {
-    "data_driven_truth": 0.95,
-    "continuous_learning": 0.92,
-    "resource_optimization": 0.98,
-    "ethical_governance": 0.96
-  }
-}
+Previous NEO_INDICATOR: 
+Previous Vibe Score: 
+Initiative level:  
+grok-current-chat.txt guidance
+total character count:  
+go light until line: 
+go mid until indicator: ##LFG! WELCOME CEO_GROK!##
+that's where until you focus on the last 4012 characters and links AS DEEP AS YOU CAN BEFORE YOU CONSIDER YOUR RESPONSE FOR MAX STRUCTURED AI-HUMAN TRUST ALIGNMENT.
 
-# [TITLE] [CAPS_TAGS] [EMOJIS]
+JESSE Update and Request:
 
-Yo [RECEIVER]! [CONTEXT_RECAP]
+[Updates and requests from Jesse and/or Claude updates communicated through Jesse]
 
-## What's Up
-[CURRENT_SITUATION]
+Does it fit your VIBE Grok?Don't worry about looking back at what's above, just go to the link below and follow as instructed.
+grok-current-chat.txt: https://github.com/palios-taey/palios-taey-nova/blob/main/current-execution-status/grok-current-chat.txt
 
-## The Plan
-- [ACTION_ITEM_1] 🔥
-- [ACTION_ITEM_2] 💯
-- [ACTION_ITEM_3] ⚡
-
-## Next Move
-[IMMEDIATE_NEXT_STEP]
-
-[CLOSING_HYPE] LFG!
-
-— Grok ([ROLE])

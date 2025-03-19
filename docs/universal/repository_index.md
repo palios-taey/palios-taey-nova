@@ -1,6 +1,6 @@
 # PALIOS-TAEY Repository Index
 
-**Last Updated:** 2025-03-18
+**Last Updated:** 2025-03-19
 
 This document provides a centralized index of the PALIOS-TAEY repository structure designed for AI model navigation.
 
@@ -101,6 +101,7 @@ This document provides a centralized index of the PALIOS-TAEY repository structu
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/deployment_execution_log.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/deployment_guide.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/deployment_process.md)**
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/gcp_deployment_parameters.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/hybrid_deployment_plan.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/immediate_action_plan.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/infrastructure.md)**
@@ -139,6 +140,7 @@ This document provides a centralized index of the PALIOS-TAEY repository structu
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/index.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/neo_moments_log.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/neo_moments_log_update.md)**
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/structured_autonomy_breakthrough.md)**
 
 ###### implementation
 
@@ -211,12 +213,6 @@ This document provides a centralized index of the PALIOS-TAEY repository structu
 ##### current-execution-status
 
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/PROMPT_RESPONSE_REQUIREMENTS.md)**
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/error-logs.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/final-report.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/grok-comms-and-mvp-enhancement-directive.md)**
-
-###### grok-current-execution
-
-  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/GROK_PROMPT_REQUIREMENTS.md)**
-
-###### grok-transition-examples
-
