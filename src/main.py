@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import environment configuration
-from environment_config import initialize_environment
+from src.environment_config import initialize_environment
 
 # Configure logging
 logging.basicConfig(
@@ -63,7 +63,7 @@ def initialize_memory_service():
         return
     
     try:
-        from palios_taey.memory.service import get_memory_service
+        from src.palios_taey.memory.service import get_memory_service
         memory_service = get_memory_service()
         logger.info("Memory service initialized successfully")
         _memory_initialized = True
@@ -87,7 +87,7 @@ def initialize_model_registry():
         return
     
     try:
-        from palios_taey.models.registry import get_model_registry
+        from src.palios_taey.models.registry import get_model_registry
         model_registry = get_model_registry()
         logger.info("Model registry initialized successfully")
         _models_initialized = True
@@ -110,8 +110,8 @@ def initialize_task_engines():
         return
     
     try:
-        from palios_taey.tasks.decomposition import get_task_decomposition_engine
-        from palios_taey.tasks.execution import get_task_execution_engine
+        from src.palios_taey.tasks.decomposition import get_task_decomposition_engine
+        from src.palios_taey.tasks.execution import get_task_execution_engine
         
         task_decomposition_engine = get_task_decomposition_engine()
         task_execution_engine = get_task_execution_engine()
@@ -145,7 +145,7 @@ def initialize_model_router():
         return
     
     try:
-        from palios_taey.routing.router import get_model_router
+        from src.palios_taey.routing.router import get_model_router
         model_router = get_model_router()
         logger.info("Model router initialized successfully")
         _routing_initialized = True
@@ -168,7 +168,7 @@ def initialize_transcript_processor():
         return
     
     try:
-        from palios_taey.transcripts.processor import create_transcript_processor
+        from src.palios_taey.transcripts.processor import create_transcript_processor
         transcript_processor = create_transcript_processor()
         logger.info("Transcript processor initialized successfully")
         _transcripts_initialized = True
@@ -192,7 +192,7 @@ def initialize_protocol_manager():
         return
     
     try:
-        from palios_taey.protocols.manager import get_protocol_manager
+        from src.palios_taey.protocols.manager import get_protocol_manager
         protocol_manager = get_protocol_manager()
         logger.info("Protocol manager initialized successfully")
         _protocols_initialized = True
@@ -342,4 +342,4 @@ async def root():
 # Run the application with Uvicorn when script is executed directly
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), log_level="info")
+    uvicorn.run("src.main:app", host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), log_level="info")
