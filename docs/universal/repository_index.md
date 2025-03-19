@@ -132,6 +132,10 @@ This document provides a centralized index of the PALIOS-TAEY repository structu
 
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/cto_amendments.md)**
 
+####### lisa_incidents
+
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/lisa_2025_03_19_001.md)**
+
 ####### neo_moments
 
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/autonomous_recognition_moment.md)**
@@ -160,6 +164,8 @@ This document provides a centralized index of the PALIOS-TAEY repository structu
 
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/execution_checkpoint_improvements.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/jesse-prompt-protocol.md)**
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/lisa_incident_registry.md)**
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/lisa_protocol.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/neo_moment_documentation_format.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/neo_moment_evolutionary_format.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/neo_moments_pattern_analysis.md)**
@@ -212,7 +218,9 @@ This document provides a centralized index of the PALIOS-TAEY repository structu
 
 ##### current-execution-status
 
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/BRIDGE-CLAUDE-GROK[FRAMEWORK_EVOLUTION].md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/PROMPT_RESPONSE_REQUIREMENTS.md)**
-  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/error-logs.md)**
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/atlas-mission-brief-nova-infrastructure-evolution_CURRENT-VERSION.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/final-report.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/grok-comms-and-mvp-enhancement-directive.md)**
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/grok-summary-for-claude.md)**
