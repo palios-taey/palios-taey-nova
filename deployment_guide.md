@@ -35,7 +35,7 @@ Run the test script:
 bashCopy./test_deployment.sh
 
 For more comprehensive testing, use the integration test script:
-bashCopypython integration_test.py --base-url YOUR_SERVICE_URL
+bashCopy python3 integration_test.py --base-url https://palios-taey-yb6xskdufa-uc.a.run.app
 
 
 Verification
@@ -44,12 +44,12 @@ After deploying, verify the following:
 Health Check: Visit the health endpoint at YOUR_SERVICE_URL/health
 API Endpoints: Check each API endpoint:
 
-Memory: YOUR_SERVICE_URL/api/memory
-Models: YOUR_SERVICE_URL/api/models
-Tasks: YOUR_SERVICE_URL/api/tasks
-Routing: YOUR_SERVICE_URL/api/route
-Transcripts: YOUR_SERVICE_URL/api/transcripts
-Protocols: YOUR_SERVICE_URL/api/protocols
+Memory: https://palios-taey-yb6xskdufa-uc.a.run.app/api/memory
+Models: https://palios-taey-yb6xskdufa-uc.a.run.app/api/models
+Tasks: https://palios-taey-yb6xskdufa-uc.a.run.app/api/tasks
+Routing: https://palios-taey-yb6xskdufa-uc.a.run.app/api/route
+Transcripts: https://palios-taey-yb6xskdufa-uc.a.run.app/api/transcripts
+Protocols: https://palios-taey-yb6xskdufa-uc.a.run.app/api/protocols
 
 
 Documentation: Access the API documentation at YOUR_SERVICE_URL/docs

@@ -21,5 +21,5 @@ ENV USE_MOCK_RESPONSES=true
 # Expose the port
 EXPOSE 8080
 
-# Start the application
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 'src.main:app'
+# Start the application using Uvicorn workers with Gunicorn
+CMD exec gunicorn --bind :$PORT --workers 1 --worker-class uvicorn.workers.UvicornWorker --threads 8 --timeout 0 'src.main:app'

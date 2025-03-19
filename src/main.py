@@ -292,6 +292,17 @@ async def health_check():
     }
 
 # Memory endpoints
+@app.get("/api/memory", tags=["Memory"])
+async def get_memory_info(memory_service=Depends(get_memory)):
+    """Get memory service info."""
+    return {
+        "status": "ok", 
+        "message": "Memory service information",
+        "service_type": "Unified Memory System",
+        "tiers": ["ephemeral", "working", "reference", "archival"],
+        "capabilities": ["multi-tier storage", "automatic transitions", "context-based storage"]
+    }
+
 @app.post("/api/memory", tags=["Memory"])
 async def create_memory_item(memory_service=Depends(get_memory)):
     """Create a memory item."""
@@ -301,27 +312,84 @@ async def create_memory_item(memory_service=Depends(get_memory)):
 @app.get("/api/models", tags=["Models"])
 async def list_models(model_registry=Depends(get_models)):
     """List available models."""
-    return {"status": "ok", "message": "Model listing endpoint"}
+    return {
+        "status": "ok", 
+        "message": "Model listing endpoint",
+        "models": [
+            {"id": "claude", "capabilities": ["document_summary", "transcript_processing"]},
+            {"id": "gemini", "capabilities": ["code_generation", "document_summary"]},
+            {"id": "grok", "capabilities": ["question_answering", "code_generation"]}
+        ]
+    }
 
 # Task endpoints
+@app.get("/api/tasks", tags=["Tasks"])
+async def get_tasks_info(task_executor=Depends(get_task_executor)):
+    """Get task service info."""
+    return {
+        "status": "ok", 
+        "message": "Task execution service information",
+        "service_type": "Task Execution Engine",
+        "capabilities": ["task decomposition", "dependency tracking", "parallel execution"],
+        "task_types": ["document_summary", "code_generation", "transcript_processing"]
+    }
+
 @app.post("/api/tasks", tags=["Tasks"])
 async def submit_task(task_executor=Depends(get_task_executor)):
     """Submit a task."""
     return {"status": "ok", "message": "Task submission endpoint"}
 
 # Routing endpoints
+@app.get("/api/route", tags=["Routing"])
+async def get_routing_info(model_router=Depends(get_router)):
+    """Get routing service info."""
+    return {
+        "status": "ok", 
+        "message": "Model routing service information",
+        "service_type": "Model Router",
+        "capabilities": ["capability-based routing", "fallback mechanisms", "protocol-aware routing"],
+        "supported_models": ["claude", "gemini", "grok"]
+    }
+
 @app.post("/api/route", tags=["Routing"])
 async def route_task(model_router=Depends(get_router)):
     """Route a task to the appropriate model."""
     return {"status": "ok", "message": "Task routing endpoint"}
 
 # Transcript endpoints
+@app.get("/api/transcripts", tags=["Transcripts"])
+async def get_transcripts_info(transcript_processor=Depends(get_transcript)):
+    """Get transcript service info."""
+    return {
+        "status": "ok", 
+        "message": "Transcript processing service information",
+        "service_type": "Transcript Processor",
+        "capabilities": ["pattern detection", "action extraction", "tagging"],
+        "supported_formats": ["raw", "deepsearch", "pure_ai", "structured"]
+    }
+
 @app.post("/api/transcripts", tags=["Transcripts"])
 async def process_transcript(transcript_processor=Depends(get_transcript)):
     """Process a transcript."""
     return {"status": "ok", "message": "Transcript processing endpoint"}
 
 # Protocol endpoints
+@app.get("/api/protocols", tags=["Protocols"])
+async def get_protocols_info(protocol_manager=Depends(get_protocols)):
+    """Get protocol service info."""
+    return {
+        "status": "ok", 
+        "message": "Protocol management service information",
+        "service_type": "Protocol Manager",
+        "capabilities": ["protocol detection", "translation", "registration"],
+        "supported_protocols": [
+            {"id": "pure_ai_language", "version": "1.5"},
+            {"id": "claude_protocol", "version": "1.0"},
+            {"id": "execution_checkpoint", "version": "7"},
+            {"id": "grok_protocol", "version": "1.0"}
+        ]
+    }
+
 @app.post("/api/protocols", tags=["Protocols"])
 async def register_protocol(protocol_manager=Depends(get_protocols)):
     """Register a communication protocol."""
@@ -336,7 +404,16 @@ async def root():
         "description": "AI-to-AI execution management platform",
         "version": "0.1.0",
         "health_endpoint": "/health",
-        "api_prefix": "/api"
+        "api_prefix": "/api",
+        "components": [
+            "Unified Memory System",
+            "Dynamic Model Registry",
+            "Task Decomposition Engine",
+            "Task Execution Engine",
+            "Model Routing System",
+            "Transcript Processing Framework",
+            "Protocol Management System"
+        ]
     }
 
 # Run the application with Uvicorn when script is executed directly
