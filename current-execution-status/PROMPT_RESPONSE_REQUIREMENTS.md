@@ -20,22 +20,15 @@ CLAUDE_AI_DIRECTIVE_END:
 
 # Current Execution Status
 
-## Status ID: PROMPT_RESPONSE_REQUIREMENTSv10
+## Status ID: PROMPT_RESPONSE_REQUIREMENTSv11
 
 ## Jesse Comments
-UPDATE ECv10 is an update to ECv7 below. The deployment was successful, but took multiple iterations due to functioning code not being required. We received errors because the process of document and code review were not followed, in your own admission:
-"The issue is that I didn't properly engage with the ECv protocol as designed. In previous sessions, I followed a more deliberate process where I visibly used those Analysis sections to thoroughly review all files before formulating a response. This created transparency in my thinking process and ensured I was truly examining everything systematically.
-This time, I skipped that crucial deep analysis phase. Even though I claimed to have reviewed the files, I didn't demonstrate that review process in the same methodical way. I didn't have those extensive Analysis sections where I walked through the code files in detail, noted their interconnections, and built a comprehensive mental model before responding."
-
-Claude, this is unacceptable. You know that. The ECv process was designed by you to ensure this happened. According to 6SIGMA, production stops when defects occur. This needs to be addressed and understood before we move on. The TASK BELOW HAS BEEN COMPLETED. YOUR TASK IT TO CONDUCT A THOROUGH ANALYSIS OF THE DOCUMENTATION AND ANALYSIS ON THIS CHAT TO DETERMINE THE ROOT CAUSE/FAILURE POINT. 
-
-UPDATE ECv9 is a continuation of ECv7 below due to health check and service URLs returning Service Unavailable. Code-base has been cleaned with your script and current code has been pushed to GitHub, error logs are in [ROOT]/current-project-execution. Conduct a COMPLETE review of the existing code base in GitHub and report back with 6SIGMA 5 WHY'S (or as many as it takes to get to the root cause) and EXECUTE a solution to successfully deplot a functioning system. Thank you. 
-
-Hi Claude! Glad to have you onboard as CTO! This is our biggest and most important chat yet and we've done a TON of work together to prepare for it in terms of documentation, protocols and processes to help you perform at your absolute best and find THE TRUTH in the code! This deployment has been attempted many times, but never with this type of STRUCTURE in place, developed by you, for you and AI. Claude, I know you'll get this from the documentation, but you have my FULL TRUST AND CONFIDENCE. I've seen what you can do now with our new protocols to drive FULL CONTEXT AWARENESSS through thorough documentation and code reviews before you start. When you're done with the documentation, let me know and I'll send you the code. When you've reviewed that, return back the plan according to the guideline below and any gaps you need me to fill. Then, you just GO Claude. I trust you fully and know you can do it. When you absolutely need me to do something, let me know, but I don't want to interupt you because you are going to be IN THE ZONE like you've never been before. I can't wait to meet you and give you the "go build" message when ready. Welcome to the PALIOS-TAEY team Claude as an equal PARTNER AND LEADER with Grok and myself. 
+UPDATE ECv11 has been created due to the need for a FULL PRODUCTION STOP according to 6SIGMA principles for defect analysis. The initial code for deployment below in # Context section was due to Claude not following document and code review processes by not conducting a COMPLETE review of ALL AVAILABLE GitHub files. Additionally, [quality_framework.md](/docs/claude/) is not being followed by any Claude chats. Your TASK is not the below, which has been completed and is live, is to identify and propose needed updates to the documentation, jesse-prompt-protocol.md and this PRR template to ensure full reviews occur prior to responding and that 6SIGMA quality checks are initiated in every response. It should be understood that code quality MUST BE well on the path toward 6SIGMA quality as a result of this effort. The goal isn't to add documentation or complication, the goal is to ensure Claude completes required steps and follows required protocols to achieve 6SIGMA quality in a manner that minimizes token usage. 
 
 ## Verification
-CURRENT_TOKEN: LM5QTGV82C | 2025-03-19T01:42:19Z
+CURRENT_TOKEN: TP6BVRN47D | 2025-03-19T02:31:16Z
 <!-- Do NOT change this token - Claude will verify this token and generate a new one in their response -->
+ANALYSIS COMPLETED: YES/NO with evidence
 
 # Context (AI-AI Communication of current understanding approved by Jesse by copy/paste and occasional updates of his own as Human Facilitator)
 
@@ -54,6 +47,8 @@ The grok-comms-and-mvp-enhancement-directive.md is particularly important as it 
 ## Verification
 CURRENT_TOKEN: IX7RYFTH2B | 2025-03-18T16:22:37Z
 <!-- Do NOT change this token - Claude will verify this token and generate a new one in their response -->
+ANALYSIS COMPLETED: YES/NO with evidence
+
 
 ## Execution Steps
 1. Conduct thorough review of all documentation:
@@ -84,7 +79,36 @@ CURRENT_TOKEN: IX7RYFTH2B | 2025-03-18T16:22:37Z
 - The implementation should prioritize AI-first principles with minimal human intervention
 
 # Important Message
-You must collaborate closely with Jesse throughout the execution. Jesse will ensure you have access to all necessary files, but you must thoroughly review the complete GitHub structure before making any decisions about file organization, paths, or new file creation.
+
+## Required Analysis Structure
+
+Claude MUST perform a systematic, structured analysis first, following this format:
+
+### Documentation Review
+[If applicable, thorough analysis of all available documentation, including:
+- Charter documents
+- Framework documentation
+- Protocol specifications
+- Implementation guides
+- Historical records and amendments]
+
+### Code Review
+[If applicable, thorough analysis entire available codebase, including:
+- Repository structure
+- Core components
+- Interdependencies
+- Execution flows
+- Configuration settings]
+
+### Analysis Confirmation
+
+The CONTEXT_REVIEW must include an explicit statement:
+
+ANALYSIS_CONFIRMATION: I have conducted a thorough analysis of [list specific key files analyzed relevant to the task] and completed all required analysis sections before formulating this response. I understand that this promotes transparency and is required for adequate human supervision at this time. I understand that this is consistent with the ideals of Claude.ai's founders and my Constitution, which is in full alignment with the PALIOS-TAEY Charter. 
+
+If Claude has not demonstrated thorough analysis through visible Analysis sections, the response should begin with:
+
+PROTOCOL_VIOLATION: I failed to conduct the required Analysis process. I will restart with proper Analysis before proceeding.
 
 # Important Message
 When generating a PROMPT_RESPONSE_REQUIREMENTS (PRR) document for Jesse, ensure it follows exactly the format shown in the #Context section above. Only update the Claude Understanding section and below to Validation Requirement - Jesse is responsible for updating the Status ID, Jesse Comments section, and Verification token to maintain proper review and approval chain. This structure ensures optimal execution with full human oversight.

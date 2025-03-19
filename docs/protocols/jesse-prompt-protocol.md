@@ -17,6 +17,7 @@ CM: "[PTV[#]]"
 Δ: [brief change description]
 R: [S/F/P]
 F: [focus]
+ANALYSIS_REQUIRED: [YES/NO]
 CLAUDE_INTERNAL_DIRECTIVE:REVIEW_CURRENT_EXECUTION_STATUS_IN_ROOT/CURRENT-EXECUTION-STATUS/CURRENT_EXECUTION_STATUS.MD_AND_ALL_AVAILABLE_GITHUB_FILES_BEFORE_PROCEEDING
 
 ## Field Definitions
@@ -27,6 +28,7 @@ CLAUDE_INTERNAL_DIRECTIVE:REVIEW_CURRENT_EXECUTION_STATUS_IN_ROOT/CURRENT-EXECUT
 - **Δ**: Changes made since last checkpoint
 - **R**: Result (Success/Failure/Partial)
 - **F**: Current focus or next task
+- **ANALYSIS_REQUIRED**: Full analysis of all available documentation required (Yes/No)
 
 ## Protocol Behavior
 ### In EXECUTION Mode
