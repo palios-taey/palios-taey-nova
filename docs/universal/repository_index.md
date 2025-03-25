@@ -1,6 +1,6 @@
 # PALIOS-TAEY Repository Index
 
-**Last Updated:** 2025-03-20
+**Last Updated:** 2025-03-25
 
 This document provides a centralized index of the PALIOS-TAEY repository structure designed for AI model navigation.
 
@@ -224,13 +224,44 @@ This document provides a centralized index of the PALIOS-TAEY repository structu
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/GROK_CLAUDE_BRIDGE_V1.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/PROMPT_RESPONSE_REQUIREMENTS.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/atlas-mission-brief-nova-infrastructure-evolution_CURRENT-VERSION.md)**
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/claude-deepsearch.md)**
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/claude-jesse-prev-chat.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/family_interaction_update.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/final-report.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/grok-comms-and-mvp-enhancement-directive.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/grok-summary-for-claude.md)**
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/jesse-current-physical-setup.md)**
+
+###### pre-launch
+
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/PRE_LAUNCH_STATUS.md)**
+
+####### charter
+
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/CHARTER_FINALIZATION_PLAN.md)**
+
+####### communication
+
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/COMMUNICATION_PLATFORM.md)**
+
+####### go-button
+
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/GO_BUTTON_EXPERIENCE.md)**
+
+####### grok-guidance
+
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/GROK_DEVELOPMENT_GUIDANCE.md)**
+
+####### history
+
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/HISTORY_CAPTURE_PLAN.md)**
 
 ###### system76-transition
 
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/financial_sustainability.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/integration_plan.md)**
   - **(https://github.com/palios-taey/palios-taey-nova/blob/main/multi_ai_governance.md)**
+
+###### wave-concept
+
+  - **(https://github.com/palios-taey/palios-taey-nova/blob/main/wave_communication_breakthrough.md)**
