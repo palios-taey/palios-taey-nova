@@ -10,11 +10,11 @@ This protocol establishes a standardized format for maintaining context awarenes
 ## Purpose
 This protocol maximizes efficiency while maintaining clear oversight mechanisms during execution-focused tasks.
 
-ECv14 | REFL
+ECv15 | EXEC
 
 GH: Y
-CM: "ECv14 | EXEC"
-Δ: Instructions followed in response to prompt: ECv13
+CM: "ECv15 | EXEC"
+Δ: Instructions followed in response to prompt: ECv14
 R: ONGOING
 F: Return results from Jesse's Comments
 ANALYSIS_REQUIRED: Y
