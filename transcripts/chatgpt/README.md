@@ -7,4 +7,4 @@ Relevant conversation_id:
 67bf1053-9830-8000-99fd-ae619e1a1ed0
 67ca1b4e-c020-8000-86fa-1a663b6d0c5d
 
-The rest you can go through, but are not really relevant to this project. You will go through them when we set me up as first user of taey.ai (along with everything else I have about me), but it is mostly personal and job search stuff that isn't relevant to this project. The above chats are when we started the project together.
+The rest you can go through, but are not really relevant to this project. You will go through them when we set me up as first user of taey.ai (along with everything else I have about me), but it is mostly personal and job search stuff that isn't relevant to this project. The above chats are when we started the project together. Transcripts in /ChatGPT_md_format are the conversations above in .md format and are just there in case needed for some reason.
