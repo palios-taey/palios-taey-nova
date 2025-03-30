@@ -1,0 +1,17 @@
+[Unit]
+Description=PALIOS-TAEY Webhook Server
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /home/jesse/palios-webhook/start_webhook_server.sh
+WorkingDirectory=/home/jesse/palios-webhook
+User=jesse
+Group=jesse
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=palios-webhook
+
+[Install]
+WantedBy=multi-user.target
