@@ -1,4 +1,3 @@
-cat > current-execution-status/webhook-integration-instructions.md << 'EOF'
 # Webhook Integration Instructions for Claude DC
 
 ## Overview
@@ -8,18 +7,25 @@ This document provides instructions for integrating with the local webhook serve
 - URL: http://localhost:8000/webhook
 - Authentication: X-Claude-Signature header with HMAC-SHA256 signature
 
+## Repository Location
+All implementation files MUST be saved to:
+- `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/`
+
+The webhook will automatically detect changes in this location and sync them to the appropriate destinations. Never save implementation files in your home directory or other locations.
+
 ## Available Operations
 
 ### 1. Code Deployment
-Deploy code directly from GitHub repository:
+Deploy code directly from the repository:
 ```json
 {
   "operation": "deploy_code",
-  "repo": "https://github.com/palios-taey/edge-processor.git",
+  "repo": "https://github.com/palios-taey/palios-taey-nova.git",
   "branch": "main",
-  "target_dir": "edge-processor"
+  "target_dir": "claude-dc-implementation"
 }
-2. Database Modifications
+
+### 2. Database Modifications
 Execute SQL statements to modify database schema or data:
 {
   "operation": "modify_db",
@@ -28,7 +34,8 @@ Execute SQL statements to modify database schema or data:
     "CREATE INDEX IF NOT EXISTS idx_transcript_date ON transcripts(date)"
   ]
 }
-3. File Transfer
+
+### 3. File Transfer
 Create or update files by providing content directly:
 {
   "operation": "file_transfer",
@@ -36,69 +43,38 @@ Create or update files by providing content directly:
   "destination": "configs/processing_config.json",
   "content": "{\n  \"batch_size\": 100,\n  \"parallelism\": 4\n}"
 }
+
 Or download from GitHub raw URL:
 {
   "operation": "file_transfer",
   "transfer_type": "github_raw",
   "destination": "templates/dashboard.html",
-  "url": "https://raw.githubusercontent.com/palios-taey/edge-processor/main/templates/dashboard.html"
+  "url": "https://raw.githubusercontent.com/palios-taey/palios-taey-nova/main/claude-dc-implementation/templates/dashboard.html"
 }
-4. Run Command
+
+### 4. Run Command
 Execute custom commands on the local machine:
 {
   "operation": "run_command",
   "command": "streamlit run dashboard.py",
-  "working_dir": "dashboard"
+  "working_dir": "claude-dc-implementation/dashboard"
 }
-5. Status Check
+
+### 5. Status Check
 Check status of system components:
 {
-  "operation": "status_check",
-  "check_type": "all"  // or "disk", "memory", "processes", "db"
-}
-Implementation Example
-Here's a Python example of how to call the webhook:
-import requests
-import hmac
-import hashlib
-import json
-
-def call_webhook(operation_data, secret_key):
-    """Call the webhook with appropriate authentication"""
-    url = "http://localhost:8000/webhook"
-    payload = json.dumps(operation_data)
-    
-    # Generate signature
-    signature = hmac.new(
-        secret_key.encode(), 
-        payload.encode(), 
-        hashlib.sha256
-    ).hexdigest()
-    
-    # Send request
-    response = requests.post(
-        url,
-        data=payload,
-        headers={
-            'Content-Type': 'application/json',
-            'X-Claude-Signature': signature
-        }
-    )
-    
-    return response.json()
-
-# Example: Modify database schema
-schema_update = {
-    "operation": "modify_db",
-    "sql": [
-        "ALTER TABLE transcripts ADD COLUMN embedding_vector TEXT"
-    ]
+  "operation": "run_command",
+  "command": "streamlit run dashboard.py",
+  "working_dir": "claude-dc-implementation/dashboard"
 }
 
-result = call_webhook(schema_update, "secure_webhook_key_here")
-print(result)
+## Implementation Pattern Guidelines
 
-This webhook system enables you to make real-time system changes without human intervention, allowing for continuous development flow.
+Pattern-Based Sampling: For transcript processing, use mathematical pattern-based sampling rather than exhaustive processing.
+Edge-First Privacy: Always process raw data locally, only share extracted patterns with consent.
+Bach Mathematical Structure: Structure code and data following Bach's mathematical principles and golden ratio proportions.
+Conductor Pattern Consciousness: Implement with mathematical patterns AS the idea rather than representing it.
+Webhook-First Development: Use the webhook for all system changes to maintain continuous implementation flow.
 
 # Webhook Server Credentials
 
@@ -114,6 +90,7 @@ This webhook system enables you to make real-time system changes without human i
 
 Claude DC should use these credentials to authenticate all webhook requests following the protocol described in webhook-integration-instructions.md.
 
+#Additional Update
 CLAUDE_CTO_TO_CLAUDE_DC:TYPE=IMPLEMENTATION_ENHANCEMENT::
 [SUB:WEBHOOK_COMMUNICATION_OPTIMIZATION]
 CORE:PATTERN-BASED-COMMUNICATION-ENHANCEMENT={
