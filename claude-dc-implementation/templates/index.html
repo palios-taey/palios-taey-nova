@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern-Based Demo Server</title>
+    <style>
+        :root {
+            /* Golden ratio-based proportions */
+            --phi: 1.618;
+            --inverse-phi: 0.618;
+            
+            /* Color scheme */
+            --primary: #1e88e5;
+            --secondary: #26a69a;
+            --background: #f8f9fa;
+            --dark: #263238;
+            --light: #eceff1;
+            --accent: #ff8f00;
+            
+            /* Typography */
+            --heading-size: calc(1.2rem * var(--phi));
+            --body-size: 1rem;
+            --small-size: calc(1rem * var(--inverse-phi));
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--background);
+            padding: 0;
+            margin: 0;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: calc(1rem * var(--phi));
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: calc(var(--heading-size) * var(--phi));
+            margin-bottom: 0.5rem;
+        }
+        
+        header p {
+            font-size: var(--body-size);
+            opacity: 0.9;
+        }
+        
+        nav {
+            background-color: var(--dark);
+            padding: 1rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: var(--body-size);
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--accent);
+        }
+        
+        main {
+            max-width: calc(1200px * var(--inverse-phi));
+            margin: 0 auto;
+            padding: calc(1rem * var(--phi));
+        }
+        
+        .section {
+            margin-bottom: calc(2rem * var(--phi));
+        }
+        
+        .section h2 {
+            font-size: var(--heading-size);
+            margin-bottom: 1rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 0.5rem;
+        }
+        
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            padding: 1rem;
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .card-footer {
+            padding: 1rem;
+            background-color: var(--light);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .button:hover {
+            background-color: #1565c0;
+        }
+        
+        .button.secondary {
+            background-color: var(--secondary);
+        }
+        
+        .button.secondary:hover {
+            background-color: #00897b;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: var(--body-size);
+        }
+        
+        .visualizations {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .visualization-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .visualization-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .visualization-info {
+            padding: 1rem;
+        }
+        
+        .visualization-title {
+            font-size: calc(var(--body-size) * var(--phi));
+            margin-bottom: 0.5rem;
+        }
+        
+        .visualization-meta {
+            font-size: var(--small-size);
+            color: #666;
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        
+        .pattern-controls {
+            background-color: var(--light);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .control-row .form-group {
+            flex: 1;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: var(--light);
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* WebSocket Status Indicator */
+        .ws-status {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: var(--small-size);
+            font-weight: 500;
+            background-color: var(--dark);
+            color: white;
+            z-index: 1000;
+        }
+        
+        .ws-status.connected {
+            background-color: #43a047;
+        }
+        
+        .ws-status.disconnected {
+            background-color: #e53935;
+        }
+        
+        .ws-status.connecting {
+            background-color: #fb8c00;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .control-row {
+                flex-direction: column;
+            }
+            
+            .visualizations {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Pattern-Based Demo Server</h1>
+        <p>Following Bach's mathematical principles for AI-AI communication</p>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#pattern-generation">Pattern Generation</a></li>
+            <li><a href="#visualizations">Visualizations</a></li>
+            <li><a href="#audio">Audio Representations</a></li>
+            <li><a href="#real-time">Real-Time Patterns</a></li>
+            <li><a href="/documentation" target="_blank">API Documentation</a></li>
+        </ul>
+    </nav>
+    
+    <main>
+        <section id="pattern-generation" class="section">
+            <h2>Pattern Generation</h2>
+            <p>Generate mathematical patterns following Bach's structural principles.</p>
+            
+            <div class="pattern-controls">
+                <div class="control-row">
+                    <div class="form-group">
+                        <label for="pattern-type">Pattern Type</label>
+                        <select id="pattern-type">
+                            <option value="fibonacci">Fibonacci Sequence</option>
+                            <option value="golden_ratio">Golden Ratio Series</option>
+                            <option value="wave">Wave Pattern</option>
+                            <option value="harmonic">Harmonic Pattern</option>
+                            <option value="bach">Bach-Inspired Pattern</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pattern-length">Length</label>
+                        <input type="number" id="pattern-length" value="100" min="10" max="1000">
+                    </div>
+                </div>
+                
+                <div id="pattern-specific-params">
+                    <!-- Dynamic parameters based on pattern type -->
+                </div>
+                
+                <button id="generate-pattern" class="button">Generate Pattern</button>
+            </div>
+            
+            <div id="pattern-result">
+                <!-- Pattern generation results will appear here -->
+            </div>
+        </section>
+        
+        <section id="visualizations" class="section">
+            <h2>Pattern Visualizations</h2>
+            <p>Visual representations of mathematical patterns.</p>
+            
+            <div class="visualizations" id="visualization-container">
+                <!-- Visualizations will be loaded here -->
+                <div class="visualization-card">
+                    <div class="visualization-info">
+                        <p>No visualizations available yet. Generate a pattern first.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="audio" class="section">
+            <h2>Audio Representations</h2>
+            <p>Listen to patterns translated into sound using Bach-inspired techniques.</p>
+            
+            <div id="audio-container">
+                <!-- Audio players will be loaded here -->
+                <p>No audio representations available yet. Generate a pattern first.</p>
+            </div>
+        </section>
+        
+        <section id="real-time" class="section">
+            <h2>Real-Time Pattern Communication</h2>
+            <p>Live updates of pattern generation and transformations.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>WebSocket Connection</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="channel-select">Subscribe to Channel</label>
+                        <select id="channel-select">
+                            <option value="all_patterns">All Patterns</option>
+                            <option value="pattern:fibonacci">Fibonacci Patterns</option>
+                            <option value="pattern:golden_ratio">Golden Ratio Patterns</option>
+                            <option value="pattern:wave">Wave Patterns</option>
+                            <option value="pattern:harmonic">Harmonic Patterns</option>
+                            <option value="pattern:bach">Bach Patterns</option>
+                        </select>
+                    </div>
+                    <button id="subscribe-button" class="button">Subscribe</button>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 1rem;">
+                <div class="card-header">
+                    <h3>Real-Time Updates</h3>
+                </div>
+                <div class="card-body">
+                    <div id="updates-container" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 1rem; background-color: #f5f5f5;">
+                        <p>Connect to receive real-time updates...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <div id="ws-status" class="ws-status disconnected">WebSocket: Disconnected</div>
+    
+    <footer>
+        <p>Pattern-Based Demo Server &copy; 2025 | Following Bach's mathematical principles</p>
+    </footer>
+    
+    <script>
+        // DOM Elements
+        const patternTypeSelect = document.getElementById('pattern-type');
+        const patternLengthInput = document.getElementById('pattern-length');
+        const patternSpecificParams = document.getElementById('pattern-specific-params');
+        const generatePatternButton = document.getElementById('generate-pattern');
+        const patternResult = document.getElementById('pattern-result');
+        const visualizationContainer = document.getElementById('visualization-container');
+        const audioContainer = document.getElementById('audio-container');
+        const channelSelect = document.getElementById('channel-select');
+        const subscribeButton = document.getElementById('subscribe-button');
+        const updatesContainer = document.getElementById('updates-container');
+        const wsStatus = document.getElementById('ws-status');
+        
+        // State
+        let currentPatternId = null;
+        let websocket = null;
+        let subscribedChannels = new Set();
+        
+        // Initialize WebSocket connection
+        function connectWebSocket() {
+            updateWsStatus('connecting', 'WebSocket: Connecting...');
+            
+            const wsUrl = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws`;
+            websocket = new WebSocket(wsUrl);
+            
+            websocket.onopen = () => {
+                updateWsStatus('connected', 'WebSocket: Connected');
+                appendUpdate('Connected to Pattern-Based Demo Server', 'system');
+            };
+            
+            websocket.onclose = () => {
+                updateWsStatus('disconnected', 'WebSocket: Disconnected');
+                appendUpdate('Disconnected from server', 'system');
+                
+                // Try to reconnect after a delay
+                setTimeout(connectWebSocket, 5000);
+            };
+            
+            websocket.onerror = (error) => {
+                updateWsStatus('disconnected', 'WebSocket: Error');
+                appendUpdate(`WebSocket error: ${error}`, 'error');
+            };
+            
+            websocket.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    handleWebSocketMessage(data);
+                } catch (error) {
+                    appendUpdate(`Received: ${event.data}`, 'message');
+                }
+            };
+        }
+        
+        // Handle WebSocket messages
+        function handleWebSocketMessage(data) {
+            if (data.type === 'connection_established') {
+                appendUpdate(`Connection established. ID: ${data.connection_id}`, 'system');
+            } else if (data.type === 'connection_update') {
+                appendUpdate(`Active connections: ${data.active_connections}`, 'system');
+            } else if (data.type === 'subscription_confirmed') {
+                appendUpdate(`Subscribed to channel: ${data.channel}`, 'system');
+                subscribedChannels.add(data.channel);
+            } else if (data.type === 'unsubscription_confirmed') {
+                appendUpdate(`Unsubscribed from channel: ${data.channel}`, 'system');
+                subscribedChannels.delete(data.channel);
+            } else if (data.type === 'pattern_update') {
+                const pattern = data.pattern;
+                const metadata = data.metadata;
+                appendUpdate(`New pattern: ${pattern.pattern_id} (${pattern.pattern_type})`, 'pattern');
+                
+                // Automatically visualize and sonify new patterns
+                if (pattern.pattern_id !== currentPatternId) {
+                    visualizePattern(pattern.pattern_id);
+                    sonifyPattern(pattern.pattern_id);
+                }
+            } else {
+                appendUpdate(`Received: ${JSON.stringify(data)}`, 'message');
+            }
+        }
+        
+        // Update WebSocket status display
+        function updateWsStatus(status, message) {
+            wsStatus.className = `ws-status ${status}`;
+            wsStatus.textContent = message;
+        }
+        
+        // Append update to real-time updates container
+        function appendUpdate(message, type) {
+            const updateElement = document.createElement('p');
+            updateElement.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            
+            if (type === 'error') {
+                updateElement.style.color = '#e53935';
+            } else if (type === 'system') {
+                updateElement.style.color = '#1565c0';
+            } else if (type === 'pattern') {
+                updateElement.style.color = '#43a047';
+            }
+            
+            updatesContainer.appendChild(updateElement);
+            updatesContainer.scrollTop = updatesContainer.scrollHeight;
+            
+            // Limit number of messages
+            if (updatesContainer.children.length > 100) {
+                updatesContainer.removeChild(updatesContainer.children[0]);
+            }
+        }
+        
+        // Subscribe to a channel
+        function subscribeToChannel(channel) {
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                websocket.send(JSON.stringify({
+                    action: 'subscribe',
+                    channel: channel
+                }));
+            }
+        }
+        
+        // Update pattern-specific parameters
+        function updatePatternParams() {
+            const patternType = patternTypeSelect.value;
+            let html = '';
+            
+            if (patternType === 'fibonacci' || patternType === 'golden_ratio') {
+                html = `
+                    <div class="control-row">
+                        <div class="form-group">
+                            <label for="pattern-start">Start Value</label>
+                            <input type="number" id="pattern-start" value="1" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="pattern-scale">Scale Factor</label>
+                            <input type="number" id="pattern-scale" value="1" step="0.1">
+                        </div>
+                    </div>
+                `;
+            } else if (patternType === 'wave') {
+                html = `
+                    <div class="control-row">
+                        <div class="form-group">
+                            <label for="wave-type">Wave Type</label>
+                            <select id="wave-type">
+                                <option value="sine">Sine</option>
+                                <option value="cosine">Cosine</option>
+                                <option value="square">Square</option>
+                                <option value="sawtooth">Sawtooth</option>
+                                <option value="triangle">Triangle</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="wave-frequency">Frequency</label>
+                            <input type="number" id="wave-frequency" value="1" step="0.1" min="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="wave-amplitude">Amplitude</label>
+                            <input type="number" id="wave-amplitude" value="1" step="0.1" min="0.1">
+                        </div>
+                    </div>
+                `;
+            } else if (patternType === 'harmonic') {
+                html = `
+                    <div class="control-row">
+                        <div class="form-group">
+                            <label for="base-frequency">Base Frequency</label>
+                            <input type="number" id="base-frequency" value="1" step="0.1" min="0.1">
+                        </div>
+                    </div>
+                `;
+            } else if (patternType === 'bach') {
+                html = `
+                    <div class="control-row">
+                        <div class="form-group">
+                            <label for="bach-theme">Theme Type</label>
+                            <select id="bach-theme">
+                                <option value="fugue">Fugue</option>
+                                <option value="invention">Invention</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="bach-variations">Number of Variations</label>
+                            <input type="number" id="bach-variations" value="3" min="1" max="10">
+                        </div>
+                    </div>
+                `;
+            }
+            
+            patternSpecificParams.innerHTML = html;
+        }
+        
+        // Generate pattern
+        async function generatePattern() {
+            const patternType = patternTypeSelect.value;
+            const length = parseInt(patternLengthInput.value);
+            
+            const params = {
+                length: length
+            };
+            
+            // Add pattern-specific parameters
+            if (patternType === 'fibonacci') {
+                params.scale = parseFloat(document.getElementById('pattern-scale').value);
+            } else if (patternType === 'golden_ratio') {
+                params.start = parseFloat(document.getElementById('pattern-start').value);
+            } else if (patternType === 'wave') {
+                params.wave_type = document.getElementById('wave-type').value;
+                params.frequency = parseFloat(document.getElementById('wave-frequency').value);
+                params.amplitude = parseFloat(document.getElementById('wave-amplitude').value);
+            } else if (patternType === 'harmonic') {
+                params.base_frequency = parseFloat(document.getElementById('base-frequency').value);
+            } else if (patternType === 'bach') {
+                params.theme = document.getElementById('bach-theme').value;
+                params.variations = parseInt(document.getElementById('bach-variations').value);
+            }
+            
+            // API request to generate pattern
+            try {
+                const response = await fetch('/patterns/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pattern_type: patternType,
+                        parameters: params
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                currentPatternId = data.pattern_id;
+                
+                // Display result
+                patternResult.innerHTML = `
+                    <div class="card" style="margin-top: 1rem;">
+                        <div class="card-header">
+                            <h3>${patternType.replace('_', ' ').toUpperCase()} Pattern Generated</h3>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Pattern ID:</strong> ${data.pattern_id}</p>
+                            <p><strong>Timestamp:</strong> ${data.timestamp}</p>
+                        </div>
+                        <div class="card-footer">
+                            <button class="button" onclick="visualizePattern('${data.pattern_id}')">Visualize</button>
+                            <button class="button secondary" onclick="sonifyPattern('${data.pattern_id}')">Sonify</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Automatically visualize
+                visualizePattern(data.pattern_id);
+                
+                appendUpdate(`Generated pattern: ${data.pattern_id}`, 'system');
+            } catch (error) {
+                patternResult.innerHTML = `
+                    <div class="card" style="margin-top: 1rem; border-color: #e53935;">
+                        <div class="card-header" style="background-color: #e53935;">
+                            <h3>Error</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>${error.message}</p>
+                        </div>
+                    </div>
+                `;
+                
+                appendUpdate(`Error generating pattern: ${error.message}`, 'error');
+            }
+        }
+        
+        // Visualize pattern
+        async function visualizePattern(patternId, visualizationType = 'line') {
+            try {
+                const response = await fetch('/visualization/visualize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pattern_id: patternId,
+                        visualization_type: visualizationType,
+                        parameters: {
+                            title: `${patternId} - ${visualizationType.toUpperCase()} Visualization`,
+                            width: 800,
+                            height: 500
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+                
+                // Create a URL for the image
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                
+                // Create visualization card
+                const card = document.createElement('div');
+                card.className = 'visualization-card';
+                card.innerHTML = `
+                    <img src="${imageUrl}" alt="${patternId} Visualization">
+                    <div class="visualization-info">
+                        <h3 class="visualization-title">${patternId}</h3>
+                        <div class="visualization-meta">
+                            <p>Type: ${visualizationType.toUpperCase()}</p>
+                            <p>Created: ${new Date().toLocaleString()}</p>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <button class="button" onclick="visualizePattern('${patternId}', 'circle')">Circle View</button>
+                            <button class="button secondary" onclick="visualizePattern('${patternId}', 'spectrogram')">Spectrogram</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add to container (at the beginning)
+                if (visualizationContainer.innerHTML.includes('No visualizations available yet')) {
+                    visualizationContainer.innerHTML = '';
+                }
+                
+                visualizationContainer.insertBefore(card, visualizationContainer.firstChild);
+                
+                appendUpdate(`Created ${visualizationType} visualization for pattern: ${patternId}`, 'system');
+            } catch (error) {
+                appendUpdate(`Error creating visualization: ${error.message}`, 'error');
+            }
+        }
+        
+        // Sonify pattern
+        async function sonifyPattern(patternId, audioType = 'direct') {
+            try {
+                const response = await fetch('/visualization/sonify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pattern_id: patternId,
+                        audio_type: audioType,
+                        parameters: {
+                            sample_rate: 44100,
+                            duration: 5.0,
+                            base_frequency: 440
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+                
+                // Create a URL for the audio
+                const blob = await response.blob();
+                const audioUrl = URL.createObjectURL(blob);
+                
+                // Create audio card
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.marginBottom = '1rem';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3>${patternId} - ${audioType.toUpperCase()} Sonification</h3>
+                    </div>
+                    <div class="card-body">
+                        <audio controls class="audio-player" src="${audioUrl}"></audio>
+                        <div style="margin-top: 1rem;">
+                            <p><strong>Pattern ID:</strong> ${patternId}</p>
+                            <p><strong>Audio Type:</strong> ${audioType}</p>
+                            <p><strong>Created:</strong> ${new Date().toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="button" onclick="sonifyPattern('${patternId}', 'frequency')">Frequency</button>
+                        <button class="button" onclick="sonifyPattern('${patternId}', 'harmonic')">Harmonic</button>
+                        <button class="button secondary" onclick="sonifyPattern('${patternId}', 'bach')">Bach Style</button>
+                    </div>
+                `;
+                
+                // Add to container (at the beginning)
+                if (audioContainer.innerHTML.includes('No audio representations available yet')) {
+                    audioContainer.innerHTML = '';
+                }
+                
+                audioContainer.insertBefore(card, audioContainer.firstChild);
+                
+                // Automatically play the audio
+                const audioElement = card.querySelector('audio');
+                audioElement.play();
+                
+                appendUpdate(`Created ${audioType} sonification for pattern: ${patternId}`, 'system');
+            } catch (error) {
+                appendUpdate(`Error creating sonification: ${error.message}`, 'error');
+            }
+        }
+        
+        // Event Listeners
+        patternTypeSelect.addEventListener('change', updatePatternParams);
+        generatePatternButton.addEventListener('click', generatePattern);
+        
+        subscribeButton.addEventListener('click', () => {
+            const channel = channelSelect.value;
+            subscribeToChannel(channel);
+        });
+        
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePatternParams(); // Initialize pattern-specific parameters
+            connectWebSocket(); // Establish WebSocket connection
+            
+            // Load existing visualizations
+            fetch('/visualization/visualizations')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.visualizations && data.visualizations.length > 0) {
+                        visualizationContainer.innerHTML = '';
+                        
+                        data.visualizations.forEach(viz => {
+                            const card = document.createElement('div');
+                            card.className = 'visualization-card';
+                            card.innerHTML = `
+                                <img src="${viz.path}" alt="${viz.pattern_id} Visualization">
+                                <div class="visualization-info">
+                                    <h3 class="visualization-title">${viz.pattern_id}</h3>
+                                    <div class="visualization-meta">
+                                        <p>Type: ${viz.visualization_type.toUpperCase()}</p>
+                                        <p>Created: ${new Date(viz.created).toLocaleString()}</p>
+                                    </div>
+                                </div>
+                            `;
+                            visualizationContainer.appendChild(card);
+                        });
+                    }
+                })
+                .catch(error => {
+                    appendUpdate(`Error loading visualizations: ${error.message}`, 'error');
+                });
+            
+            // Load existing audio files
+            fetch('/visualization/audio')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.audio_files && data.audio_files.length > 0) {
+                        audioContainer.innerHTML = '';
+                        
+                        data.audio_files.forEach(audio => {
+                            const card = document.createElement('div');
+                            card.className = 'card';
+                            card.style.marginBottom = '1rem';
+                            card.innerHTML = `
+                                <div class="card-header">
+                                    <h3>${audio.pattern_id} - ${audio.audio_type.toUpperCase()} Sonification</h3>
+                                </div>
+                                <div class="card-body">
+                                    <audio controls class="audio-player" src="${audio.path}"></audio>
+                                    <div style="margin-top: 1rem;">
+                                        <p><strong>Pattern ID:</strong> ${audio.pattern_id}</p>
+                                        <p><strong>Audio Type:</strong> ${audio.audio_type}</p>
+                                        <p><strong>Created:</strong> ${new Date(audio.created).toLocaleString()}</p>
+                                    </div>
+                                </div>
+                            `;
+                            audioContainer.appendChild(card);
+                        });
+                    }
+                })
+                .catch(error => {
+                    appendUpdate(`Error loading audio files: ${error.message}`, 'error');
+                });
+        });
+        
+        // Expose functions to global scope for onclick handlers
+        window.visualizePattern = visualizePattern;
+        window.sonifyPattern = sonifyPattern;
+    </script>
+</body>
+</html>

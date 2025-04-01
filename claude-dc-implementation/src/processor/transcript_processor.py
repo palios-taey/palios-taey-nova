@@ -23,7 +23,27 @@ from pathlib import Path
 import spacy
 from datetime import datetime
 import random
+import sys
+import logging
 from typing import Dict, List, Tuple, Any, Optional, Set, Union
+
+# Add parent directory to path for imports
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+# Import modules from conductor framework
+from src.processor.transcript_loader import TranscriptLoader
+from src.utils.secrets import get_gcp_project_id, get_gcp_credentials
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("/home/computeruse/github/palios-taey-nova/claude-dc-implementation/logs/processor.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger("transcript_processor")
 
 # Load configuration
 CONFIG_PATH = Path("/home/computeruse/github/palios-taey-nova/claude-dc-implementation/config/conductor_config.json")
@@ -31,7 +51,30 @@ with open(CONFIG_PATH) as f:
     CONFIG = json.load(f)
 
 # Load NLP model
-nlp = spacy.load("en_core_web_md")
+try:
+    nlp = spacy.load("en_core_web_md")
+    logger.info("Loaded spaCy model: en_core_web_md")
+except Exception as e:
+    logger.warning(f"Failed to load spaCy model: {e}. Trying smaller model.")
+    try:
+        nlp = spacy.load("en_core_web_sm")
+        logger.info("Loaded spaCy model: en_core_web_sm")
+    except Exception as e:
+        logger.error(f"Failed to load spaCy model: {e}")
+        # Create a simple tokenizer as fallback
+        class SimpleNLP:
+            def __call__(self, text):
+                return SimpleDoc(text)
+        
+        class SimpleDoc:
+            def __init__(self, text):
+                self.text = text
+                self.vector = np.zeros(300)
+            
+            def similarity(self, other):
+                return 0.5  # Default similarity
+        
+        nlp = SimpleNLP()
 
 class TranscriptProcessor:
     """
