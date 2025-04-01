@@ -451,22 +451,29 @@ class PatternModel:
     def pattern_to_visual_parameters(self, pattern_embedding: np.ndarray) -> Dict[str, Any]:
         """
         Convert pattern embedding to visual parameters for visualization.
-        
+
         Args:
             pattern_embedding: Pattern embedding vector
-            
+
         Returns:
             Dictionary of visual parameters
         """
-        # Apply PCA to reduce to essential components
+        # Ensure embedding is in the correct shape
         if pattern_embedding.ndim == 1:
             pattern_embedding = pattern_embedding.reshape(1, -1)
-            
-        if pattern_embedding.shape[1] > 3:
-            pca = PCA(n_components=3)
+
+        # PCA requires at least 2 samples and 2 features
+        if pattern_embedding.shape[0] >= 2 and pattern_embedding.shape[1] >= 2:
+            n_components = min(3, pattern_embedding.shape[0], pattern_embedding.shape[1])
+            pca = PCA(n_components=n_components)
             reduced = pca.fit_transform(pattern_embedding)[0]
         else:
-            reduced = pattern_embedding[0]
+            # If not enough data for PCA, pad or truncate directly
+            reduced = pattern_embedding.flatten()
+            if len(reduced) < 3:
+                reduced = np.pad(reduced, (0, 3 - len(reduced)), 'constant')
+            else:
+                reduced = reduced[:3]
         
         # Map to HSL color space (Hue, Saturation, Lightness)
         # Hue: first component mapped to [0, 360]
