@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# Conductor Framework Setup Script
+# Modified Conductor Framework Setup Script
 # This script installs all required dependencies for the Conductor Framework
-# It requires a secrets file to be present at /home/jesse/secrets/palios-taey-secrets.json
 
 SECRETS_FILE="/home/jesse/secrets/palios-taey-secrets.json"
-INSTALL_DIR="/home/computeruse/github/palios-taey-nova/claude-dc-implementation"
+INSTALL_DIR="/home/jesse/projects/palios-taey-nova/claude-dc-implementation"
 
 echo "Setting up Conductor Framework environment..."
 
@@ -17,13 +16,14 @@ if [ ! -f "$SECRETS_FILE" ]; then
     exit 1
 fi
 
-# Create Python virtual environment
-python3 -m venv $INSTALL_DIR/.venv
-source $INSTALL_DIR/.venv/bin/activate
+# Create Python virtual environment (optional)
+# python3 -m venv $INSTALL_DIR/.venv
+# source $INSTALL_DIR/.venv/bin/activate
 
 # Install required packages
-pip install --upgrade pip
-pip install \
+pip3 install --upgrade pip
+pip3 install \
+    aiohttp \
     numpy \
     pandas \
     scikit-learn \
@@ -52,11 +52,11 @@ pip install \
     soundfile
 
 # Install spaCy language model
-python -m spacy download en_core_web_md
+python3 -m spacy download en_core_web_md
 
 # Create .env file from secrets
 echo "Creating .env file from secrets..."
-python -c "
+python3 -c "
 import json
 import os
 
@@ -79,14 +79,16 @@ with open('$INSTALL_DIR/.env', 'w') as f:
 # Setup Google Cloud credentials from secrets
 echo "Setting up Google Cloud credentials from secrets..."
 mkdir -p $INSTALL_DIR/credentials
-python -c "
+python3 -c "
 import json
+import os
 
 # Load secrets file
 with open('$SECRETS_FILE', 'r') as f:
     secrets = json.load(f)
 
 # Create service account file
+os.makedirs('$INSTALL_DIR/credentials', exist_ok=True)
 with open('$INSTALL_DIR/credentials/service_account.json', 'w') as f:
     json.dump(secrets['gcp']['service_account'], f, indent=2)
 "
@@ -94,6 +96,8 @@ with open('$INSTALL_DIR/credentials/service_account.json', 'w') as f:
 # Create necessary directories
 mkdir -p $INSTALL_DIR/config
 mkdir -p $INSTALL_DIR/data/transcripts
+mkdir -p $INSTALL_DIR/data/patterns
+mkdir -p $INSTALL_DIR/data/models
 mkdir -p $INSTALL_DIR/logs
 
 echo "Environment setup complete!"
