@@ -115,31 +115,42 @@ The EVE Manager provides edge computing capabilities:
 
 ### Running Individual Components
 
-- **Transcript Processing**:
+- **Enhanced Transcript Processing**:
   ```
-  python main.py --mode process
+  python process_all_transcripts.py
   ```
 
-- **Dashboard**:
+- **Communication Dashboard**:
   ```
-  python main.py --mode dashboard
+  python start_communication_dashboard.py
   ```
 
 - **MCP Server**:
   ```
-  python main.py --mode mcp
+  python -m src.mcp.mcp_server
   ```
 
-- **EVE Manager**:
+- **Dashboard Only** (if services are already running):
   ```
-  python main.py --mode eve
+  streamlit run communication_dashboard.py --server.port=8502
   ```
 
 ### API Endpoints
 
-- **MCP Server**: http://localhost:8000/api/context
-- **Dashboard**: http://localhost:8501
+- **MCP Server**: http://localhost:8001/api/context
+- **Communication Dashboard**: http://localhost:8502
 - **Webhook**: http://localhost:8000/webhook
+- **Demo Server**: http://localhost:8002
+
+### Communication Dashboard Features
+
+The integrated communication dashboard provides:
+
+1. **Multi-AI Communication**: Seamlessly communicate with Claude, Grok, ChatGPT, and Gemini
+2. **Context-Aware Routing**: Include relevant patterns as context when messaging
+3. **AI-to-AI Bridging**: Direct AI-to-AI communication with custom bridge formats
+4. **Pattern Visualization**: Wave-based visualization of extracted patterns
+5. **Conversation History**: View and load previous conversations across different AI models
 
 ## Project Structure
 
@@ -178,12 +189,12 @@ If adding new services:
     - Explicitly update this README immediately to document your change.
 
 Current Port Assignments:
-Service	Port(s)
-Claude DC	8080, 8501, 6080
-MCP Server	8001
-Webhook	8000
-Demo Server	8002
-Streamlit Dashboard	8502
+Service Port(s)
+Claude DC       8080, 8501, 6080
+MCP Server      8001
+Webhook 8000
+Demo Server     8002
+Streamlit Dashboard     8502
 
 To verify active ports:
 sudo lsof -i -P -n | grep LISTEN

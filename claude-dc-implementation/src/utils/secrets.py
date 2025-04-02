@@ -305,6 +305,36 @@ def get_webhook_url() -> Optional[str]:
     """
     return secrets_manager.get_webhook_url()
 
+def load_secrets() -> Dict[str, Any]:
+    """
+    Load all secrets into a structured dictionary.
+    
+    Returns:
+        Dictionary containing all available secrets
+    """
+    # Initialize secrets dictionary
+    secrets = {
+        "api_keys": {
+            "anthropic": get_api_key("anthropic"),
+            "openai": get_api_key("openai"),
+            "google_ai_studio": get_api_key("google_ai_studio"),
+            "xai_grok": get_api_key("xai_grok")
+        },
+        "gcp": {
+            "project_id": get_gcp_project_id(),
+            "service_account": get_gcp_credentials()
+        },
+        "webhook": {
+            "url": get_webhook_url(),
+            "secret": get_webhook_secret()
+        },
+        "mcp": {
+            "api_key": os.environ.get("MCP_API_KEY", "default_key_for_development")
+        }
+    }
+    
+    return secrets
+
 
 if __name__ == "__main__":
     # Test the secrets manager
@@ -324,3 +354,9 @@ if __name__ == "__main__":
     
     webhook_secret = get_webhook_secret()
     print(f"Webhook secret found: {webhook_secret is not None}")
+    
+    # Test loading all secrets
+    all_secrets = load_secrets()
+    print("\nAll secrets loaded successfully!")
+    print(f"API keys available: {', '.join(k for k, v in all_secrets['api_keys'].items() if v)}")
+    print(f"Webhook URL: {all_secrets['webhook']['url']}")
