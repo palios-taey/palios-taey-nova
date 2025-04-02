@@ -282,7 +282,7 @@ class TranscriptProcessor:
         
         return vectors
     
-    def extract_patterns(self, transcript: str, source: str = None) -> Dict[str, List[Dict[str, Any]]]:
+    def _process_transcript_chunk(self, transcript: str, source: str = None) -> Dict[str, List[Dict[str, Any]]]:
         """
         Extract patterns from a transcript using mathematical sampling.
         
@@ -293,6 +293,31 @@ class TranscriptProcessor:
         Returns:
             Dictionary of extracted patterns by pattern type
         """
+        # Handle large texts by chunking if needed
+        MAX_LENGTH = 900000  # Slightly under spaCy's limit
+        
+        if len(transcript) > MAX_LENGTH:
+            # Process in chunks
+            chunks = [transcript[i:i+MAX_LENGTH] for i in range(0, len(transcript), MAX_LENGTH)]
+            logger.info(f"Splitting large transcript ({len(transcript)} chars) into {len(chunks)} chunks")
+            
+            # Process each chunk and combine results
+            all_patterns = defaultdict(list)
+            for i, chunk in enumerate(chunks):
+                logger.info(f"Processing chunk {i+1}/{len(chunks)}")
+                chunk_patterns = self._process_transcript_chunk(chunk, source)
+                
+                # Merge patterns
+                for pattern_type, patterns in chunk_patterns.items():
+                    all_patterns[pattern_type].extend(patterns)
+            
+            return dict(all_patterns)
+        else:
+            # Process normally for smaller texts
+            return self._process_transcript_chunk(transcript, source)
+
+    def _process_transcript_chunk(self, transcript: str, source: str = None) -> Dict[str, List[Dict[str, Any]]]:
+        """Internal method to process a chunk of transcript text"""
         # Apply different sampling methods based on mathematical patterns
         fibonacci_samples = self._fibonacci_sampling(transcript)
         golden_ratio_samples = self._golden_ratio_sampling(transcript)
@@ -377,7 +402,7 @@ class TranscriptProcessor:
                     break
             
             # Extract patterns from the transcript
-            patterns = self.extract_patterns(text, source)
+            patterns = self._process_transcript_chunk(text, source)
             
             # Update metrics
             for pattern_type, entries in patterns.items():
@@ -630,7 +655,7 @@ if __name__ == "__main__":
     """
     
     # Process the sample transcript
-    patterns = processor.extract_patterns(sample_transcript, source="Claude")
+    patterns = processor._process_transcript_chunk(sample_transcript, source="Claude")
     
     # Print extracted patterns
     for pattern_type, entries in patterns.items():

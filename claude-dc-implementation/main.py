@@ -150,7 +150,7 @@ The EVE-OS integration gives us the foundation for edge computing with local pri
 
 def run_mcp_server():
     """Run the Model Context Protocol server."""
-    uvicorn.run(mcp_app, host="0.0.0.0", port=8000)
+    uvicorn.run(mcp_app, host="0.0.0.0", port=8001)
 
 def run_dashboard():
     """Run the Streamlit dashboard."""
@@ -159,7 +159,7 @@ def run_dashboard():
         "streamlit",
         "run",
         "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/src/dashboard/app.py",
-        "--server.port=8501",
+        "--server.port=8502",
         "--server.address=0.0.0.0"
     ]
     
@@ -256,7 +256,7 @@ def main():
         mcp_thread.daemon = True
         mcp_thread.start()
         
-        services.append(("MCP Server", mcp_thread, 8000))
+        services.append(("MCP Server", mcp_thread, 8001))
     
     # EVE Manager
     if args.mode in ["all", "eve"]:

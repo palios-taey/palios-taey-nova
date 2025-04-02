@@ -171,6 +171,24 @@ claude-dc-implementation/
 ├── main.py
 └── README.md
 ```
+## Port Mapping
+Explicitly manage port assignments clearly listed below.
+If adding new services:
+    - Increment from the last-used port, clearly avoiding conflicts.
+    - Explicitly update this README immediately to document your change.
+
+Current Port Assignments:
+Service	Port(s)
+Claude DC	8080, 8501, 6080
+MCP Server	8001
+Webhook	8000
+Demo Server	8002
+Streamlit Dashboard	8502
+
+To verify active ports:
+sudo lsof -i -P -n | grep LISTEN
+
+Always keep this section explicitly updated to prevent port conflicts.
 
 ## Acknowledgments
 

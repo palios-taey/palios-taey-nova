@@ -64,16 +64,49 @@ class TranscriptLoader:
         """
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
-                transcript = json.load(f)
+                raw_data = json.load(f)
+            
+            # Handle different JSON structures
+            transcript = {}
+            
+            # Check if it's a list or dictionary
+            if isinstance(raw_data, list):
+                # Handle list format (e.g., conversations.json)
+                if raw_data and isinstance(raw_data[0], dict):
+                    # Extract text from a list of messages
+                    messages = []
+                    for item in raw_data:
+                        if "content" in item:
+                            messages.append(item["content"])
+                        elif "message" in item and isinstance(item["message"], dict) and "content" in item["message"]:
+                            messages.append(item["message"]["content"])
+                    
+                    transcript["text"] = "\n\n".join(messages)
+                    transcript["source"] = os.path.basename(os.path.dirname(file_path))
+                else:
+                    raise ValueError("Unexpected list structure in JSON file")
+            elif isinstance(raw_data, dict):
+                # Handle dictionary format
+                if "text" in raw_data:
+                    transcript = raw_data
+                elif "messages" in raw_data and isinstance(raw_data["messages"], list):
+                    messages = [msg.get("content", "") for msg in raw_data["messages"] if isinstance(msg, dict)]
+                    transcript["text"] = "\n\n".join(messages)
+                else:
+                    # Try to extract useful text from the dictionary
+                    text_parts = []
+                    for key, value in raw_data.items():
+                        if isinstance(value, str) and len(value) > 50:  # Likely text content
+                            text_parts.append(value)
+                    
+                    if text_parts:
+                        transcript["text"] = "\n\n".join(text_parts)
+                    else:
+                        raise ValueError("Could not find text content in JSON file")
             
             # Ensure required fields
-            if "text" not in transcript:
-                # Try to extract text from messages if available
-                if "messages" in transcript:
-                    transcript["text"] = "\n\n".join([msg.get("content", "") for msg in transcript["messages"]])
-                else:
-                    transcript["text"] = ""
-                    logger.warning(f"No text or messages found in {file_path}")
+            if "text" not in transcript or not transcript["text"]:
+                raise ValueError("No text content found in transcript")
             
             # Add source based on directory if not present
             if "source" not in transcript:

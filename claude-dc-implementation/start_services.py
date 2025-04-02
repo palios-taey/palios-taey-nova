@@ -83,7 +83,7 @@ def run_mcp_server():
     config = uvicorn.Config(
         app=mcp_app,
         host="0.0.0.0",
-        port=8000,
+        port=8001,
         log_level="info"
     )
     
@@ -140,7 +140,7 @@ def main():
                 "--host",
                 "0.0.0.0",
                 "--port",
-                "8000"
+                "8001"
             ])
             
             # Wait for stop event

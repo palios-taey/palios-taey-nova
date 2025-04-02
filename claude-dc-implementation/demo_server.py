@@ -25,7 +25,7 @@ from pydantic import BaseModel, Field
 
 # Constants following golden ratio proportions in configuration
 API_VERSION = "0.618.0"  # Golden ratio version
-DEFAULT_PORT = 8000
+DEFAULT_PORT = 8002
 DEFAULT_HOST = "0.0.0.0"
 SECRET_KEY = os.environ.get("WEBHOOK_SECRET", "user-family-community-society")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
