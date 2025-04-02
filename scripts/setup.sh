@@ -4,31 +4,54 @@
 echo "Starting Claude DC Environment Setup"
 echo "==================================="
 
-# Install dependencies from requirements.txt
+# Update system packages
+sudo apt update -y
+
+# Install required system-level dependencies explicitly
+sudo apt install -y \
+    brltty \
+    command-not-found \
+    chrome-gnome-shell \
+    cups-bsd \
+    python3-dbus \
+    docker.io \
+    python3-apt \
+    system76-driver \
+    python3-systemd \
+    ubuntu-drivers-common \
+    ufw \
+    xkit
+
+# Verify Docker installation (if Docker is needed)
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+
+# Python environment setup
 echo "Installing Python dependencies from requirements.txt..."
-if [ -f "claude-dc-implementation/requirements.txt" ]; then
-  pip install --no-cache-dir -r claude-dc-implementation/requirements.txt || echo "Some dependencies failed to install"
-else
-  echo "ERROR: requirements.txt not found"
-  exit 1
-fi
+pip install --upgrade pip
+pip install -r claude-dc-implementation/requirements.txt
 
 # Install spaCy language model
 echo "Installing spaCy model..."
-python -m spacy download en_core_web_md || echo "spaCy model download failed"
+python -m spacy download en_core_web_md
 
-# Create .env file from secrets if needed
+# Create required directories
+echo "Creating directory structure..."
+mkdir -p claude-dc-implementation/data/transcripts
+mkdir -p claude-dc-implementation/data/patterns
+mkdir -p claude-dc-implementation/data/models
+mkdir -p claude-dc-implementation/logs
+mkdir -p claude-dc-implementation/cache
+
+# Setup .env file from secrets (adjust as needed)
 if [ ! -f "claude-dc-implementation/.env" ] && [ -f "/home/computeruse/secrets/palios-taey-secrets.json" ]; then
   echo "Creating .env file from secrets..."
   python3 -c "
 import json
 import os
-
-# Load secrets file
 with open('/home/computeruse/secrets/palios-taey-secrets.json', 'r') as f:
     secrets = json.load(f)
-
-# Create .env file
 with open('claude-dc-implementation/.env', 'w') as f:
     f.write(f\"ANTHROPIC_API_KEY=\\\"{secrets['api_keys']['anthropic']}\\\"\n\")
     f.write(f\"GOOGLE_AI_STUDIO_KEY=\\\"{secrets['api_keys']['google_ai_studio']}\\\"\n\")
@@ -38,22 +61,10 @@ with open('claude-dc-implementation/.env', 'w') as f:
     f.write(f\"GCP_REGION=\\\"{secrets['gcp']['region']}\\\"\n\")
     f.write(f\"WEBHOOK_SECRET=\\\"{secrets['webhook']['secret']}\\\"\n\")
 "
-  echo ".env file created successfully!"
 else
   echo "Skipping .env creation (already exists or secrets not found)"
 fi
 
 echo ""
-echo "Setup complete! You can now review your cache files:"
-echo "- claude-dc-cache_part-1.md"
-echo "- claude-dc-cache_part-2.md"
-echo "- cache-update.md"
-echo "- webhook-integration-instructions.md"
-echo "- CACHE.UPDATE.IMPLEMENTATION.md"
-echo "- IMPLEMENTATION_REPORT.md"
-echo ""
-echo "And start services with:"
-echo "cd claude-dc-implementation"
-echo "python3 -m uvicorn src.mcp.mcp_server:app --host 0.0.0.0 --port 8001"
-echo "python3 -m streamlit run src/dashboard/app.py --server.port=8502"
-echo "python3 -m uvicorn demo_server:app --host 0.0.0.0 --port 8002"
+echo "Setup complete!"
+
