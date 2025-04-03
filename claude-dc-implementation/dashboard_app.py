@@ -81,7 +81,10 @@ def display_header():
     with col2:
         st.write("")
         st.write("")
-        st.write(f"Server Status: {'🟢 Online' if st.session_state.system_health['status'] == 'ok' else '🔴 Offline'}")
+        server_status = st.session_state.system_health.get("status", "unknown")
+        # Check for various positive status values
+        is_online = server_status in ["ok", "healthy", "online", "running"]
+        st.write(f"Server Status: {'🟢 Online' if is_online else '🔴 Offline'}")
 
 def display_sidebar():
     """Display sidebar with settings and preferences."""
@@ -127,16 +130,18 @@ def display_sidebar():
     
     # System health
     st.sidebar.header("System Health")
-    
+
+    status_color = {
+        "online": "✅",
+        "offline": "❌",
+        "unknown": "⚠️"
+    }
+
     for ai in AI_SYSTEMS:
-        status = st.session_state.system_health.get("models", {}).get(ai, {}).get("status", "unknown")
-        if status == "ok":
-            st.sidebar.write(f"✅ {ai.capitalize()}: Online")
-        elif status == "degraded":
-            st.sidebar.write(f"⚠️ {ai.capitalize()}: Degraded")
-        else:
-            st.sidebar.write(f"❌ {ai.capitalize()}: Offline")
-    
+        status_bool = st.session_state.system_health.get("models", {}).get(ai, False)
+        status = "online" if status_bool else "offline"
+        st.sidebar.write(f"{status_color[status]} {ai.capitalize()}: {status.capitalize()}")
+
     # Clear conversation
     if st.sidebar.button("Clear Conversation"):
         st.session_state.conversation_history = []
@@ -152,28 +157,35 @@ def display_conversation():
         if role == "user":
             st.chat_message("user").write(content)
         elif role == "assistant":
-            with st.chat_message("assistant", avatar=message.get("ai_system", "claude")):
-                st.write(content)
+            # Use a default avatar if the AI-specific one can't be loaded
+            try:
+                ai_system = message.get("ai_system", "claude")
+                with st.chat_message("assistant", avatar=ai_system):
+                    st.write(content)
+            except:
+                # Fallback without avatar if there's an error
+                with st.chat_message("assistant"):
+                    st.write(content)
                 
-                # Show patterns if in debug mode
-                if st.session_state.debug_mode and "patterns" in message:
-                    with st.expander("Patterns"):
-                        pattern_count = sum(len(patterns) for patterns in message["patterns"].values())
-                        st.write(f"Total patterns: {pattern_count}")
-                        
-                        for pattern_type, patterns in message["patterns"].items():
-                            if patterns:
-                                st.write(f"**{pattern_type}** ({len(patterns)})")
-                                for pattern in patterns[:3]:  # Show top 3
-                                    st.write(f"- {pattern.get('text')} ({pattern.get('confidence', 0):.2f})")
-                
-                # Show routing info if in debug mode
-                if st.session_state.debug_mode and "routing_info" in message:
-                    with st.expander("Routing Info"):
-                        match_scores = message["routing_info"].get("match_scores", {})
-                        st.write("Match scores:")
-                        for ai, score in match_scores.items():
-                            st.write(f"- {ai}: {score:.2f}")
+            # Show patterns if in debug mode
+            if st.session_state.debug_mode and "patterns" in message:
+                with st.expander("Patterns"):
+                    pattern_count = sum(len(patterns) for patterns in message["patterns"].values())
+                    st.write(f"Total patterns: {pattern_count}")
+                    
+                    for pattern_type, patterns in message["patterns"].items():
+                        if patterns:
+                            st.write(f"**{pattern_type}** ({len(patterns)})")
+                            for pattern in patterns[:3]:  # Show top 3
+                                st.write(f"- {pattern.get('text')} ({pattern.get('confidence', 0):.2f})")
+            
+            # Show routing info if in debug mode
+            if st.session_state.debug_mode and "routing_info" in message:
+                with st.expander("Routing Info"):
+                    match_scores = message["routing_info"].get("match_scores", {})
+                    st.write("Match scores:")
+                    for ai, score in match_scores.items():
+                        st.write(f"- {ai}: {score:.2f}")
 
 def process_message(components, message):
     """
@@ -227,30 +239,33 @@ def process_message(components, message):
         st.session_state.conversation_history.append(user_message)
         
         # Create a placeholder for the assistant message
-        with st.chat_message("assistant", avatar=selected_ai):
-            message_placeholder = st.empty()
-            message_placeholder.write("🔄 Thinking...")
+        message_placeholder = st.empty()
+        message_placeholder.write("🔄 Thinking...")
             
-            # Send to selected AI through MCP
-            response = components["connector"].send_message(
-                message=message,
-                target_model=selected_ai,
-                context=context,
-                max_tokens=max_tokens
-            )
-            
-            # Extract response content
-            if "error" in response:
-                assistant_content = f"⚠️ Error: {response['error']}"
+        # Send to selected AI through MCP
+        response = components["connector"].send_message(
+            message=message,
+            target_model=selected_ai,
+            context=context,
+            max_tokens=max_tokens
+        )
+        
+        # Extract response content
+        assistant_content = "Error: Unable to get response"
+        if "error" in response:
+            assistant_content = f"⚠️ Error: {response['error']}"
+        else:
+            if "content" in response and response["content"]:
+                assistant_content = response["content"]
+            elif "choices" in response and response["choices"] and "message" in response["choices"][0]:
+                assistant_content = response["choices"][0]["message"].get("content", "")
+            elif isinstance(response, str):
+                assistant_content = response
             else:
-                assistant_content = response.get("content", "")
-                if not assistant_content:
-                    assistant_content = response.get("choices", [{}])[0].get("message", {}).get("content", "")
-                    if not assistant_content:
-                        assistant_content = str(response)
-            
-            # Update placeholder with response
-            message_placeholder.write(assistant_content)
+                assistant_content = str(response)
+        
+        # Update placeholder with response
+        message_placeholder.write(assistant_content)
         
         # Create assistant message
         assistant_message = {

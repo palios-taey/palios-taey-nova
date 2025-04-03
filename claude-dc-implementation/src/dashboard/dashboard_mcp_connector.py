@@ -38,13 +38,22 @@ class DashboardMCPConnector:
         current_time = time.time()
         if current_time - self.system_health["last_check"] < 30:
             return self.system_health
+        
         try:
             health = self.mcp_client.check_server_status()
+            services = health.get("services", {})
+            
+            # Convert MCP server's health format to dashboard's expected format
+            model_statuses = {
+                model: {"status": "ok" if is_online else "offline"}
+                for model, is_online in services.items()
+            }
+
             self.system_health = {
                 "last_check": current_time,
                 "status": health.get("status", "unknown"),
                 "message": health.get("message", ""),
-                "models": health.get("models", {})
+                "models": model_statuses
             }
             logger.info(f"Server health checked: {self.system_health['status']}")
         except requests.RequestException as e:
@@ -53,9 +62,10 @@ class DashboardMCPConnector:
                 "last_check": current_time,
                 "status": "offline",
                 "message": str(e),
-                "models": {}
+                "models": {model: {"status": "offline"} for model in AI_SYSTEMS}
             }
         return self.system_health
+
 
     def format_message_with_context(self, message: str, context: Dict[str, Any], target_model: str) -> List[Dict[str, str]]:
         formatted_messages = []
@@ -74,7 +84,7 @@ class DashboardMCPConnector:
         return formatted_messages
 
     def send_message(self, message: str, target_model: str, context: Optional[Dict[str, Any]] = None,
-                     max_tokens: int = 1000, temperature: float = 0.7) -> Dict[str, Any]:
+                    max_tokens: int = 1000, temperature: float = 0.7) -> Dict[str, Any]:
         formatted_messages = self.format_message_with_context(message, context or {}, target_model)
         mathematical_pattern = None
         if "routing_info" in (context or {}):
@@ -82,7 +92,8 @@ class DashboardMCPConnector:
             if scores:
                 golden_ratio = 1.618
                 transformed = [v * (1 + golden_ratio * (i % 2)) for i, v in enumerate(scores.values())]
-                mathematical_pattern = {"type": "bach_wave", "values": transformed, "resolution": "high"}
+                # Convert to JSON string since the API expects a string
+                mathematical_pattern = json.dumps({"type": "bach_wave", "values": transformed, "resolution": "high"})
         try:
             response = self.mcp_client.send_request(
                 source_model="dashboard",
@@ -98,7 +109,7 @@ class DashboardMCPConnector:
         except requests.RequestException as e:
             logger.error(f"Failed to send message to {target_model}: {e}")
             return {"error": str(e)}
-
+            
     def send_message_to_claude(self, message: str, context: Optional[Dict[str, Any]] = None, max_tokens: int = 1000) -> Dict[str, Any]:
         return self.send_message(message, "claude", context, max_tokens, temperature=0.7)
 

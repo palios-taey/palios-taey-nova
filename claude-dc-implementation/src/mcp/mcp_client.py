@@ -42,10 +42,10 @@ class MCPClient:
         self.api_key = api_key
         self.session = requests.Session()
         self.session.headers.update({
-            "X-API-Key": self.api_key,
+            "api-key": self.api_key,  # Changed from "X-API-Key" to "api-key"
             "Content-Type": "application/json"
         })
-    
+        
     def send_request(self, 
                    source_model: str, 
                    target_model: str, 
@@ -317,7 +317,7 @@ class MCPClient:
         """
         try:
             # Send request to health endpoint
-            response = self.session.get(f"{self.server_url}/health")
+            response = self.session.get(f"{self.server_url}/api/health")
             
             # Check for success
             if response.status_code == 200:
