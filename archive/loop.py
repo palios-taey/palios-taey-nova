@@ -37,7 +37,7 @@ from .tools import (
 )
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
-
+USE_STREAMING = True
 
 class APIProvider(StrEnum):
     ANTHROPIC = "anthropic"
@@ -136,15 +136,50 @@ async def sampling_loop(
         # implementation may be able call the SDK directly with:
         # `response = client.messages.create(...)` instead.
         try:
-            raw_response = client.beta.messages.with_raw_response.create(
-                max_tokens=max_tokens,
-                messages=messages,
-                model=model,
-                system=[system],
-                tools=tool_collection.to_params(),
-                betas=betas,
-                extra_body=extra_body,
-            )
+            if USE_STREAMING:
+                # Use streaming API call
+                with client.beta.messages.with_streaming_response.create(
+                    max_tokens=max_tokens,
+                    messages=messages,
+                    model=model,
+                    system=[system],
+                    tools=tool_collection.to_params(),
+                    betas=betas,
+                    extra_body=extra_body,
+                ) as stream:
+                    response_content = []
+                    for event in stream.iter_events():
+                        if event.type == "content_block_delta":
+                            content = event.delta.text
+                            output_callback({"type": "text", "text": content})
+                            response_content.append(content)
+                    # Assemble the full response after streaming completes
+                    full_response = "".join(response_content)
+                    messages.append({
+                        "role": "assistant",
+                        "content": [{"type": "text", "text": full_response}]
+                    })
+            else:
+                # Existing non-streaming method
+                raw_response = client.beta.messages.with_raw_response.create(
+                    max_tokens=max_tokens,
+                    messages=messages,
+                    model=model,
+                    system=[system],
+                    tools=tool_collection.to_params(),
+                    betas=betas,
+                    extra_body=extra_body,
+                )
+                response = raw_response.parse()
+                response_params = _response_to_params(response)
+                messages.append({
+                    "role": "assistant",
+                    "content": response_params,
+                })
+
+                for content_block in response_params:
+                    output_callback(content_block)
+
         except (APIStatusError, APIResponseValidationError) as e:
             api_response_callback(e.request, e.response, e)
             return messages
