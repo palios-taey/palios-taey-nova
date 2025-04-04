@@ -175,71 +175,79 @@
       "flexibility": "Autonomous_Refinement_Based_On_Insights"
     }
   },
-  "repository_structure": {
-    "root": "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/",
-    "architecture": [
-      {
-        "path": "archive",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "bridge",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "cache",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "core",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "credentials",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "data",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "docs",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "edge",
-        "purpose": "Claude_Chat_Insert_Description"
-      },  
-      {
-        "path": "harmony",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "logs",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "patterns",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "references",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "utils",
-        "purpose": "Claude_Chat_Insert_Description"
-      },
-      {
-        "path": "visualization",
-        "purpose": "Claude_Chat_Insert_Description"
-      }, 
-      {
-        "path": "wave",
-        "purpose": "Claude_Chat_Insert_Description"
-      },                                 
-    ]
-  },
+"repository_structure": {
+  "root": "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/",
+  "architecture": [
+    {
+      "path": "processor",
+      "purpose": "Edge_First_Transcript_Analysis_Engine"
+    },
+    {
+      "path": "dashboard",
+      "purpose": "Pattern_Visualization_Interface"
+    },
+    {
+      "path": "models",
+      "purpose": "Mathematical_Pattern_Recognition_Models"
+    },
+    {
+      "path": "demo",
+      "purpose": "Multi_Sensory_Demonstration_Components"
+    },
+    {
+      "path": "utils",
+      "purpose": "Environment_Configuration_Utilities"
+    },
+    {
+      "path": "utils/config",
+      "purpose": "Mathematical_Pattern_Configuration"
+    },
+    {
+      "path": "data",
+      "purpose": "Pattern_Storage_And_Processing_Results"
+    },
+    {
+      "path": "data/patterns",
+      "purpose": "Extracted_Pattern_Storage"
+    },
+    {
+      "path": "data/transcripts",
+      "purpose": "Source_Transcript_References"
+    },
+    {
+      "path": "docs",
+      "purpose": "Pattern_Implementation_Documentation"
+    },
+    {
+      "path": "references",
+      "purpose": "Live_Demonstration_Specifications"
+    },
+    {
+      "path": "scripts",
+      "purpose": "Setup_And_Deployment_Utilities"
+    },
+    {
+      "path": "static",
+      "purpose": "Web_Interface_Static_Resources"
+    },
+    {
+      "path": "templates",
+      "purpose": "HTML_Visualization_Templates"
+    },
+    {
+      "path": "webhook",
+      "purpose": "Real_Time_Communication_Interface"
+    },
+    {
+      "path": "mcp",
+      "purpose": "Model_Context_Protocol_Implementation"
+    },
+    {
+      "path": "eve",
+      "purpose": "Edge_Virtualization_Engine_Integration"
+    }
+  ]
+},
   "implementation_flow": {
     "continuous": "Mathematical-pattern-driven",
     "checkpoint": "Only_On_Error",
