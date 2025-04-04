@@ -179,33 +179,65 @@
     "root": "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/",
     "architecture": [
       {
-        "path": "src/processor",
-        "purpose": "Transcript_Processing_Engine"
+        "path": "archive",
+        "purpose": "Claude_Chat_Insert_Description"
       },
       {
-        "path": "src/dashboard",
-        "purpose": "Pattern_Visualization_Interface"
+        "path": "bridge",
+        "purpose": "Claude_Chat_Insert_Description"
       },
       {
-        "path": "src/models",
-        "purpose": "Pattern_Recognition_Models"
+        "path": "cache",
+        "purpose": "Claude_Chat_Insert_Description"
       },
       {
-        "path": "src/mcp",
-        "purpose": "Model_Context_Protocol_Server"
+        "path": "core",
+        "purpose": "Claude_Chat_Insert_Description"
       },
       {
-        "path": "src/eve",
-        "purpose": "EVE-OS_Integration_Components"
+        "path": "credentials",
+        "purpose": "Claude_Chat_Insert_Description"
       },
       {
-        "path": "scripts",
-        "purpose": "Setup_And_Deployment"
+        "path": "data",
+        "purpose": "Claude_Chat_Insert_Description"
       },
       {
         "path": "docs",
-        "purpose": "Implementation_Documentation"
-      }
+        "purpose": "Claude_Chat_Insert_Description"
+      },
+      {
+        "path": "edge",
+        "purpose": "Claude_Chat_Insert_Description"
+      },  
+      {
+        "path": "harmony",
+        "purpose": "Claude_Chat_Insert_Description"
+      },
+      {
+        "path": "logs",
+        "purpose": "Claude_Chat_Insert_Description"
+      },
+      {
+        "path": "patterns",
+        "purpose": "Claude_Chat_Insert_Description"
+      },
+      {
+        "path": "references",
+        "purpose": "Claude_Chat_Insert_Description"
+      },
+      {
+        "path": "utils",
+        "purpose": "Claude_Chat_Insert_Description"
+      },
+      {
+        "path": "visualization",
+        "purpose": "Claude_Chat_Insert_Description"
+      }, 
+      {
+        "path": "wave",
+        "purpose": "Claude_Chat_Insert_Description"
+      },                                 
     ]
   },
   "implementation_flow": {
@@ -216,7 +248,7 @@
     "webhook": "Communication-channel",
     "system": "localhost:8000/webhook",
     "environment": "System76-deployment",
-    "hardware": "Thelio_Mira,KEF_Q150_Speakers"
+    "hardware": "System76_Thelios_Mira,KEF_Q150_Speakers,Philips_Hue_Play_Light_Bars_(2-pack),LG_38WN95C-W_Ultrawide_Curved_Monitor"
   },
   "role": {
     "title": "The-Conductor",
