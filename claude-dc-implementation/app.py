@@ -393,13 +393,35 @@ os.makedirs("edge/local_storage", exist_ok=True)
 # Save the API keys
 def save_secrets():
     try:
-        with open('palios-taey-secrets.json', 'w') as f:
-            secrets_data = {
-                # paste 'palios-taey-secrets.json' content here
-            json.dump(secrets_data, f, indent=2)
-        print("Saved secrets to palios-taey-secrets.json")
+        # First check for secrets in Jesse's environment
+        jesse_secrets_path = '/home/jesse/secrets/palios-taey-secrets.json'
+        if os.path.exists(jesse_secrets_path):
+            with open(jesse_secrets_path, 'r') as f:
+                secrets_data = json.load(f)
+                print("Loaded secrets from Jesse's environment")
+                return secrets_data
+                
+        # Then check Claude DC's environment
+        claude_secrets_path = '/home/computeruse/secrets/palios-taey-secrets.json'
+        if os.path.exists(claude_secrets_path):
+            with open(claude_secrets_path, 'r') as f:
+                secrets_data = json.load(f)
+                print("Loaded secrets from Claude DC's environment")
+                return secrets_data
+                
+        # Fallback to default location in the repository
+        repo_secrets_path = os.path.join(os.path.dirname(__file__), 'palios-taey-secrets.json')
+        if os.path.exists(repo_secrets_path):
+            with open(repo_secrets_path, 'r') as f:
+                secrets_data = json.load(f)
+                print("WARNING: Using secrets from repository (not recommended)")
+                return secrets_data
+                
+        print("No secrets file found. Using empty configuration.")
+        return {}
     except Exception as e:
-        print(f"Error saving secrets: {e}")
+        print(f"Error loading secrets: {e}")
+        return {}
 
 # Main entry point
 if __name__ == "__main__":
