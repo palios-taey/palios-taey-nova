@@ -1,0 +1,30 @@
+{
+  "data_id": "1d3a2225-6d32-4852-8f28-ab775087aab2",
+  "content": {
+    "user_data": {
+      "name": "Private User",
+      "email": "private@example.com",
+      "preferences": {
+        "privacy": "high",
+        "data_sharing": "minimal",
+        "personalization": "moderate"
+      }
+    },
+    "content": "This is private information that should not leave the edge.",
+    "settings": {
+      "theme": "dark",
+      "language": "english",
+      "notifications": "minimal"
+    }
+  },
+  "source": "demo",
+  "timestamp": 1743829978.568918,
+  "data_type": "json",
+  "metadata": {
+    "size": 321,
+    "storage_path": "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/palios_ai_os/edge/local_storage/1d3a2225-6d32-4852-8f28-ab775087aab2.json",
+    "source": "demo",
+    "timestamp": 1743829978.568918,
+    "data_type": "json"
+  }
+}
