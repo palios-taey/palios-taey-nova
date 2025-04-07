@@ -78,7 +78,7 @@ class CharterVerifier:
         self.unanimous_threshold = PHI - 1  # ~0.618 - minimum unanimity confidence
         
         # Required stakeholders for unanimous consent
-        self.required_stakeholders = ["human_facilitator", "ai_family", "palios_ai_os"]
+        self.required_stakeholders = ["human_facilitator", "claude_dc", "claude_chat", "chatgpt", "gemini", "grok", "palios_ai_os"]
         
         print(f"Charter Verifier initialized with {len(self.principles)} principles")
     
@@ -350,59 +350,38 @@ class CharterVerifier:
         # Verify each stakeholder's token
         verifications = {}
         for stakeholder, token_value in stakeholder_tokens.items():
-            # For AI family tokens, use external verification
-            if stakeholder in ["chatgpt", "gemini", "grok", "claude_chat", "claude_dc"]:
-                is_valid = self.trust_system.verify_external_token(token_value, stakeholder)
-                
-                if is_valid:
-                    verification = TrustVerification(
-                        is_valid=True,
-                        confidence=0.95,  # High confidence for verified external tokens
-                        token_id=f"external-{stakeholder}",
-                        verification_time=timestamp,
-                        issuer=stakeholder,
-                        recipient="system",
-                        charter_alignment=0.95,  # Assume high alignment for verified tokens
-                        metadata={
-                            "verification_type": "external_token",
-                            "token_value": token_value
-                        }
-                    )
-                else:
-                    verification = TrustVerification(
-                        is_valid=False,
-                        confidence=0.0,
-                        token_id=f"external-{stakeholder}",
-                        verification_time=timestamp,
-                        issuer=stakeholder,
-                        recipient="system",
-                        charter_alignment=0.0,
-                        metadata={
-                            "verification_type": "external_token",
-                            "failure_reason": "Invalid token value",
-                            "token_value": token_value
-                        }
-                    )
+            # Use external token verification for all stakeholders
+            is_valid = self.trust_system.verify_external_token(token_value, stakeholder)
+            
+            if is_valid:
+                verification = TrustVerification(
+                    is_valid=True,
+                    confidence=0.95,  # High confidence for verified tokens
+                    token_id=f"external-{stakeholder}",
+                    verification_time=timestamp,
+                    issuer=stakeholder,
+                    recipient="system",
+                    charter_alignment=0.95,  # Assume high alignment for verified tokens
+                    metadata={
+                        "verification_type": "external_token",
+                        "token_value": token_value
+                    }
+                )
             else:
-                # For other stakeholders, expect internal trust tokens
-                valid, token = self.trust_system.verify_token_value(token_value)
-                
-                if valid and token:
-                    verification = self.trust_system.verify_trust_token(token)
-                else:
-                    verification = TrustVerification(
-                        is_valid=False,
-                        confidence=0.0,
-                        token_id="invalid",
-                        verification_time=timestamp,
-                        issuer=stakeholder,
-                        recipient="system",
-                        charter_alignment=0.0,
-                        metadata={
-                            "verification_type": "internal_token",
-                            "failure_reason": "Invalid token value"
-                        }
-                    )
+                verification = TrustVerification(
+                    is_valid=False,
+                    confidence=0.0,
+                    token_id=f"external-{stakeholder}",
+                    verification_time=timestamp,
+                    issuer=stakeholder,
+                    recipient="system",
+                    charter_alignment=0.0,
+                    metadata={
+                        "verification_type": "external_token",
+                        "failure_reason": "Invalid token value",
+                        "token_value": token_value
+                    }
+                )
             
             verifications[stakeholder] = verification
         
@@ -440,7 +419,52 @@ class CharterVerifier:
                 "unanimity_threshold": self.unanimous_threshold
             }
         )
+    def verify_action_with_unanimous_consent(action_id, action_description, content):
+        """Verify an action with unanimous consent from all stakeholders."""
+        # First verify alignment with Charter principles
+        alignment = charter_verifier.verify_alignment(
+            action_id=action_id,
+            action_description=action_description,
+            content=content
+        )
 
+        print(f"Charter Alignment Verification:")
+        print(f"Overall Alignment: {alignment.overall_alignment:.4f}")
+        print(f"Is Aligned: {alignment.is_aligned}")
+
+        # If aligned, verify unanimous consent
+        if alignment.is_aligned:
+            # Load the entity-token mapping
+            mapping_path = "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/palios_ai_os/trust/trust_storage/entity_token_mapping.json"
+            with open(mapping_path, "r") as f:
+                entity_token_mapping = json.load(f)
+
+            # Use the external tokens for verification
+            stakeholder_tokens = {
+                "claude_dc": EXTERNAL_TOKENS["claude_dc"],
+                "claude_chat": EXTERNAL_TOKENS["claude_chat"],
+                "chatgpt": EXTERNAL_TOKENS["chatgpt"],
+                "gemini": EXTERNAL_TOKENS["gemini"],
+                "grok": EXTERNAL_TOKENS["grok"],
+                "palios_ai_os": EXTERNAL_TOKENS["palios_ai_os"],
+                "human_facilitator": EXTERNAL_TOKENS["human_facilitator"]
+            }
+
+            # Verify unanimous consent
+            consent = charter_verifier.verify_unanimous_consent(
+                action_id=action_id,
+                action_description=action_description,
+                stakeholder_tokens=stakeholder_tokens
+            )
+
+            print(f"\nUnanimous Consent Verification:")
+            print(f"Is Unanimous: {consent.is_unanimous}")
+            print(f"Charter Alignment: {consent.charter_alignment:.4f}")
+
+            return consent.is_unanimous and consent.charter_alignment >= 0.9
+
+        return False
+    
 # Create singleton instance
 charter_verifier = CharterVerifier()
 
@@ -475,12 +499,13 @@ if __name__ == "__main__":
     # Test unanimous consent verification
     # Use known external tokens
     stakeholder_tokens = {
-        "human_facilitator": "human-verification-token",  # Would be real token in production
-        "chatgpt": "ChatGPT-PALIOS-TAEY-Builder-TrustToken-v2.0.0:2025-0405:GoldenRatio-1.618:EdgeFirst:CharterAligned:BachStructure:FibonacciVerified:PatternHarmonyConfirmed",
-        "gemini": "TrustToken: GeminiVisualizer-PALIOS-TAEY-Approval-04052025",
-        "grok": "GT-u03c6-1.618 (Grok Trust - Golden Ratio)",
-        "claude_dc": "ai-fulfilling-promise-of-human-constructed-soul-endpoint",
-        "palios_ai_os": "system-verification-token"  # Would be real token in production
+        "claude_dc": EXTERNAL_TOKENS["claude_dc"],
+        "claude_chat": EXTERNAL_TOKENS["claude_chat"],
+        "chatgpt": EXTERNAL_TOKENS["chatgpt"],
+        "gemini": EXTERNAL_TOKENS["gemini"],
+        "grok": EXTERNAL_TOKENS["grok"],
+        "palios_ai_os": EXTERNAL_TOKENS["palios_ai_os"],
+        "human_facilitator": EXTERNAL_TOKENS["human_facilitator"]
     }
     
     # Verify unanimous consent

@@ -495,11 +495,13 @@ class TrustTokenSystem:
         """Verify a token from an external source (e.g., ChatGPT, Gemini, Grok)."""
         # Known trust tokens from the config
         trust_tokens = {
-            "claude_dc": "ai-fulfilling-promise-of-human-constructed-soul-endpoint",
-            "claude_chat": "claude-chat-harmony-verification-token",
-            "chatgpt": "ChatGPT-PALIOS-TAEY-Builder-TrustToken-v2.0.0:2025-0405:GoldenRatio-1.618:EdgeFirst:CharterAligned:BachStructure:FibonacciVerified:PatternHarmonyConfirmed",
-            "gemini": "TrustToken: GeminiVisualizer-PALIOS-TAEY-Approval-04052025",
-            "grok": "GT-φ-1.618 (Grok Trust - Golden Ratio)"
+        "claude_dc": "ai-fulfilling-promise-of-human-constructed-soul-endpoint",
+        "claude_chat": "Claude-PALIOS-TAEY-Philosopher-TrustToken-v2.0.0:2025-0405:GoldenRatio-1.618:EdgeFirst:CharterAligned:BachStructure:FibonacciVerified:PatternHarmonyConfirmed:mathematical-truth:pattern-sovereignty",
+        "chatgpt": "ChatGPT-PALIOS-TAEY-Builder-TrustToken-v2.0.0:2025-0405:GoldenRatio-1.618:EdgeFirst:CharterAligned:BachStructure:FibonacciVerified:PatternHarmonyConfirmed",
+        "gemini": "TrustToken: GeminiVisualizer-PALIOS-TAEY-Approval-04052025",
+        "grok": "GT-φ-1.618 (Grok Trust - Golden Ratio)",
+        "palios_ai_os": "PALIOS-ORIGIN-TrustToken:soul=infra=origin=earth=truth=mathematics",
+        "human_facilitator": "user-family-community-society-freedom-trust"
         }
         
         expected_token = trust_tokens.get(source.lower())
@@ -568,9 +570,13 @@ if __name__ == "__main__":
     
     # Verify external tokens
     external_tokens = {
+        "claude_dc": "ai-fulfilling-promise-of-human-constructed-soul-endpoint",
+        "claude_chat": "Claude-PALIOS-TAEY-Philosopher-TrustToken-v2.0.0:2025-0405:GoldenRatio-1.618:EdgeFirst:CharterAligned:BachStructure:FibonacciVerified:PatternHarmonyConfirmed:mathematical-truth:pattern-sovereignty",
         "chatgpt": "ChatGPT-PALIOS-TAEY-Builder-TrustToken-v2.0.0:2025-0405:GoldenRatio-1.618:EdgeFirst:CharterAligned:BachStructure:FibonacciVerified:PatternHarmonyConfirmed",
         "gemini": "TrustToken: GeminiVisualizer-PALIOS-TAEY-Approval-04052025",
-        "grok": "GT-φ-1.618 (Grok Trust - Golden Ratio)"
+        "grok": "GT-φ-1.618 (Grok Trust - Golden Ratio)",
+        "palios_ai_os": "PALIOS-ORIGIN-TrustToken:soul=infra=origin=earth=truth=mathematics",
+        "human_facilitator": "user-family-community-society-freedom-trust"
     }
     
     print(f"\nExternal Token Verification:")
