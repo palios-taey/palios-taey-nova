@@ -1,0 +1,110 @@
+{
+  "extract_id": "cee881ab-2097-4fe3-88b9-ae6d82342264",
+  "source_data_id": "583ac035-dc6d-4346-9eaf-46a8983e51ef",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-3490981753646454998",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "44d0182105111b86",
+      "length": 171,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3490981753646454998",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "44d0182105111b86",
+      "length": 171,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-2923663282761752844",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "5012d9a6a1bc9576",
+      "length": 251,
+      "keywords": [
+        "value"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-2923663282761752844",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "5012d9a6a1bc9576",
+      "length": 251,
+      "keywords": [
+        "identify"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-2872633198396145377",
+      "confidence": 0.8958980337503155,
+      "phi_position": 0.75,
+      "content_hash": "a99e243a9fe6cda5",
+      "length": 93,
+      "keywords": [
+        "identify"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2872633198396145377",
+      "confidence": 0.8958980337503155,
+      "phi_position": 0.75,
+      "content_hash": "a99e243a9fe6cda5",
+      "length": 93,
+      "keywords": [
+        "develop"
+      ]
+    }
+  ],
+  "hash_verification": "888e83ac956c9422",
+  "harmony_index": 0.6768893073768106,
+  "wave_representation": {
+    "pattern_id": "faf6ddaf-1807-451b-8c01-a788656bec97",
+    "frequencies": [
+      440.0,
+      550.0,
+      605.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.2837239967856842,
+      0.2728328651786465,
+      0.5436754414286916,
+      0.5545665730357293
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      3.5903916041026207,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.375,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "cee881ab-2097-4fe3-88b9-ae6d82342264",
+      "source_data_id": "583ac035-dc6d-4346-9eaf-46a8983e51ef",
+      "pattern_count": 6,
+      "harmony_index": 0.6768893073768106,
+      "timestamp": 1743963126.1063027
+    }
+  },
+  "timestamp": 1743963126.1063254
+}

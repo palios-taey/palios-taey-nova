@@ -1,0 +1,12 @@
+{
+  "data_id": "0891a69d-d7de-4824-9e05-835ccd8c9882",
+  "content": [
+    "### **\ud83d\udd39 Relation Type: One-Way vs. Two-Way**\nMost of these **should be one-way relations** to avoid clutter and unnecessary complexity. However, in some cases, **two-way relations** are useful if we expect frequent cross-referencing.\n\nHere\u2019s the breakdown:\n\n| Table | Field | Relation Type | Reason |\n|--------|------------|---------------|------------|\n| **PKD** | Source | **One-Way** \u2192 Knowledge Vault | PKD should reference Knowledge Vault sources, but Knowledge Vault doesn\u2019t need to list every PKD entry referencing it. |\n| **AI Workflows** | Source | **One-Way** \u2192 Knowledge Vault | Workflows should reference sources, but we don\u2019t need every workflow listed in the Knowledge Vault. |\n| **AI Influencers** | Influence Source | **Two-Way** \u2194 Knowledge Vault | Thought leaders should be linked to their **books, interviews, research, and podcasts** for easy cross-referencing. |\n| **AI Research** | Source | **Two-Way** \u2194 Knowledge Vault | Research should be directly tied to the Knowledge Vault and vice versa, since research is often cited in multiple places. |\n\n---\n\n### **\ud83d\ude80 Why This Works**\n\u2714 **One-Way:** Keeps PKD & Workflows clean. These are user-driven overrides, not research databases.  \n\u2714 **Two-Way:** AI Influencers and Research need **bi-directional** links to track where insights originated **and** where they are used.  \n\n---\n\n\u2705 **Final Confirmation** before we implement this?  \nIf this structure is good, we\u2019ll **update Notion** with the new fields and ensure relationships are set up properly."
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739613081.99821,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

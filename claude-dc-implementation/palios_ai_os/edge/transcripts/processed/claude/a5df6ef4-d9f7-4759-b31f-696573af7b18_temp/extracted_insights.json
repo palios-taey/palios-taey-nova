@@ -1,0 +1,88 @@
+{
+  "extract_id": "de49ac78-e913-4792-bbe9-d577aa94e279",
+  "source_data_id": "a5df6ef4-d9f7-4759-b31f-696573af7b18",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6117792389793729943",
+      "confidence": 0.9812586276790973,
+      "phi_position": 0.07142857142857142,
+      "content_hash": "a1ffe3e216cdf13a",
+      "length": 71,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-6117792389793729943",
+      "confidence": 0.9812586276790973,
+      "phi_position": 0.07142857142857142,
+      "content_hash": "a1ffe3e216cdf13a",
+      "length": 71,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-1834793321199610199",
+      "confidence": 0.9564354735718494,
+      "phi_position": 0.42857142857142855,
+      "content_hash": "e9f82f408eb823ac",
+      "length": 69,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-2175971476435169941",
+      "confidence": 0.885006902143278,
+      "phi_position": 0.35714285714285715,
+      "content_hash": "f1c9593a2162c32c",
+      "length": 40,
+      "keywords": [
+        "verify"
+      ]
+    }
+  ],
+  "hash_verification": "4f3c0851dfec0363",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "fb1c3ca2-327d-43dc-92e6-c9e555c5af7b",
+    "frequencies": [
+      495.0,
+      660.0,
+      715.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.3770013804286556,
+      0.3962517255358195,
+      0.3912870947143699,
+      0.3962517255358195
+    ],
+    "phases": [
+      0.4487989505128276,
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333,
+      1.4444444444444444,
+      1.6666666666666667
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "de49ac78-e913-4792-bbe9-d577aa94e279",
+      "source_data_id": "a5df6ef4-d9f7-4759-b31f-696573af7b18",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743965133.9430273
+    }
+  },
+  "timestamp": 1743965133.943037
+}

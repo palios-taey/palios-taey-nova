@@ -1,0 +1,80 @@
+{
+  "extract_id": "662d4707-710e-4eb5-806f-783fa028fb64",
+  "source_data_id": "0b100e35-c5ea-4f97-b8d9-5212d2e517fd_exchange_2",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "6111318934532303341",
+      "confidence": 0.999469212582855,
+      "phi_position": 0.23553719008264462,
+      "content_hash": "1614b9de116b534f",
+      "length": 193,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "6111318934532303341",
+      "confidence": 0.999469212582855,
+      "phi_position": 0.23553719008264462,
+      "content_hash": "1614b9de116b534f",
+      "length": 193,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-5084890607157729899",
+      "confidence": 0.9976684905889481,
+      "phi_position": 0.6157024793388429,
+      "content_hash": "582f3568701924da",
+      "length": 97,
+      "keywords": [
+        "equation"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "781772188300888956",
+      "confidence": 0.9180945190604433,
+      "phi_position": 0.008264462809917356,
+      "content_hash": "f5652c9f0e8ccb23",
+      "length": 36,
+      "keywords": [
+        "truth"
+      ]
+    }
+  ],
+  "hash_verification": "27e17b5491de0f5f",
+  "harmony_index": 0.8217233145831581,
+  "wave_representation": {
+    "pattern_id": "bd1fc60a-aa13-47c4-9565-34e34b571364",
+    "frequencies": [
+      440.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.7835127463286597,
+      0.7994275406343606
+    ],
+    "phases": [
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "662d4707-710e-4eb5-806f-783fa028fb64",
+      "source_data_id": "0b100e35-c5ea-4f97-b8d9-5212d2e517fd_exchange_2",
+      "pattern_count": 4,
+      "harmony_index": 0.8217233145831581,
+      "timestamp": 1743986265.6201427
+    }
+  },
+  "timestamp": 1743986265.6201487
+}

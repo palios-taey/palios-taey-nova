@@ -1,0 +1,12 @@
+{
+  "data_id": "9660ccc1-8778-413f-b712-15fc22124270",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro palios-taey-nova % curl -X GET https://palios-taey-core-711898853198.us-central1.run.app/\n\n{\"components\":{\"memory_system\":\"inactive\",\"model_registry\":\"inactive\",\"model_router\":\"inactive\",\"task_decomposer\":\"inactive\",\"task_executor\":\"inactive\",\"transcript_processor\":\"inactive\"},\"status\":\"healthy\",\"system\":\"PALIOS-TAEY\",\"version\":\"1.0.0\"}\njesselarose@Jesses-MacBook-Pro palios-taey-nova % curl -X POST -H \"Content-Type: application/json\" -d '{\"task_type\":\"general\",\"content\":{\"define\":\"Test task\",\"specific_instructions\":\"This is a test task\"}}' https://palios-taey-core-711898853198.us-central1.run.app/leader/submit_task\n\n{\"message\":\"Task execution engine not initialized\",\"status\":\"error\"}\njesselarose@Jesses-MacBook-Pro palios-taey-nova % curl -X GET https://palios-taey-core-711898853198.us-central1.run.app/models/list\n\n{\"message\":\"Model registry not initialized\",\"status\":\"error\"}\njesselarose@Jesses-MacBook-Pro palios-taey-nova % curl -X POST -H \"Content-Type: application/json\" -d '{\"content\":\"Test memory item\",\"context_id\":\"test_context\"}' https://palios-taey-core-711898853198.us-central1.run.app/memory/store\n\n\n{\"message\":\"Memory system not initialized\",\"status\":\"error\"}\njesselarose@Jesses-MacBook-Pro palios-taey-nova %\n\nAssuming these are as expected, yes, I'd like to fully configure and test the system with as little manual effort on my end as possible. You can make up sample data/tests whatever, but let's make sure it's all working as expected. What's the plan for getting to successful tests?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-09T19:18:35.332208Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

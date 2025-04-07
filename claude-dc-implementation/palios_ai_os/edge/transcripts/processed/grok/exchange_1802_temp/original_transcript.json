@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1802",
+  "content": [
+    "User: Chunking: It groups those sections into chunks that are under 128,000 characters each (DeepSearch\u2019s limit). It won\u2019t split a prompt or response in half\u2014it\u2019s smart about that.\n\nGrok: Saving: Each chunk gets saved as a JSON file (e.g., chunk_1.json) in a folder called processed_output. These files are what you\u2019ll feed into DeepSearch later."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4238064,
+  "data_type": "exchange",
+  "metadata": {}
+}

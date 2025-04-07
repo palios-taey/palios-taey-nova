@@ -1,0 +1,80 @@
+{
+  "extract_id": "43d48b1c-25af-4938-8a6f-12b40331b3dc",
+  "source_data_id": "a939f242-923c-4f07-ae75-9cee6b59d6e0",
+  "patterns": [
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-3780561744400291635",
+      "confidence": 0.9967865779896563,
+      "phi_position": 0.08695652173913043,
+      "content_hash": "24b3368e5147f02c",
+      "length": 59,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8476196129437350512",
+      "confidence": 0.947183402554453,
+      "phi_position": 0.5652173913043478,
+      "content_hash": "2cc693992bc09ea7",
+      "length": 78,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6621196975243551976",
+      "confidence": 0.941058487988815,
+      "phi_position": 0.9130434782608695,
+      "content_hash": "e8ef34c5e05548d4",
+      "length": 124,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1167534273180048514",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "b58df1c8552ced9b",
+      "length": 128,
+      "keywords": [
+        "create"
+      ]
+    }
+  ],
+  "hash_verification": "01b5418c922ca16b",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "f84a525e-8263-413e-bb3a-81835b734a64",
+    "frequencies": [
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.3993573155979313
+    ],
+    "phases": [
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.25
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "43d48b1c-25af-4938-8a6f-12b40331b3dc",
+      "source_data_id": "a939f242-923c-4f07-ae75-9cee6b59d6e0",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743965121.3502917
+    }
+  },
+  "timestamp": 1743965121.3503036
+}

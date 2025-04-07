@@ -1,0 +1,12 @@
+{
+  "data_id": "bdcc3b23-3dda-4326-a5f6-4842a09b6947",
+  "content": [
+    "Claude, things moving fast. He's all set up with GitHub, no issues. I hit a rate limit though during document review. Anthropic says cached content is excluded from rate limits, so we're trying to get as much cached content as possible in there. I think it makes sense to have Claude review everything and create cached content in the tightest manner possible. I could also share this with you in Project knowledge so you guys would be on same page and share with grok too. What do you think? If you agree, I think it would make sense for him to start with language protocols so he can do super tight AI FIRST summaries with indicators pointing back to the github files when additional context is required. We have 200K tokens of cache space, so I think this would really solve a lot of rate limit issues until we can get Unified Memory up with the transcript info. What do you think?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-26T16:45:06.597989Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

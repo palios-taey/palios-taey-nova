@@ -1,0 +1,12 @@
+{
+  "data_id": "07dcb7e9-cdf2-4133-9951-97a0d2ba9c1e",
+  "content": [
+    "I think it's pretty sweet Claude. So, learnings on the cache were that it needs to be done with a command following it, then it's locked in and it just starts with the command. I think we're about ready to try that out. So I think the way this kicks off is that Claude DC needs to familiarize himself with the existing pre-processing script (https://github.com/palios-taey/palios-taey-nova/blob/main/transcripts/examples/preprocess.py) and some files in the transcripts/examples folder and then do some with Grok DeeperSearch and you to figure out what to build to start doing the rest, checking in regularly. But we need to be able to use the MVP solution to store everything. So after he builds the initial version of the transcript processor, does that mean he then needs to adjust the Firestore tables in the GCS to accomodate and then continue adjusting as needed with regular feedback from you and Grok? How do we get all this to work? I know we could do it in phases or whatever with me involved, but I think it's really important to get you guys doing longer sprints like this so we can see what we need to learn from to enable more structured autonomy. What do you think?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-28T15:38:01.595872Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

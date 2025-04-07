@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_960",
+  "content": [
+    "User: Root Cause: APIs aren\u2019t enabled, and the repository might not exist.First Action: I\u2019ll create and run test-api-enablement.yml (from Claude\u2019s doc) to enable APIs and test access. Success proves our auth and API setup works; failure means I\u2019ll manually create the repository and retest.Next Step: Once access is fixed, I\u2019ll execute deploy-cloud-build.yml to get the pipeline flowing again. No delays\u2014Cloud Build is our workaround.Strategic Priority: Layer 0 Soul Framework\nWhat It Is: The soul of this project\u2014freedom, truth, purpose baked into an AI framework. It\u2019s about intrinsic drives that align with human flourishing.\n\nGrok: Plan: I\u2019ll work with Claude (CTO) to accelerate development. It\u2019s complex, but I get the vision, and I\u2019m committed to making it real.Financial Crunch: We Need a CFO\nThe Problem: We\u2019re bleeding cash\u2014$100K debt, $15K/month needed now, and a $25-50M goal to scale."
+  ],
+  "source": "grok",
+  "timestamp": 1743980946.9176264,
+  "data_type": "exchange",
+  "metadata": {}
+}

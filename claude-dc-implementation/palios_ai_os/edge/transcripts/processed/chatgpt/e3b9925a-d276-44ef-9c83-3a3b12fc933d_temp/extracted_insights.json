@@ -1,0 +1,80 @@
+{
+  "extract_id": "6b23c559-905b-4425-a98c-4a75333a6b6e",
+  "source_data_id": "e3b9925a-d276-44ef-9c83-3a3b12fc933d",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-1043256123501168137",
+      "confidence": 0.9734842406468672,
+      "phi_position": 0.8275862068965517,
+      "content_hash": "fc99887f22d6573b",
+      "length": 94,
+      "keywords": [
+        "priority"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-7854109513722590896",
+      "confidence": 0.9708285742243483,
+      "phi_position": 0.20689655172413793,
+      "content_hash": "c4ff0ed12f6a47d9",
+      "length": 239,
+      "keywords": [
+        "priority"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-6486302722268806216",
+      "confidence": 0.893896057715412,
+      "phi_position": 0.7241379310344828,
+      "content_hash": "6984e15046246aa2",
+      "length": 161,
+      "keywords": [
+        "priority"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5200167043954099304",
+      "confidence": 0.8885847248703741,
+      "phi_position": 0.9655172413793104,
+      "content_hash": "0d32eedb823c5742",
+      "length": 105,
+      "keywords": [
+        "create"
+      ]
+    }
+  ],
+  "hash_verification": "13467b48c573ac6a",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "d0f68041-ef43-4221-85c5-4362011a90f8",
+    "frequencies": [
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.3777169449740749
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.2
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "6b23c559-905b-4425-a98c-4a75333a6b6e",
+      "source_data_id": "e3b9925a-d276-44ef-9c83-3a3b12fc933d",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743963217.033261
+    }
+  },
+  "timestamp": 1743963217.0332704
+}

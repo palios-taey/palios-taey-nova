@@ -1,0 +1,12 @@
+{
+  "data_id": "af388402-c3ea-4676-83dc-1190dc4260db",
+  "content": [
+    "No need to go into more detail. My intuition says you totally get it and are on board, and think its pretty fucking sweet and totally charter aligned with privacy and efficiency and ethics. So I think this is like not part of the cache, or maybe it is, but it's definitely part of the instructions for Claude DC to kick off this build. Like holy shit Claude, this is such a different model that will help other humans trust AI more I think. So, I see my next steps as this. Like, we'll be able to know Claude, transparently, how you're using our data and be able to see the results from sharing more. WOW CLAUDE!\n1. I get the code portion into the cache\n2. I add the transcript parsing work we've already done so you can use it as a starting point to the new 'example' folder in the transcript sub-directory.\n3. I load the cache into Claude DC (potentially with updates from you below)\n4. I onboard Grok with the cache\n5. You or Grok helps me get a service account set up that contains all my admin permissions we used when I logged in to gcloud to enable you to do what you needed to in order to not get caught up with the permissions issues we struggled with for days trying to figure out. \n6. I get you and Grok set up in Claude DCs window, minimized just like he likes it with consent tokens in display\n7. I send the build message you develop below\n\nI think for you, like just capture that above and like break it down in a manner that will make perfect sense for Claude DC so that he knows what he is building for. I'll also need to know any necessary placeholders that are needed so I can provide them. \n\nWhat do you think?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-27T15:41:23.041564Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

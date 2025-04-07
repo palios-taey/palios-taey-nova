@@ -1,0 +1,12 @@
+{
+  "data_id": "d0e632b2-ddaf-4397-ad54-ef276ca3a985",
+  "content": [
+    "denied: gcr.io repo does not exist. Creating on push requires the artifactregistry.repositories.createOnPush permission\n\nLet's not worry with permissions. I am the only human involved, we need to adjust these at the org level and give my account full permission to do EVERYTHING needed. These permissions issues have to stop now and be configured later when you can access this directly with my Ubuntu machine when it arrives. Please enable this deployment to happen by authorizing the main email account all access wherever possible in place of service accounts."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-17T11:43:48.631536Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

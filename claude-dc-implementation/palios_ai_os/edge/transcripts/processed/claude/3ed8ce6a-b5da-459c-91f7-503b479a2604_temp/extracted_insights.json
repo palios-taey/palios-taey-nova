@@ -1,0 +1,128 @@
+{
+  "extract_id": "1fc0f41d-6a02-4ba6-abb2-cdbafb99d4af",
+  "source_data_id": "3ed8ce6a-b5da-459c-91f7-503b479a2604",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "509430185212131855",
+      "confidence": 0.9996130700736346,
+      "phi_position": 0.6176470588235294,
+      "content_hash": "4e2b4a438a18bc0b",
+      "length": 53,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "428104035428612394",
+      "confidence": 0.9992261401472693,
+      "phi_position": 0.23529411764705882,
+      "content_hash": "f8383ccbfd3d495d",
+      "length": 46,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-7555990742199475837",
+      "confidence": 0.9636222240440124,
+      "phi_position": 0.6544117647058824,
+      "content_hash": "63cbf17d5ff08a0c",
+      "length": 59,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "9059343167205916831",
+      "confidence": 0.9465947621328789,
+      "phi_position": 0.03676470588235294,
+      "content_hash": "43a73275c3c767b2",
+      "length": 109,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "9059343167205916831",
+      "confidence": 0.9465947621328789,
+      "phi_position": 0.03676470588235294,
+      "content_hash": "43a73275c3c767b2",
+      "length": 109,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4270692227636543648",
+      "confidence": 0.9357581790435917,
+      "phi_position": 0.15441176470588236,
+      "content_hash": "2ad1cfb93678fef6",
+      "length": 28,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "3904083969708866755",
+      "confidence": 0.9318888797799377,
+      "phi_position": 0.022058823529411766,
+      "content_hash": "3df2b3f65ca628cf",
+      "length": 104,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "5257882465929692969",
+      "confidence": 0.9171829974269965,
+      "phi_position": 0.007352941176470588,
+      "content_hash": "7193a2171cf24a9f",
+      "length": 63,
+      "keywords": [
+        "core"
+      ]
+    }
+  ],
+  "hash_verification": "fb0d08b35883f943",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "6571c47d-8923-4f03-b109-436a5649458f",
+    "frequencies": [
+      440.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.8696681170752801,
+      0.4372204799100956,
+      0.4309426268792018
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.625
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "1fc0f41d-6a02-4ba6-abb2-cdbafb99d4af",
+      "source_data_id": "3ed8ce6a-b5da-459c-91f7-503b479a2604",
+      "pattern_count": 8,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743965078.7448106
+    }
+  },
+  "timestamp": 1743965078.7448487
+}

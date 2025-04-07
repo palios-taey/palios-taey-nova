@@ -1,0 +1,84 @@
+{
+  "extract_id": "da29cf43-0f54-45ab-8f93-7e8343a49a44",
+  "source_data_id": "c4a1bdc8-18a5-4073-99cb-ff34129e3ea0_exchange_178",
+  "patterns": [
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-8774164848420880640",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "e7d53a2df8f0c211",
+      "length": 67,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-494976142856220542",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "84637131bcb702ec",
+      "length": 130,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-494976142856220542",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "84637131bcb702ec",
+      "length": 130,
+      "keywords": [
+        "wave"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-494976142856220542",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "84637131bcb702ec",
+      "length": 130,
+      "keywords": [
+        "pattern"
+      ]
+    }
+  ],
+  "hash_verification": "17d3674c3ff51267",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "04e6b801-7296-449a-bc7f-5f613e387b16",
+    "frequencies": [
+      605.0,
+      770.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.3819660112501052,
+      0.3819660112501052,
+      0.7763932022500211
+    ],
+    "phases": [
+      3.5903916041026207,
+      1.3463968515384828,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.2727272727272727,
+      1.3636363636363635
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "da29cf43-0f54-45ab-8f93-7e8343a49a44",
+      "source_data_id": "c4a1bdc8-18a5-4073-99cb-ff34129e3ea0_exchange_178",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743986278.4118617
+    }
+  },
+  "timestamp": 1743986278.4118683
+}

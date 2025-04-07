@@ -1,0 +1,12 @@
+{
+  "data_id": "617ebc0f-e522-46c3-9f2a-7a26fc99e1f2",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro palios-taey-nova % python3 workflow_verification.py --file .github/workflows/deploy.yml\n\n2025-03-11 16:41:23,440 - INFO - Verifying workflow file: .github/workflows/deploy.yml\n2025-03-11 16:41:23,446 - WARNING - \u26a0\ufe0f Workflow file has issues:\n2025-03-11 16:41:23,446 - WARNING - \u00a0 - Authentication step missing required parameter: workload_identity_provider\n2025-03-11 16:41:23,446 - WARNING - \u00a0 - Authentication step missing required parameter: service_account\n2025-03-11 16:41:23,446 - WARNING - \u00a0 - No Cloud Run deployment step found\n2025-03-11 16:41:23,446 - WARNING - \u00a0 - Warning: No environment variables found in workflow\n2025-03-11 16:41:23,446 - WARNING - \u00a0 - Recommended fixes:\n2025-03-11 16:41:23,446 - WARNING - \u00a0 -\nAdd Cloud Run deployment step:\n\u00a0 \u00a0 \u00a0 - id: deploy\n\u00a0 \u00a0 \u00a0 \u00a0 name: Deploy to Cloud Run\n\u00a0 \u00a0 \u00a0 \u00a0 uses: google-github-actions/deploy-cloudrun@v1\n\u00a0 \u00a0 \u00a0 \u00a0 with:\n\u00a0 \u00a0 \u00a0 \u00a0 \u00a0 service: palios-taey\n\u00a0 \u00a0 \u00a0 \u00a0 \u00a0 region: us-central1\n\u00a0 \u00a0 \u00a0 \u00a0 \u00a0 image: ${{ steps.docker-push.outputs.image-name }}\n\njesselarose@Jesses-MacBook-Pro palios-taey-nova %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-11T20:41:52.337536Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "41fa570f-9dc8-4d16-a20b-1bad06078b7a",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro palios-taey-app % gcloud builds submit --tag us-central1-docker.pkg.dev/palios-taey-dev/palios-taey/api:latest\n\nCreating temporary archive of 3 file(s) totalling 511 bytes before compression.\nUploading tarball of [.] to [gs://palios-taey-dev_cloudbuild/source/1742076234.244487-3b137d4d4efa445587f689419c87b8c9.tgz]\n**ERROR:** (gcloud.builds.submit) INVALID_ARGUMENT: could not resolve source: googleapi: Error 403: 44790150696-compute@developer.gserviceaccount.com does not have storage.objects.get access to the Google Cloud Storage object. Permission 'storage.objects.get' denied on resource (or it may not exist)., forbidden"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-15T22:06:53.746129Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

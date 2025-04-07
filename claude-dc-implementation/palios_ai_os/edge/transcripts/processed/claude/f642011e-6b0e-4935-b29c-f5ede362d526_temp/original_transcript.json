@@ -1,0 +1,12 @@
+{
+  "data_id": "f642011e-6b0e-4935-b29c-f5ede362d526",
+  "content": [
+    "Continue transcript_processor.py from: \n# Prepare result result = { \"transcript_id\": transcript_id, \"metadata\": transcript.get(\"metadata\", {}), \"message_count\": len(messages), \"direction_patterns\": direction_stats, \"purpose_patterns\": purpose_stats, \"emotion_patterns\": emotion_stats, \"action_patterns\": action_stats, \"metrics\": metrics } # Include content if requested if include_content: result[\"messages\"] = messages return result except Exception as e: logger.error(f\"Error analyzing transcript {"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T17:08:33.357703Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "e35398a3-64ce-469b-a5cc-9e1e64b9f11f",
+  "content": [
+    "C:\\Users\\jesse\\AppData\\Local\\Google\\Cloud SDK>gcloud ai models deploy text-bison --region=us-central1 --endpoint=1468728731894808576 --model-id=text-bison@001 --display-name=text-bison-deployment\nERROR: (gcloud.ai.models) Invalid choice: 'deploy'.\nMaybe you meant:\n  gcloud deploy\nTo search the help text of gcloud commands, run:\n  gcloud help -- SEARCH_TERMS\nC:\\Users\\jesse\\AppData\\Local\\Google\\Cloud SDK>"
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-19T22:37:27.753479Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

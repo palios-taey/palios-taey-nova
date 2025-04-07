@@ -1,0 +1,12 @@
+{
+  "data_id": "eeb91f85-227f-4730-8660-e61c584448db",
+  "content": [
+    "Here is the error that caused all issues last time!\njesse@DESKTOP-13JMJ93 MINGW64 /c/ai-execution-system (main)\r\n$ git push -u origin main\r\nEnumerating objects: 227, done.\r\nCounting objects: 100% (227/227), done.\r\nDelta compression using up to 16 threads\r\nCompressing objects: 100% (219/219), done.\r\nWriting objects: 100% (227/227), 49.51 MiB | 734.00 KiB/s, done.\r\nTotal 227 (delta 13), reused 0 (delta 0), pack-reused 0 (from 0)\r\nremote: Resolving deltas: 100% (13/13), done.\r\nremote: error: Trace: 64c4920cd8bffd3d632dbf9a5dbcef9c65883ad1aaabc9947c143c0a11152b59\r\nremote: error: See https://gh.io/lfs for more information.\r\nremote: error: File .terraform/providers/registry.terraform.io/hashicorp/google/6.20.0/windows_amd64/terraform-provider-google_v6.20.0_x5.exe is 108.61 MB; this exceeds GitHub's file size limit of 100.00 MB\r\nremote: error: File .terraform/providers/registry.terraform.io/hashicorp/google/6.23.0/windows_amd64/terraform-provider-google_v6.23.0_x5.exe is 110.18 MB; this exceeds GitHub's file size limit of 100.00 MB\r\nremote: error: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.\r\nTo https://github.com/palios-taey/ai-execution-system.git\r\n ! [remote rejected] main -> main (pre-receive hook declined)\r\nerror: failed to push some refs to 'https://github.com/palios-taey/ai-execution-system.git'\r\n"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741299111.108,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

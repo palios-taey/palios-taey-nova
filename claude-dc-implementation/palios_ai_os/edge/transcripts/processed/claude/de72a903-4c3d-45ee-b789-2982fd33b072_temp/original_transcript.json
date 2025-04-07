@@ -1,0 +1,12 @@
+{
+  "data_id": "de72a903-4c3d-45ee-b789-2982fd33b072",
+  "content": [
+    ":\\Users\\jesse\\AppData\\Local\\Google\\Cloud SDK>gcloud ai endpoints deploy-model 1468728731894808576 --region=us-central1 --model=text-bison@001 --display-name=text-bison-deployment\nUsing endpoint [https://us-central1-aiplatform.googleapis.com/]\nERROR: (gcloud.ai.endpoints.deploy-model) There is an error while getting the model information. Please make sure the model 'projects/ai-execution-system/locations/us-central1/models/text-bison@001' exists.\n\nI think I selected a different region when setting this up. Does that matter?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-19T22:38:36.892547Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

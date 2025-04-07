@@ -1,0 +1,12 @@
+{
+  "data_id": "ae2da500-91f8-4a0d-b917-3ecbc568bdf2",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro palios-taey-nova % SERVICE_URL=$(gcloud run services describe palios-taey-core --platform managed --region us-central1 --format=\"value(status.url)\")\n\njesselarose@Jesses-MacBook-Pro palios-taey-nova % echo $SERVICE_URL\n\nhttps://palios-taey-core-pnedkjprrq-uc.a.run.app\njesselarose@Jesses-MacBook-Pro palios-taey-nova % curl $SERVICE_URL\n\n{\"status\":\"healthy\",\"system\":\"PALIOS-TAEY\",\"version\":\"1.0.0\"}\njesselarose@Jesses-MacBook-Pro palios-taey-nova % curl $SERVICE_URL/api/health\n\n{\"components\":{\"core\":\"healthy\"},\"status\":\"healthy\"}\njesselarose@Jesses-MacBook-Pro palios-taey-nova %\n\nDo we need to get proper main.py in now?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-09T16:56:19.565059Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

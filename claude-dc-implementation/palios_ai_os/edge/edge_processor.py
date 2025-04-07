@@ -15,6 +15,7 @@ import json
 import hashlib
 import time
 import uuid
+import shutil
 from typing import Dict, List, Any, Optional, Union, Tuple
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -406,31 +407,114 @@ edge_processor = EdgeProcessor()
 
 # Example usage
 if __name__ == "__main__":
-    print(f"PALIOS AI OS Edge Processor Test")
-    print(f"Golden Ratio (u03c6): {PHI}")
-    
-    # Test with sample data
-    sample_text = """The PALIOS AI OS must prioritize privacy as a fundamental principle. 
-    All sensitive data should remain local, with only mathematical patterns shared with external systems.
-    The golden ratio provides a natural harmony in the pattern extraction process, ensuring balance between privacy and utility.
-    Trust must be verified through cryptographic mechanisms that align with our charter principles.
-    """
-    
-    # Extract patterns
-    pattern_extract = edge_processor.extract_patterns(sample_text, "test")
-    
+    import sys
+    import shutil
+    from pathlib import Path
+    import time
+
+    if len(sys.argv) < 2:
+        print("Usage: python3 edge_processor.py <file_path>")
+        sys.exit(1)
+
+    file_path = sys.argv[1]
+
+    if file_path.endswith('.json'):
+        with open(file_path, 'r') as f:
+            data_dict = json.load(f)
+            content_data = data_dict.get('content', '')
+            source = data_dict.get('source', 'unknown')
+
+            # Explicitly handle all variations robustly
+            combined_text_parts = []
+            
+            if isinstance(content_data, list):
+                for item in content_data:
+                    if isinstance(item, dict):
+                        text_entry = item.get('text', '')
+                        if isinstance(text_entry, list):
+                            combined_text_parts.extend([str(t) for t in text_entry])
+                        elif isinstance(text_entry, str):
+                            combined_text_parts.append(text_entry)
+                    elif isinstance(item, str):
+                        combined_text_parts.append(item)
+                    else:
+                        combined_text_parts.append(str(item))
+
+                combined_text = "\n\n".join(combined_text_parts)
+
+            elif isinstance(content_data, str):
+                combined_text = content_data
+
+            else:
+                combined_text = str(content_data)
+
+            sensitive_data = SensitiveData(
+                data_id=data_dict.get('data_id', f"{source}_{Path(file_path).stem}"),
+                content=combined_text,
+                source=source,
+                timestamp=data_dict['timestamp'],
+                data_type=data_dict['data_type'],
+                metadata=data_dict.get('metadata', {})
+            )
+
+        pattern_extract = edge_processor.extract_patterns(sensitive_data)
+
+    elif file_path.endswith('.txt'):
+        with open(file_path, 'r') as f:
+            text = f.read()
+        pattern_extract = edge_processor.extract_patterns(text, "txt_file")
+
+    else:
+        print(f"Unsupported file type: {file_path}")
+        sys.exit(1)
+
+    # Display results
     print(f"\nExtracted {len(pattern_extract.patterns)} patterns:")
-    for i, pattern in enumerate(pattern_extract.patterns[:5]):  # Show first 5 patterns
+    for i, pattern in enumerate(pattern_extract.patterns[:5]):
         print(f"{i+1}. Category: {pattern['category']}")
         print(f"   Confidence: {pattern['confidence']:.4f}")
         print(f"   Keywords: {pattern['keywords']}")
-    
+
     print(f"\nHarmony index: {pattern_extract.harmony_index:.4f}")
-    
-    # Create wave representation
+
     wave = edge_processor.create_wave_representation(pattern_extract)
-    
     print(f"\nWave representation:")
     print(f"Pattern ID: {wave.pattern_id}")
     print(f"Frequencies: {[f'{f:.2f}' for f in wave.frequencies[:3]]}...")
     print(f"Amplitudes: {[f'{a:.2f}' for a in wave.amplitudes[:3]]}...")
+
+    # Explicitly save pattern extract and wave representation results
+    results = {
+        "extract_id": pattern_extract.extract_id,
+        "source_data_id": pattern_extract.source_data_id,
+        "patterns": pattern_extract.patterns,
+        "hash_verification": pattern_extract.hash_verification,
+        "harmony_index": pattern_extract.harmony_index,
+        "wave_representation": {
+            "pattern_id": wave.pattern_id,
+            "frequencies": wave.frequencies,
+            "amplitudes": wave.amplitudes,
+            "phases": wave.phases,
+            "harmonics": wave.harmonics,
+            "duration": wave.duration,
+            "metadata": wave.metadata
+        },
+        "timestamp": time.time()
+    }
+
+    # Ensure explicitly structured processed storage
+    processed_dir = Path(__file__).resolve().parent / 'transcripts' / 'processed' / source / Path(file_path).stem
+    processed_dir.mkdir(parents=True, exist_ok=True)
+
+    # Move original transcript explicitly if exists
+    original_transcript_dest = processed_dir / 'original_transcript.json'
+    if Path(file_path).exists():
+        shutil.move(file_path, original_transcript_dest)
+
+    # Save insights explicitly
+    extracted_insights_dest = processed_dir / 'extracted_insights.json'
+    with open(extracted_insights_dest, 'w') as f:
+        json.dump(results, f, indent=2)
+
+    print(f"✅ Clearly moved and structured original and insights explicitly in: {processed_dir}")
+

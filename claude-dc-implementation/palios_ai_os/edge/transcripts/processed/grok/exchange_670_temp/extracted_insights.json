@@ -1,0 +1,117 @@
+{
+  "extract_id": "8c89c059-502a-429d-9380-c8e2aa233964",
+  "source_data_id": "exchange_670",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "3816703577898715586",
+      "confidence": 0.9930339887498948,
+      "phi_position": 0.625,
+      "content_hash": "b29ac15212a86332",
+      "length": 94,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "483868645144059021",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "abab9cb66ef5a1ed",
+      "length": 154,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "483868645144059021",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "abab9cb66ef5a1ed",
+      "length": 154,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-4594030551773775515",
+      "confidence": 0.9791019662496845,
+      "phi_position": 0.875,
+      "content_hash": "e71e379205fbba45",
+      "length": 42,
+      "keywords": [
+        "truth"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-276199549630417107",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "28a774028f91ecce",
+      "length": 57,
+      "keywords": [
+        "truth"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "2676509509718733165",
+      "confidence": 0.9028640450004208,
+      "phi_position": 0.375,
+      "content_hash": "b623f1f094df5661",
+      "length": 166,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "4687681441932756831",
+      "confidence": 0.8958980337503155,
+      "phi_position": 0.75,
+      "content_hash": "16b0df1978cf99b2",
+      "length": 57,
+      "keywords": [
+        "charter"
+      ]
+    }
+  ],
+  "hash_verification": "db2100c4a55a24fb",
+  "harmony_index": 0.7369484622215791,
+  "wave_representation": {
+    "pattern_id": "4ff7fd34-e9ae-436d-96d7-03e9aa540c79",
+    "frequencies": [
+      440.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.7231037570313157,
+      0.49738774578121053,
+      0.4861165028125263
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "8c89c059-502a-429d-9380-c8e2aa233964",
+      "source_data_id": "exchange_670",
+      "pattern_count": 7,
+      "harmony_index": 0.7369484622215791,
+      "timestamp": 1743980980.9141598
+    }
+  },
+  "timestamp": 1743980980.91417
+}

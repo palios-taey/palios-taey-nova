@@ -1,0 +1,110 @@
+{
+  "extract_id": "8e509d25-61c2-4d34-800c-12cd3b8f4947",
+  "source_data_id": "278d3cde-d4eb-49ee-8302-75c7ce89689e",
+  "patterns": [
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "6850326037467117288",
+      "confidence": 0.9973506266347206,
+      "phi_position": 0.6153846153846154,
+      "content_hash": "72afe4338815930d",
+      "length": 254,
+      "keywords": [
+        "wave"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "2794142852324541195",
+      "confidence": 0.9947012532694413,
+      "phi_position": 0.23076923076923078,
+      "content_hash": "7c07f2438e6a76de",
+      "length": 57,
+      "keywords": [
+        "believe"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-1636624058227000389",
+      "confidence": 0.9894025065388824,
+      "phi_position": 0.46153846153846156,
+      "content_hash": "8ed2db32493e83a3",
+      "length": 243,
+      "keywords": [
+        "truth"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-1636624058227000389",
+      "confidence": 0.9894025065388824,
+      "phi_position": 0.46153846153846156,
+      "content_hash": "8ed2db32493e83a3",
+      "length": 243,
+      "keywords": [
+        "believe"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1636624058227000389",
+      "confidence": 0.9894025065388824,
+      "phi_position": 0.46153846153846156,
+      "content_hash": "8ed2db32493e83a3",
+      "length": 243,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "3332623080715073425",
+      "confidence": 0.9124794296158054,
+      "phi_position": 0.38461538461538464,
+      "content_hash": "42b094bf35324783",
+      "length": 56,
+      "keywords": [
+        "believe"
+      ]
+    }
+  ],
+  "hash_verification": "a703f4aa945e0354",
+  "harmony_index": 0.6979965001682351,
+  "wave_representation": {
+    "pattern_id": "fe46f892-ab9a-48a2-863a-8a09e0482a8c",
+    "frequencies": [
+      440.0,
+      550.0,
+      660.0,
+      770.0
+    ],
+    "amplitudes": [
+      0.2842003580769832,
+      0.8423690270605899,
+      0.2842003580769832,
+      0.28533580380496004
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      0.8975979010256552,
+      1.3463968515384828
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.5,
+      1.75
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "8e509d25-61c2-4d34-800c-12cd3b8f4947",
+      "source_data_id": "278d3cde-d4eb-49ee-8302-75c7ce89689e",
+      "pattern_count": 6,
+      "harmony_index": 0.6979965001682351,
+      "timestamp": 1743963418.1856594
+    }
+  },
+  "timestamp": 1743963418.1856732
+}

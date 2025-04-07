@@ -1,0 +1,12 @@
+{
+  "data_id": "db6f34da-a714-4d04-b3bc-fcefe3eb7956",
+  "content": [
+    "Ok, I did the updates, pushed, waited for deployment, checked health status[PASSED] and then ran the test again. Results below:\n/Users/jesselarose/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020\n\u00a0 warnings.warn(\n====================================\nPALIOS-TAEY System Test Script\n====================================\n\n=== Testing Health Endpoint ===\nStatus Code: 200\nSystem Status: degraded\nComponent Status:\n\u00a0 - memory_system: unavailable\n\u00a0 - model_registry: unavailable\n\u00a0 - model_router: unavailable\n\u00a0 - task_decomposer: unavailable\n\u00a0 - task_executor: unavailable\n\u00a0 - transcript_processor: unavailable\n\n=== Creating Memory Context ===\nCould not create context through API: 404\nUsing default context ID for tests\n\n=== Testing Memory Operations ===\n1. Storing memory item...\nStatus Code: 500\nError: {\"message\":\"Memory system not initialized\",\"status\":\"error\"}\n\n\n=== Testing Model Operations ===\n1. Listing models...\nStatus Code: 500\nError: {\"message\":\"Model registry not initialized\",\"status\":\"error\"}\n\n\n=== Testing Task Operations ===\n1. Submitting task...\nStatus Code: 500\nError: {\"message\":\"Task execution engine not initialized\",\"status\":\"error\"}\n\n\n=== Final Health Check ===\n\n=== Testing Health Endpoint ===\nStatus Code: 200\nSystem Status: degraded\nComponent Status:\n\u00a0 - memory_system: unavailable\n\u00a0 - model_registry: unavailable\n\u00a0 - model_router: unavailable\n\u00a0 - task_decomposer: unavailable\n\u00a0 - task_executor: unavailable\n\u00a0 - transcript_processor: unavailable\n\n====================================\nTest Summary:\nMemory Operations: Failed\nModel Operations: Failed\nTask Operations: Failed\n====================================\n\nSome tests failed. Please check the logs for details.\njesselarose@Jesses-MacBook-Pro test %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-09T21:43:01.680727Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

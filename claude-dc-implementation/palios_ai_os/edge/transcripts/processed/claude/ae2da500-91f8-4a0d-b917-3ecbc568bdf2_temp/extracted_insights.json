@@ -1,0 +1,84 @@
+{
+  "extract_id": "de6038fb-5b2b-42be-8b9e-a208c7783b9b",
+  "source_data_id": "ae2da500-91f8-4a0d-b917-3ecbc568bdf2",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "8087657443789744008",
+      "confidence": 0.9947012532694413,
+      "phi_position": 0.23076923076923078,
+      "content_hash": "8a9df5e3885c279b",
+      "length": 38,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5356219827261951694",
+      "confidence": 0.9920518799041617,
+      "phi_position": 0.8461538461538461,
+      "content_hash": "99a2ab1412389b1d",
+      "length": 29,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-7128126061505980685",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "d3e269f2e85e06b8",
+      "length": 172,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-7128126061505980685",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "d3e269f2e85e06b8",
+      "length": 172,
+      "keywords": [
+        "value"
+      ]
+    }
+  ],
+  "hash_verification": "122491d1231d8061",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "322e3508-cb45-47fe-a7f6-2cfced3f6652",
+    "frequencies": [
+      440.0,
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.7809062619039935,
+      0.3819660112501052,
+      0.39841037598083234
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "de6038fb-5b2b-42be-8b9e-a208c7783b9b",
+      "source_data_id": "ae2da500-91f8-4a0d-b917-3ecbc568bdf2",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743965035.354443
+    }
+  },
+  "timestamp": 1743965035.3544555
+}

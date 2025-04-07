@@ -1,0 +1,12 @@
+{
+  "data_id": "6b642acb-2c22-4518-9f45-3dd3213f3022",
+  "content": [
+    "Ok, some feedback. I made the first prompt update, I'm assuming you want the protocol introduction and purpose included as an intro to the standard prompt in the first message of a new chat?\n\nI think the rest of the changes should be included in the current execution status template. I'd also like them to not only respond to the current verification with the current token, but also have them respond with the full next token to use (I don't want to enter anything manually, not even a date, they can include date stamp in token though). I think it would also be helpful to have a section for Jesse Comments at the top followed by the sections you'll update in the standard format that is there currently. Sometime's I'll have comments and sometimes I won't, but I can put in \"See below\" or something if I don't have anything to say. What do you think? If you agree, please generate a full new current_execution_status template for me, and then we can try it out with the next prompt."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-17T22:24:38.535479Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "f945bd55-d39c-4088-b6bb-127128d56466",
+  "content": [
+    "Dockerfile\nREADME.md\ncomplete_deploy.sh\ncredentials\ndocs\nenvironment_config.py\nfirestore_integration_update.py\nfirestore_setup.py\nfix_deployment.sh\nfix_scripts.sh\ngithub-setup.sh\niam-documentation.md\nlogs\nmemory_service.py\nmemory_service.py.20250311_163912.bak\nmodel_registry.py\nmodel_registry.py.20250311_163912.bak\nmodel_routing.py\nmodel_routing.py.20250311_163912.bak\nprepare_deploy.sh\nprepare_deploy.sh.bak\npush_to_github.sh\nrequirements.txt\nreset_firestore_complete.py\nscripts\nservice-account-cleanup.sh\nservice_update.log\nservice_update.py\nsetup_env.sh\nsrc\ntask_decomposition.py\ntask_decomposition.py.20250311_163912.bak\ntask_execution.py\ntask_execution.py.20250311_163912.bak\nterraform\ntest\ntranscript_processor.py\ntranscript_processor.py.20250311_163912.bak\nverify-sa-binding.sh\nworkflow_verification.log\nworkflow_verification.py\n\n./credentials:\ngithub-actions-key.json service-account.json\n\n./docs:\nCURRENT_IAM.txt api-documentation.md\n\n./logs:\n\n./scripts:\nbuild_push.sh build_push.sh.bak deploy.sh\n\n./src:\n**init**.py memory_service.py.bak\nai_services.py model_registry.py\napi model_routing.py\napi_key_manager.py models\nconfig services\nfirestore_integration.py task_decomposition.py\nfirestore_integration.py.bak task_execution.py\nlogs test_system.py\nmain.py transcript_format_handler.py\nmain.py.bak transcript_processor.py\nmemory_service.py utils\n\n./src/api:\n**init**.py\n\n./src/config:\n**init**.py decomposition_rules model_capabilities\n\n./src/config/decomposition_rules:\ncode_generation.json general.json\ndocument_summary.json transcript_processing.json\n\n./src/config/model_capabilities:\nclaude.json gemini.json\n\n./src/logs:\nserver.log\n\n./src/models:\n**init**.py\n\n./src/services:\n**init**.py memory_service_update.py\n\n./src/utils:\n**init**.py environment_config.py\n\n./terraform:\nfirestore_permissions.tf variables.tf\nmain.tf\n\n./test:"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-13T23:30:21.159385Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

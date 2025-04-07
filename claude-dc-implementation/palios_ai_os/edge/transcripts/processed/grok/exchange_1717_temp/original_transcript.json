@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1717",
+  "content": [
+    "User: A summary like \u201cUser asks about today\u2019s weather\u201d could help filter results faster than scanning full text.\n\nGrok: Why Not Now: At this preprocessing stage, DeepSearch needs the raw, cleaned text to tag intents, topics, and embeddings. Summaries aren\u2019t needed for that\u2014they\u2019d just be extra noise. You\u2019re right: they\u2019re bloat unless they\u2019re true summaries, which we can add post-tagging if needed."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4237797,
+  "data_type": "exchange",
+  "metadata": {}
+}

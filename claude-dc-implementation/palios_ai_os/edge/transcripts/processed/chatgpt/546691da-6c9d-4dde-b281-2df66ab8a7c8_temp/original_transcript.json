@@ -1,0 +1,12 @@
+{
+  "data_id": "546691da-6c9d-4dde-b281-2df66ab8a7c8",
+  "content": [
+    "C:\\Users\\jesse>curl -X GET \"http://127.0.0.1:5001/full_schema_validation\"\r\n{\r\n  \"chat_history\": {\r\n    \"missing_fields\": []\r\n  },\r\n  \"goals\": {\r\n    \"missing_fields\": []\r\n  },\r\n  \"principles\": {\r\n    \"missing_fields\": []\r\n  }\r\n}\r"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739757380.802952,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

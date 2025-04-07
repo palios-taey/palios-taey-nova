@@ -1,0 +1,12 @@
+{
+  "data_id": "512d58cd-95be-437d-82f8-141cab6edd78",
+  "content": [
+    "jesse@pop-os:~/claude-integration$ chmod +x launch_computer_use.sh\njesse@pop-os:~/claude-integration$ ./computer_use_test.sh\nTest environment set up successfully in ~/test_claude_computer_use/\nTo test, navigate to this directory in the Computer Use environment and run:\n./test_python.py\njesse@pop-os:~/claude-integration$ ./launch_computer_use.sh\n./launch_computer_use.sh: line 22: docker: command not found\nComputer Use environment started!\nAccess the demo UI at http://localhost:8080\nFor VNC access: http://localhost:6080\nFor Streamlit access: http://localhost:8501"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-24T13:03:42.595366Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

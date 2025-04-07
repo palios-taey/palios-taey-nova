@@ -1,0 +1,12 @@
+{
+  "data_id": "21e659b5-94d2-4221-8925-3474ec04fffb",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro palios-taey-app % gcloud resource-manager org-policies disable-enforce constraints/iam.allowedPolicyMemberDomains --project=palios-taey-dev\n\n**ERROR:** (gcloud.resource-manager.org-policies.disable-enforce) INVALID_ARGUMENT: Policy and Constraint must be of the same type:\nPolicy:\nStoragePolicy{resource=null, constraint=constraints/iam.allowedPolicyMemberDomains, etag=<ByteString@1247dedd size=0 contents=\"\">, updateTime=Optional.empty, policy=BooleanPolicy{unconditionalFragment=Optional[UnconditionalFragment{enforced=false, parameters=Optional.empty, resourceTypes=Optional.empty}], conditionalFragments=[]}}\nConstraint:\nConstraint{version=0, name=constraints/iam.allowedPolicyMemberDomains, displayName=Domain restricted sharing, description=This list constraint defines one or more Cloud Identity or Google Workspace customer IDs whose principals can be added to IAM policies. By default, all user identities are allowed to be added to IAM policies. Only allowed values can be defined in this constraint, denied values are not supported. If this constraint is active, only principals that belong to the allowed customer IDs can be added to IAM policies.You do not need to add the google.com customer ID to this list in order to interoperate with Google services. Adding google.com allows sharing with Google employees and non-production systems, and should only be used for sharing data with Google employees., constraintDefault=ALLOW, constraintType=ListConstraint{suggestedValue=, allowedTypes=[EXACT]}, supportsDryRun=false, equivalentConstraint=, supportsSimulation=false}\njesselarose@Jesses-MacBook-Pro palios-taey-app %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-16T00:20:02.604860Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

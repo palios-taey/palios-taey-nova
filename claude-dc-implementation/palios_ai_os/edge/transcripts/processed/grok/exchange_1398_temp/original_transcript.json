@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1398",
+  "content": [
+    "User: Add a Diagnostic: In your next prompt, ask DeepSearch to count the number of [JESSE PROMPT] and [GROK RESPONSE] sections it sees in the transcript_chunk before tagging. That way, we\u2019ll know exactly what it\u2019s working with.\n\nGrok: Try File Attachments: If pasting doesn\u2019t work, attach the transcript as a file (e.g., transcript_segment_1of4.txt) and reference it in the prompt. DeepSearch mentioned it can use the read_attachment tool, so let\u2019s test that."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.423686,
+  "data_type": "exchange",
+  "metadata": {}
+}

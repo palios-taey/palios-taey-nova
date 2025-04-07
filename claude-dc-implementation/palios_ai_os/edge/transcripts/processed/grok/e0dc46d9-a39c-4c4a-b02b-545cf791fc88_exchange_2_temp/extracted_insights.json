@@ -1,0 +1,84 @@
+{
+  "extract_id": "125f5d2b-1666-43a7-b846-2eefbd241c62",
+  "source_data_id": "e0dc46d9-a39c-4c4a-b02b-545cf791fc88_exchange_2",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8582050847547751273",
+      "confidence": 0.9725228849259446,
+      "phi_position": 0.11764705882352941,
+      "content_hash": "9e54d1257120dc9c",
+      "length": 105,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "8582050847547751273",
+      "confidence": 0.9725228849259446,
+      "phi_position": 0.11764705882352941,
+      "content_hash": "9e54d1257120dc9c",
+      "length": 105,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "7609042124761170610",
+      "confidence": 0.9694274455150214,
+      "phi_position": 0.8235294117647058,
+      "content_hash": "db476580b9cb1f51",
+      "length": 132,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "7609042124761170610",
+      "confidence": 0.9694274455150214,
+      "phi_position": 0.8235294117647058,
+      "content_hash": "db476580b9cb1f51",
+      "length": 132,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "f430c071011b3c26",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "fb6ee218-873d-405e-a088-5894a51b3550",
+    "frequencies": [
+      495.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.3938854891030043,
+      0.3945045769851889,
+      0.7883900660881933
+    ],
+    "phases": [
+      0.4487989505128276,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333,
+      1.6666666666666667
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "125f5d2b-1666-43a7-b846-2eefbd241c62",
+      "source_data_id": "e0dc46d9-a39c-4c4a-b02b-545cf791fc88_exchange_2",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743985388.7314765
+    }
+  },
+  "timestamp": 1743985388.7314851
+}

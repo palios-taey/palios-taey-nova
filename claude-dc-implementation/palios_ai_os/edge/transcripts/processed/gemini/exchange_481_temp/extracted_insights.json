@@ -1,0 +1,174 @@
+{
+  "extract_id": "e9216312-be86-4229-8c96-5c466999ddd8",
+  "source_data_id": "exchange_481",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-5044147668699168233",
+      "confidence": 0.9848300562505259,
+      "phi_position": 0.075,
+      "content_hash": "4dbfa728bccfbb2e",
+      "length": 226,
+      "keywords": [
+        "priority"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "4219635228226216067",
+      "confidence": 0.9819660112501052,
+      "phi_position": 0.6,
+      "content_hash": "ae7cb95f9ebe4587",
+      "length": 168,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4219635228226216067",
+      "confidence": 0.9819660112501052,
+      "phi_position": 0.6,
+      "content_hash": "ae7cb95f9ebe4587",
+      "length": 168,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1382879817307199506",
+      "confidence": 0.9778640450004208,
+      "phi_position": 0.45,
+      "content_hash": "9f19b5b27b7e02ef",
+      "length": 51,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2490263509915303581",
+      "confidence": 0.9651699437494741,
+      "phi_position": 0.125,
+      "content_hash": "7abdffe9bdfc738b",
+      "length": 102,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "2490263509915303581",
+      "confidence": 0.9651699437494741,
+      "phi_position": 0.125,
+      "content_hash": "7abdffe9bdfc738b",
+      "length": 102,
+      "keywords": [
+        "phase"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-2096178839810620178",
+      "confidence": 0.959830056250526,
+      "phi_position": 0.05,
+      "content_hash": "7bfc8ad88d0d243e",
+      "length": 741,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2096178839810620178",
+      "confidence": 0.959830056250526,
+      "phi_position": 0.05,
+      "content_hash": "7bfc8ad88d0d243e",
+      "length": 741,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-2096178839810620178",
+      "confidence": 0.959830056250526,
+      "phi_position": 0.05,
+      "content_hash": "7bfc8ad88d0d243e",
+      "length": 741,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1904210644290406761",
+      "confidence": 0.9471359549995791,
+      "phi_position": 0.525,
+      "content_hash": "b49391b91f244c4d",
+      "length": 44,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-262685362602141167",
+      "confidence": 0.934830056250526,
+      "phi_position": 0.025,
+      "content_hash": "283101cbe90b9a35",
+      "length": 744,
+      "keywords": [
+        "implement",
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "dd21d6a434ce417f",
+  "harmony_index": 0.6525842282978183,
+  "wave_representation": {
+    "pattern_id": "1a721ff5-68be-4347-ba21-079b427ade1a",
+    "frequencies": [
+      440.0,
+      495.0,
+      550.0,
+      660.0,
+      715.0,
+      770.0
+    ],
+    "amplitudes": [
+      0.16516383427084208,
+      0.16331917135421048,
+      0.1654025046875438,
+      0.9805663389583859,
+      0.16331917135421048,
+      0.16376416197912283
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      1.3463968515384828,
+      0.8975979010256552,
+      0.4487989505128276,
+      1.3463968515384828
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.25,
+      1.5,
+      1.625,
+      1.75
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "e9216312-be86-4229-8c96-5c466999ddd8",
+      "source_data_id": "exchange_481",
+      "pattern_count": 11,
+      "harmony_index": 0.6525842282978183,
+      "timestamp": 1743976703.2768657
+    }
+  },
+  "timestamp": 1743976703.2768939
+}

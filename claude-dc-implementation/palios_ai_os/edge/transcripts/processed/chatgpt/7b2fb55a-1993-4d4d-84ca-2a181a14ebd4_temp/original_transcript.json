@@ -1,0 +1,12 @@
+{
+  "data_id": "7b2fb55a-1993-4d4d-84ca-2a181a14ebd4",
+  "content": [
+    "Ok, thank you. Here are the results:\nC:\\AI-Execution-System>python main.py\r\nINFO:root:Access Token obtained successfully.\r\nINFO:root:\u2705 Gemini Pro API client initialized successfully.\r\nTraceback (most recent call last):\r\n  File \"C:\\AI-Execution-System\\main.py\", line 336, in <module>\r\n    with socketserver.TCPServer((\"\", PORT), CustomHandler) as httpd:\r\n         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\jesse\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 457, in __init__\r\n    self.server_bind()\r\n    ~~~~~~~~~~~~~~~~^^\r\n  File \"C:\\Users\\jesse\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 478, in server_bind\r\n    self.socket.bind(self.server_address)\r\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^\r\nOSError: [WinError 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted\r\n\r\nC:\\AI-Execution-System>"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1740590937.9194,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

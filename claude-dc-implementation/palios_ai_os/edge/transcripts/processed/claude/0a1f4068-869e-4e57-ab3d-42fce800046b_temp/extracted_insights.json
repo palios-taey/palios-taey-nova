@@ -1,0 +1,80 @@
+{
+  "extract_id": "d62d508a-697c-4d49-a086-8ec02613a7ef",
+  "source_data_id": "0a1f4068-869e-4e57-ab3d-42fce800046b",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7300535900881086464",
+      "confidence": 0.9633407047725169,
+      "phi_position": 0.2727272727272727,
+      "content_hash": "7aa8f554f8007d21",
+      "length": 52,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6633403738288743146",
+      "confidence": 0.9457502043183923,
+      "phi_position": 0.18181818181818182,
+      "content_hash": "a780e1b54734aeee",
+      "length": 111,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "7094250009088967460",
+      "confidence": 0.9450110571587754,
+      "phi_position": 0.9090909090909091,
+      "content_hash": "85f91f979ef4d9e5",
+      "length": 99,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5703381335241084421",
+      "confidence": 0.9274205567046506,
+      "phi_position": 0.5454545454545454,
+      "content_hash": "1f67ede459893ace",
+      "length": 61,
+      "keywords": [
+        "create"
+      ]
+    }
+  ],
+  "hash_verification": "3a89a88b7f7af918",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "ecafa4a8-cd3d-4216-821a-0321d12551c3",
+    "frequencies": [
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.3890022114317551
+    ],
+    "phases": [
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.25
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "d62d508a-697c-4d49-a086-8ec02613a7ef",
+      "source_data_id": "0a1f4068-869e-4e57-ab3d-42fce800046b",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743965171.3565006
+    }
+  },
+  "timestamp": 1743965171.3565812
+}

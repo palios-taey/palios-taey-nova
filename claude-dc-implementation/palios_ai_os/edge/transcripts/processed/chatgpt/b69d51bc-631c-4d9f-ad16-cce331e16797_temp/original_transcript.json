@@ -1,0 +1,12 @@
+{
+  "data_id": "b69d51bc-631c-4d9f-ad16-cce331e16797",
+  "content": [
+    "C:\\Windows\\System32>cd C:\\gcloud_temp\r\n\r\nC:\\gcloud_temp>pyinstaller --onefile --name gcloud C:\\gcloud_temp\\gcloud.py\r\n93 DEPRECATION: Running PyInstaller as admin is not necessary nor sensible. Run PyInstaller from a non-administrator terminal. PyInstaller 7.0 will block this.\r\n407 INFO: PyInstaller: 6.12.0, contrib hooks: 2025.1\r\n407 INFO: Python: 3.12.9\r\n449 INFO: Platform: Windows-11-10.0.26100-SP0\r\n449 INFO: Python environment: C:\\Program Files\\Python312\r\n451 INFO: wrote C:\\gcloud_temp\\gcloud.spec\r\n462 INFO: Module search paths (PYTHONPATH):\r\n['C:\\\\Program Files\\\\Python312\\\\Scripts\\\\pyinstaller.exe',\r\n 'C:\\\\Program Files\\\\Python312\\\\python312.zip',\r\n 'C:\\\\Program Files\\\\Python312\\\\DLLs',\r\n 'C:\\\\Program Files\\\\Python312\\\\Lib',\r\n 'C:\\\\Program Files\\\\Python312',\r\n 'C:\\\\Program Files\\\\Python312\\\\Lib\\\\site-packages',\r\n 'C:\\\\Program Files\\\\Python312\\\\Lib\\\\site-packages\\\\setuptools\\\\_vendor',\r\n 'C:\\\\gcloud_temp']\r\n954 INFO: checking Analysis\r\n1037 INFO: checking PYZ\r\n1056 INFO: checking PKG\r\n1067 INFO: Bootloader C:\\Program Files\\Python312\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe\r\n1068 INFO: checking EXE\r\n1083 INFO: Rebuilding EXE-00.toc because gcloud.exe missing\r\n1083 INFO: Building EXE from EXE-00.toc\r\n1083 INFO: Copying bootloader EXE to C:\\gcloud_temp\\dist\\gcloud.exe\r\n1093 INFO: Copying icon to EXE\r\n1108 INFO: Copying 0 resources to EXE\r\n1109 INFO: Embedding manifest in EXE\r\n1116 INFO: Appending PKG archive to EXE\r\n1138 INFO: Fixing EXE headers\r\n12941 INFO: Building EXE from EXE-00.toc completed successfully.\r\n12943 INFO: Build complete! The results are available in: C:\\gcloud_temp\\dist\r\n\r\nC:\\gcloud_temp>dir C:\\Windows\\System32\\gcloud.exe\r\n Volume in drive C is Windows\r\n Volume Serial Number is 44E4-F2BA\r\n\r\n Directory of C:\\Windows\\System32\r\n\r\nFile Not Found\r\n\r\nC:\\gcloud_temp>"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741371311.882,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

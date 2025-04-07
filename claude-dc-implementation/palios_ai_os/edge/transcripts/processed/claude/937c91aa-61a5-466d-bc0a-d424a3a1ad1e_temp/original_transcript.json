@@ -1,0 +1,12 @@
+{
+  "data_id": "937c91aa-61a5-466d-bc0a-d424a3a1ad1e",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro palios-taey-nova % gcloud iam service-accounts add-iam-policy-binding \"github-actions-sa@ai-execution-system.iam.gserviceaccount.com\" \\\n\u00a0 --project=\"ai-execution-system\" \\\n\u00a0 --role=\"roles/iam.workloadIdentityUser\" \\\n\u00a0 --member=\"principalSet://iam.googleapis.com/projects/711898853198/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider/attribute.repository/palios-taey/palios-taey-nova\"\nERROR: Policy modification failed. For a binding with condition, run \"gcloud alpha iam policies lint-condition\" to identify issues in condition.\n**ERROR:** (gcloud.iam.service-accounts.add-iam-policy-binding) INVALID_ARGUMENT: Invalid principalSet member (principalSet://iam.googleapis.com/projects/711898853198/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider/attribute.repository/palios-taey/palios-taey-nova)."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-11T20:01:52.433127Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

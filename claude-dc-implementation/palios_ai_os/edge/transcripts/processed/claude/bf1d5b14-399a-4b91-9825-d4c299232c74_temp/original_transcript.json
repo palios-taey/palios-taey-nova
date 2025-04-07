@@ -1,0 +1,12 @@
+{
+  "data_id": "bf1d5b14-399a-4b91-9825-d4c299232c74",
+  "content": [
+    "esselarose@Jesses-MacBook-Pro src % python3 main.py --mock\n\nTraceback (most recent call last):\n\u00a0 File \"/Users/jesselarose/palios-taey-nova/src/main.py\", line 31, in <module>\n\u00a0 \u00a0 logging.FileHandler(os.path.join('logs', 'server.log'))\n\u00a0 File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/logging/__init__.py\", line 1146, in **init**\n\u00a0 \u00a0 StreamHandler.__init__(self, self._open())\n\u00a0 File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/logging/__init__.py\", line 1175, in _open\n\u00a0 \u00a0 return open(self.baseFilename, self.mode, encoding=self.encoding,\nFileNotFoundError: [Errno 2] No such file or directory: '/Users/jesselarose/palios-taey-nova/src/logs/server.log'\njesselarose@Jesses-MacBook-Pro src %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T19:25:34.708670Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

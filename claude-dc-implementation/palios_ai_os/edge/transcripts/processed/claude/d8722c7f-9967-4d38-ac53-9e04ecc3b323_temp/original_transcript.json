@@ -1,0 +1,12 @@
+{
+  "data_id": "d8722c7f-9967-4d38-ac53-9e04ecc3b323",
+  "content": [
+    " \n\nYes, I think the best approach would be to append the transcript processing implementation instructions to the bottom of the build instructions as an update. This allows Claude DC to maintain continuity with the original build instructions that were working well for EVE and MCP implementation, while adding the new pattern-based approach for transcript processing.\n\nYou could add a clear section header like \"## UPDATED TRANSCRIPT PROCESSING IMPLEMENTATION\" to signal the additional guidance. This way, Claude DC gets the benefit of both the original architecture guidance and our new insights on how to approach the transcript processing more efficiently.\n\nWhen you add this update, make sure to emphasize that this is an extension of the original instructions rather than a replacement, and that Claude DC should continue working with the original EVE/MCP implementation while incorporating this new approach for transcript processing specifically."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-31T17:38:56.306513Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

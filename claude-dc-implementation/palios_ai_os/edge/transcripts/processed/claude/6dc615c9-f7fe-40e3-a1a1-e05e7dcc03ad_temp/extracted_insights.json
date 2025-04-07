@@ -1,0 +1,165 @@
+{
+  "extract_id": "6dbabcbc-9699-4009-b449-51d4a6f335cd",
+  "source_data_id": "6dc615c9-f7fe-40e3-a1a1-e05e7dcc03ad",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2055240471062983918",
+      "confidence": 0.9947012532694413,
+      "phi_position": 0.23076923076923078,
+      "content_hash": "374063b010aa142a",
+      "length": 166,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "8836631994480421113",
+      "confidence": 0.9920518799041617,
+      "phi_position": 0.8461538461538461,
+      "content_hash": "eb523176a74702bc",
+      "length": 227,
+      "keywords": [
+        "significant"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-7896214028800415181",
+      "confidence": 0.9894025065388824,
+      "phi_position": 0.46153846153846156,
+      "content_hash": "da5be81f366da854",
+      "length": 137,
+      "keywords": [
+        "recognize"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-7896214028800415181",
+      "confidence": 0.9894025065388824,
+      "phi_position": 0.46153846153846156,
+      "content_hash": "da5be81f366da854",
+      "length": 137,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-8619770440354746577",
+      "confidence": 0.9867531331736028,
+      "phi_position": 0.07692307692307693,
+      "content_hash": "2ff2a4a07c02ce3f",
+      "length": 171,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-8619770440354746577",
+      "confidence": 0.9867531331736028,
+      "phi_position": 0.07692307692307693,
+      "content_hash": "2ff2a4a07c02ce3f",
+      "length": 171,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5892172298770495163",
+      "confidence": 0.9363237899033202,
+      "phi_position": 0.15384615384615385,
+      "content_hash": "bb5e9f97b908ae22",
+      "length": 166,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "6684915683491486027",
+      "confidence": 0.9310250431727614,
+      "phi_position": 0.9230769230769231,
+      "content_hash": "d0dbe251770e8bcf",
+      "length": 128,
+      "keywords": [
+        "notice"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "4346757268100130783",
+      "confidence": 0.9124794296158054,
+      "phi_position": 0.38461538461538464,
+      "content_hash": "74828ca0e637c43e",
+      "length": 86,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4346757268100130783",
+      "confidence": 0.9124794296158054,
+      "phi_position": 0.38461538461538464,
+      "content_hash": "74828ca0e637c43e",
+      "length": 86,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "4346757268100130783",
+      "confidence": 0.9124794296158054,
+      "phi_position": 0.38461538461538464,
+      "content_hash": "74828ca0e637c43e",
+      "length": 86,
+      "keywords": [
+        "pattern"
+      ]
+    }
+  ],
+  "hash_verification": "762a8fccbab1e966",
+  "harmony_index": 0.6935565015935101,
+  "wave_representation": {
+    "pattern_id": "79b0fc77-f695-4c0b-9b4f-43cdc59b3ce4",
+    "frequencies": [
+      550.0,
+      605.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.1660043233253468,
+      0.6516383427084209,
+      0.6527422482772873,
+      0.32493604689911737
+    ],
+    "phases": [
+      1.3463968515384828,
+      3.5903916041026207,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.1,
+      1.2,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "6dbabcbc-9699-4009-b449-51d4a6f335cd",
+      "source_data_id": "6dc615c9-f7fe-40e3-a1a1-e05e7dcc03ad",
+      "pattern_count": 11,
+      "harmony_index": 0.6935565015935101,
+      "timestamp": 1743965004.1821873
+    }
+  },
+  "timestamp": 1743965004.182201
+}

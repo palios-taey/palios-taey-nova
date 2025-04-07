@@ -1,0 +1,122 @@
+{
+  "extract_id": "55d4b4db-c658-4b20-a168-0a516caef0c9",
+  "source_data_id": "6d7e0f87-0802-47e2-856b-bdb12e463ea1",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1990849744387769132",
+      "confidence": 0.9992608528403831,
+      "phi_position": 0.09090909090909091,
+      "content_hash": "8463bb383ec44a4c",
+      "length": 57,
+      "keywords": [
+        "implement",
+        "require"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-1990849744387769132",
+      "confidence": 0.9992608528403831,
+      "phi_position": 0.09090909090909091,
+      "content_hash": "8463bb383ec44a4c",
+      "length": 57,
+      "keywords": [
+        "phase"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1352449452236600613",
+      "confidence": 0.9457502043183923,
+      "phi_position": 0.18181818181818182,
+      "content_hash": "7fb8ce73cfaeb61f",
+      "length": 234,
+      "keywords": [
+        "implement",
+        "require",
+        "need"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-1352449452236600613",
+      "confidence": 0.9457502043183923,
+      "phi_position": 0.18181818181818182,
+      "content_hash": "7fb8ce73cfaeb61f",
+      "length": 234,
+      "keywords": [
+        "phase"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5714428273513496197",
+      "confidence": 0.9274205567046506,
+      "phi_position": 0.5454545454545454,
+      "content_hash": "5b50f95e0b10129d",
+      "length": 373,
+      "keywords": [
+        "implement",
+        "require",
+        "should"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-5714428273513496197",
+      "confidence": 0.9274205567046506,
+      "phi_position": 0.5454545454545454,
+      "content_hash": "5b50f95e0b10129d",
+      "length": 373,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "9186025997424606233",
+      "confidence": 0.8907612614771675,
+      "phi_position": 0.7272727272727273,
+      "content_hash": "39f7ce9188389130",
+      "length": 99,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "adafd6cc6913d10d",
+  "harmony_index": 0.7369484622215791,
+  "wave_representation": {
+    "pattern_id": "9d439510-e5a5-4774-a2f1-c717e6ca2d0d",
+    "frequencies": [
+      660.0,
+      770.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.7340539517329283,
+      0.49312638214484694,
+      0.4772727272727273
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.1666666666666667,
+      1.25
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "55d4b4db-c658-4b20-a168-0a516caef0c9",
+      "source_data_id": "6d7e0f87-0802-47e2-856b-bdb12e463ea1",
+      "pattern_count": 7,
+      "harmony_index": 0.7369484622215791,
+      "timestamp": 1743965088.5003262
+    }
+  },
+  "timestamp": 1743965088.5004163
+}

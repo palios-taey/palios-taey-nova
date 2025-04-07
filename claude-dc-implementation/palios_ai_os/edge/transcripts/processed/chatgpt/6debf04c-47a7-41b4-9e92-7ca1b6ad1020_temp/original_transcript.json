@@ -1,0 +1,12 @@
+{
+  "data_id": "6debf04c-47a7-41b4-9e92-7ca1b6ad1020",
+  "content": [
+    "## \ud83d\udccc **How to use this script clearly:**\n\n1. **Save** it as `process_chatgpt_transcripts.py`.\n2. **Ensure** your ChatGPT JSON files are placed in:\n   ```\n   ./transcripts/chatgpt/\n   ```\n3. **Run** it easily from your terminal:\n   ```bash\n   python3 process_chatgpt_transcripts.py\n   ```\n\n---\n\n## \u2705 **Exactly What this Does:**\n- Clearly reads each ChatGPT JSON file individually.\n- Extracts the conversation text, timestamps, and authors accurately.\n- Creates individual temporary files for each chat.\n- Sends each chat clearly and individually to your Edge Processor (`edge_processor.py`).\n\n---\n\n## \ud83d\udea6 **Next Step (After Confirming ChatGPT Script):**\n- I'll immediately provide you a similar dedicated script specifically for **Claude JSON files**.\n- Then we'll finalize your batch processor to trigger each clearly defined script separately.\n\nTry this out and confirm it's working\u2014then we\u2019ll smoothly continue with Claude\u2019s processor!"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743953262.214246,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

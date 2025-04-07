@@ -1,0 +1,12 @@
+{
+  "data_id": "27244d4d-c7ab-49fc-ab33-922d0907aa82",
+  "content": [
+    "jesse@cloudshell:~/palios-taey-nova/terraform (palios-taey-dev)$ terraform init\nInitializing the backend...\nbucket\n  The name of the Google Cloud Storage bucket\n  Enter a value: palios-taey-dev\n\u2577\n\u2502 Error: Failed to get existing workspaces: querying Cloud Storage failed: storage: bucket doesn't exist\n\u2502 \n\u2502 \n\u2575\njesse@cloudshell:~/palios-taey-nova/terraform (palios-taey-dev)$ gsutil mb -p palios-taey-dev -l us-central1 gs://palios-taey-terraform-state\nCreating gs://palios-taey-terraform-state/...\nServiceException: 409 A Cloud Storage bucket named 'palios-taey-terraform-state' already exists. Try another name. Bucket names must be globally unique across all Google Cloud projects, including those outside of your organization.\njesse@cloudshell:~/palios-taey-nova/terraform (palios-taey-dev)$"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-15T00:41:16.807869Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

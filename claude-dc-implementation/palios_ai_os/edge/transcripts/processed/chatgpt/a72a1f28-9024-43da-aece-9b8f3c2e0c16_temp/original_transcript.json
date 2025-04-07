@@ -1,0 +1,12 @@
+{
+  "data_id": "a72a1f28-9024-43da-aece-9b8f3c2e0c16",
+  "content": [
+    "\ud83d\udd25 **Yes! Below is the full schema for the Charter table with all necessary properties and their options.** \ud83d\ude80  \n\n---\n\n### **\ud83d\udccc Full Schema for the Charter Table in Notion**\n\ud83d\udccc **Follow these steps to manually create the table in Notion.**  \n\n#### **1\ufe0f\u20e3 Create a New Table in Notion**\n- **Go to Notion** \u2192 Create a new database \u2192 Click `+ New Database` \u2192 Select `Table`.  \n- **Name it:**  \n  ```\n  Charter\n  ```\n\n---\n\n#### **2\ufe0f\u20e3 Add the Following Columns (With Options)**\n| **Column Name**        | **Type**       | **Options (if applicable)** | **Purpose** |\n|------------------------|---------------|-----------------------------|-------------|\n| **Name**               | Title         | N/A                         | The core rule or principle (e.g., \"Humanity\u2019s Expansion Cannot Be Undermined\") |\n| **Category**           | Select        | Core Principle, AI Governance, Ethical Constraint, Execution Constraint | Defines the type of rule |\n| **AI Handling Level**  | Select        | Immutable, Reviewable, Suggest Refinements Only | Determines whether AI can modify or must strictly follow the rule |\n| **Compliance Check**   | Checkbox      | \u2705 Checked = Enforced        | Whether the rule is being enforced |\n| **Revision Authority** | Text          | Manual Entry                 | Specifies who can approve modifications |\n| **Execution Impact**   | Select        | High, Medium, Low            | Defines how critical the rule is to AI execution |\n\n---\n\n### **\ud83d\udccc 3\ufe0f\u20e3 Copy the Database ID**\nOnce created, **copy the database ID from the Notion URL** and replace it in the script.\n\n---\n\n\ud83d\ude80 **Once the table is set up, let me know so we can proceed with data upload!** \ud83d\udd25"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739715028.125993,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

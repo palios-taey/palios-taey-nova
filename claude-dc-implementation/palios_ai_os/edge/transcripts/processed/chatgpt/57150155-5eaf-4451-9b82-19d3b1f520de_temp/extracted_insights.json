@@ -1,0 +1,84 @@
+{
+  "extract_id": "805b0bd4-bab2-45d4-bc12-e0507d55249b",
+  "source_data_id": "57150155-5eaf-4451-9b82-19d3b1f520de",
+  "patterns": [
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "6692859880941844518",
+      "confidence": 0.9960748796430676,
+      "phi_position": 0.23214285714285715,
+      "content_hash": "0350aa3df9d186b5",
+      "length": 113,
+      "keywords": [
+        "recognize"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6692859880941844518",
+      "confidence": 0.9960748796430676,
+      "phi_position": 0.23214285714285715,
+      "content_hash": "0350aa3df9d186b5",
+      "length": 113,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2137665455194052388",
+      "confidence": 0.9473128008923313,
+      "phi_position": 0.14285714285714285,
+      "content_hash": "e92f53efb3038701",
+      "length": 146,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-137940674470764240",
+      "confidence": 0.9276871991076687,
+      "phi_position": 0.017857142857142856,
+      "content_hash": "0de6c7ebdde309c8",
+      "length": 13,
+      "keywords": [
+        "verify"
+      ]
+    }
+  ],
+  "hash_verification": "af76fccdffbe59d8",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "41290f4b-900e-4ba7-8f94-d345f3b39a1a",
+    "frequencies": [
+      495.0,
+      605.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.38553743982153377,
+      0.39921497592861355,
+      0.7886775361070799
+    ],
+    "phases": [
+      0.4487989505128276,
+      3.5903916041026207,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.2222222222222223,
+      1.3333333333333333
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "805b0bd4-bab2-45d4-bc12-e0507d55249b",
+      "source_data_id": "57150155-5eaf-4451-9b82-19d3b1f520de",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743963397.0601547
+    }
+  },
+  "timestamp": 1743963397.0601683
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "1ed7ba86-581c-4706-8cf7-beb25acbc3c5",
+  "content": [
+    "`export ANTHROPIC_API_KEY=\"`\n\n`echo 'export ANTHROPIC_API_KEY=\"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\"' >> ~/.bashrc\"`\n\n`esse@pop-os:~/projects/palios-taey-nova/claude-dc-implementation$ ./analyze_cache_tokens.py`\n`Analyzing files in: /home/jesse/projects/palios-taey-nova/claude-dc-implementation/cache`\n`File Name                                Tokens     Size       Tokens/KB `\n`----------------------------------------------------------------------`\n`cache-update.md                          Error: 'MessageTokensCount' object has no attribute 'token_count'`\n`claude-dc-cache_part-1.md                Error: 'MessageTokensCount' object has no attribute 'token_count'`\n`IMPLEMENTATION_REPORT.md                 Error: 'MessageTokensCount' object has no attribute 'token_count'`\n`CACHE.UPDATE.IMPLEMENTATION.md           Error: 'MessageTokensCount' object has no attribute 'token_count'`\n`webhook-integration-instructions.md      Error: 'MessageTokensCount' object has no attribute 'token_count'`\n`claude-dc-cache_part-2.md                Error: 'MessageTokensCount' object has no attribute 'token_count'`\n`Detailed results saved to: cache_token_analysis_20250403_152936.json`\n`jesse@pop-os:~/projects/palios-taey-nova/claude-dc-implementation$ `"
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-03T19:30:35.282027Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

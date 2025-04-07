@@ -1,0 +1,117 @@
+{
+  "extract_id": "562b36c0-590e-4849-a20b-8704c1ec9eb0",
+  "source_data_id": "e604cac8-8c0f-49cc-8caa-314bea9b2dde",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-4309497794324449750",
+      "confidence": 0.9653640450004208,
+      "phi_position": 0.4375,
+      "content_hash": "490ef08801ab7fc9",
+      "length": 26,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "118020760036338012",
+      "confidence": 0.9583980337503155,
+      "phi_position": 0.8125,
+      "content_hash": "3097d0c2354d3e16",
+      "length": 170,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1765114296649200186",
+      "confidence": 0.9444660112501052,
+      "phi_position": 0.5625,
+      "content_hash": "a9bcfde2a5da3a1a",
+      "length": 86,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "8312624198037672049",
+      "confidence": 0.9235679774997896,
+      "phi_position": 0.3125,
+      "content_hash": "cc46fe8ca044c6e2",
+      "length": 260,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8312624198037672049",
+      "confidence": 0.9235679774997896,
+      "phi_position": 0.3125,
+      "content_hash": "cc46fe8ca044c6e2",
+      "length": 260,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-9022380907535579830",
+      "confidence": 0.9166019662496845,
+      "phi_position": 0.9375,
+      "content_hash": "7a523050fe45e9a8",
+      "length": 119,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-9044486192139493373",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "9311433fa1e46689",
+      "length": 130,
+      "keywords": [
+        "worth"
+      ]
+    }
+  ],
+  "hash_verification": "35ff549f36bd09f0",
+  "harmony_index": 0.7880869884079644,
+  "wave_representation": {
+    "pattern_id": "abfa3ae9-5daa-42e5-9c38-552db444d077",
+    "frequencies": [
+      440.0,
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.2404459971874737,
+      0.23872875703131574,
+      1.0
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "562b36c0-590e-4849-a20b-8704c1ec9eb0",
+      "source_data_id": "e604cac8-8c0f-49cc-8caa-314bea9b2dde",
+      "pattern_count": 7,
+      "harmony_index": 0.7880869884079644,
+      "timestamp": 1743965089.2311492
+    }
+  },
+  "timestamp": 1743965089.2311769
+}

@@ -1,0 +1,84 @@
+{
+  "extract_id": "8143ac08-9a78-4114-b0e8-59fe5ca4d6cd",
+  "source_data_id": "7680663d-c6b1-4c53-a3ea-fe1724dd55ed_exchange_58",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6121521880832079400",
+      "confidence": 0.9998870786799857,
+      "phi_position": 0.23595505617977527,
+      "content_hash": "fe356f5a79232dcf",
+      "length": 68,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-7342157469634316152",
+      "confidence": 0.9997741573599714,
+      "phi_position": 0.47191011235955055,
+      "content_hash": "fcdb237a98ef6947",
+      "length": 67,
+      "keywords": [
+        "validate"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-7342157469634316152",
+      "confidence": 0.9997741573599714,
+      "phi_position": 0.47191011235955055,
+      "content_hash": "fcdb237a98ef6947",
+      "length": 67,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-7342157469634316152",
+      "confidence": 0.9997741573599714,
+      "phi_position": 0.47191011235955055,
+      "content_hash": "fcdb237a98ef6947",
+      "length": 67,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "3877d867546381c4",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "ec4300b5-ff2f-4514-81c2-8c540786adb0",
+    "frequencies": [
+      495.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.3999548314719943,
+      0.7999322472079915,
+      0.3999548314719943
+    ],
+    "phases": [
+      0.4487989505128276,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333,
+      1.4444444444444444
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "8143ac08-9a78-4114-b0e8-59fe5ca4d6cd",
+      "source_data_id": "7680663d-c6b1-4c53-a3ea-fe1724dd55ed_exchange_58",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743986254.8234696
+    }
+  },
+  "timestamp": 1743986254.823476
+}

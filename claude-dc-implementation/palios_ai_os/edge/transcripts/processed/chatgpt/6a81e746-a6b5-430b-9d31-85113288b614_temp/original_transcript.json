@@ -1,0 +1,12 @@
+{
+  "data_id": "6a81e746-a6b5-430b-9d31-85113288b614",
+  "content": [
+    "### **\u2705 Docker Installation Settings Look Good, But Enable WSL 2 for Better Performance**\nYou're almost there! \ud83d\ude80\n\n### **\ud83d\udd0d What\u2019s Good?**\n\u2705 **Installing Docker properly** (not in `AppData`)  \n\u2705 **Shortcut option selected (personal preference)**  \n\n### **\ud83d\udd27 Recommended Fix: Enable WSL 2 (If You Plan to Use Containers Efficiently)**\n\ud83d\udd39 **WSL 2 (Windows Subsystem for Linux 2)** is **strongly recommended** instead of Hyper-V because:\n- **Better performance** for Linux-based containers.\n- **Faster file system access** than Hyper-V.\n- **Less resource-heavy** than full Hyper-V VMs.\n\n\ud83d\udc49 **If you're only using Windows containers**, Hyper-V is fine.  \n\ud83d\udc49 **If you plan to work with Linux containers**, enable **WSL 2**.\n\n### **\ud83d\ude80 Steps to Enable WSL 2 (If Needed)**\nIf you want WSL 2:\n1\ufe0f\u20e3 **Check \"Use WSL 2 instead of Hyper-V (recommended)\"** before clicking OK.  \n2\ufe0f\u20e3 If WSL 2 is **not installed**, follow these steps after installing Docker:\n   ```cmd\n   wsl --install\n   ```\n3\ufe0f\u20e3 **Restart your system after both SDK & Docker installations.**  \n\n---\n\n### **\ud83d\ude80 Next Steps**\n1\ufe0f\u20e3 **Finish installing Docker**.  \n2\ufe0f\u20e3 **Restart your computer after both SDK & Docker are installed.**  \n3\ufe0f\u20e3 **Verify Docker installation after restart:**\n   ```cmd\n   docker --version\n   ```\n4\ufe0f\u20e3 **Test in Python to ensure Docker works inside subprocess:**\n   ```python\n   import subprocess\n   subprocess.run([\"docker\", \"--version\"], check=True, capture_output=True, text=True)\n   ```\n\n\ud83d\ude80 **Once you complete this, your system should finally be fully stable! Let me know the results! \ud83d\udd25**"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741368340.041701,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

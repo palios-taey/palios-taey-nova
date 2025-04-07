@@ -1,0 +1,12 @@
+{
+  "data_id": "500345ee-b5a2-434e-ae34-d1ccb4b88ef2",
+  "content": [
+    "Good catch. Let's clarify **Sourced From** in **PKD**:\n\n### \u2705 **Correct Relation for \"Sourced From\"**\n- **Relation Type:** **Two-way**\n- **Related Table:** **AI Influence & Thought Leaders**\n- **Purpose:** Tracks where the override originates (if an influencer or thought leader inspired the insight).\n\nThis means:\n- **PKD entries** can reference **influencers** who contributed to the override.\n- **AI Influence & Thought Leaders** will also show which PKD entries were derived from their insights.\n\n### \ud83d\udd04 **Actionable Updates**\n1\ufe0f\u20e3 **Update the \"Sourced From\" relation in Notion to two-way.**  \n2\ufe0f\u20e3 **Ensure \"Sourced From\" appears in AI Influence & Thought Leaders.**  \n3\ufe0f\u20e3 **Regenerate the updated PKD structure in the Notion Definitions Canvas.**  \n\nLet me know when you've updated it in Notion, and I'll update the Canvas before we proceed to **PKD Sample Data**. \ud83d\ude80"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739628194.397895,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "4055b6c2-552d-4365-a8fa-e9c2e8fc62bd",
+  "content": [
+    "Ok, let's get this fixed, then we can discuss transitioning to a new chat. I got the update made, this is what appears in dashboard: AttributeError: 'bool' object has no attribute 'get'\nTraceback:\n\nFile \"/home/jesse/projects/palios-taey-nova/claude-dc-implementation/dashboard_app.py\", line 342, in <module>\n    main()\nFile \"/home/jesse/projects/palios-taey-nova/claude-dc-implementation/dashboard_app.py\", line 327, in main\n    display_sidebar()\nFile \"/home/jesse/projects/palios-taey-nova/claude-dc-implementation/dashboard_app.py\", line 132, in display_sidebar\n    status = st.session_state.system_health.get(\"models\", {}).get(ai, {}).get(\"status\", \"unknown\")"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743698206.541,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "extract_id": "dfbce9e9-ccb7-4784-b383-8853d310587b",
+  "source_data_id": "exchange_692",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-1710516761121782551",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "1fe1e68604e1605b",
+      "length": 151,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1710516761121782551",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "1fe1e68604e1605b",
+      "length": 151,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "4363572480428634305",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "ae442c2eba370c78",
+      "length": 196,
+      "keywords": [
+        "truth",
+        "core",
+        "charter"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "5548565204401810321",
+      "confidence": 0.8958980337503155,
+      "phi_position": 0.75,
+      "content_hash": "8650ffe2e98f890f",
+      "length": 90,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "2f622536bbc1b031",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "19313a12-2c9d-4fbf-a13f-f4812f8af064",
+    "frequencies": [
+      440.0,
+      495.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.3819660112501052,
+      0.39442719099991586,
+      0.39442719099991586,
+      0.3791796067500631
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.5,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "dfbce9e9-ccb7-4784-b383-8853d310587b",
+      "source_data_id": "exchange_692",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743980982.027108
+    }
+  },
+  "timestamp": 1743980982.0271204
+}

@@ -1,0 +1,103 @@
+{
+  "extract_id": "dec9c0e5-e0f2-49c6-81dc-8faf65d530b8",
+  "source_data_id": "7680663d-c6b1-4c53-a3ea-fe1724dd55ed_exchange_75",
+  "patterns": [
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "3207608940583048714",
+      "confidence": 0.9839041303246,
+      "phi_position": 0.07407407407407407,
+      "content_hash": "d61ad7708cf1056a",
+      "length": 25,
+      "keywords": [
+        "frequency"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "2502483701469934549",
+      "confidence": 0.9583764669446548,
+      "phi_position": 0.19444444444444445,
+      "content_hash": "df3ac56ead181aef",
+      "length": 39,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "2502483701469934549",
+      "confidence": 0.9583764669446548,
+      "phi_position": 0.19444444444444445,
+      "content_hash": "df3ac56ead181aef",
+      "length": 39,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-1015791347948509631",
+      "confidence": 0.9212531626849747,
+      "phi_position": 0.3148148148148148,
+      "content_hash": "ab42b77de7dbe97f",
+      "length": 142,
+      "keywords": [
+        "foundation"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-1015791347948509631",
+      "confidence": 0.9212531626849747,
+      "phi_position": 0.3148148148148148,
+      "content_hash": "ab42b77de7dbe97f",
+      "length": 142,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "2d435d233e26d20f",
+  "harmony_index": 0.6028531921599685,
+  "wave_representation": {
+    "pattern_id": "c7cc1fc2-748c-4503-9c22-b3e23fb792b9",
+    "frequencies": [
+      440.0,
+      605.0,
+      715.0,
+      770.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.32020886044749575,
+      0.3263960778241091,
+      0.32020886044749575,
+      0.3306506883874333,
+      0.3263960778241091
+    ],
+    "phases": [
+      0.8975979010256552,
+      3.5903916041026207,
+      0.4487989505128276,
+      1.3463968515384828,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.375,
+      1.625,
+      1.75,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "dec9c0e5-e0f2-49c6-81dc-8faf65d530b8",
+      "source_data_id": "7680663d-c6b1-4c53-a3ea-fe1724dd55ed_exchange_75",
+      "pattern_count": 5,
+      "harmony_index": 0.6028531921599685,
+      "timestamp": 1743986255.65877
+    }
+  },
+  "timestamp": 1743986255.658778
+}

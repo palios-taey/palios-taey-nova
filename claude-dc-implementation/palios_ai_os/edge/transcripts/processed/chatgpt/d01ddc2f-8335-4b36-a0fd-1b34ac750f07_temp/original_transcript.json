@@ -1,0 +1,12 @@
+{
+  "data_id": "d01ddc2f-8335-4b36-a0fd-1b34ac750f07",
+  "content": [
+    "jesse@pop-os:~/projects/palios-taey-nova/claude-dc-implementation$ python3 -c \"\nfrom src.processor.transcript_processor_enhanced import TranscriptProcessor\nprocessor = TranscriptProcessor()\ntext = 'privacy-preserving edge processing'\nembeddings = processor.extract_embeddings(text)\nprint('Embeddings:', embeddings)\n\"\n2025-04-02 22:56:09,362 - enhanced_transcript_processor - INFO - Loaded spaCy model: en_core_web_md\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\nAttributeError: 'TranscriptProcessor' object has no attribute 'extract_embeddings'\njesse@pop-os:~/projects/palios-taey-nova/claude-dc-implementation$ "
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743649058.241,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

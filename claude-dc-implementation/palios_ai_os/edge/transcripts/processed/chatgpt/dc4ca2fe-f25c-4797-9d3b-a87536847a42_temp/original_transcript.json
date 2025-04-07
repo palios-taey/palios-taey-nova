@@ -1,0 +1,12 @@
+{
+  "data_id": "dc4ca2fe-f25c-4797-9d3b-a87536847a42",
+  "content": [
+    "C:\\Windows\\System32>doskey gcloud=cmd.exe /c gcloud.cmd $*\r\n\r\nC:\\Windows\\System32>echo doskey gcloud=cmd.exe /c gcloud.cmd $* > C:\\Users\\jesse\\gcloud_alias.cmd\r\n\r\nC:\\Windows\\System32>reg add \"HKCU\\Software\\Microsoft\\Command Processor\" /v AutoRun /t REG_SZ /d \"C:\\Users\\jesse\\gcloud_alias.cmd\" /f\r\nThe operation completed successfully.\r\n\r\nC:\\Windows\\System32>\r\n\nI closed Python and reopened as admin\n\nPython 3.12.9 (tags/v3.12.9:fdb8142, Feb  4 2025, 15:27:58) [MSC v.1942 64 bit (AMD64)] on win32\r\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\r\n>>> import subprocess\r\n>>> subprocess.run([\"gcloud\", \"--version\"], check=True, capture_output=True, text=True)\r\nTraceback (most recent call last):\r\n  File \"<stdin>\", line 1, in <module>\r\n  File \"C:\\Program Files\\Python312\\Lib\\subprocess.py\", line 550, in run\r\n    with Popen(*popenargs, **kwargs) as process:\r\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Program Files\\Python312\\Lib\\subprocess.py\", line 1028, in __init__\r\n    self._execute_child(args, executable, preexec_fn, close_fds,\r\n  File \"C:\\Program Files\\Python312\\Lib\\subprocess.py\", line 1540, in _execute_child\r\n    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,\r\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nFileNotFoundError: [WinError 2] The system cannot find the file specified\r\n>>>\r\n\n"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741369489.393,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

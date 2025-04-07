@@ -1,0 +1,84 @@
+{
+  "extract_id": "6327ad22-ecf8-4565-bd2d-344471945ecc",
+  "source_data_id": "exchange_1882",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "6616454882781440208",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "1cd90f86ec3d8ff3",
+      "length": 53,
+      "keywords": [
+        "must"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6616454882781440208",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "1cd90f86ec3d8ff3",
+      "length": 53,
+      "keywords": [
+        "must"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1282463869455937929",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "33625e61f462aa6a",
+      "length": 30,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-5507195552686188836",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "ac820d14ada68108",
+      "length": 74,
+      "keywords": [
+        "important"
+      ]
+    }
+  ],
+  "hash_verification": "2f6dd1efe75969ce",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "bda3903e-4f27-4449-943e-74720a7ac0dc",
+    "frequencies": [
+      440.0,
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.39721359549995794,
+      0.3819660112501052,
+      0.7916407864998738
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "6327ad22-ecf8-4565-bd2d-344471945ecc",
+      "source_data_id": "exchange_1882",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743978536.5782647
+    }
+  },
+  "timestamp": 1743978536.5783
+}

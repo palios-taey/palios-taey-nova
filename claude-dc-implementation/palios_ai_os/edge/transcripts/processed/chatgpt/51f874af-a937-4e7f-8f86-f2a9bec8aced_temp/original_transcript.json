@@ -1,0 +1,12 @@
+{
+  "data_id": "51f874af-a937-4e7f-8f86-f2a9bec8aced",
+  "content": [
+    "C:\\AI-Execution-System>set GEMINI_SERVICE_ACCOUNT_FILE=C:\\AI-Execution-System\\keys\\gemini-api-7a14f958617a.json\r\n\r\nC:\\AI-Execution-System>python main.py\r\nERROR:root:\u274c Gemini Pro API client initialization failed: Failed to obtain an ID token: fetch_id_token() got an unexpected keyword argument 'service_account_file'\r\nServer running on port 8080 with custom routing..."
+  ],
+  "source": "chatgpt",
+  "timestamp": 1740593185.719834,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

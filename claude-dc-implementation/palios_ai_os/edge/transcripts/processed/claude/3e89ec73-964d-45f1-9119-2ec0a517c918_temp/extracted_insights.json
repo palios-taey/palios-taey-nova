@@ -1,0 +1,80 @@
+{
+  "extract_id": "6f12f902-e77f-491d-8c8a-8c7da6a3efa6",
+  "source_data_id": "3e89ec73-964d-45f1-9119-2ec0a517c918",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-4269204192793373036",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "fe038645828935df",
+      "length": 193,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8797919930682101607",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "d610a916ed944a91",
+      "length": 83,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "2504230042476026966",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "b30304d71f0bdcb5",
+      "length": 55,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3551306859353521372",
+      "confidence": 0.8958980337503155,
+      "phi_position": 0.75,
+      "content_hash": "4677774372fbede7",
+      "length": 120,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "bc7943a77ad096dc",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "12565233-d0d6-41ba-9cdd-6929a34d841c",
+    "frequencies": [
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3819660112501052,
+      1.0
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.2
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "6f12f902-e77f-491d-8c8a-8c7da6a3efa6",
+      "source_data_id": "3e89ec73-964d-45f1-9119-2ec0a517c918",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743965131.2602649
+    }
+  },
+  "timestamp": 1743965131.2603445
+}

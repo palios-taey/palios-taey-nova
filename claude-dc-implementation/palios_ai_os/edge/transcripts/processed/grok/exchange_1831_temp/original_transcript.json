@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1831",
+  "content": [
+    "User: Collapse multiple line breaks (\\n\\n\\n) into single ones (\\n) and trim leading/trailing whitespace.\n\nGrok: Replace special characters like \\u2014 (em-dash) with simpler equivalents (e.g., -- or -) where it won\u2019t mess up readability."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4238133,
+  "data_type": "exchange",
+  "metadata": {}
+}

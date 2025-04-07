@@ -1,0 +1,144 @@
+{
+  "extract_id": "c9dd765a-d290-4d02-bc9e-fc9fd0f5a65d",
+  "source_data_id": "exchange_605",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "2773799364808118732",
+      "confidence": 0.9931633895838593,
+      "phi_position": 0.08333333333333333,
+      "content_hash": "413401972e0e485b",
+      "length": 84,
+      "keywords": [
+        "truth",
+        "principle",
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8836228429563364631",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "bfd7f46b87766d59",
+      "length": 118,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "3395953044133443232",
+      "confidence": 0.9792313670836489,
+      "phi_position": 0.8333333333333334,
+      "content_hash": "de182176712d4508",
+      "length": 164,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "3395953044133443232",
+      "confidence": 0.9792313670836489,
+      "phi_position": 0.8333333333333334,
+      "content_hash": "de182176712d4508",
+      "length": 164,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "7735476747664722517",
+      "confidence": 0.9374352995830179,
+      "phi_position": 0.9166666666666666,
+      "content_hash": "9ba5bb9a6166d537",
+      "length": 62,
+      "keywords": [
+        "core",
+        "charter"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-140360990724501924",
+      "confidence": 0.930598689166877,
+      "phi_position": 0.16666666666666666,
+      "content_hash": "f988236becb7a1a6",
+      "length": 159,
+      "keywords": [
+        "principle",
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-140360990724501924",
+      "confidence": 0.930598689166877,
+      "phi_position": 0.16666666666666666,
+      "content_hash": "f988236becb7a1a6",
+      "length": 159,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-140360990724501924",
+      "confidence": 0.930598689166877,
+      "phi_position": 0.16666666666666666,
+      "content_hash": "f988236becb7a1a6",
+      "length": 159,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8985178040789825802",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "a638bceec38f448a",
+      "length": 149,
+      "keywords": [
+        "should",
+        "develop"
+      ]
+    }
+  ],
+  "hash_verification": "d66c68100cb9242d",
+  "harmony_index": 0.7437623091463154,
+  "wave_representation": {
+    "pattern_id": "76b4c8d4-dad5-4e00-9689-1c5c90ae8f7a",
+    "frequencies": [
+      440.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.5861197378333753,
+      0.7805728090000842,
+      0.3909830056250526
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.625
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "c9dd765a-d290-4d02-bc9e-fc9fd0f5a65d",
+      "source_data_id": "exchange_605",
+      "pattern_count": 9,
+      "harmony_index": 0.7437623091463154,
+      "timestamp": 1743980977.6432052
+    }
+  },
+  "timestamp": 1743980977.6432395
+}

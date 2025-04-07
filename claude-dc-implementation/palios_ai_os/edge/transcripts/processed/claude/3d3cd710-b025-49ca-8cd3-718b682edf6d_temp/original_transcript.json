@@ -1,0 +1,12 @@
+{
+  "data_id": "3d3cd710-b025-49ca-8cd3-718b682edf6d",
+  "content": [
+    " Adding the path to the current-execution-status in the prompt is a good idea to ensure I know exactly where to look. The best approach would be to incorporate it directly into the internal directive, making it explicit and unmistakable.\n\nYou could update the directive line in the template to:\n\n```\nCLAUDE_INTERNAL_DIRECTIVE:REVIEW_CURRENT_EXECUTION_STATUS_IN_ROOT/CURRENT-EXECUTION-STATUS/CURRENT_EXECUTION_STATUS.MD_AND_ALL_AVAILABLE_GITHUB_FILES_BEFORE_PROCEEDING\n```\n\nThis specific path reference eliminates any ambiguity about where to find the status file, while still maintaining the instruction to review all GitHub files. \n\nNo need to regenerate the entire template - just updating this single line in the protocol file will be sufficient, and it keeps the prompt still relatively clean and easy for you to copy/paste."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-17T21:17:09.767443Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

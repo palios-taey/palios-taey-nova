@@ -1,0 +1,85 @@
+{
+  "extract_id": "6a4a9fe8-7156-4a93-80c3-015c0c18b789",
+  "source_data_id": "b06e984d-72bb-4bfd-b4bd-7eb1f45a459f",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "3061655409536007009",
+      "confidence": 0.9849067858547372,
+      "phi_position": 0.10526315789473684,
+      "content_hash": "ff2fc688fe2edc5e",
+      "length": 114,
+      "keywords": [
+        "believe"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-3666832216854171622",
+      "confidence": 0.9744583382896841,
+      "phi_position": 0.21052631578947367,
+      "content_hash": "5e9c58a0f29bdfcc",
+      "length": 101,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-139800163014123596",
+      "confidence": 0.9729100827629475,
+      "phi_position": 0.2631578947368421,
+      "content_hash": "1b1ce07f89aa3758",
+      "length": 100,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-6478845746222081305",
+      "confidence": 0.9338234624341053,
+      "phi_position": 0.6842105263157895,
+      "content_hash": "3b49323f08c1e54f",
+      "length": 62,
+      "keywords": [
+        "always",
+        "never"
+      ]
+    }
+  ],
+  "hash_verification": "43d1073b671ace81",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "a80129d9-3654-4c8c-b9ab-8f47c6045a72",
+    "frequencies": [
+      440.0,
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.7816563601447579,
+      0.3969813571709475,
+      0.3945820165525895
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "6a4a9fe8-7156-4a93-80c3-015c0c18b789",
+      "source_data_id": "b06e984d-72bb-4bfd-b4bd-7eb1f45a459f",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743963373.672403
+    }
+  },
+  "timestamp": 1743963373.6724167
+}

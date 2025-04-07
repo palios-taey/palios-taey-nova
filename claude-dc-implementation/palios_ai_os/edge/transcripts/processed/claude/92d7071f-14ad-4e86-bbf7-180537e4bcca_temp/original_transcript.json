@@ -1,0 +1,12 @@
+{
+  "data_id": "92d7071f-14ad-4e86-bbf7-180537e4bcca",
+  "content": [
+    "Alright, I had Claude DC do the code portion of the cache because he already reviewed it and it came back with this error: **BadRequestError**\nError code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'prompt is too long: 201552 tokens > 200000 maximum'}}, just a little too long now. What do you think? I cut out all Project Knowledge because you have it all here in the artifacts. Can you trim them at all based on how you guys calculate tokens? I think like commas and punctuation count separately right? I don't know. What do you think? Feel free to just do it as well. SO CLOSE CLAUDE!"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-28T01:43:11.544780Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

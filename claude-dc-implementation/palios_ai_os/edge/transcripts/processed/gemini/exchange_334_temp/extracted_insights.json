@@ -1,0 +1,104 @@
+{
+  "extract_id": "d20191bb-1625-4ac5-a60c-d787c8b5ef71",
+  "source_data_id": "exchange_334",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "2569673119267221229",
+      "confidence": 0.9901699437494741,
+      "phi_position": 0.1,
+      "content_hash": "beb6a8d8dd198bde",
+      "length": 104,
+      "keywords": [
+        "principle"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-30730470067832778",
+      "confidence": 0.9878640450004208,
+      "phi_position": 0.46,
+      "content_hash": "26994b54870ff7a6",
+      "length": 202,
+      "keywords": [
+        "principle",
+        "charter"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "2156262856754242182",
+      "confidence": 0.9858980337503155,
+      "phi_position": 0.84,
+      "content_hash": "ba9113fd17d70b82",
+      "length": 422,
+      "keywords": [
+        "principle"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-2644155034996711728",
+      "confidence": 0.9478640450004208,
+      "phi_position": 0.42,
+      "content_hash": "a2262daa3bfae8eb",
+      "length": 115,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2644155034996711728",
+      "confidence": 0.9478640450004208,
+      "phi_position": 0.42,
+      "content_hash": "a2262daa3bfae8eb",
+      "length": 115,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-8263579907629116355",
+      "confidence": 0.930169943749474,
+      "phi_position": 0.16,
+      "content_hash": "467d65c2bada8a8b",
+      "length": 130,
+      "keywords": [
+        "principle",
+        "charter"
+      ]
+    }
+  ],
+  "hash_verification": "34488827f9c41dc5",
+  "harmony_index": 0.8503309576779687,
+  "wave_representation": {
+    "pattern_id": "d01270a2-951a-4e20-a0fd-ed442a1a5b4e",
+    "frequencies": [
+      440.0,
+      660.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.27826629214291726
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "d20191bb-1625-4ac5-a60c-d787c8b5ef71",
+      "source_data_id": "exchange_334",
+      "pattern_count": 6,
+      "harmony_index": 0.8503309576779687,
+      "timestamp": 1743976695.9545748
+    }
+  },
+  "timestamp": 1743976695.9546025
+}

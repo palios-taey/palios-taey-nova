@@ -1,0 +1,12 @@
+{
+  "data_id": "04b077d1-837f-45cd-8824-d65e5dd8049c",
+  "content": [
+    "I did it once, and it didn't work. I tried it again and this was the results:\n\nMicrosoft Windows [Version 10.0.26100.3194]\r\n(c) Microsoft Corporation. All rights reserved.\r\n\r\nC:\\Windows\\System32>gcloud --version\r\n'C:\\Windows\\System32\\gcloud.bat' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n\r\nC:\\Windows\\System32>del C:\\Windows\\System32\\gcloud.bat\r\nCould Not Find C:\\Windows\\System32\\gcloud.bat\r\n\r\nC:\\Windows\\System32>del C:\\Program Files (x86)\\Google\\Cloud SDK\\google-cloud-sdk\\bin\\gcloud.bat\r\nThe system cannot find the path specified.\r\n\r\nC:\\Windows\\System32>setx PATH \"%PATH%\" /M\r\n\r\nSUCCESS: Specified value was saved.\r\n\r\nC:\\Windows\\System32>\r"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741373059.49,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

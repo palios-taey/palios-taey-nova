@@ -1,0 +1,88 @@
+{
+  "extract_id": "9c04d624-d56e-4038-80b2-6d93b78491d6",
+  "source_data_id": "exchange_394",
+  "patterns": [
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "5181979473841098545",
+      "confidence": 0.9473128008923313,
+      "phi_position": 0.14285714285714285,
+      "content_hash": "0629099085893b0a",
+      "length": 148,
+      "keywords": [
+        "identify"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1735828726956200906",
+      "confidence": 0.9302382195158321,
+      "phi_position": 0.02040816326530612,
+      "content_hash": "b9533f9b2f141049",
+      "length": 130,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-7077745358288364773",
+      "confidence": 0.9234354984273967,
+      "phi_position": 0.013605442176870748,
+      "content_hash": "b20ecc533bfff5e1",
+      "length": 152,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "5889911730772568686",
+      "confidence": 0.8609046873381199,
+      "phi_position": 0.9931972789115646,
+      "content_hash": "30641cfb420907d3",
+      "length": 97,
+      "keywords": [
+        "truth"
+      ]
+    }
+  ],
+  "hash_verification": "4cb30f10e93fa8be",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "fb56120c-1591-45a8-839a-bc3854d2fe8a",
+    "frequencies": [
+      440.0,
+      550.0,
+      605.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.372180937467624,
+      0.3846870996854794,
+      0.38946256017846625,
+      0.3860476439031664
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      3.5903916041026207,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.375,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "9c04d624-d56e-4038-80b2-6d93b78491d6",
+      "source_data_id": "exchange_394",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743980966.6081364
+    }
+  },
+  "timestamp": 1743980966.6082158
+}

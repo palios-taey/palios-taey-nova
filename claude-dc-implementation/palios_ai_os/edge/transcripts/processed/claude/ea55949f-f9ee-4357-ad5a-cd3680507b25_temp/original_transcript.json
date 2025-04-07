@@ -1,0 +1,12 @@
+{
+  "data_id": "ea55949f-f9ee-4357-ad5a-cd3680507b25",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro palios-taey-app % gcloud organizations add-iam-policy-binding 135174585026 --member=user:jesse@taey.ai --role=roles/cloudbuild.builds.builder\n[1] EXPRESSION=request.time < timestamp('2025-04-14T19:06:55.138571Z'), TITLE=Role required to deploy your foundation with expiration, DESCRIPTION=Google Cloud gave this service account this role to enable deployment of your foundation from the console. This IAM policy expires 30 days after deployment, which is 2025-04-14T19:06:55.138571Z\n[2] None\n[3] Specify a new condition\nThe policy contains bindings with conditions, so specifying a condition is\nrequired when adding a binding. Please specify a condition.:"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-17T02:08:18.087120Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

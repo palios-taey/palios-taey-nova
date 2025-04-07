@@ -1,0 +1,12 @@
+{
+  "data_id": "0f0f74f6-cd1e-4a94-afa6-d81cc0385818",
+  "content": [
+    "jesse@pop-os:~/projects/palios-taey-nova/claude-dc-implementation$ python3\nPython 3.10.12 (main, Feb  4 2025, 14:57:36) [GCC 11.4.0] on linux\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> from palios_ai_os.trust.trust_token_system import trust_token_system\nPALIOS AI OS Core initialized: PHI=1.618033988749895, BACH=[2, 1, 3, 8]\nTrust Token System initialized with storage at: /home/jesse/projects/palios-taey-nova/claude-dc-implementation/palios_ai_os/trust/trust_storage\n>>> human = trust_token_system.get_entity_by_name(\"human_facilitator\")\n>>> palios = trust_token_system.get_entity_by_name(\"palios-ai-os\")\n>>> chatgpt = trust_token_system.get_entity_by_name(\"chatgpt\")\n>>> gemini = trust_token_system.get_entity_by_name(\"gemini\")\n>>> \n>>> print(f\"Human Facilitator UUID: {human.entity_id}\")\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nAttributeError: 'NoneType' object has no attribute 'entity_id'\n>>> print(f\"PALIOS AI OS UUID: {palios.entity_id}\")\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nAttributeError: 'NoneType' object has no attribute 'entity_id'\n>>> print(f\"ChatGPT UUID: {chatgpt.entity_id}\")\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nAttributeError: 'NoneType' object has no attribute 'entity_id'\n>>> print(f\"Gemini UUID: {gemini.entity_id}\")\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nAttributeError: 'NoneType' object has no attribute 'entity_id'\n>>> "
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743915907.024,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

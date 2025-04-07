@@ -1,0 +1,12 @@
+{
+  "data_id": "7ccfcb30-bbf9-48ef-bdc6-84cd42c48d50",
+  "content": [
+    "ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\ngoogle-cloud-aiplatform 1.87.0 requires protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<6.0.0,>=3.20.2, but you have protobuf 6.30.2 which is incompatible.\ngoogle-cloud-firestore 2.20.1 requires protobuf!=3.20.0,!=3.20.1,!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<6.0.0dev,>=3.20.2, but you have protobuf 6.30.2 which is incompatible.\ngrpcio-status 1.71.0 requires protobuf<6.0dev,>=5.26.1, but you have protobuf 6.30.2 which is incompatible.\nstreamlit 1.44.0 requires protobuf<6,>=3.20, but you have protobuf 6.30.2 which is incompatible.\ntensorflow-rocm 2.14.0.600 requires protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3, but you have protobuf 6.30.2 which is incompatible.\nSuccessfully installed protobuf-6.30.2\njesse@pop-os:~$ "
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743555052.863,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

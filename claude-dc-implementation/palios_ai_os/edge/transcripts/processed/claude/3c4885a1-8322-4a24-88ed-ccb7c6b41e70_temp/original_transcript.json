@@ -1,0 +1,12 @@
+{
+  "data_id": "3c4885a1-8322-4a24-88ed-ccb7c6b41e70",
+  "content": [
+    "Ok, they all work. We're using port 8000 for everything though, so we'll need to make sure we communicate what ports are already occupied. I updated demo_server.py to 8002. I have the following environments/servers open right now: Claude DC: 8080, 8501, 6080 MCP: Default 8000 in file, currently set at 8001 Webhook: 8000 Demo: 8002, I updated the file Streamlit: 8502\nLet's get this figured out first and make updates accordingly. Then we can discuss transcript data."
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-01T23:17:43.259875Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

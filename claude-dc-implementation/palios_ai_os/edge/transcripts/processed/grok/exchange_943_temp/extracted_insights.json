@@ -1,0 +1,95 @@
+{
+  "extract_id": "453a641d-9c60-4977-8cc3-4562e39208aa",
+  "source_data_id": "exchange_943",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "4219643782287523086",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "20eac0d0de492495",
+      "length": 72,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "4219643782287523086",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "20eac0d0de492495",
+      "length": 72,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-208106755314610706",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "b555c0001739518b",
+      "length": 151,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-208106755314610706",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "b555c0001739518b",
+      "length": 151,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-208106755314610706",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "b555c0001739518b",
+      "length": 151,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "725de33fa14569d7",
+  "harmony_index": 0.7417778798423906,
+  "wave_representation": {
+    "pattern_id": "bac83142-2f7e-43c1-ac78-5d2327c6b86a",
+    "frequencies": [
+      440.0,
+      495.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.6493163389583858,
+      0.6493163389583858,
+      0.31830500937508766
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "453a641d-9c60-4977-8cc3-4562e39208aa",
+      "source_data_id": "exchange_943",
+      "pattern_count": 5,
+      "harmony_index": 0.7417778798423906,
+      "timestamp": 1743980994.9183543
+    }
+  },
+  "timestamp": 1743980994.9184334
+}

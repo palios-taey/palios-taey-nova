@@ -1,0 +1,12 @@
+{
+  "data_id": "a7b6dd85-7ffd-44c8-bd41-7b938b22b9cd",
+  "content": [
+    "C:\\AI-Execution-System>python firestore_setup.py\r\n\u2705 Firestore is connected and test data has been written!\r\n\r\nC:\\AI-Execution-System>python C:\\AI-Execution-System\\firestore_bulk_upload.py\r\n\u2705 Data successfully uploaded to goals!\r\n\u2705 Data successfully uploaded to principles!\r\n\u2705 Data successfully uploaded to execution_logs!\r\n\u2705 Data successfully uploaded to ai_workflows!\r\n\u2705 Data successfully uploaded to platform_development!\r\n\u2705 Data successfully uploaded to system_security!\r\n\u2705 Data successfully uploaded to knowledge_vault!\r\n\u2705 Data successfully uploaded to mind_map!\r\n\u2705 Data successfully uploaded to ai_research!\r\n\u2705 Data successfully uploaded to user_preferences!\r\n\u2705 Data successfully uploaded to life_optimization!\r\n\u2705 Data successfully uploaded to charter_table!\r\n\u2705 Data successfully uploaded to charter_document!\r\n\u2705 Data successfully uploaded to database_property_definitions!\r\n\u2705 Data successfully uploaded to pkd!\r\n\u2705 Data successfully uploaded to master_tags!\r\n\ud83d\ude80 All data successfully uploaded to Firestore!\r\n\r\nC:\\AI-Execution-System>python C:\\AI-Execution-System\\firestore_setup.py\r\nTraceback (most recent call last):\r\n  File \"C:\\AI-Execution-System\\firestore_setup.py\", line 8, in <module>\r\n    cred = credentials.Certificate(key_file_path)\r\n  File \"C:\\Users\\jesse\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\firebase_admin\\credentials.py\", line 97, in __init__\r\n    with open(cert) as json_file:\r\n         ~~~~^^^^^^\r\nFileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\AI-Execution-System\\\\ai-execution-system-firebase-adminsdk-fbsvc-480e6b7b09.json'\r\n\r\nC:\\AI-Execution-System>python C:\\AI-Execution-System\\firestore_setup.py\r\n\u2705 Firestore is connected and test data has been written!\r\n\r\nC:\\AI-Execution-System>\r\n\r"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739743669.211145,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

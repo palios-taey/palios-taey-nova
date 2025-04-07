@@ -1,0 +1,84 @@
+{
+  "extract_id": "3fbe71fa-2596-4053-8c4b-5e4deceb290d",
+  "source_data_id": "exchange_345",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-5506967421490562407",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "aa2ceb7a7fd149cf",
+      "length": 102,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5506967421490562407",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "aa2ceb7a7fd149cf",
+      "length": 102,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "9037578856887394250",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "bff20f2c5b9492f4",
+      "length": 112,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "9037578856887394250",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "bff20f2c5b9492f4",
+      "length": 112,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "41cd2934d2455ada",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "c039d6b7-2ae2-4b27-ace3-346a93806f1f",
+    "frequencies": [
+      550.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.39442719099991586,
+      0.7763932022500211,
+      0.3819660112501052
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.2,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "3fbe71fa-2596-4053-8c4b-5e4deceb290d",
+      "source_data_id": "exchange_345",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743981014.7906327
+    }
+  },
+  "timestamp": 1743981014.7906687
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "67181cbf-7370-4bab-9762-421715cc2f28",
+  "content": [
+    "I don't have an organization, just project. Do I need to create an organization?\n\njesselarose@Jesses-MacBook-Pro palios-taey-nova % ./scripts/apply_infrastructure.sh -c true -b 012796-3C9A41-E282F5 -e dev\nError: When creating a new project, both org-id and billing-account are required\njesselarose@Jesses-MacBook-Pro palios-taey-nova % ./scripts/apply_infrastructure.sh --create-project true --billing-account 012796-3C9A41-E282F5 --environment dev\nError: When creating a new project, both org-id and billing-account are required\njesselarose@Jesses-MacBook-Pro palios-taey-nova %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-14T20:02:39.513350Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

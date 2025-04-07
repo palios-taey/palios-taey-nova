@@ -1,0 +1,12 @@
+{
+  "data_id": "e9bd172d-2170-4964-a32b-6cb9d22138ff",
+  "content": [
+    " Here's the command for Claude DC to load the cache update file from the `/jesse` directory:\n\n```bash\ncache load -f ~/projects/palios-taey-nova/current-execution-status/jesse/cache-update.md\n```\n\nThis will append the content of the cache-update.md file to Claude DC's existing cache. After running this command, Claude DC should be able to access the AI-AI Communication Framework information we've added.\n\nIf you need to check if the file exists in that location first, you can run:\n\n```bash\nls -la ~/projects/palios-taey-nova/current-execution-status/jesse/cache-update.md\n```"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-29T17:57:29.033547Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

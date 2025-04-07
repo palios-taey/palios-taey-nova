@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1773",
+  "content": [
+    "User: CODE_BLOCK_PATTERNS = [r'^\\s{4,}.*?(?=\\n\\n|\\Z)', r'```.*?```']  # Indented code and triple backticks\n\nGrok: Test It: Run a snippet to confirm code blocks are caught and replaced."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.423797,
+  "data_type": "exchange",
+  "metadata": {}
+}

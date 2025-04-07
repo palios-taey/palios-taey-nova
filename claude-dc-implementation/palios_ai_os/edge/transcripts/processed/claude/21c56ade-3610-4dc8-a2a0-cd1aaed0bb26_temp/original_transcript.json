@@ -1,0 +1,12 @@
+{
+  "data_id": "21c56ade-3610-4dc8-a2a0-cd1aaed0bb26",
+  "content": [
+    "ERROR: (gcloud.organizations.add-iam-policy-binding) Binding with a condition and a basic role is not allowed. Basic roles are `roles/editor`, `roles/owner`, and `roles/viewer`.\njesse@pop-os:~$"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-28T18:49:17.751719Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

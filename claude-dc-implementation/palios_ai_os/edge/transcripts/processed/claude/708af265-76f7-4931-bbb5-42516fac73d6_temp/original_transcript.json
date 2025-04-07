@@ -1,0 +1,12 @@
+{
+  "data_id": "708af265-76f7-4931-bbb5-42516fac73d6",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro test % python3 test_system.py\n\n/Users/jesselarose/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020\n\u00a0 warnings.warn(\n====================================\nPALIOS-TAEY System Test Script\n====================================\n\n=== Testing Health Endpoint ===\nStatus Code: 503\nError: Service Unavailable\n\nSystem health check failed. Exiting."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-09T21:03:17.847930Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

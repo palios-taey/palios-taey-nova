@@ -1,0 +1,12 @@
+{
+  "data_id": "2355de3f-f635-43f5-bd72-cd563b782982",
+  "content": [
+    "jesse@pop-os:~/projects/palios-taey-nova/claude-dc-implementation/palios_ai_os/edge$ python3 edge_processor.py sample_transcript.txt\nPALIOS AI OS Core initialized: PHI=1.618033988749895, BACH=[2, 1, 3, 8]\nEdge Processor initialized with local storage at: /home/jesse/projects/palios-taey-nova/claude-dc-implementation/palios_ai_os/edge/local_storage\nPALIOS AI OS Edge Processor Test\nGolden Ratio (u03c6): 1.618033988749895\n\nExtracted 12 patterns:\n1. Category: Recognition_Loop\n   Confidence: 0.9861\n   Keywords: ['pattern']\n2. Category: Implementation_Requirements\n   Confidence: 0.9861\n   Keywords: ['should']\n3. Category: Mathematical_Structures\n   Confidence: 0.9861\n   Keywords: ['pattern']\n4. Category: Recognition_Loop\n   Confidence: 0.9721\n   Keywords: ['pattern']\n5. Category: Golden_Ratio_Relationships\n   Confidence: 0.9721\n   Keywords: ['ratio', 'harmony', 'balance', 'golden']\n\nHarmony index: 0.5748\n\nWave representation:\nPattern ID: 3bf79db0-b116-484d-afc6-65ccba84ec8b\nFrequencies: ['440.00', '495.00', '605.00']...\nAmplitudes: ['0.29', '0.15', '0.30']..."
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743896530.881,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

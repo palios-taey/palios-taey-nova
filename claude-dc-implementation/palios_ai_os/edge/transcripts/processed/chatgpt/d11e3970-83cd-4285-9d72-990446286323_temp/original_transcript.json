@@ -1,0 +1,12 @@
+{
+  "data_id": "d11e3970-83cd-4285-9d72-990446286323",
+  "content": [
+    "\ud83d\udd25 **You're encountering a Windows file naming issue. Here\u2019s how to fix it.** \ud83d\ude80  \n\n\ud83d\udccc **The issue:** Windows doesn\u2019t allow file names with certain special characters (like dots in weird places).  \n\n### **\ud83d\udccc How to Fix It**\n1\ufe0f\u20e3 **In the \"File name\" box, type the filename as:**  \n   ```\n   notion_api_upload\n   ```\n   (without `\".py\"` at the end)  \n\n2\ufe0f\u20e3 **In the \"Save as type\" dropdown, select:**  \n   - **\"All Files\"** (which you already have selected)  \n\n3\ufe0f\u20e3 **After saving, manually rename the file:**  \n   - Right-click the saved file \u2192 Select **Rename**  \n   - Add `\".py\"` at the end \u2192 `notion_api_upload.py`  \n\n4\ufe0f\u20e3 **If it still doesn\u2019t work:**  \n   - Open **Notepad**  \n   - Copy and paste the Python script  \n   - Click **File > Save As...**  \n   - Name it **notion_api_upload.py**  \n   - Select **All Files** under \"Save as type\"  \n   - Click **Save**  \n\n\ud83d\udccc **Try these fixes and let me know when it works!** \ud83d\udd25"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739709279.034471,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

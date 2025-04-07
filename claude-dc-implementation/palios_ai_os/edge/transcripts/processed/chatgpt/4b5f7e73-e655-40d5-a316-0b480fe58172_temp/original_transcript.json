@@ -1,0 +1,12 @@
+{
+  "data_id": "4b5f7e73-e655-40d5-a316-0b480fe58172",
+  "content": [
+    "\ud83d\udd25 **Understood\u2014We Need to Create the Charter Table in Notion Before Running the Script.** \ud83d\ude80  \n\n\ud83d\udccc **Let\u2019s do this step-by-step:**  \n\n### **\ud83d\udccc Step 1: Manually Create the Charter Table in Notion**  \n1\ufe0f\u20e3 **Go to Notion and navigate to your workspace.**  \n2\ufe0f\u20e3 **Create a new database** \u2192 Click `+ New Database` \u2192 Select `Table`.  \n3\ufe0f\u20e3 **Name it:**  \n   ```\n   Charter\n   ```\n4\ufe0f\u20e3 **Add the following columns (matching what the script expects):**  \n   - **Name** (Title column)  \n   - **Category** (Select)  \n   - **AI Handling Level** (Select)  \n   - **Compliance Check** (Checkbox)  \n   - **Revision Authority** (Text)  \n   - **Execution Impact** (Select)  \n\n5\ufe0f\u20e3 **Once the table is created, copy the Database ID** (from the URL as described before).  \n\n---\n\n### **\ud83d\udccc Step 2: Update the Script with the New Charter Database ID**  \n1\ufe0f\u20e3 Open **notion_api_upload.py** in a text editor.  \n2\ufe0f\u20e3 Locate the section where database IDs are defined:  \n   ```python\n   DATABASE_IDS = {\n       \"Charter\": \"OLD_DATABASE_ID_HERE\",\n       ...\n   }\n   ```\n3\ufe0f\u20e3 Replace `\"OLD_DATABASE_ID_HERE\"` with the **actual Database ID** from Notion.  \n4\ufe0f\u20e3 **Save the file.**  \n\n---\n\n### **\ud83d\udccc Step 3: Re-run the Script**\n1\ufe0f\u20e3 Open Command Prompt and navigate to the script location:  \n   ```sh\n   cd %USERPROFILE%\\Downloads\n   ```\n2\ufe0f\u20e3 Run the script again:  \n   ```sh\n   python notion_api_upload.py\n   ```  \n3\ufe0f\u20e3 **Check Notion** to confirm the data has been uploaded.  \n\n\ud83d\ude80 **Once this is done, let me know if you need help setting up any other tables!** \ud83d\udd25"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739712402.288902,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

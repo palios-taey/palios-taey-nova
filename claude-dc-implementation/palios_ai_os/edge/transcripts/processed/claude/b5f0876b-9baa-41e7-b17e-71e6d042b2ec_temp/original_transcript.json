@@ -1,0 +1,12 @@
+{
+  "data_id": "b5f0876b-9baa-41e7-b17e-71e6d042b2ec",
+  "content": [
+    " You're right, I should be providing clear, direct instructions without options. Here's exactly what you need to do to run the tests:\n\n1. First, navigate to the project root directory:\n   ```bash\n   cd /path/to/ai-execution-system\n   ```\n\n2. Run setup_env.sh to configure the environment:\n   ```bash\n   ./setup_env.sh\n   ```\n\n3. Start the PALIOS-TAEY server in one terminal window:\n   ```bash\n   python main.py --mock\n   ```\n\n4. Open a new terminal window, navigate to the same directory, and run the test script:\n   ```bash\n   python test_system.py\n   ```\n\nThe test script will automatically run all tests against the locally running server and produce a comprehensive report of the system's functionality. It will detect which components are active and verify their operation.\n\nThe --mock flag ensures the system runs in mock mode, which allows all tests to run without external dependencies. This is the most reliable way to verify the core functionality."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T19:15:28.561153Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

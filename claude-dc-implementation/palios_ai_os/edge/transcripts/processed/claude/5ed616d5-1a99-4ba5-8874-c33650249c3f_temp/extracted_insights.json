@@ -1,0 +1,159 @@
+{
+  "extract_id": "d85955fb-10ea-43d1-a1be-6b9a97496f2a",
+  "source_data_id": "5ed616d5-1a99-4ba5-8874-c33650249c3f",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5414394628024619007",
+      "confidence": 0.958909810851753,
+      "phi_position": 0.049079754601226995,
+      "content_hash": "ac63254bafa5993b",
+      "length": 80,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "212307393703581752",
+      "confidence": 0.9405049028762928,
+      "phi_position": 0.03067484662576687,
+      "content_hash": "2921c8dc6c9236e8",
+      "length": 39,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-3438603673680778624",
+      "confidence": 0.9282349642259861,
+      "phi_position": 0.018404907975460124,
+      "content_hash": "86e939f8965d23bc",
+      "length": 161,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-4770305252987237949",
+      "confidence": 0.9220999949008327,
+      "phi_position": 0.012269938650306749,
+      "content_hash": "fb0816564885cb34",
+      "length": 50,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-3702353550070146931",
+      "confidence": 0.9159650255756793,
+      "phi_position": 0.006134969325153374,
+      "content_hash": "d0f954b7573f930a",
+      "length": 156,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-3702353550070146931",
+      "confidence": 0.9159650255756793,
+      "phi_position": 0.006134969325153374,
+      "content_hash": "d0f954b7573f930a",
+      "length": 156,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "9790121379330895",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "deb6bcfada3d1534",
+      "length": 135,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "9790121379330895",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "deb6bcfada3d1534",
+      "length": 135,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "1181324549429226294",
+      "confidence": 0.8602369355748378,
+      "phi_position": 0.9938650306748467,
+      "content_hash": "0b10fe2f58b184a6",
+      "length": 175,
+      "keywords": [
+        "foundation",
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1181324549429226294",
+      "confidence": 0.8602369355748378,
+      "phi_position": 0.9938650306748467,
+      "content_hash": "0b10fe2f58b184a6",
+      "length": 175,
+      "keywords": [
+        "implement"
+      ]
+    }
+  ],
+  "hash_verification": "5a1e42314857813b",
+  "harmony_index": 0.6454400934032366,
+  "wave_representation": {
+    "pattern_id": "75d82fde-7129-4181-a8b7-831e10ba7c17",
+    "frequencies": [
+      440.0,
+      495.0,
+      660.0,
+      715.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.3432910873773197,
+      0.17417863868869812,
+      0.6972256095957645,
+      0.17529408765690782,
+      0.34835727737739625
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.5,
+      1.625,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "d85955fb-10ea-43d1-a1be-6b9a97496f2a",
+      "source_data_id": "5ed616d5-1a99-4ba5-8874-c33650249c3f",
+      "pattern_count": 10,
+      "harmony_index": 0.6454400934032366,
+      "timestamp": 1743965037.3461578
+    }
+  },
+  "timestamp": 1743965037.346237
+}

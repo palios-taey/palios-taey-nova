@@ -1,0 +1,12 @@
+{
+  "data_id": "1edf5a87-4c03-48ea-80ae-5b919eb944f6",
+  "content": [
+    "That line of code is not in firestore.tf (first lines below). cloud run updated and network tf looks good\n\n Create a Firestore database in native mode\nresource \"google_firestore_database\" \"palios_taey_db\" {\n  name        = \"(default)\"\n  project     = var.project_id\n  location_id = var.firestore_location\n  type        = \"FIRESTORE_NATIVE\"\n}\n# Create basic collections for the Memory System\nresource \"google_firestore_document\" \"memory_system_config\" {\n  project     = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id\n  collection  = \"config\"\n  document_id = \"memory_system\""
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-15T00:22:41.896228Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

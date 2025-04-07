@@ -1,0 +1,12 @@
+{
+  "data_id": "11db973c-11c8-4999-8c45-2686800cb117",
+  "content": [
+    "For this purpose, a more narrow role is **\"API Integration Developer.\"** This role specifically focuses on implementing, testing, and maintaining the integration of the Gemini Pro API\u2014not only during the initial integration phase but also for ongoing operations.\n\nAdditionally, when granting users access to the service account, it's best to follow the principle of least privilege. Instead of using the Editor role (which grants broad permissions), assign more specific roles such as:\n\n- **Service Account User:** Allows users to act as the service account without granting full project-wide permissions.\n- **Service Account Token Creator:** Enables users to generate OAuth2 tokens using the service account.\n\nThese roles restrict access to only what is necessary for integration and ongoing operations while reducing security risks.\n\nDoes that clarify things for you?"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1740591953.270248,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

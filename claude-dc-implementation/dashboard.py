@@ -489,28 +489,80 @@ if not dashboard_template.exists():
                     
                     // Display pattern results
                     let resultHtml = '<h3>Extracted Patterns</h3>';
-                    resultHtml += '<ul>';
                     
-                    for (const category in data.pattern_counts) {
-                        if (data.pattern_counts[category] > 0) {
-                            resultHtml += `<li>${category}: ${data.pattern_counts[category]}</li>`;
+                    // Check if pattern_counts exists and has data
+                    const patternCounts = data.pattern_counts || {};
+                    
+                    if (Object.keys(patternCounts).length > 0) {
+                        resultHtml += '<div class="pattern-categories">';
+                        for (const category in patternCounts) {
+                            if (patternCounts[category] > 0) {
+                                resultHtml += `<div class="pattern-category">
+                                    <span class="category-name">${category}</span>: 
+                                    <span class="category-count">${patternCounts[category]}</span>
+                                </div>`;
+                            }
                         }
+                        resultHtml += '</div>';
+                    } else {
+                        resultHtml += '<p>No pattern categories found</p>';
                     }
                     
-                    resultHtml += '</ul>';
-                    
-                    if (data.sampled_patterns && data.sampled_patterns.length > 0) {
+                    // Check if patterns array exists and has data
+                    if (data.patterns && data.patterns.length > 0) {
                         resultHtml += '<h3>Top Patterns</h3>';
-                        resultHtml += '<ul>';
+                        resultHtml += '<ul class="patterns-list">';
                         
-                        data.sampled_patterns.forEach(pattern => {
-                            resultHtml += `<li>${pattern.category} (${(pattern.confidence * 100).toFixed(1)}% confidence)</li>`;
+                        // Take the first 5 patterns to display
+                        const topPatterns = data.patterns.slice(0, 5);
+                        topPatterns.forEach(pattern => {
+                            resultHtml += `<li>
+                                <div class="pattern-item">
+                                    <strong>${pattern.category || 'Uncategorized'}</strong>
+                                    ${pattern.confidence ? ` (${(pattern.confidence * 100).toFixed(1)}% confidence)` : ''}
+                                </div>
+                            </li>`;
                         });
                         
                         resultHtml += '</ul>';
                     }
                     
+                    // Update the result element with the new HTML
                     resultElement.innerHTML = resultHtml;
+                    
+                    // Add styling for pattern display
+                    if (!document.getElementById('pattern-styles')) {
+                        const style = document.createElement('style');
+                        style.id = 'pattern-styles';
+                        style.textContent = `
+                            .pattern-categories {
+                                display: flex;
+                                flex-wrap: wrap;
+                                margin-bottom: 15px;
+                            }
+                            .pattern-category {
+                                background: #f5f5f5;
+                                padding: 8px 12px;
+                                margin: 5px;
+                                border-radius: 5px;
+                                font-size: 14px;
+                            }
+                            .category-name {
+                                font-weight: bold;
+                            }
+                            .patterns-list {
+                                list-style: none;
+                                padding: 0;
+                            }
+                            .pattern-item {
+                                background: #f5f5f5;
+                                padding: 8px 12px;
+                                margin: 5px 0;
+                                border-radius: 5px;
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    }
                 })
                 .catch(error => {
                     console.error('Error processing on edge:', error);
@@ -609,9 +661,21 @@ async def process_on_edge(data: Dict):
         return JSONResponse(status_code=400, content={"error": "No text provided"})
     
     # Use pattern extractor from imported components
-    patterns = palios_os.edge.extract_patterns(text)
+    patterns = palios_os.edge.extract_patterns(text, "dashboard")
     
-    return patterns
+    # Format the pattern data for the frontend
+    pattern_counts = {}
+    for pattern in patterns.patterns:
+        category = pattern.get("category", "Unknown")
+        if category not in pattern_counts:
+            pattern_counts[category] = 0
+        pattern_counts[category] += 1
+    
+    return {
+        "harmony_index": patterns.harmony_index,
+        "pattern_counts": pattern_counts,
+        "patterns": patterns.patterns  # Return the full pattern data
+    }
 
 # WebSocket route
 @app.websocket("/ws")
@@ -645,7 +709,7 @@ async def send_updates():
                 try:
                     await connection.send_json({
                         "type": "system_update",
-                        "status": f"Harmony Index: {harmony_index:.4f}",
+                        "status": "Harmony Index: {harmony_index:.4f}",
                         "harmony_index": harmony_index,
                         "timestamp": current_time
                     })
@@ -662,5 +726,5 @@ async def startup_event():
 
 # Main entry point
 if __name__ == "__main__":
-    # Run the FastAPI app with Uvicorn
-    uvicorn.run("dashboard:app", host="0.0.0.0", port=8080, reload=True)
+    # Update this line to use port 8502
+    uvicorn.run("dashboard:app", host="0.0.0.0", port=8502, reload=True)

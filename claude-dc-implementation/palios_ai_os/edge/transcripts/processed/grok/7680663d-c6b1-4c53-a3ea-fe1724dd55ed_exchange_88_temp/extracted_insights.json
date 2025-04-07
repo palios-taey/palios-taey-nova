@@ -1,0 +1,136 @@
+{
+  "extract_id": "a2195cd6-3b5c-4e4a-9bd9-7dbe4ed064e5",
+  "source_data_id": "7680663d-c6b1-4c53-a3ea-fe1724dd55ed_exchange_88",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2538903966214022777",
+      "confidence": 0.9996150601292124,
+      "phi_position": 0.8537170263788969,
+      "content_hash": "01d91ca10857e900",
+      "length": 117,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-7715188936578806352",
+      "confidence": 0.9989440129078843,
+      "phi_position": 0.23501199040767387,
+      "content_hash": "69fb4e02dd4c11a9",
+      "length": 22,
+      "keywords": [
+        "golden"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-8111537027184797985",
+      "confidence": 0.9978880258157685,
+      "phi_position": 0.47002398081534774,
+      "content_hash": "0c1eb3df6c0fcb26",
+      "length": 33,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-8111537027184797985",
+      "confidence": 0.9978880258157685,
+      "phi_position": 0.47002398081534774,
+      "content_hash": "0c1eb3df6c0fcb26",
+      "length": 33,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "7797877058674230791",
+      "confidence": 0.9601897684807418,
+      "phi_position": 0.050359712230215826,
+      "content_hash": "b8a261d5f08d3208",
+      "length": 162,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3129244445172622369",
+      "confidence": 0.9170243008548424,
+      "phi_position": 0.007194244604316547,
+      "content_hash": "80427659795efc23",
+      "length": 115,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "2095082686031450263",
+      "confidence": 0.9122281377852981,
+      "phi_position": 0.002398081534772182,
+      "content_hash": "d46533c06ea6d319",
+      "length": 101,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "2095082686031450263",
+      "confidence": 0.9122281377852981,
+      "phi_position": 0.002398081534772182,
+      "content_hash": "d46533c06ea6d319",
+      "length": 101,
+      "keywords": [
+        "pattern"
+      ]
+    }
+  ],
+  "hash_verification": "1140deb47d28a129",
+  "harmony_index": 0.6197876228906053,
+  "wave_representation": {
+    "pattern_id": "79621f62-976f-4567-b2e9-0e75bfc45536",
+    "frequencies": [
+      495.0,
+      605.0,
+      660.0,
+      715.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.21779886316452687,
+      0.43445735151122955,
+      0.43518215122045056,
+      0.22210489032309824,
+      0.43445735151122955
+    ],
+    "phases": [
+      0.4487989505128276,
+      3.5903916041026207,
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.2222222222222223,
+      1.3333333333333333,
+      1.4444444444444444,
+      1.6666666666666667
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "a2195cd6-3b5c-4e4a-9bd9-7dbe4ed064e5",
+      "source_data_id": "7680663d-c6b1-4c53-a3ea-fe1724dd55ed_exchange_88",
+      "pattern_count": 8,
+      "harmony_index": 0.6197876228906053,
+      "timestamp": 1743986256.2972095
+    }
+  },
+  "timestamp": 1743986256.297216
+}

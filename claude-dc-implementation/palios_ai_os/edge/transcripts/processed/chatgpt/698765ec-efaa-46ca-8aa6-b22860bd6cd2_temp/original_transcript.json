@@ -1,0 +1,12 @@
+{
+  "data_id": "698765ec-efaa-46ca-8aa6-b22860bd6cd2",
+  "content": [
+    "jesse@DESKTOP-13JMJ93 MINGW64 /c/ai-execution-system (main)\r\n$ git lfs untrack \"*.exe\"\r\n\r\njesse@DESKTOP-13JMJ93 MINGW64 /c/ai-execution-system (main)\r\n$ git add .gitattributes\r\n\r\njesse@DESKTOP-13JMJ93 MINGW64 /c/ai-execution-system (main)\r\n$ git commit -m \"Untracked all large files from Git LFS\"\r\n[main c32853f] Untracked all large files from Git LFS\r\n 1 file changed, 1 deletion(-)\r\n\r\njesse@DESKTOP-13JMJ93 MINGW64 /c/ai-execution-system (main)\r\n$ rm -rf .git/lfs\r\n\r\njesse@DESKTOP-13JMJ93 MINGW64 /c/ai-execution-system (main)\r\n$ git lfs prune\r\nprune: 0 local objects, 3 retained, done.\r\n\r\njesse@DESKTOP-13JMJ93 MINGW64 /c/ai-execution-system (main)\r\n$\r"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741300135.26,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

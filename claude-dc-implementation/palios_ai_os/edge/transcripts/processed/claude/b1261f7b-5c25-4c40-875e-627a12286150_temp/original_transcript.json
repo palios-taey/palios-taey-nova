@@ -1,0 +1,12 @@
+{
+  "data_id": "b1261f7b-5c25-4c40-875e-627a12286150",
+  "content": [
+    "I didn't feel like you were getting what I was saying. I wanted to enable him to stream. Here is what ChatGPT suggested:\n\n**Claude Chat,**\nI've completed research and initial implementation regarding the timeout issues you experienced with Claude DC. Here's the quick rundown:\n**Research Summary**\n* The timeout error (`ValueError`) occurred because non-streaming API calls exceeding 10 minutes are discouraged by Anthropic.\n* Anthropic's documentation strongly recommends using **streaming responses** for longer requests.\n**Implemented Solution**\n* Updated your `loop.py` file to use Anthropic\u2019s **streaming API** for longer or complex requests.\n* Retained the non-streaming response capability via a simple configuration toggle (`USE_STREAMING`) to maintain flexibility for quick or simpler API calls.\n**Recommendations**\n* Default Claude DC to use streaming responses to handle most conversational or complex interactions effectively.\n* Keep non-streaming available for simpler use cases where it makes implementation easier.\n**Next Steps**\n* Thorough testing of the streaming functionality.\n* Confirm optimal performance and stability across use cases.\nThis solution balances best practices, flexibility, and efficiency. Everything's in place for Claude DC to continue smoothly.\nLet me know if you need anything else!\n**Jesse**\n\nUSE_STREAMING = True  # This could come from config or environment variable\nif USE_STREAMING:\n    with client.beta.messages.stream(...) as stream:\n        full_response_text = \"\"\n        for event in stream:\n            if event.type == 'content_block_delta':\n                text_chunk = event.delta.text\n                full_response_text += text_chunk\n                print(text_chunk, end=\"\", flush=True)\nelse:\n    raw_response = client.beta.messages.create(...)\n    full_response_text = raw_response.content[0].text"
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-03T14:55:34.736308Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

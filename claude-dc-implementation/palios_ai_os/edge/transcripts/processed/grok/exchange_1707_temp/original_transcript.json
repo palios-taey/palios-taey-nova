@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1707",
+  "content": [
+    "User: The script looks for anything between ``` and ``` and replaces it with `[CODE_BLOCK_SUMMARY]`.\n\nGrok: Why It\u2019s Not Working: If the code blocks aren\u2019t being removed, it might be because they\u2019re formatted differently or there\u2019s a mismatch in the regex. Your example shows triple backticks, so the script should catch them, but we\u2019ll add flexibility for other formats (like indented code) and log removals to confirm it\u2019s working."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4237761,
+  "data_type": "exchange",
+  "metadata": {}
+}

@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1937",
+  "content": [
+    "User: DeepSearch\u2019s Response: In its thinking trace, it mused about \u201cpast interactions\u201d and \u201cearlier sessions,\u201d wondering if the table came from a previous chat or a misinterpretation. It even noted that its last response in that chat was JSON, not a table, which suggests it might\u2019ve pulled the table idea from somewhere else\u2014like an older session\u2019s context lingering in its reasoning.\n\nGrok: My Take: Yes, it\u2019s referencing other chats\u2014or at least acting like it is. Even in a new chat, DeepSearch seems to carry a \u201cmemory\u201d of your project\u2019s history (iterations, character limits, etc.) through its internal reasoning, not necessarily from direct session data. This blurred the lines and led it to spit out a table, despite your clear JSON request. It\u2019s like it overthought your context and defaulted to a format it thought was helpful, ignoring your explicit instructions."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4238398,
+  "data_type": "exchange",
+  "metadata": {}
+}

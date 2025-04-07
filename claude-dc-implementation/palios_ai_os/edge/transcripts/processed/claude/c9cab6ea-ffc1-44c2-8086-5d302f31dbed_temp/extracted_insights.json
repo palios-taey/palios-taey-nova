@@ -1,0 +1,80 @@
+{
+  "extract_id": "98f504ab-7589-4840-b6dd-316ff6352f05",
+  "source_data_id": "c9cab6ea-ffc1-44c2-8086-5d302f31dbed",
+  "patterns": [
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "7503406635005797053",
+      "confidence": 0.9992608528403831,
+      "phi_position": 0.09090909090909091,
+      "content_hash": "3ead80bb05702a06",
+      "length": 83,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "2824035072571907613",
+      "confidence": 0.9704361168565865,
+      "phi_position": 0.06060606060606061,
+      "content_hash": "7f8d70b6a63259a3",
+      "length": 100,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4996315695782783573",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "16e2b9f4c8c0f0bb",
+      "length": 129,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8144375004651770585",
+      "confidence": 0.8844049965527148,
+      "phi_position": 0.9696969696969697,
+      "content_hash": "716590ed1aca934e",
+      "length": 138,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "ad8cfd0eec9a89a9",
+  "harmony_index": 0.8217233145831581,
+  "wave_representation": {
+    "pattern_id": "ee98d301-f76c-4d93-9951-562a3256d28f",
+    "frequencies": [
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.7588470105606482,
+      0.793939393939394
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.0833333333333333
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "98f504ab-7589-4840-b6dd-316ff6352f05",
+      "source_data_id": "c9cab6ea-ffc1-44c2-8086-5d302f31dbed",
+      "pattern_count": 4,
+      "harmony_index": 0.8217233145831581,
+      "timestamp": 1743965016.8915515
+    }
+  },
+  "timestamp": 1743965016.8915648
+}

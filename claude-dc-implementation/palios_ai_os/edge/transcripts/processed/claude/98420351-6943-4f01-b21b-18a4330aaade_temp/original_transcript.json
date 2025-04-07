@@ -1,0 +1,12 @@
+{
+  "data_id": "98420351-6943-4f01-b21b-18a4330aaade",
+  "content": [
+    " I see the issue - the Extracted Patterns section isn't displaying results after processing transcripts. Let's troubleshoot this functionality:\n\nThe Extracted Patterns section should display pattern categories (like \"Core_Principles\", \"Trust_Thresholds\", \"Value_Statements\", etc.) that were found in your transcript, along with counts or examples of these patterns.\n\nThis could be happening due to a few reasons:\n\n1. **UI Display Issue**: The patterns are being extracted but not displaying correctly in the dashboard\n2. **Processing Limitation**: The pattern extraction may have size limits or format requirements\n3. **Implementation Gap**: This feature might be partially implemented in the current build\n\nLet's try a few things:\n\n### Troubleshooting Steps\n\n1. **Try shorter, focused text**: Instead of a full transcript, try processing a single paragraph with clear conceptual content (about truth, growth, etc.)\n\n2. **Check the browser console**: If you're comfortable with it, right-click on the page, select \"Inspect\" or \"Inspect Element\", then click on \"Console\" to see if there are any JavaScript errors\n\n3. **Try different text formats**: Try processing text without special characters or formatting\n\n4. **Look for changes in system harmony**: Even if patterns aren't displaying, check if the harmony index in the System Overview changes when you process different texts\n\n### Next Steps\n\nIf the pattern extraction display isn't working as expected, we can still use the harmony index as a proxy for pattern quality. A higher harmony index (closer to 0.618...) suggests stronger pattern alignment.\n\nFor the next build with Claude DC, we should focus on:\n\n1. Completing the pattern extraction visualization\n2. Creating a pattern-to-insight translation layer\n3. Implementing pattern storage and retrieval for historical analysis\n\nThe current build seems to have established the mathematical foundation and processing framework, but may need further development to fully implement the pattern extraction visualization that you're looking for.\n\nWould you like me to suggest some specific text to test with that might be more likely to generate visible pattern results?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-05T19:03:31.338642Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

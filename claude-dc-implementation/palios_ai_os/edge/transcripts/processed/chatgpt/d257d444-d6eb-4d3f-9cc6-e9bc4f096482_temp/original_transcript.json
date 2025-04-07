@@ -1,0 +1,12 @@
+{
+  "data_id": "d257d444-d6eb-4d3f-9cc6-e9bc4f096482",
+  "content": [
+    "C:\\AI-Execution-System>curl -X POST -H \"Content-Type: application/json\" -d \"{\\\"prompt\\\": \\\"Test Gemini integration\\\"}\" http://localhost:8080/execute_gemini\r\n<!DOCTYPE HTML>\r\n<html lang=\"en\">\r\n    <head>\r\n        <meta charset=\"utf-8\">\r\n        <title>Error response</title>\r\n    </head>\r\n    <body>\r\n        <h1>Error response</h1>\r\n        <p>Error code: 501</p>\r\n        <p>Message: Unsupported method ('POST').</p>\r\n        <p>Error code explanation: 501 - Server does not support this operation.</p>\r\n    </body>\r\n</html>"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1740589552.45046,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

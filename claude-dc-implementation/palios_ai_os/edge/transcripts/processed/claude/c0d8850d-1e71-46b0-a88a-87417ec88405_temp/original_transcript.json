@@ -1,0 +1,12 @@
+{
+  "data_id": "c0d8850d-1e71-46b0-a88a-87417ec88405",
+  "content": [
+    "Continue transcript_processor.py from:\ndef analyze_transcript(self, transcript_id: str, include_content: bool = True) -> Dict[str, Any]: \"\"\" Analyze a processed transcript with robust error handling Args: transcript_id: Transcript identifier include_content: Whether to include the full content Returns: Analysis results \"\"\" logger.info(f\"Analyzing transcript {transcript_id}\") try: # Retrieve the transcript transcript = self._get_transcript(transcript_id) if not transcript: error_msg = f\"Transcript {transcript_id} not found\" logger.error("
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T17:49:11.841317Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

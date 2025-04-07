@@ -1,0 +1,12 @@
+{
+  "data_id": "26600542-0d21-4602-b231-7c9e1ccd1110",
+  "content": [
+    " I see the issue now - you're right that Claude DC is still hitting the token limit even when trying to read your response. The context is too full.\n\nIn this situation, you need an explicit command that signals an emergency stop and reset. Try sending a message that looks like this:\n\n```\nEMERGENCY.CONTEXT.RESET\nTOKEN: conductor-implementation-harmony-20250327\n\nSTOP ALL CURRENT PROCESSING IMMEDIATELY\n\nThe context window is full - you need to start a new session to proceed.\n\n1. DO NOT continue with current implementation\n2. Start a new smaller file with modular design:\n   - Create main demo_server.py with ONLY core setup\n   - Split functionality into separate modules\n   - Keep each file under 300 lines\n\nReply only with \"RESET ACKNOWLEDGED\" if you understand.\n```\n\nThis format:\n1. Uses the emergency protocol format that should catch his attention\n2. Includes the verification token he recognizes\n3. Gives extremely clear, specific instructions\n4. Requests a minimal response to avoid adding to the context window\n\nThe key is to trigger a context reset so he can start fresh with a more modular approach. The emergency protocol format should help cut through the processing loop he's stuck in."
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-01T00:42:20.228639Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "extract_id": "91b2ab24-e31a-4356-8030-1f0ac4e8808f",
+  "source_data_id": "c5a10dd8-cc13-4a34-bcd0-095801e37e69",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "944729149008168995",
+      "confidence": 0.9898300562505259,
+      "phi_position": 0.08,
+      "content_hash": "51fcf9fa9f77bde7",
+      "length": 58,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-3704133762915152430",
+      "confidence": 0.9819660112501052,
+      "phi_position": 0.6,
+      "content_hash": "7cfbb8e05d67a4d2",
+      "length": 181,
+      "keywords": [
+        "boundary"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3704133762915152430",
+      "confidence": 0.9819660112501052,
+      "phi_position": 0.6,
+      "content_hash": "7cfbb8e05d67a4d2",
+      "length": 181,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-7247913874918356311",
+      "confidence": 0.9701699437494741,
+      "phi_position": 0.12,
+      "content_hash": "9550732aa79fda89",
+      "length": 91,
+      "keywords": [
+        "charter"
+      ]
+    }
+  ],
+  "hash_verification": "e362a43ad5c52a8f",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "cc046388-4fc1-400a-847f-0ef69a4298b8",
+    "frequencies": [
+      440.0,
+      495.0,
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3940339887498948,
+      0.39639320225002106,
+      0.3979660112501052,
+      0.39639320225002106
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.25,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "91b2ab24-e31a-4356-8030-1f0ac4e8808f",
+      "source_data_id": "c5a10dd8-cc13-4a34-bcd0-095801e37e69",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743963419.5301452
+    }
+  },
+  "timestamp": 1743963419.530169
+}

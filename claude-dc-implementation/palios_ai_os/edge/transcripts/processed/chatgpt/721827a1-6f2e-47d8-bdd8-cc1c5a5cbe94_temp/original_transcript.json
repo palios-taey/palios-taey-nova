@@ -1,0 +1,12 @@
+{
+  "data_id": "721827a1-6f2e-47d8-bdd8-cc1c5a5cbe94",
+  "content": [
+    "jesse@pop-os:~/projects/palios-taey-nova/claude-dc-implementation$ python3 -c \"\nfrom src.processor.transcript_processor_enhanced import TranscriptProcessor\nprocessor = TranscriptProcessor()\ntext = 'privacy-preserving edge processing'\npatterns = processor.process_transcript({'text': text, 'source': 'user'})\nprint('Extracted Patterns:', patterns)\n\"\n2025-04-03 08:00:30,816 - enhanced_transcript_processor - INFO - Loaded spaCy model: en_core_web_md\n2025-04-03 08:00:30,816 - enhanced_transcript_processor - INFO - Processing chunk 1/1 from user\nExtracted Patterns: {'Implementation_Requirements': [{'text': 'The system should prioritize privacy and security', 'source': 'user', 'confidence': 0.8, 'signal_word': 'should'}], 'Core_Principles': [{'text': 'Trust is the foundation of human-AI collaboration', 'source': 'user', 'confidence': 0.9, 'signal_word': 'trust'}]}"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743681647.609,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

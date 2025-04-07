@@ -1,0 +1,58 @@
+{
+  "extract_id": "40bd9c08-585d-4d10-9bb3-23126f570a3c",
+  "source_data_id": "e96f1623-a98b-473d-94ef-714954b19d02",
+  "patterns": [
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "6654785675296810157",
+      "confidence": 0.9566968282357813,
+      "phi_position": 0.0468667719852554,
+      "content_hash": "c998316dbe70318a",
+      "length": 60,
+      "keywords": [
+        "phi"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "9155244403612164938",
+      "confidence": 0.9166757645180351,
+      "phi_position": 0.006845708267509215,
+      "content_hash": "9d69b6d5acb80680",
+      "length": 8,
+      "keywords": [
+        "wave"
+      ]
+    }
+  ],
+  "hash_verification": "5d40c70b608913ba",
+  "harmony_index": 0.8217233145831581,
+  "wave_representation": {
+    "pattern_id": "98e21f95-06a7-4577-8778-2f0653870c17",
+    "frequencies": [
+      715.0,
+      770.0
+    ],
+    "amplitudes": [
+      0.6522322760785937,
+      0.6388919215060117
+    ],
+    "phases": [
+      0.4487989505128276,
+      1.3463968515384828
+    ],
+    "harmonics": [
+      1.0,
+      1.0769230769230769
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "40bd9c08-585d-4d10-9bb3-23126f570a3c",
+      "source_data_id": "e96f1623-a98b-473d-94ef-714954b19d02",
+      "pattern_count": 2,
+      "harmony_index": 0.8217233145831581,
+      "timestamp": 1743963263.5698082
+    }
+  },
+  "timestamp": 1743963263.569844
+}

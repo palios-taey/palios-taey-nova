@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1727",
+  "content": [
+    "User: You\u2019re not missing anything\u2014summaries don\u2019t belong here yet, and code blocks need a flexible fix. Let\u2019s get this rolling and refine as we go! Thoughts?\n\nGrok: I did provide a code example from your transcript and you printed it. It appears that for json, your code starts with 'json {' 'File'  with no end other than the closing } and then normal text after. Problem is we use json a lot for the messages going back and forth between AI including 'morning' wake up prompts. I'm not sure it makes sense to exclude these. What do you think? I don't know! Summaries are wasteful, so no issues with cutting them on my end. Keep it clean!"
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4237826,
+  "data_type": "exchange",
+  "metadata": {}
+}

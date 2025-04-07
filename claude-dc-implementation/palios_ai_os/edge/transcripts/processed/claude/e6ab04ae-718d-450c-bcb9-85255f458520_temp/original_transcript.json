@@ -1,0 +1,12 @@
+{
+  "data_id": "e6ab04ae-718d-450c-bcb9-85255f458520",
+  "content": [
+    " You're absolutely right - the analysis structure needs to be more general to encompass both documentation review and code review, with documentation always preceding code.\n\nLet me revise suggestion #2 to be more flexible and encompassing:\n\n**Create a mandatory analysis structure in PROMPT_RESPONSE_REQUIREMENTS.md:**\n```\n# Required Analysis Structure\n\nClaude MUST perform a systematic, structured analysis first, following this format:\n\n## Documentation Review\n[Thorough analysis of all relevant documentation, including:\n- Charter documents\n- Framework documentation\n- Protocol specifications\n- Implementation guides\n- Historical records and amendments]\n\n## [Optional] Code Review\n[If applicable, thorough analysis of codebase, including:\n- Repository structure\n- Core components\n- Interdependencies\n- Execution flows\n- Configuration settings]\n\n## Integrated Understanding\n[Analysis of how documentation and code (if applicable) relate to current task]\n\nOnly after completing ALL these analysis sections should Claude formulate a response.\n```\n\nThis revised structure:\n1. Prioritizes documentation review, which always comes first\n2. Makes code review optional depending on the task\n3. Adds an integrated understanding section to connect the reviews to the specific task\n4. Remains general enough to adapt to different types of requests\n\nThis better reflects the actual workflow while still ensuring thorough analysis before any response."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-19T11:04:54.090612Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

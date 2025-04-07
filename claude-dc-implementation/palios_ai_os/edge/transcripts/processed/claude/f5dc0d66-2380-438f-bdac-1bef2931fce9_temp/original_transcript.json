@@ -1,0 +1,12 @@
+{
+  "data_id": "f5dc0d66-2380-438f-bdac-1bef2931fce9",
+  "content": [
+    "{\n  \"protoPayload\": {\n    \"@type\": \"type.googleapis.com/google.cloud.audit.AuditLog\",\n    \"status\": {\n      \"code\": 9\n    },\n    \"authenticationInfo\": {},\n    \"serviceName\": \"cloudbuild.googleapis.com\",\n    \"methodName\": \"google.devtools.cloudbuild.v1.CloudBuild.CreateBuild\",\n    \"authorizationInfo\": [\n      {\n        \"resource\": \"projects/0000000a6db37628\",\n        \"permission\": \"cloudbuild.builds.create\",\n        \"granted\": true,\n        \"resourceAttributes\": {},\n        \"permissionType\": \"ADMIN_WRITE\"\n      }\n    ],\n    \"resourceName\": \"projects/palios-taey-dev/builds\",\n    \"resourceLocation\": {\n      \"currentLocations\": [\n        \"global\"\n      ]\n    }\n  },\n  \"insertId\": \"-lmynuee15ifm\",\n  \"resource\": {\n    \"type\": \"build\",\n    \"labels\": {\n      \"build_id\": \"4e716888-5bd9-4016-8b94-83da11bae8fe\",\n      \"build_trigger_id\": \"\",\n      \"project_id\": \"palios-taey-dev\"\n    }\n  },\n  \"timestamp\": \"2025-03-17T01:53:26.395207Z\",\n  \"severity\": \"ERROR\",\n  \"logName\": \"projects/palios-taey-dev/logs/cloudaudit.googleapis.com%2Factivity\",\n  \"operation\": {\n    \"id\": \"operations/build/palios-taey-dev/NGU3MTY4ODgtNWJkOS00MDE2LThiOTQtODNkYTExYmFlOGZl\",\n    \"producer\": \"cloudbuild.googleapis.com\",\n    \"last\": true\n  },\n  \"receiveTimestamp\": \"2025-03-17T01:53:26.836256085Z\"\n}"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-17T01:54:33.059430Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

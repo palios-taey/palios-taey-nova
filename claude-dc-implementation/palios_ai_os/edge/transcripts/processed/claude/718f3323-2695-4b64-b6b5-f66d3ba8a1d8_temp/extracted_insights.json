@@ -1,0 +1,158 @@
+{
+  "extract_id": "763f575d-b40c-4191-b10e-93a6acc53e65",
+  "source_data_id": "718f3323-2695-4b64-b6b5-f66d3ba8a1d8",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-1521014230162128883",
+      "confidence": 0.9812586276790973,
+      "phi_position": 0.07142857142857142,
+      "content_hash": "5f6f05b2c58cbaff",
+      "length": 155,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-4981020388431020870",
+      "confidence": 0.9533945826786766,
+      "phi_position": 0.5714285714285714,
+      "content_hash": "dfb32b8c053b9b45",
+      "length": 256,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "2720933681463765755",
+      "confidence": 0.9473128008923313,
+      "phi_position": 0.14285714285714285,
+      "content_hash": "6329326e0f96b066",
+      "length": 212,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "2720933681463765755",
+      "confidence": 0.9473128008923313,
+      "phi_position": 0.14285714285714285,
+      "content_hash": "6329326e0f96b066",
+      "length": 212,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "4202380560447405478",
+      "confidence": 0.9316123194646012,
+      "phi_position": 0.7857142857142857,
+      "content_hash": "258070ea39a0bdba",
+      "length": 88,
+      "keywords": [
+        "foundation"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "3011646323595299822",
+      "confidence": 0.9255305376782559,
+      "phi_position": 0.9285714285714286,
+      "content_hash": "51e70e3eb3d20d2f",
+      "length": 133,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "3011646323595299822",
+      "confidence": 0.9255305376782559,
+      "phi_position": 0.9285714285714286,
+      "content_hash": "51e70e3eb3d20d2f",
+      "length": 133,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "3011646323595299822",
+      "confidence": 0.9255305376782559,
+      "phi_position": 0.9285714285714286,
+      "content_hash": "51e70e3eb3d20d2f",
+      "length": 133,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "3011646323595299822",
+      "confidence": 0.9255305376782559,
+      "phi_position": 0.9285714285714286,
+      "content_hash": "51e70e3eb3d20d2f",
+      "length": 133,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4608424312830174111",
+      "confidence": 0.885006902143278,
+      "phi_position": 0.35714285714285715,
+      "content_hash": "da5a7c0cbbfac7c0",
+      "length": 140,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "17f425faed9151d3",
+  "harmony_index": 0.6028531921599685,
+  "wave_representation": {
+    "pattern_id": "20db1f28-8e30-4b77-910a-ccd36ef59258",
+    "frequencies": [
+      440.0,
+      495.0,
+      605.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.35064935064935066,
+      0.3551626513961231,
+      0.3520766671427807,
+      0.34894558952926863,
+      0.3520766671427807
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.375,
+      1.5,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "763f575d-b40c-4191-b10e-93a6acc53e65",
+      "source_data_id": "718f3323-2695-4b64-b6b5-f66d3ba8a1d8",
+      "pattern_count": 10,
+      "harmony_index": 0.6028531921599685,
+      "timestamp": 1743965130.627957
+    }
+  },
+  "timestamp": 1743965130.62797
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "5861c2ee-d856-44cb-8866-d1e2e711b22c",
+  "content": [
+    "Ok, got it. So the plan for the transcripts that we came up with was to have the preprocessing tool break them up and strip the code out and create the files to be sent to DeepSearch API. It can only do 125K characters at a time, so I'm wondering if there is a better way to do this with another AI that can accept more characters/content. What do you think is the best way to figure this out? Like this is all stuff we have places for in our system, but it is tough getting started, so I'm trying to think through this with you. What is the best way to do this? Can we do your transcripts faster first with you/Claude DC? Do we have what we need set up in the platform to accept it? Like is there anything that needs to be done there first? I think we left off with that setting up the APIs and building out the database tables in Firestore. I think this would probably be good for you to work with Claude DC on, to get all that figured out."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-24T19:31:30.328339Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "extract_id": "76ca514b-e028-407f-90d4-0243075c4a6b",
+  "source_data_id": "4a0c9b17-293d-4c30-b664-718bb4e318f9",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-7306241185381607258",
+      "confidence": 0.9723300562505259,
+      "phi_position": 0.0625,
+      "content_hash": "d57665764ce54edd",
+      "length": 85,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-7565802416962188525",
+      "confidence": 0.9653640450004208,
+      "phi_position": 0.4375,
+      "content_hash": "3bbd144f842cfc65",
+      "length": 233,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "3105669820134559342",
+      "confidence": 0.9583980337503155,
+      "phi_position": 0.8125,
+      "content_hash": "423ff446d2d4b867",
+      "length": 127,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3931797719709034362",
+      "confidence": 0.9514320225002104,
+      "phi_position": 0.1875,
+      "content_hash": "d6b8fe0b58be09af",
+      "length": 254,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "5635714008011570651",
+      "confidence": 0.9235679774997896,
+      "phi_position": 0.3125,
+      "content_hash": "d29ec764bf53ed38",
+      "length": 108,
+      "keywords": [
+        "believe"
+      ]
+    }
+  ],
+  "hash_verification": "72b35146ed7bb3d5",
+  "harmony_index": 0.8379023057014187,
+  "wave_representation": {
+    "pattern_id": "dfd32042-9b79-426e-aa4f-b3ecbccfa5c0",
+    "frequencies": [
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.6481553370833684,
+      0.9803600187501753
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.2
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "76ca514b-e028-407f-90d4-0243075c4a6b",
+      "source_data_id": "4a0c9b17-293d-4c30-b664-718bb4e318f9",
+      "pattern_count": 5,
+      "harmony_index": 0.8379023057014187,
+      "timestamp": 1743963322.2927387
+    }
+  },
+  "timestamp": 1743963322.2927675
+}

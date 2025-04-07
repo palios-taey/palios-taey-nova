@@ -1,0 +1,129 @@
+{
+  "extract_id": "031031ea-2285-4401-8e7b-f6bc3161a8ac",
+  "source_data_id": "exchange_1009",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2312907296378858310",
+      "confidence": 0.9905506121645999,
+      "phi_position": 0.4626865671641791,
+      "content_hash": "c6529cd2dd0687b3",
+      "length": 73,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "2312907296378858310",
+      "confidence": 0.9905506121645999,
+      "phi_position": 0.4626865671641791,
+      "content_hash": "c6529cd2dd0687b3",
+      "length": 73,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-7322580556896404871",
+      "confidence": 0.9878126195151358,
+      "phi_position": 0.22388059701492538,
+      "content_hash": "067660b58b9a30ca",
+      "length": 62,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-8765216718022986051",
+      "confidence": 0.954606175653511,
+      "phi_position": 0.04477611940298507,
+      "content_hash": "292444afea06eb09",
+      "length": 66,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "6683008539796685168",
+      "confidence": 0.9396808025191826,
+      "phi_position": 0.029850746268656716,
+      "content_hash": "7322c28ec762c002",
+      "length": 150,
+      "keywords": [
+        "must"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6683008539796685168",
+      "confidence": 0.9396808025191826,
+      "phi_position": 0.029850746268656716,
+      "content_hash": "7322c28ec762c002",
+      "length": 150,
+      "keywords": [
+        "need",
+        "must"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "6683008539796685168",
+      "confidence": 0.9396808025191826,
+      "phi_position": 0.029850746268656716,
+      "content_hash": "7322c28ec762c002",
+      "length": 150,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "5665499540406722738",
+      "confidence": 0.9247554293848543,
+      "phi_position": 0.014925373134328358,
+      "content_hash": "c8b094d597a1e2d8",
+      "length": 125,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "fcc0880c68e0d2ee",
+  "harmony_index": 0.7774064789229711,
+  "wave_representation": {
+    "pattern_id": "139b64e3-5223-4774-a84d-1abbbf4987ef",
+    "frequencies": [
+      440.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.21552008916879806,
+      0.43669237940930916,
+      1.0
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.625
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "031031ea-2285-4401-8e7b-f6bc3161a8ac",
+      "source_data_id": "exchange_1009",
+      "pattern_count": 8,
+      "harmony_index": 0.7774064789229711,
+      "timestamp": 1743976728.1207564
+    }
+  },
+  "timestamp": 1743976728.1207795
+}

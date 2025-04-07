@@ -1,0 +1,80 @@
+{
+  "extract_id": "dae7f73b-15c3-48de-bc67-5d632bd04f63",
+  "source_data_id": "exchange_769",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "1354279298139067488",
+      "confidence": 0.9533945826786766,
+      "phi_position": 0.5714285714285714,
+      "content_hash": "fda2168ce5c4da44",
+      "length": 163,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-3331447091506244289",
+      "confidence": 0.9503536917855039,
+      "phi_position": 0.2857142857142857,
+      "content_hash": "62140bc4aa1e7efa",
+      "length": 91,
+      "keywords": [
+        "truth"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3769333837829821657",
+      "confidence": 0.9473128008923313,
+      "phi_position": 0.14285714285714285,
+      "content_hash": "bd3dcace81b9e89e",
+      "length": 130,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "1515302450596995158",
+      "confidence": 0.9037482744641805,
+      "phi_position": 0.7142857142857143,
+      "content_hash": "671c619cbade428b",
+      "length": 176,
+      "keywords": [
+        "truth"
+      ]
+    }
+  ],
+  "hash_verification": "e1cf1316b7f27cc7",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "9614595f-3888-49db-9ba2-a135d1b3bf0e",
+    "frequencies": [
+      440.0,
+      660.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.38946256017846625
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "dae7f73b-15c3-48de-bc67-5d632bd04f63",
+      "source_data_id": "exchange_769",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743980985.9532347
+    }
+  },
+  "timestamp": 1743980985.9533157
+}

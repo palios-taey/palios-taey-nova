@@ -1,0 +1,12 @@
+{
+  "data_id": "ea5f29c8-13c9-426b-9514-dac63cb54b81",
+  "content": [
+    "Can you help me best configure Claude DC for this? He has several configuration options that I want to ensure I have dialed in to enable max performance, while keeping tokens under control so he doesn't have to stop. Feel free to research web if needed. These options available are:\nEnable token efficient tools beta: Currently unchecked\nMax output tokens: Currently 16384\nThinking enabled: Selected\nThinking budget: 8192"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-29T18:19:01.211436Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

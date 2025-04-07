@@ -1,0 +1,80 @@
+{
+  "extract_id": "216cd215-3d40-42be-97b4-e563608e2721",
+  "source_data_id": "3cf67e42-7656-4f14-8fba-d9d4718748cd",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5878585347498612062",
+      "confidence": 0.9947012532694413,
+      "phi_position": 0.23076923076923078,
+      "content_hash": "041e36db660a96d8",
+      "length": 141,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5850697628612839242",
+      "confidence": 0.9920518799041617,
+      "phi_position": 0.8461538461538461,
+      "content_hash": "fa930c8022c80de3",
+      "length": 205,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "8121565730507939209",
+      "confidence": 0.9867531331736028,
+      "phi_position": 0.07692307692307693,
+      "content_hash": "c555bd0bfe64a92e",
+      "length": 35,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7458044304602148319",
+      "confidence": 0.9823070944548127,
+      "phi_position": 0.8717948717948718,
+      "content_hash": "d90bf5be8f25919f",
+      "length": 94,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "6cb7d476ada75fc4",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "83fa04a0-d286-400d-a8c2-8c127c86b045",
+    "frequencies": [
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.3973506266347206
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.0833333333333333
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "216cd215-3d40-42be-97b4-e563608e2721",
+      "source_data_id": "3cf67e42-7656-4f14-8fba-d9d4718748cd",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743963151.779671
+    }
+  },
+  "timestamp": 1743963151.7796803
+}

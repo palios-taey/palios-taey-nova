@@ -1,0 +1,114 @@
+{
+  "extract_id": "616cee4f-c98a-4886-bd1f-8cbc8bdfc6a8",
+  "source_data_id": "3d70e81d-dada-4e89-a514-7e006180d9ac",
+  "patterns": [
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-8389391108754099484",
+      "confidence": 0.987229169144842,
+      "phi_position": 0.6052631578947368,
+      "content_hash": "751ececcab25bcc4",
+      "length": 64,
+      "keywords": [
+        "detect"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-5351737523624032912",
+      "confidence": 0.9597521880261053,
+      "phi_position": 0.27631578947368424,
+      "content_hash": "60e10ff2fa1da02e",
+      "length": 109,
+      "keywords": [
+        "significant"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "3351263646764729905",
+      "confidence": 0.9349846540791578,
+      "phi_position": 0.17105263157894737,
+      "content_hash": "b335868958d81361",
+      "length": 39,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "5487759775177140121",
+      "confidence": 0.9229879509873681,
+      "phi_position": 0.013157894736842105,
+      "content_hash": "1ebaea729a5c17de",
+      "length": 147,
+      "keywords": [
+        "worth"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2292692685993176485",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "975c94b40b895ad9",
+      "length": 128,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-2292692685993176485",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "975c94b40b895ad9",
+      "length": 128,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "47459a6e0a9ddcc2",
+  "harmony_index": 0.6207541847459475,
+  "wave_representation": {
+    "pattern_id": "8595eae2-859d-48b7-b328-4faf6ea18e11",
+    "frequencies": [
+      495.0,
+      550.0,
+      605.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.2764263791541654,
+      0.5546771627162105,
+      0.28388988130640597,
+      0.2728328651786465,
+      0.2728328651786465
+    ],
+    "phases": [
+      0.4487989505128276,
+      1.3463968515384828,
+      3.5903916041026207,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.1111111111111112,
+      1.2222222222222223,
+      1.3333333333333333,
+      1.4444444444444444
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "616cee4f-c98a-4886-bd1f-8cbc8bdfc6a8",
+      "source_data_id": "3d70e81d-dada-4e89-a514-7e006180d9ac",
+      "pattern_count": 6,
+      "harmony_index": 0.6207541847459475,
+      "timestamp": 1743963425.78642
+    }
+  },
+  "timestamp": 1743963425.7864578
+}

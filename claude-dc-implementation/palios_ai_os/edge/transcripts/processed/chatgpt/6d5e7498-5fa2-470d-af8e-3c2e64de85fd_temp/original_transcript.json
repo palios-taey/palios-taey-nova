@@ -1,0 +1,12 @@
+{
+  "data_id": "6d5e7498-5fa2-470d-af8e-3c2e64de85fd",
+  "content": [
+    "I think the router is just using static defaults at this time and that it is set to update itself as it actually interacts. \n\njesse@pop-os:~/projects/palios-taey-nova/claude-dc-implementation$ python3 -c \"\nfrom src.processor.transcript_processor_enhanced import TranscriptProcessor\nprocessor = TranscriptProcessor()\n\ntexts = [\n  'The system should prioritize privacy and security',\n  'Trust is the foundation of human-AI collaboration'\n]\n\nembeddings = [processor.nlp(text).vector for text in texts]\nprint('Embeddings:', embeddings)\n\"\n2025-04-03 09:45:44,752 - enhanced_transcript_processor - INFO - Loaded spaCy model: en_core_web_md\nTraceback (most recent call last):\n  File \"<string>\", line 10, in <module>\n  File \"<string>\", line 10, in <listcomp>\nAttributeError: 'TranscriptProcessor' object has no attribute 'nlp'"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743687993.0,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

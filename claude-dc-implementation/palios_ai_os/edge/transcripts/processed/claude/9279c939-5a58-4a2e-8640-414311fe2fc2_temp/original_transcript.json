@@ -1,0 +1,12 @@
+{
+  "data_id": "9279c939-5a58-4a2e-8640-414311fe2fc2",
+  "content": [
+    "ERROR: Policy modification failed. For a binding with condition, run \"gcloud alpha iam policies lint-condition\" to identify issues in condition.\nERROR: (gcloud.organizations.add-iam-policy-binding) INVALID_ARGUMENT: The role name must be in the form \"roles/{role}\", \"organizations/{organization_id}/roles/{role}\", or \"projects/{project_id}/roles/{role}\".\njesse@pop-os:~$"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-28T18:48:03.956107Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

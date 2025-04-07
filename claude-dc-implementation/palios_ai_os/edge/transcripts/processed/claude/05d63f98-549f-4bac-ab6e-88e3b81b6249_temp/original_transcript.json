@@ -1,0 +1,12 @@
+{
+  "data_id": "05d63f98-549f-4bac-ab6e-88e3b81b6249",
+  "content": [
+    "I'm installing these but getting this message for all of them, is this OK:\n\njesse@pop-os:~$ sudo apt-get install google-cloud-cli-cloud-build-local\nReading package lists... Done\nBuilding dependency tree... Done\nReading state information... Done\nE: Unable to locate package google-cloud-cli-cloud-build-local"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-28T18:34:36.323890Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

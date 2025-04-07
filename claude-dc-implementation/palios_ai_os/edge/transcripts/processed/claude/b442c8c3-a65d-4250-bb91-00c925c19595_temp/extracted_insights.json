@@ -1,0 +1,80 @@
+{
+  "extract_id": "0f0da93c-43fd-4f4a-b9e7-8dbfa7cf7fc3",
+  "source_data_id": "b442c8c3-a65d-4250-bb91-00c925c19595",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2467956843169244232",
+      "confidence": 0.9881815053178811,
+      "phi_position": 0.4603174603174603,
+      "content_hash": "e4be6ac2882b0fca",
+      "length": 55,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-441467097953971959",
+      "confidence": 0.9810860932338115,
+      "phi_position": 0.873015873015873,
+      "content_hash": "f53838ab6bf52cdd",
+      "length": 293,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-441467097953971959",
+      "confidence": 0.9810860932338115,
+      "phi_position": 0.873015873015873,
+      "content_hash": "f53838ab6bf52cdd",
+      "length": 293,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-9032891148283732802",
+      "confidence": 0.9324534153170395,
+      "phi_position": 0.5396825396825397,
+      "content_hash": "b7414b90643562d9",
+      "length": 37,
+      "keywords": [
+        "implement"
+      ]
+    }
+  ],
+  "hash_verification": "f77f529e4ade7b08",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "f67272df-020d-40e7-abc9-b89d5610d86a",
+    "frequencies": [
+      440.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3962172186467623,
+      1.0
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "0f0da93c-43fd-4f4a-b9e7-8dbfa7cf7fc3",
+      "source_data_id": "b442c8c3-a65d-4250-bb91-00c925c19595",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743965137.534607
+    }
+  },
+  "timestamp": 1743965137.5346441
+}

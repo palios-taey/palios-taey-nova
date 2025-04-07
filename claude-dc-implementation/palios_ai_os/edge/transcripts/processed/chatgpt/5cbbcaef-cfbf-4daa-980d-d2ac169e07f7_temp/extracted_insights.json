@@ -1,0 +1,86 @@
+{
+  "extract_id": "69a61e8b-6c74-4ba9-8fc7-00796df6fa71",
+  "source_data_id": "5cbbcaef-cfbf-4daa-980d-d2ac169e07f7",
+  "patterns": [
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-785256300758192074",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "89c7832297c5df95",
+      "length": 199,
+      "keywords": [
+        "pattern",
+        "identify"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-785256300758192074",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "89c7832297c5df95",
+      "length": 199,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-785256300758192074",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "89c7832297c5df95",
+      "length": 199,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1758526571250364173",
+      "confidence": 0.9027346441664563,
+      "phi_position": 0.3333333333333333,
+      "content_hash": "626bb2526a3b1a72",
+      "length": 156,
+      "keywords": [
+        "implement",
+        "build"
+      ]
+    }
+  ],
+  "hash_verification": "091fafbe0358c404",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "b93eef6b-e473-48ab-bf19-d4477862bba5",
+    "frequencies": [
+      605.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.3819660112501052,
+      0.7625129400833965,
+      0.3819660112501052
+    ],
+    "phases": [
+      3.5903916041026207,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.0909090909090908,
+      1.3636363636363635
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "69a61e8b-6c74-4ba9-8fc7-00796df6fa71",
+      "source_data_id": "5cbbcaef-cfbf-4daa-980d-d2ac169e07f7",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743963256.5641458
+    }
+  },
+  "timestamp": 1743963256.564182
+}

@@ -1,0 +1,117 @@
+{
+  "extract_id": "77b0f3a9-70ed-43c7-a80a-56d951b1547a",
+  "source_data_id": "exchange_623",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2032304823037555382",
+      "confidence": 0.9948692370565568,
+      "phi_position": 0.6129032258064516,
+      "content_hash": "d8d2a4dd3cb13da2",
+      "length": 61,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "2383423079069668753",
+      "confidence": 0.993395750201087,
+      "phi_position": 0.0967741935483871,
+      "content_hash": "c8fc1d3e1bb84736",
+      "length": 122,
+      "keywords": [
+        "notice"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8183009000946537918",
+      "confidence": 0.9897384741131137,
+      "phi_position": 0.22580645161290322,
+      "content_hash": "a41ae3c72fd001de",
+      "length": 197,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8118054025952565558",
+      "confidence": 0.9846077111696704,
+      "phi_position": 0.8387096774193549,
+      "content_hash": "9ef387609e2db0e6",
+      "length": 258,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-471896976714878762",
+      "confidence": 0.9780034613707573,
+      "phi_position": 0.25806451612903225,
+      "content_hash": "a7540ef4eb31ecde",
+      "length": 85,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-852540582850929208",
+      "confidence": 0.9472188837100983,
+      "phi_position": 0.41935483870967744,
+      "content_hash": "8fe29c41700d35f6",
+      "length": 105,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5601425147518489136",
+      "confidence": 0.9288796211688289,
+      "phi_position": 0.16129032258064516,
+      "content_hash": "5839477156f42350",
+      "length": 170,
+      "keywords": [
+        "develop"
+      ]
+    }
+  ],
+  "hash_verification": "f365cb5b54c47672",
+  "harmony_index": 0.7880869884079644,
+  "wave_representation": {
+    "pattern_id": "7cc0c770-67bc-4cab-8795-148855611c7c",
+    "frequencies": [
+      605.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.24917446877513588,
+      1.0,
+      0.24725043267134467
+    ],
+    "phases": [
+      3.5903916041026207,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.0909090909090908,
+      1.1818181818181819
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "77b0f3a9-70ed-43c7-a80a-56d951b1547a",
+      "source_data_id": "exchange_623",
+      "pattern_count": 7,
+      "harmony_index": 0.7880869884079644,
+      "timestamp": 1743976710.3229685
+    }
+  },
+  "timestamp": 1743976710.3230503
+}

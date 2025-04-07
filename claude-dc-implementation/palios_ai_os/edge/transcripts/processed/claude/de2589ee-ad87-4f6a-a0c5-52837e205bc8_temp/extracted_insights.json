@@ -1,0 +1,99 @@
+{
+  "extract_id": "421d11be-a6f3-449c-a823-fc91e28d7d0e",
+  "source_data_id": "de2589ee-ad87-4f6a-a0c5-52837e205bc8",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2338013364055548129",
+      "confidence": 0.9901699437494741,
+      "phi_position": 0.1,
+      "content_hash": "bbe3b9e2e8b3eeb5",
+      "length": 85,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6028876863971134182",
+      "confidence": 0.9819660112501052,
+      "phi_position": 0.6,
+      "content_hash": "e0fece4e5b64bd20",
+      "length": 49,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "734671221101270198",
+      "confidence": 0.9639320225002104,
+      "phi_position": 0.2,
+      "content_hash": "20f2859d5b4044bf",
+      "length": 60,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7079685064054708026",
+      "confidence": 0.9541019662496845,
+      "phi_position": 0.9,
+      "content_hash": "b8d1609d07060260",
+      "length": 141,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1554171873712704419",
+      "confidence": 0.9278640450004209,
+      "phi_position": 0.4,
+      "content_hash": "588db45295df2d15",
+      "length": 60,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "9157517476440265572",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "55d3283928241e34",
+      "length": 131,
+      "keywords": [
+        "implement",
+        "should"
+      ]
+    }
+  ],
+  "hash_verification": "f1f078c033432fe1",
+  "harmony_index": 1.0,
+  "wave_representation": {
+    "pattern_id": "bc944651-af4e-43af-85f5-3c3fa10d008f",
+    "frequencies": [
+      660.0
+    ],
+    "amplitudes": [
+      1.0
+    ],
+    "phases": [
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "421d11be-a6f3-449c-a823-fc91e28d7d0e",
+      "source_data_id": "de2589ee-ad87-4f6a-a0c5-52837e205bc8",
+      "pattern_count": 6,
+      "harmony_index": 1.0,
+      "timestamp": 1743965038.1004486
+    }
+  },
+  "timestamp": 1743965038.1004603
+}

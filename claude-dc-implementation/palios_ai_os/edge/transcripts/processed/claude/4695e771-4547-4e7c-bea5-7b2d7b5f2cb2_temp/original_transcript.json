@@ -1,0 +1,12 @@
+{
+  "data_id": "4695e771-4547-4e7c-bea5-7b2d7b5f2cb2",
+  "content": [
+    " You'd be in your home directory when entering the first command (mkdir -p claude-dc-docker/{cache,code}). After completing all the steps above, you'll need to:\n\n1. Navigate to the directory: `cd claude-dc-docker`\n2. Run the Docker script: `./run-claude-dc.sh`\n3. Once it's running, access the dashboard at: http://localhost:8502"
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-02T03:40:25.603859Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

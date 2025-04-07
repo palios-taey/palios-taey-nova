@@ -1,0 +1,12 @@
+{
+  "data_id": "17ee925c-ff21-4aad-a92a-20e8cac80dce",
+  "content": [
+    " Looking at the deployment failure in detail, the root causes were:\n\n1. **Import Path Issue**: In the initial deployment, we had an import statement in main.py that tried to import `environment_config` directly, but it couldn't find it because in the containerized environment, Python needs the full module path `src.environment_config`.\n\n2. **ASGI/WSGI Mismatch**: The more critical issue was a mismatch in how we were trying to serve the FastAPI application. FastAPI is an ASGI (Asynchronous Server Gateway Interface) application, but we were trying to run it with Gunicorn without an ASGI worker. The error logs showed: `TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'` which is a clear indicator of this mismatch.\n\nWe fixed both issues by:\n1. Updating import statements to use package-relative paths\n2. Adding the Uvicorn worker to Gunicorn via `--worker-class uvicorn.workers.UvicornWorker`\n\nThis experience highlights the importance of understanding how modern Python web frameworks like FastAPI interact with different server configurations, especially in containerized environments. In the future, we should ensure our deployment scripts include comprehensive testing of the application startup process before final deployment.\n\nWould you like me to add any specific checks or tests to our deployment process to prevent similar issues in the future?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-19T10:20:05.386158Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

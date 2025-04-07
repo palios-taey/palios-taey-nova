@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1086",
+  "content": [
+    "User: I was in cmd, do I need to be in SDK for this?\n\nGemini: To clarify the steps:\n\nStay in your regular cmd.exe command prompt (the one you've been using in C:\\ai-execution-system>).\nFollow the steps I provided to edit the System Environment Variables (Windows key -> \"environment variables\" -> \"Edit the system environment variables\" -> ... -> Edit the Path variable and add the Scripts directory).\nIMPORTANT: After you have added the Scripts directory to the Path and clicked \"OK\" on all the Environment Variables windows, you must close your current command prompt window.\nOpen a brand new command prompt window (Windows key -> cmd -> Enter).\nIn this new command prompt, type pip --version and press Enter.\nThe reason you need to open a new command prompt is that environment variables are loaded when a command prompt starts up. Changes you make to environment variables will only be reflected in command prompts that are opened after you make the changes.\n\nSo, you can perform all these steps from your regular cmd.exe prompt. Just make sure you open a new one to test pip --version after modifying the PATH.\n\nLet me know if pip --version works in the new command prompt!\n\nLogo for Gemini Apps\nGemini Apps"
+  ],
+  "source": "gemini",
+  "timestamp": 1743976679.6538453,
+  "data_type": "exchange",
+  "metadata": {}
+}

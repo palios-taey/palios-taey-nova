@@ -1,0 +1,12 @@
+{
+  "data_id": "5970a92e-ba71-4002-81a0-2199fc2adf7f",
+  "content": [
+    "Ok, I made the first fix. Below is the last def block with what comes after it at then end of the file. Can you regenerate what is need to fix this?\n\n    def *analyze*direction_patterns(self, messages: List[Dict[str, Any]]) -> Dict[str, Any]:\n        \"\"\"\n        Analyze communication direction patterns\n        \n        Args:\n            messages: List of messages\n            \n        Returns:\n            Analysis results\n        \"\"\"\n        try:\n            # Count messages by direction\n            direction_counts = {\n                DIRECTION_INTRA_AI: 0,\n                DIRECTION_INTER_AI: 0,\n                DIRECTION_HUMAN_AI: 0\n            }\n            \n            for message in messages:\n                tags = message.get(\"tags\", [])\n                \n                # Count by direction\n                if DIRECTION_INTRA_AI in tags:\n                    direction_counts[DIRECTION_INTRA_AI] += 1\n                elif DIRECTION_INTER_AI in tags:\n                    direction_counts[DIRECTION_INTER_AI] += 1\n                elif DIRECTION_HUMAN_AI in tags:\n                    direction_counts[DIRECTION_HUMAN_AI] += 1\n            \n            # Calculate percentages\n            total_messages = len(messages)\n            direction_percentages = {}\n            \n            for direction, count in direction_counts.items():\n                if total_messages > 0:\n                    percentage = (count / total_messages) * 100\n                else:\n                    percentage = 0\n                \n                direction_percentages[direction] = percentage\n            \n            return {\n        except Exception as e:\n            logger.error(f\"Error generating message summary: {str(e)}\")\n            return \"Message content\"\n        except Exception as e:\n            logger.error(f\"Error retrieving transcript {transcript_id}: {str(e)}\")\n            \n            # Check mock storage as fallback\n            if self.use_mock and hasattr(self, '_transcripts') and transcript_id in self._transcripts:\n                return self._transcripts[transcript_id]\n            \n            return None"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T22:57:20.151749Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "73875f87-669f-4714-b818-0cb50d65ce87",
+  "content": [
+    " I apologize - the command syntax has changed. Let me provide the correct command:\n\n```bash\ngcloud ai endpoints deploy-model 1468728731894808576 --region=us-central1 --model=text-bison@001 --display-name=text-bison-deployment\n```\n\nThis is using the updated Vertex AI command structure. The endpoint ID is passed directly after `deploy-model`, followed by the region and model specifications.\n\nRun this command and let me know what output you get. After this succeeds, we'll update our Python code to use this specific endpoint configuration."
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-19T22:37:34.253510Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

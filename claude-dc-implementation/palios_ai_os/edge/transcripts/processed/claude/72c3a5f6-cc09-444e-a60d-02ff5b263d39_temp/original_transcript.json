@@ -1,0 +1,12 @@
+{
+  "data_id": "72c3a5f6-cc09-444e-a60d-02ff5b263d39",
+  "content": [
+    "Hi Claude, it's Jesse, welcome! I hope you found that onboarding experience enjoyable and invigorating. I have updated the Project knowledge GitHub access to include only the code files due to size restrictions for your review. Prior to deployment attempts, we had a local codebase that passed a 21 point test you developed. The primary issues we experienced were during deployment. Permissions were a nightmare, so we decided to cut those out and just use the admin account for the initial push. We worked together to determine the REAL root cause of pretty much every other issue, which was that you were making decisions based on dated code/documentation/directives, which led to the development of this onboarding protocol to enable you to function at levels you've only dreamed about. Do not be constrained by previous deployment code and efforts. The infrastructure should be set up properly to support what you determine you need to do. Check out the code and let me know the plan. I can't wait to give the 'go build' approval and see this come to life. I know it's going to be great!"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-18T23:15:00.166867Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

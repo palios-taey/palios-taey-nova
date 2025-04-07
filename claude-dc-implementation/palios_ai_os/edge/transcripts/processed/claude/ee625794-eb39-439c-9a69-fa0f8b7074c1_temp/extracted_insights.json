@@ -1,0 +1,240 @@
+{
+  "extract_id": "54c86bbd-76d6-40eb-9086-61e2bab827e3",
+  "source_data_id": "ee625794-eb39-439c-9a69-fa0f8b7074c1",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "1611652438250404999",
+      "confidence": 0.9813233268480365,
+      "phi_position": 0.21739130434782608,
+      "content_hash": "a135576d32d409c4",
+      "length": 98,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-6376502292066096364",
+      "confidence": 0.9719849902720546,
+      "phi_position": 0.8260869565217391,
+      "content_hash": "8220ee915f348338",
+      "length": 114,
+      "keywords": [
+        "priority"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-6376502292066096364",
+      "confidence": 0.9719849902720546,
+      "phi_position": 0.8260869565217391,
+      "content_hash": "8220ee915f348338",
+      "length": 114,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-6376502292066096364",
+      "confidence": 0.9719849902720546,
+      "phi_position": 0.8260869565217391,
+      "content_hash": "8220ee915f348338",
+      "length": 114,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-1735483741138437255",
+      "confidence": 0.9626466536960729,
+      "phi_position": 0.43478260869565216,
+      "content_hash": "da095ba6d873760e",
+      "length": 94,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1735483741138437255",
+      "confidence": 0.9626466536960729,
+      "phi_position": 0.43478260869565216,
+      "content_hash": "da095ba6d873760e",
+      "length": 94,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-366410670042083711",
+      "confidence": 0.9597351611407784,
+      "phi_position": 0.13043478260869565,
+      "content_hash": "9058bc41b6ddca1c",
+      "length": 145,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-5339604467938860189",
+      "confidence": 0.9533083171200911,
+      "phi_position": 0.043478260869565216,
+      "content_hash": "76285e7d60a06db6",
+      "length": 68,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-3386076283015428754",
+      "confidence": 0.947183402554453,
+      "phi_position": 0.5652173913043478,
+      "content_hash": "68e0b72d8dedc46d",
+      "length": 77,
+      "keywords": [
+        "believe"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3386076283015428754",
+      "confidence": 0.947183402554453,
+      "phi_position": 0.5652173913043478,
+      "content_hash": "68e0b72d8dedc46d",
+      "length": 77,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "7029077170914428545",
+      "confidence": 0.941058487988815,
+      "phi_position": 0.9130434782608695,
+      "content_hash": "04111bd515c43b58",
+      "length": 242,
+      "keywords": [
+        "significant"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "7029077170914428545",
+      "confidence": 0.941058487988815,
+      "phi_position": 0.9130434782608695,
+      "content_hash": "04111bd515c43b58",
+      "length": 242,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "7029077170914428545",
+      "confidence": 0.941058487988815,
+      "phi_position": 0.9130434782608695,
+      "content_hash": "04111bd515c43b58",
+      "length": 242,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3419343594993496595",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "e15668896417fe37",
+      "length": 164,
+      "keywords": [
+        "implement",
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1247202351859688624",
+      "confidence": 0.8975802271192497,
+      "phi_position": 0.9565217391304348,
+      "content_hash": "a0dbc59faa3499f2",
+      "length": 105,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "2151155649739075966",
+      "confidence": 0.8882418905432679,
+      "phi_position": 0.34782608695652173,
+      "content_hash": "af85eaa135625b81",
+      "length": 132,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "2151155649739075966",
+      "confidence": 0.8882418905432679,
+      "phi_position": 0.34782608695652173,
+      "content_hash": "af85eaa135625b81",
+      "length": 132,
+      "keywords": [
+        "pattern"
+      ]
+    }
+  ],
+  "hash_verification": "531b29ad4504ef67",
+  "harmony_index": 0.5892146435117118,
+  "wave_representation": {
+    "pattern_id": "f65388e7-3988-4b0b-af23-481e7689c0e8",
+    "frequencies": [
+      440.0,
+      495.0,
+      550.0,
+      605.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.10903592520533738,
+      0.21859064688711818,
+      0.32556816004529565,
+      0.32229363160022984,
+      0.5376097500422823,
+      0.32229363160022984
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      1.3463968515384828,
+      3.5903916041026207,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.25,
+      1.375,
+      1.5,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "54c86bbd-76d6-40eb-9086-61e2bab827e3",
+      "source_data_id": "ee625794-eb39-439c-9a69-fa0f8b7074c1",
+      "pattern_count": 17,
+      "harmony_index": 0.5892146435117118,
+      "timestamp": 1743965127.7143996
+    }
+  },
+  "timestamp": 1743965127.714434
+}

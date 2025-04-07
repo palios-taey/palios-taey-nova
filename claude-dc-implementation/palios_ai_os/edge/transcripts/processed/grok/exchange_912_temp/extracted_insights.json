@@ -1,0 +1,84 @@
+{
+  "extract_id": "f65ee098-32db-47a4-a81d-74b8d095b380",
+  "source_data_id": "exchange_912",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-7502621599412048621",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "83a0424f605b399b",
+      "length": 79,
+      "keywords": [
+        "value"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "501684889948066311",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "55865cdb04100eca",
+      "length": 58,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "501684889948066311",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "55865cdb04100eca",
+      "length": 58,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "501684889948066311",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "55865cdb04100eca",
+      "length": 58,
+      "keywords": [
+        "value"
+      ]
+    }
+  ],
+  "hash_verification": "f797e4246073781b",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "e0a12ae3-a7c4-4122-9ef2-d3f2c2302851",
+    "frequencies": [
+      440.0,
+      495.0,
+      550.0
+    ],
+    "amplitudes": [
+      0.3819660112501052,
+      0.3819660112501052,
+      0.7763932022500211
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      1.3463968515384828
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.25
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "f65ee098-32db-47a4-a81d-74b8d095b380",
+      "source_data_id": "exchange_912",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743980993.3353927
+    }
+  },
+  "timestamp": 1743980993.3354752
+}

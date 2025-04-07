@@ -1,0 +1,12 @@
+{
+  "data_id": "7f4c0eb3-4f21-4194-b532-b44015a35d41",
+  "content": [
+    " I see the issue - some interfaces are being recognized but not others. Let me provide a completely organized version of both files, and we'll make sure they compile correctly. \n\nKey changes made:\n1. Removed uuid dependency in favor of crypto.randomUUID()\n2. Made all interfaces and types exported\n3. Simplified the test suite by removing redundant tests\n4. Fixed interface visibility and inheritance\n5. Ensured all methods referenced in the class are implemented\n\nTo implement:\n\n1. Save both files:\n   - coreProtocol.ts\n   - integration-tests.ts\n\n2. Run the build:\n```bash\nnpm run build\n```\n\nLet me know if you encounter any compilation errors and I'll help resolve them."
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-23T21:34:44.709361Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

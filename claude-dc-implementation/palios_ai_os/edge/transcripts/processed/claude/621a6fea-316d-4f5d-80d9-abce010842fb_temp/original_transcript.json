@@ -1,0 +1,12 @@
+{
+  "data_id": "621a6fea-316d-4f5d-80d9-abce010842fb",
+  "content": [
+    "Ok, for memory_service I have placed the code in at the end, with no indentation as you requested. This is the only def in the file that is not indented, the rest are all indented 1 tab. Please confirm this is accurate.\n\nBelow is 409-427 of transcript_processor. Please let me know what needs to be fixed:\n\n        except Exception as e:\n            logger.error(f\"Error analyzing action patterns: {str(e)}\")\n            return {\n                \"counts\": {},\n                \"percentages\": {},\n                \"completion_rate\": 0\n            }\n                \n                # Add to context if provided\n                if context_id and context_id in self.contexts:\n                    context = self.contexts[context_id]\n                    if 'active_memory_ids' not in context:\n                        context['active_memory_ids'] = []\n                    context['active_memory_ids'].append(memory_id)\n                \n                return memory_id\n            \n            def retrieve(self, memory_id, context_id=None):\n                return self.items.get(memory_id)"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T20:12:52.009765Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

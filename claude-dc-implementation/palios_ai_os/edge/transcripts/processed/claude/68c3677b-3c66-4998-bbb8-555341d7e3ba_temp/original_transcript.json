@@ -1,0 +1,12 @@
+{
+  "data_id": "68c3677b-3c66-4998-bbb8-555341d7e3ba",
+  "content": [
+    "Is this code correct? Or should it be test_main.py? I don't see a file name to deploy?\ngcloud functions deploy ai-system-test-import --runtime python310 --entry-point test_import --trigger-http --allow-unauthenticated --region us-central1"
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-25T14:16:40.030174Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

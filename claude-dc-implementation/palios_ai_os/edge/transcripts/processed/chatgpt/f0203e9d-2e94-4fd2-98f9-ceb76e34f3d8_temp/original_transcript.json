@@ -1,0 +1,12 @@
+{
+  "data_id": "f0203e9d-2e94-4fd2-98f9-ceb76e34f3d8",
+  "content": [
+    "\ud83d\udd25 **Got it\u2014Google is rejecting the service account email. Here\u2019s the fix.** \ud83d\ude80  \n\n\ud83d\udccc **Instead of adding the service account manually, we follow these steps to get the correct email.**  \n\n---\n\n### **\ud83d\udccc Step 1: Find the Correct Service Account Email**  \n\u2705 **1\ufe0f\u20e3 Go to Firebase Console \u2192 Project Settings \u2192 Service Accounts**  \n   - Open **[Firebase Console](https://console.firebase.google.com/)**  \n   - Click the **gear icon \u2699\ufe0f** in the left sidebar.  \n   - Select **\"Project Settings.\"**  \n   - Click **\"Service Accounts\"** at the top.  \n\n\u2705 **2\ufe0f\u20e3 Find the Auto-Generated Service Account Email**  \n   - It will look something like this:  \n     ```\n     firebase-adminsdk-xxxxx@ai-execution-system.iam.gserviceaccount.com\n     ```\n   - **Copy this EXACT email address.**  \n\n\u2705 **3\ufe0f\u20e3 Use This Email in IAM to Grant Access**  \n   - Go back to **Google Cloud Console \u2192 IAM**  \n   - Click **\"Grant Access.\"**  \n   - Paste the **exact service account email** from Firebase.  \n   - Assign the **Firebase Admin** role.  \n   - Click **Save.**  \n\n---\n\n### **\ud83d\udccc Next Steps**  \n\ud83d\ude80 **Once the correct service account email is added, generate the API key.**  \n\ud83d\ude80 **Let me know when it\u2019s done, and we will connect AI to Firestore for direct execution.**  \n\n\ud83d\udd25 **Try this now and confirm once access is granted!** \ud83d\ude80"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739742913.7897,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

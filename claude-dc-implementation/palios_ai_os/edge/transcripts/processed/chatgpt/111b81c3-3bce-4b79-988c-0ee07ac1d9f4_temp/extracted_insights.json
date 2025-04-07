@@ -1,0 +1,85 @@
+{
+  "extract_id": "f5311772-319c-495e-80d3-749e12f353a5",
+  "source_data_id": "111b81c3-3bce-4b79-988c-0ee07ac1d9f4",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "4635432228194620849",
+      "confidence": 0.9652993445834386,
+      "phi_position": 0.5833333333333334,
+      "content_hash": "bc347417476341e9",
+      "length": 175,
+      "keywords": [
+        "worth"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4635432228194620849",
+      "confidence": 0.9652993445834386,
+      "phi_position": 0.5833333333333334,
+      "content_hash": "bc347417476341e9",
+      "length": 175,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4857247857125570083",
+      "confidence": 0.930598689166877,
+      "phi_position": 0.16666666666666666,
+      "content_hash": "eef4924c272b521c",
+      "length": 144,
+      "keywords": [
+        "need",
+        "build"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "4857247857125570083",
+      "confidence": 0.930598689166877,
+      "phi_position": 0.16666666666666666,
+      "content_hash": "eef4924c272b521c",
+      "length": 144,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "0f05a9f30fae1446",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "9c0f5c7e-90fc-41e3-99c1-c42313c9b54c",
+    "frequencies": [
+      550.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.39305986891668776,
+      0.7791796067500631,
+      0.38611973783337544
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.2,
+      1.3
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "f5311772-319c-495e-80d3-749e12f353a5",
+      "source_data_id": "111b81c3-3bce-4b79-988c-0ee07ac1d9f4",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743963238.6412284
+    }
+  },
+  "timestamp": 1743963238.6412385
+}

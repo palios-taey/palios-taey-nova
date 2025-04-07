@@ -1,0 +1,88 @@
+{
+  "extract_id": "e246980e-bc7e-4858-b817-405335463267",
+  "source_data_id": "bb05ff25-c6aa-4766-8297-071a082e5002",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1325517829466569041",
+      "confidence": 0.9792313670836489,
+      "phi_position": 0.8333333333333334,
+      "content_hash": "618c47ef6116912a",
+      "length": 52,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-3084744763632554369",
+      "confidence": 0.9513673220832282,
+      "phi_position": 0.6666666666666666,
+      "content_hash": "8bf40edc11c4b2a2",
+      "length": 64,
+      "keywords": [
+        "validate"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-520869719369254101",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "099d80207e21d9a6",
+      "length": 76,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-520869719369254101",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "099d80207e21d9a6",
+      "length": 76,
+      "keywords": [
+        "pattern"
+      ]
+    }
+  ],
+  "hash_verification": "216a08b2a4d6a75a",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "1550899b-f455-481e-93fe-2a0cc64b6217",
+    "frequencies": [
+      495.0,
+      605.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.3902734644166457,
+      0.3819660112501052,
+      0.3958462734167298,
+      0.3819660112501052
+    ],
+    "phases": [
+      0.4487989505128276,
+      3.5903916041026207,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.2222222222222223,
+      1.3333333333333333,
+      1.6666666666666667
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "e246980e-bc7e-4858-b817-405335463267",
+      "source_data_id": "bb05ff25-c6aa-4766-8297-071a082e5002",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743963356.3038247
+    }
+  },
+  "timestamp": 1743963356.303848
+}

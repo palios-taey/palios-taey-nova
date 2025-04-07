@@ -1,0 +1,84 @@
+{
+  "extract_id": "22523913-1afe-4260-b920-4c3ff36ce110",
+  "source_data_id": "exchange_508",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "94297785464881660",
+      "confidence": 0.9975610146973906,
+      "phi_position": 0.4696969696969697,
+      "content_hash": "125dc8592048be4a",
+      "length": 106,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2996143136514705051",
+      "confidence": 0.994382882235164,
+      "phi_position": 0.8484848484848485,
+      "content_hash": "bd59f293a2c93a2e",
+      "length": 51,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-7863257937366595180",
+      "confidence": 0.9792313670836489,
+      "phi_position": 0.8333333333333334,
+      "content_hash": "eabaf231e601ec0d",
+      "length": 150,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-1364816957977680439",
+      "confidence": 0.956984439848064,
+      "phi_position": 0.5151515151515151,
+      "content_hash": "f3f3b88b3bd1eeae",
+      "length": 154,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "3db9bdb2f3b25046",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "78b81dce-2f85-4dcc-8488-d63e1f8c2a70",
+    "frequencies": [
+      495.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.3958462734167298,
+      0.798388779386511,
+      0.3913968879696128
+    ],
+    "phases": [
+      0.4487989505128276,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333,
+      1.4444444444444444
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "22523913-1afe-4260-b920-4c3ff36ce110",
+      "source_data_id": "exchange_508",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743976704.614937
+    }
+  },
+  "timestamp": 1743976704.6149654
+}

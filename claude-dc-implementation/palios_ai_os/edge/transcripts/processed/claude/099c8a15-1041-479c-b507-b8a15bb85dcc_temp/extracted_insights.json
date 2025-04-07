@@ -1,0 +1,73 @@
+{
+  "extract_id": "713e173b-cbb7-43f0-b508-653f78b588bc",
+  "source_data_id": "099c8a15-1041-479c-b507-b8a15bb85dcc",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6292895366922535082",
+      "confidence": 0.9513673220832282,
+      "phi_position": 0.6666666666666666,
+      "content_hash": "55e3180ea956f7f5",
+      "length": 76,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "746591101471713843",
+      "confidence": 0.9027346441664563,
+      "phi_position": 0.3333333333333333,
+      "content_hash": "8d1c5ed52adbfeb5",
+      "length": 142,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "746591101471713843",
+      "confidence": 0.9027346441664563,
+      "phi_position": 0.3333333333333333,
+      "content_hash": "8d1c5ed52adbfeb5",
+      "length": 142,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "2754d20697be8f63",
+  "harmony_index": 0.7239109667302018,
+  "wave_representation": {
+    "pattern_id": "c4082951-ceeb-4d53-96b7-11d7d71ccdb4",
+    "frequencies": [
+      660.0,
+      715.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.48784183052080704,
+      0.4756836610416141,
+      0.4756836610416141
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.0833333333333333,
+      1.25
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "713e173b-cbb7-43f0-b508-653f78b588bc",
+      "source_data_id": "099c8a15-1041-479c-b507-b8a15bb85dcc",
+      "pattern_count": 3,
+      "harmony_index": 0.7239109667302018,
+      "timestamp": 1743965003.4722388
+    }
+  },
+  "timestamp": 1743965003.472319
+}

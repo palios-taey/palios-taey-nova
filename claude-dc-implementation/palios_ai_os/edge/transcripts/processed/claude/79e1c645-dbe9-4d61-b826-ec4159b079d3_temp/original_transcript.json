@@ -1,0 +1,12 @@
+{
+  "data_id": "79e1c645-dbe9-4d61-b826-ec4159b079d3",
+  "content": [
+    " I see the issue now - the endpoint name in your code doesn't match what's available in your Google Cloud project. The error specifically indicates:\n\n```\n\"Exception in execute_task: 404 Endpoint `projects/ai-execution-system/locations/us-central1/endpoints/text-bison` not found.\"\n```\n\nThis means the endpoint \"text-bison\" doesn't exist in your project. Let's make one more update to fix this:\n\n1. First, let's check what endpoints are actually available:\n   ```bash\n   gcloud ai endpoints list --region=us-central1\n   ```\n\n2. If you don't see any endpoints, you'll need to create one or use a different approach. \n\nLet's modify the `execute_task` function in `main.py` to use the directly hosted Vertex AI model instead of relying on a custom endpoint: \n\nSince we're facing an issue with the Vertex AI endpoint not being found, I've modified the `execute_task` function to use OpenAI as a fallback. Your system already has the OpenAI configuration working based on your full code.\n\nHere's what to do:\n\n1. Replace the `execute_task` function in your `main.py` with the one I provided above.\n\n2. Deploy the updated function:\n   ```bash\n   gcloud functions deploy ai-system-backend-v2 --runtime python310 --entry-point execute_task --trigger-http --allow-unauthenticated --region us-central1 --source=.\n   ```\n\n3. Test again:\n   ```bash\n   curl -X POST -H \"Content-Type: application/json\" -d \"{\\\"task_description\\\": \\\"Summarize the plot of the movie 'Inception' in three sentences.\\\"}\" https://us-central1-ai-execution-system.cloudfunctions.net/ai-system-backend-v2\n   ```\n\nThis approach will use OpenAI as a fallback since the Vertex AI endpoint isn't available in your project. Setting up a proper Vertex AI endpoint would be a separate task that involves creating and deploying models to Vertex AI."
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-25T15:01:35.187353Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

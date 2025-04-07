@@ -1,0 +1,12 @@
+{
+  "data_id": "c23455bf-62e4-4288-85c1-d6453870434f",
+  "content": [
+    " For your Firestore database structure, you need to decide which type of query scope to use:\n\n1. **Collection** (recommended for our use case): \n   This will create an index for queries within the specific `communicationIterationMetrics` collection path only. This is typically what you want when you're organizing data in a hierarchical structure, which is what we've designed with our main collection and sub-collections.\n\n2. **Collection group**:\n   This would create an index that works across all collections with the ID `communicationIterationMetrics` anywhere in your database. This is useful when you have the same collection ID appearing in multiple places in your database hierarchy and want to query across all of them.\n\nFor our Communication & Iteration Table implementation, choose **Collection** as the query scope. This makes sense because we're organizing our metrics data in a specific path with a clear parent-child relationship:\n- Main collection: `communicationIterationMetrics`\n- Sub-collections: `interactions` and `metricSummaries` under each session document\n\nUsing a Collection query scope will be more efficient and aligns with how we've structured the data model."
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-20T19:55:03.224110Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

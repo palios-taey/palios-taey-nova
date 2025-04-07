@@ -1,0 +1,12 @@
+{
+  "data_id": "859bedcd-4c87-4a8e-8885-cddfbda93f82",
+  "content": [
+    "Ok, streamlit was working but not anymore. I'm guessing I need to run setup or something first? MCP started up server fine, but port should be 8001. The curl command said it was looking for 8000. Here are ports in README now to track this:\nCurrent Port Assignments:\nService\tPort(s)\nClaude DC\t8080, 8501, 6080\nMCP Server\t8001\nWebhook\t8000\nDemo Server\t8002\nStreamlit Dashboard\t8502"
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-02T02:17:44.679037Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

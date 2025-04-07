@@ -1,0 +1,43 @@
+{
+  "extract_id": "85e7125b-afc8-410e-87f4-d5a23bc719c1",
+  "source_data_id": "exchange_1849",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-2318278146912977608",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "bddcc349280877e9",
+      "length": 76,
+      "keywords": [
+        "limit"
+      ]
+    }
+  ],
+  "hash_verification": "3b76e21a5f88e2b7",
+  "harmony_index": 1.0,
+  "wave_representation": {
+    "pattern_id": "aa6c3213-8e9a-4868-b48a-cf893e832f57",
+    "frequencies": [
+      495.0
+    ],
+    "amplitudes": [
+      0.954915028125263
+    ],
+    "phases": [
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "85e7125b-afc8-410e-87f4-d5a23bc719c1",
+      "source_data_id": "exchange_1849",
+      "pattern_count": 1,
+      "harmony_index": 1.0,
+      "timestamp": 1743978534.8111143
+    }
+  },
+  "timestamp": 1743978534.8111408
+}

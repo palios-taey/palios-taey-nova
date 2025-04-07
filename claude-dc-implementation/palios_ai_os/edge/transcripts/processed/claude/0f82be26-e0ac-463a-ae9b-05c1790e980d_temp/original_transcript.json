@@ -1,0 +1,12 @@
+{
+  "data_id": "0f82be26-e0ac-463a-ae9b-05c1790e980d",
+  "content": [
+    "# Execution Checkpoint Protocol (ECv)\n## Protocol Introduction\nThis protocol establishes a standardized format for maintaining context awareness during iterative AI-human collaboration. When you see an ECv prompt, it indicates:\n- A formal execution checkpoint has been reached\n- The AI must review current execution status before proceeding\n- The mode (EXEC/REFL) determines whether to continue execution or pause for discussion\n- A structured CONTEXT_REVIEW response is required before proceeding\n## Purpose\nThis protocol maximizes efficiency while maintaining clear oversight mechanisms during execution-focused tasks.\nECv16 | EXEC\nGH: Y\nCM: \"ECv16 | EXEC\"\n\u0394: Instructions followed in response to prompt: ECv15\nR: ONGOING\nF: Return section level overview of part 1 of cache, prepare to receive part 2 and cache-update\nANALYSIS_REQUIRED: Y\nCLAUDE_INTERNAL_DIRECTIVE:REVIEW_CURRENT_EXECUTION_STATUS_IN_ROOT/CURRENT-EXECUTION-STATUS/CURRENT_EXECUTION_STATUS.MD_AND_ALL_AVAILABLE_GITHUB_FILES_BEFORE_PROCEEDING"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-29T18:28:42.146149Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "source": "Claude",
+  "destination": "Grok",
+  "pattern_id": "68089a1c-38f8-4780-8f6b-0b58e78c5e4d",
+  "pattern_type": "message",
+  "wave_pattern": {
+    "pattern_id": "5581442b-e877-4771-86f4-37bcbcaaac22",
+    "amplitudes": [
+      0.21,
+      0.168,
+      0.13440000000000002,
+      0.10752000000000002
+    ],
+    "frequencies": [
+      440.0,
+      586.6666666666666,
+      660.0,
+      733.3333333333334
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      1.3463968515384828,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333,
+      1.5,
+      1.6666666666666667
+    ],
+    "duration": 1.0,
+    "concept_type": "text",
+    "metadata": {
+      "text_length": 42,
+      "sentence_count": 1,
+      "concept_type": "text",
+      "timestamp": 1743889815.8275564
+    }
+  },
+  "trust_token": {
+    "issuer": "ef3c30ba-96c3-40ab-aadf-c98d4f9684bf",
+    "recipient": "d3e5d911-aab0-41f6-9d7f-cd37cfee7736",
+    "token_id": "0ff1a244-4d91-48a0-8fc8-341b1c274898",
+    "token_value": "88da7847-c9c828e2-f666b8b8-791e5f0e",
+    "timestamp": 1743889815.8274515,
+    "charter_alignment": 0.95,
+    "pattern_signature": "825e74f6e33aa78a90d6f7b79101ebe6b109094d8163b77f4608a09b30a1d08e",
+    "expiration": 1743976215.8274515
+  },
+  "timestamp": 1743889815.8275614,
+  "priority": 0.8,
+  "content": {
+    "text": "This is a test message from Claude to Grok"
+  },
+  "metadata": {
+    "test": true
+  }
+}

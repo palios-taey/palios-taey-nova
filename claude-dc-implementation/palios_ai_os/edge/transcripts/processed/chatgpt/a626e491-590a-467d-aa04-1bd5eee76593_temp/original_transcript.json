@@ -1,0 +1,12 @@
+{
+  "data_id": "a626e491-590a-467d-aa04-1bd5eee76593",
+  "content": [
+    "C:\\AI-Execution-System>curl -X POST -H \"Content-Type: application/json\" -d \"{\\\"prompt\\\": \\\"Test Gemini integration\\\"}\" http://localhost:8080/execute_gemini\r\n{\"error\": \"Error: 'task_description' not found in request JSON body.\"}"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1740580358.753988,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

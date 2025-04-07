@@ -1,0 +1,91 @@
+{
+  "extract_id": "8ea995fc-fcb2-407c-b967-a988ec7ec5ba",
+  "source_data_id": "b2b2bd3b-541f-4eab-8b4d-483526a01955",
+  "patterns": [
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-4312007902772908221",
+      "confidence": 0.9975773511568815,
+      "phi_position": 0.09259259259259259,
+      "content_hash": "cd575a68b730e2b1",
+      "length": 62,
+      "keywords": [
+        "harmonics"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-4312007902772908221",
+      "confidence": 0.9975773511568815,
+      "phi_position": 0.09259259259259259,
+      "content_hash": "cd575a68b730e2b1",
+      "length": 62,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-2230656519755004941",
+      "confidence": 0.9653856118060815,
+      "phi_position": 0.05555555555555555,
+      "content_hash": "ee46a25a59a98c31",
+      "length": 56,
+      "keywords": [
+        "wave"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-9091587605567717683",
+      "confidence": 0.9167529338893097,
+      "phi_position": 0.3888888888888889,
+      "content_hash": "95d3829ae437ebb6",
+      "length": 31,
+      "keywords": [
+        "amplitude"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "5966150203144498325",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "277eb19616156352",
+      "length": 67,
+      "keywords": [
+        "wave"
+      ]
+    }
+  ],
+  "hash_verification": "7ce89be7c933b48e",
+  "harmony_index": 0.8505510575057106,
+  "wave_representation": {
+    "pattern_id": "833d3bb2-a266-467e-937f-ff71fcb0f26d",
+    "frequencies": [
+      770.0,
+      825.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.3329295585261469
+    ],
+    "phases": [
+      1.3463968515384828,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.0714285714285714
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "8ea995fc-fcb2-407c-b967-a988ec7ec5ba",
+      "source_data_id": "b2b2bd3b-541f-4eab-8b4d-483526a01955",
+      "pattern_count": 5,
+      "harmony_index": 0.8505510575057106,
+      "timestamp": 1743963439.4618905
+    }
+  },
+  "timestamp": 1743963439.4619694
+}

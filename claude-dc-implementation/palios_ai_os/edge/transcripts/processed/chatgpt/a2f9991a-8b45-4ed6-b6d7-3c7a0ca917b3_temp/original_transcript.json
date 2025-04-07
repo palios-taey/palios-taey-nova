@@ -1,0 +1,12 @@
+{
+  "data_id": "a2f9991a-8b45-4ed6-b6d7-3c7a0ca917b3",
+  "content": [
+    "C:\\Users\\jesse>cd C:\\AI-Execution-System\r\n\r\nC:\\AI-Execution-System>python firestore_setup.py\r\nTraceback (most recent call last):\r\n  File \"C:\\AI-Execution-System\\firestore_setup.py\", line 1, in <module>\r\n    import firebase_admin\r\nModuleNotFoundError: No module named 'firebase_admin'\r\n\r\nC:\\AI-Execution-System>"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739736361.101386,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "extract_id": "d79185ff-0f4d-4ab6-8559-822317c93c78",
+  "source_data_id": "ead84d33-28c9-4ef3-8056-aec60472910b",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "5004161029951559948",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "7b6d77be97745cd4",
+      "length": 110,
+      "keywords": [
+        "value",
+        "believe"
+      ]
+    }
+  ],
+  "hash_verification": "a8af431a5533b901",
+  "harmony_index": 1.0,
+  "wave_representation": {
+    "pattern_id": "386c206d-02d1-45cd-b327-c531f7a015d2",
+    "frequencies": [
+      550.0
+    ],
+    "amplitudes": [
+      0.9860679774997896
+    ],
+    "phases": [
+      1.3463968515384828
+    ],
+    "harmonics": [
+      1.0
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "d79185ff-0f4d-4ab6-8559-822317c93c78",
+      "source_data_id": "ead84d33-28c9-4ef3-8056-aec60472910b",
+      "pattern_count": 1,
+      "harmony_index": 1.0,
+      "timestamp": 1743963373.721274
+    }
+  },
+  "timestamp": 1743963373.7212856
+}

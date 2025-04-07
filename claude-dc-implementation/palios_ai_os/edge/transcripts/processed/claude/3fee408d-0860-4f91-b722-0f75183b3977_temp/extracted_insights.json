@@ -1,0 +1,159 @@
+{
+  "extract_id": "0c23c78b-b1c0-42e9-9720-5bc1a1fd0b54",
+  "source_data_id": "3fee408d-0860-4f91-b722-0f75183b3977",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-6058098806969920047",
+      "confidence": 0.9861542447224326,
+      "phi_position": 0.2222222222222222,
+      "content_hash": "85f5f8d5001fde99",
+      "length": 156,
+      "keywords": [
+        "value"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6058098806969920047",
+      "confidence": 0.9861542447224326,
+      "phi_position": 0.2222222222222222,
+      "content_hash": "85f5f8d5001fde99",
+      "length": 156,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-517561001181766378",
+      "confidence": 0.9745586038426978,
+      "phi_position": 0.5925925925925926,
+      "content_hash": "d98054249dab5fb1",
+      "length": 50,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-517561001181766378",
+      "confidence": 0.9745586038426978,
+      "phi_position": 0.5925925925925926,
+      "content_hash": "d98054249dab5fb1",
+      "length": 50,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-6773661553205195718",
+      "confidence": 0.9723084894448653,
+      "phi_position": 0.4444444444444444,
+      "content_hash": "7efac129a11bbc71",
+      "length": 207,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-6773661553205195718",
+      "confidence": 0.9723084894448653,
+      "phi_position": 0.4444444444444444,
+      "content_hash": "7efac129a11bbc71",
+      "length": 207,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-2028011259932321304",
+      "confidence": 0.9491172076853955,
+      "phi_position": 0.18518518518518517,
+      "content_hash": "228aac3c691c1967",
+      "length": 176,
+      "keywords": [
+        "value"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5232542535172382011",
+      "confidence": 0.9397716812034933,
+      "phi_position": 0.2962962962962963,
+      "content_hash": "07d2f9a4a35468d8",
+      "length": 242,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-840103977314602834",
+      "confidence": 0.9236758115280933,
+      "phi_position": 0.7777777777777778,
+      "content_hash": "5204acd432b1725f",
+      "length": 41,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8833207227732785415",
+      "confidence": 0.8911390032867216,
+      "phi_position": 0.9629629629629629,
+      "content_hash": "146c2d293f8581fa",
+      "length": 87,
+      "keywords": [
+        "need",
+        "create"
+      ]
+    }
+  ],
+  "hash_verification": "3938d29591386cc1",
+  "harmony_index": 0.6357403751431239,
+  "wave_representation": {
+    "pattern_id": "6fef2750-2199-4d1c-aa38-745615b8919d",
+    "frequencies": [
+      440.0,
+      550.0,
+      660.0,
+      715.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.17930077176771503,
+      0.3577519502188935,
+      0.5288240844738771,
+      0.17950532762206342,
+      0.5336857186196051
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.5,
+      1.625,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "0c23c78b-b1c0-42e9-9720-5bc1a1fd0b54",
+      "source_data_id": "3fee408d-0860-4f91-b722-0f75183b3977",
+      "pattern_count": 10,
+      "harmony_index": 0.6357403751431239,
+      "timestamp": 1743965033.1794822
+    }
+  },
+  "timestamp": 1743965033.179516
+}

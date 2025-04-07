@@ -1,0 +1,84 @@
+{
+  "extract_id": "a1d2b0a4-bc6c-4ddd-bb2a-103dbb03708b",
+  "source_data_id": "22bcb7ee-65c8-4b30-a757-ae28937604fd",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "6351266756067853408",
+      "confidence": 0.9955443419648117,
+      "phi_position": 0.08571428571428572,
+      "content_hash": "0241144c57daa6bf",
+      "length": 62,
+      "keywords": [
+        "foundation"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-192394668537922108",
+      "confidence": 0.8992926164289923,
+      "phi_position": 0.37142857142857144,
+      "content_hash": "52354a25d5fc415c",
+      "length": 144,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-192394668537922108",
+      "confidence": 0.8992926164289923,
+      "phi_position": 0.37142857142857144,
+      "content_hash": "52354a25d5fc415c",
+      "length": 144,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8356313805947388449",
+      "confidence": 0.8826733948211131,
+      "phi_position": 0.9714285714285714,
+      "content_hash": "28c5b37d5a87dccf",
+      "length": 76,
+      "keywords": [
+        "build"
+      ]
+    }
+  ],
+  "hash_verification": "d56046327c6ea3c5",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "f8da7c32-7895-4719-b451-10b31ff539b2",
+    "frequencies": [
+      440.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.3991088683929624,
+      0.7563932022500212,
+      0.3798585232857985
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "a1d2b0a4-bc6c-4ddd-bb2a-103dbb03708b",
+      "source_data_id": "22bcb7ee-65c8-4b30-a757-ae28937604fd",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743963272.8753722
+    }
+  },
+  "timestamp": 1743963272.8754015
+}

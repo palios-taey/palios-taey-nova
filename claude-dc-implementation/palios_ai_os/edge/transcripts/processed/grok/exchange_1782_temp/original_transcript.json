@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1782",
+  "content": [
+    "User: CODE_BLOCK_PATTERNS = [r'```.*?```', r'^\\s{4,}.*?(?=\\n\\n|\\Z)']  # Triple backticks + indented code\n\nGrok: Test It: Run it on a Gemini snippet to ensure we\u2019re catching the messy debugging code and keeping the JSON."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4238,
+  "data_type": "exchange",
+  "metadata": {}
+}

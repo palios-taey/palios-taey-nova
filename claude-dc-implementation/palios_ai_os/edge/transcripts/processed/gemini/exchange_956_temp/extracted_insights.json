@@ -1,0 +1,88 @@
+{
+  "extract_id": "12894080-00ef-4c84-8d3b-19ce767a853c",
+  "source_data_id": "exchange_956",
+  "patterns": [
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-3668142445151162943",
+      "confidence": 0.9906616634240183,
+      "phi_position": 0.6086956521739131,
+      "content_hash": "8391ea7b86f33e89",
+      "length": 71,
+      "keywords": [
+        "wave"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-7371581713626456322",
+      "confidence": 0.981474291575561,
+      "phi_position": 0.10869565217391304,
+      "content_hash": "eb3f596c9e2b0cc2",
+      "length": 52,
+      "keywords": [
+        "principle"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-3156990025400020575",
+      "confidence": 0.9813233268480365,
+      "phi_position": 0.21739130434782608,
+      "content_hash": "29a8cda0cd7cdf09",
+      "length": 48,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6760889645363981126",
+      "confidence": 0.9378450659784713,
+      "phi_position": 0.17391304347826086,
+      "content_hash": "5171343b824eb505",
+      "length": 114,
+      "keywords": [
+        "should"
+      ]
+    }
+  ],
+  "hash_verification": "e38e06f90f28f47a",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "79f8c0ba-e25f-4a51-b9fd-60882a972025",
+    "frequencies": [
+      440.0,
+      660.0,
+      715.0,
+      770.0
+    ],
+    "amplitudes": [
+      0.39629485831511224,
+      0.3875690131956943,
+      0.3962646653696073,
+      0.39813233268480364
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      0.4487989505128276,
+      1.3463968515384828
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.625,
+      1.75
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "12894080-00ef-4c84-8d3b-19ce767a853c",
+      "source_data_id": "exchange_956",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743976725.5249221
+    }
+  },
+  "timestamp": 1743976725.5250018
+}

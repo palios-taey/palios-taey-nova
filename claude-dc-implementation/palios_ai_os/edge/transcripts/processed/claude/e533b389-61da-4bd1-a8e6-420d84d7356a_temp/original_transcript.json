@@ -1,0 +1,12 @@
+{
+  "data_id": "e533b389-61da-4bd1-a8e6-420d84d7356a",
+  "content": [
+    "memory_service lines 244-264\n        # Create timestamp\n        now = datetime.datetime.now()\n        \n        # Prepare base metadata\n        base_metadata = {\n            \"created_at\": now,\n            \"updated_at\": now,\n            \"creator_id\": \"system\",  # Default value\n            \"access_count\": 0,\n            \"last_accessed\": now,# Generate a unique ID if not provided in metadata\n        memory_id = str(uuid.uuid4())\n        if metadata and 'memory_id' in metadata:\n            memory_id = metadata['memory_id']\n        \n        # Create timestamp\n        now = datetime.datetime.now()\n        \n        # Prepare base metadata\n        base_metadata = {\n            \"created_at\": now,\n            \"updated_at\": now,\n\ntranscript_processor 1243-1255\n       except Exception as e:\n            logger.error(f\"Error analyzing purpose patterns: {str(e)}\")\n            return {\n                \"counts\": {},\n                \"percentages\": {}\n            }\"error\": error_msg, \"transcript_id\": transcript_id}\n            \n            # Get all messages\n            messages = self._get_transcript_messages(transcript_id)\n            if not messages:\n                warning_msg = f\"No messages found for transcript {transcript_id}\"\n                logger.warning(warning_msg)\n                return {\"warning\": warning_msg, \"transcript_id\": transcript_id}"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T21:05:10.564942Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

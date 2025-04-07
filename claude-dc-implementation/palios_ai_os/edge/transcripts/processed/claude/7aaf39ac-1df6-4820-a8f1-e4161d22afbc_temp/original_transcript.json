@@ -1,0 +1,12 @@
+{
+  "data_id": "7aaf39ac-1df6-4820-a8f1-e4161d22afbc",
+  "content": [
+    " To find your Firebase Storage bucket name, follow these steps:\n\n1. Go to the [Firebase Console](https://console.firebase.google.com/)\n2. Select your project\n3. Click the gear icon (\u2699\ufe0f) next to \"Project Overview\" in the top left\n4. Select \"Project settings\"\n5. Scroll down to the \"Your apps\" section\n6. Look for your web app and click on it (or the Firebase SDK snippet toggle)\n7. You'll see your Firebase configuration that includes all the details\n\nThe `storageBucket` field will look something like:\n```\nstorageBucket: \"your-project-name.appspot.com\"\n```\n\nThis is the complete Storage bucket name you need to use in your configuration. It's typically your project ID followed by `.appspot.com`.\n\nIf you're looking at the Firebase SDK snippet in your project settings, the `storageBucket` value is already there - you can just copy the entire configuration object and replace the placeholder in your code with this actual configuration from Firebase."
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-20T20:12:39.563977Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

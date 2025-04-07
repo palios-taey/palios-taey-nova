@@ -1,0 +1,105 @@
+{
+  "extract_id": "fedc51e2-fd51-4b14-877d-b52928d8e944",
+  "source_data_id": "b2783f1b-947b-42e3-aac8-b7ca989b36e2",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-7114972323940949598",
+      "confidence": 0.9967865779896563,
+      "phi_position": 0.08695652173913043,
+      "content_hash": "c04508b20dcc7a77",
+      "length": 164,
+      "keywords": [
+        "need",
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-471244271450223052",
+      "confidence": 0.9813233268480365,
+      "phi_position": 0.21739130434782608,
+      "content_hash": "4139d3724d4b66bd",
+      "length": 162,
+      "keywords": [
+        "need",
+        "develop"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3028187073481161723",
+      "confidence": 0.9597351611407784,
+      "phi_position": 0.13043478260869565,
+      "content_hash": "5216b2d36a4b3f79",
+      "length": 84,
+      "keywords": [
+        "need",
+        "create"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-3028187073481161723",
+      "confidence": 0.9597351611407784,
+      "phi_position": 0.13043478260869565,
+      "content_hash": "5216b2d36a4b3f79",
+      "length": 84,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2835845705738524051",
+      "confidence": 0.9533083171200911,
+      "phi_position": 0.043478260869565216,
+      "content_hash": "fa3b4efcf247ac0d",
+      "length": 58,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-5662429953622869477",
+      "confidence": 0.8882418905432679,
+      "phi_position": 0.34782608695652173,
+      "content_hash": "8c895c75571f7cd6",
+      "length": 187,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "b5043a416a20e4bd",
+  "harmony_index": 0.8449475395938787,
+  "wave_representation": {
+    "pattern_id": "fdc6e123-a6ef-49c7-bd14-55b1c3784a63",
+    "frequencies": [
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.5497110073834351
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.0833333333333333
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "fedc51e2-fd51-4b14-877d-b52928d8e944",
+      "source_data_id": "b2783f1b-947b-42e3-aac8-b7ca989b36e2",
+      "pattern_count": 6,
+      "harmony_index": 0.8449475395938787,
+      "timestamp": 1743965076.7119865
+    }
+  },
+  "timestamp": 1743965076.71206
+}

@@ -1,0 +1,84 @@
+{
+  "extract_id": "5c72f9a4-62b7-4566-9d94-b651dce22e27",
+  "source_data_id": "7680663d-c6b1-4c53-a3ea-fe1724dd55ed_exchange_36",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-7789703539075724441",
+      "confidence": 0.9382391471596169,
+      "phi_position": 0.028409090909090908,
+      "content_hash": "8660047ee250c81f",
+      "length": 76,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-7789703539075724441",
+      "confidence": 0.9382391471596169,
+      "phi_position": 0.028409090909090908,
+      "content_hash": "8660047ee250c81f",
+      "length": 76,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-9041549400161546301",
+      "confidence": 0.9268755107959805,
+      "phi_position": 0.017045454545454544,
+      "content_hash": "a88a295347d413a7",
+      "length": 77,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-5038463785854890317",
+      "confidence": 0.9235679774997896,
+      "phi_position": 0.3125,
+      "content_hash": "f3785a3413188baa",
+      "length": 20,
+      "keywords": [
+        "wave"
+      ]
+    }
+  ],
+  "hash_verification": "cf76c603c732b13c",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "17e637dd-898a-42b1-a4a7-21a239670610",
+    "frequencies": [
+      660.0,
+      715.0,
+      770.0
+    ],
+    "amplitudes": [
+      0.7730229315911195,
+      0.3876478294319234,
+      0.3847135954999579
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      1.3463968515384828
+    ],
+    "harmonics": [
+      1.0,
+      1.0833333333333333,
+      1.1666666666666667
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "5c72f9a4-62b7-4566-9d94-b651dce22e27",
+      "source_data_id": "7680663d-c6b1-4c53-a3ea-fe1724dd55ed_exchange_36",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743986253.746408
+    }
+  },
+  "timestamp": 1743986253.7464151
+}

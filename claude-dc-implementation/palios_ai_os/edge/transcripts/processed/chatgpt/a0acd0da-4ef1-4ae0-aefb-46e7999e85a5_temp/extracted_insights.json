@@ -1,0 +1,84 @@
+{
+  "extract_id": "46e0771b-4a61-4826-84be-d9cccc49f4af",
+  "source_data_id": "a0acd0da-4ef1-4ae0-aefb-46e7999e85a5",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "7604873562024450998",
+      "confidence": 0.9633407047725169,
+      "phi_position": 0.2727272727272727,
+      "content_hash": "bfbe72a0a181a30b",
+      "length": 98,
+      "keywords": [
+        "validate"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7604873562024450998",
+      "confidence": 0.9633407047725169,
+      "phi_position": 0.2727272727272727,
+      "content_hash": "bfbe72a0a181a30b",
+      "length": 98,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "4095375571883609741",
+      "confidence": 0.9274205567046506,
+      "phi_position": 0.5454545454545454,
+      "content_hash": "262902f717ea4f12",
+      "length": 254,
+      "keywords": [
+        "validate"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-6365056967231762356",
+      "confidence": 0.8907612614771675,
+      "phi_position": 0.7272727272727273,
+      "content_hash": "666f1efc80771b05",
+      "length": 176,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "1dfed9480d33e1a0",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "7903df26-7529-405c-a8eb-7d6e319fdfda",
+    "frequencies": [
+      495.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.7781522522954335,
+      0.3926681409545034,
+      0.3781522522954335
+    ],
+    "phases": [
+      0.4487989505128276,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333,
+      1.6666666666666667
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "46e0771b-4a61-4826-84be-d9cccc49f4af",
+      "source_data_id": "a0acd0da-4ef1-4ae0-aefb-46e7999e85a5",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743963335.9177387
+    }
+  },
+  "timestamp": 1743963335.9178195
+}

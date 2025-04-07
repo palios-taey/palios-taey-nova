@@ -1,0 +1,12 @@
+{
+  "data_id": "54517cc4-c477-4eff-b7b1-96dff249221d",
+  "content": [
+    " You'll need to set your API key in the code. Here's how to do it:\n\n```python\nimport anthropic\nimport os\n\n# Option 1: Set the API key in your code (not recommended for production)\nclient = anthropic.Anthropic(api_key=\"your_api_key_here\")\n\n# Option 2: Set the API key as an environment variable (better security)\n# os.environ[\"ANTHROPIC_API_KEY\"] = \"your_api_key_here\"\n# client = anthropic.Anthropic()\n\n# Continue with your token counting code...\nwith open(\"my_text.txt\", \"r\", encoding=\"utf-8\") as file:\n    text_to_analyze = file.read()\n\nresponse = client.messages.count_tokens(\n    model=\"claude-3-7-sonnet-20250219\",\n    system=\"You are a scientist\",\n    messages=[{\n        \"role\": \"user\",\n        \"content\": text_to_analyze\n    }],\n)\nprint(response.token_count)  # Using token_count directly instead of response.json()\n```\n\nTo get your API key:\n\n1. Go to the Anthropic Console: https://console.anthropic.com/\n2. Sign in to your account\n3. Navigate to the API Keys section\n4. Generate a new API key if you don't already have one\n5. Copy the key and use it in your code\n\nFor security, it's best to use environment variables (Option 2) rather than hardcoding the key in your script, especially if you plan to share the code or check it into version control."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-29T14:35:57.701655Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

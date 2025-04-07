@@ -1,0 +1,114 @@
+{
+  "extract_id": "fdf4550c-2e26-40c1-9db2-2a9a766f92a9",
+  "source_data_id": "exchange_540",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2763969410779140472",
+      "confidence": 0.9973506266347206,
+      "phi_position": 0.6153846153846154,
+      "content_hash": "7509973107da76a9",
+      "length": 124,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7928891817046126992",
+      "confidence": 0.9675223639428336,
+      "phi_position": 0.057692307692307696,
+      "content_hash": "bdacd1040f4a1498",
+      "length": 96,
+      "keywords": [
+        "need",
+        "create"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "1341641772663117688",
+      "confidence": 0.9641878349037409,
+      "phi_position": 0.6538461538461539,
+      "content_hash": "0b1e2e0b2a166621",
+      "length": 143,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6782443187277981871",
+      "confidence": 0.9363237899033202,
+      "phi_position": 0.15384615384615385,
+      "content_hash": "3e164ca17b300559",
+      "length": 152,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "2391009001857863352",
+      "confidence": 0.9317101988465747,
+      "phi_position": 0.40384615384615385,
+      "content_hash": "fd382bf94a3d364e",
+      "length": 141,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2391009001857863352",
+      "confidence": 0.9317101988465747,
+      "phi_position": 0.40384615384615385,
+      "content_hash": "fd382bf94a3d364e",
+      "length": 141,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-4183277447185427750",
+      "confidence": 0.9290608254812952,
+      "phi_position": 0.019230769230769232,
+      "content_hash": "d3a4c58c5d105304",
+      "length": 85,
+      "keywords": [
+        "create"
+      ]
+    }
+  ],
+  "hash_verification": "79aa00e546c89843",
+  "harmony_index": 0.84821489216924,
+  "wave_representation": {
+    "pattern_id": "b46c2c1c-f250-4adb-a320-597e5d4e4d1b",
+    "frequencies": [
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.48698725421878947,
+      1.0
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.2
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "fdf4550c-2e26-40c1-9db2-2a9a766f92a9",
+      "source_data_id": "exchange_540",
+      "pattern_count": 7,
+      "harmony_index": 0.84821489216924,
+      "timestamp": 1743976706.215393
+    }
+  },
+  "timestamp": 1743976706.2154067
+}

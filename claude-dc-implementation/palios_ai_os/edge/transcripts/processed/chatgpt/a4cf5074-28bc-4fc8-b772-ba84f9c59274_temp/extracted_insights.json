@@ -1,0 +1,88 @@
+{
+  "extract_id": "d58e92c8-817e-4987-882d-f5c77b517ac7",
+  "source_data_id": "a4cf5074-28bc-4fc8-b772-ba84f9c59274",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7043628972603992338",
+      "confidence": 0.9813233268480365,
+      "phi_position": 0.21739130434782608,
+      "content_hash": "0bb397676ccfb562",
+      "length": 182,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "3835129178645300588",
+      "confidence": 0.9626466536960729,
+      "phi_position": 0.43478260869565216,
+      "content_hash": "5559ef977775152d",
+      "length": 203,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-6621200162820687890",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "093299bef9f8124d",
+      "length": 50,
+      "keywords": [
+        "sequence"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "6849599325812634317",
+      "confidence": 0.8882418905432679,
+      "phi_position": 0.34782608695652173,
+      "content_hash": "bf24e8da5d37325f",
+      "length": 74,
+      "keywords": [
+        "value"
+      ]
+    }
+  ],
+  "hash_verification": "c1bba8be43aac9ef",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "086e7f85-9125-4bc5-a91b-e17e4ae3de52",
+    "frequencies": [
+      495.0,
+      550.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.3925293307392146,
+      0.3776483781086536,
+      0.3962646653696073,
+      0.3819660112501052
+    ],
+    "phases": [
+      0.4487989505128276,
+      1.3463968515384828,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.1111111111111112,
+      1.3333333333333333,
+      1.6666666666666667
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "d58e92c8-817e-4987-882d-f5c77b517ac7",
+      "source_data_id": "a4cf5074-28bc-4fc8-b772-ba84f9c59274",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743963198.7684734
+    }
+  },
+  "timestamp": 1743963198.7684858
+}

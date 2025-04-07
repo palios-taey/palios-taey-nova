@@ -1,0 +1,12 @@
+{
+  "data_id": "c030f215-c1e6-4a26-a1fa-e992c810a13c",
+  "content": [
+    "C:\\Windows\\System32>echo %PATH%\r\nC:\\Program Files\\Python312\\Scripts\\;C:\\Program Files\\Python312\\;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\Google\\Cloud SDK\\google-cloud-sdk\\bin;C:\\Windows\\System32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Users\\jesse\\AppData\\Local\\Muse Hub\\lib\r\n\r\nC:\\Windows\\System32>gcloud --version\r\nGoogle Cloud SDK 513.0.0\r\nbq 2.1.14\r\ncloud-run-proxy 0.5.0\r\ncore 2025.02.28\r\ngcloud-crc32c 1.0.0\r\ngsutil 5.33\r\n\r\nC:\\Windows\\System32>\n\n>>> import subprocess\r\n>>>\r\n>>> try:\r\n...     output = subprocess.run([\"gcloud\", \"--version\"], check=True, capture_output=True, text=True)\r\n...     print(\"\u2705 gcloud is working inside Python!\", output.stdout)\r\n... except FileNotFoundError:\r\n...     print(\"\u274c gcloud is still NOT found in Python.\")\r\n...\r\n\u274c gcloud is still NOT found in Python.\r\n>>>\n\nWTF IS WRONG WITH MY MACHINE????"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741357858.987,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

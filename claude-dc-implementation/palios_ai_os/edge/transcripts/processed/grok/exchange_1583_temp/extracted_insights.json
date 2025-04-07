@@ -1,0 +1,58 @@
+{
+  "extract_id": "b6b10264-9b36-46b4-8c98-2739ff3ba59e",
+  "source_data_id": "exchange_1583",
+  "patterns": [
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "8059743904640985578",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "6a39cb6ce3eb01ef",
+      "length": 66,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "8059743904640985578",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "6a39cb6ce3eb01ef",
+      "length": 66,
+      "keywords": [
+        "phase"
+      ]
+    }
+  ],
+  "hash_verification": "1ac88666f2446fca",
+  "harmony_index": 0.8217233145831581,
+  "wave_representation": {
+    "pattern_id": "72fdf005-3fe4-4e1d-a0d7-1b3754bc2afe",
+    "frequencies": [
+      715.0,
+      770.0
+    ],
+    "amplitudes": [
+      0.6573786516665263,
+      0.6573786516665263
+    ],
+    "phases": [
+      0.4487989505128276,
+      1.3463968515384828
+    ],
+    "harmonics": [
+      1.0,
+      1.0769230769230769
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "b6b10264-9b36-46b4-8c98-2739ff3ba59e",
+      "source_data_id": "exchange_1583",
+      "pattern_count": 2,
+      "harmony_index": 0.8217233145831581,
+      "timestamp": 1743978521.250414
+    }
+  },
+  "timestamp": 1743978521.250522
+}

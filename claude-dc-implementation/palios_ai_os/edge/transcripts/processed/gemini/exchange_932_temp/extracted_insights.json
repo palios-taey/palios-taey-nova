@@ -1,0 +1,80 @@
+{
+  "extract_id": "1ae60b0c-9962-4e6a-9b91-61f172287c4a",
+  "source_data_id": "exchange_932",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3938931059123433707",
+      "confidence": 0.9945307116670875,
+      "phi_position": 0.4666666666666667,
+      "content_hash": "93754400b85d4c46",
+      "length": 18,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "9218860900429402882",
+      "confidence": 0.9901699437494741,
+      "phi_position": 0.1,
+      "content_hash": "f96cfac463180896",
+      "length": 460,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2894069706255054623",
+      "confidence": 0.9792313670836489,
+      "phi_position": 0.8333333333333334,
+      "content_hash": "7052e14740d62027",
+      "length": 104,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-1737770124699193337",
+      "confidence": 0.9764967229171926,
+      "phi_position": 0.06666666666666667,
+      "content_hash": "1310835aa049e757",
+      "length": 125,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "314f69c3cd732b83",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "c6867c0b-ae01-49c1-88da-8141bc6ee2c4",
+    "frequencies": [
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.3952993445834385
+    ],
+    "phases": [
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.25
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "1ae60b0c-9962-4e6a-9b91-61f172287c4a",
+      "source_data_id": "exchange_932",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743976724.4823897
+    }
+  },
+  "timestamp": 1743976724.4824018
+}

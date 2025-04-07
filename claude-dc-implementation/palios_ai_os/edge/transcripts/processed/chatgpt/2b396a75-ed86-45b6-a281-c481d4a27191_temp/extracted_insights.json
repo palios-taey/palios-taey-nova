@@ -1,0 +1,80 @@
+{
+  "extract_id": "6643f406-5d1c-47c2-9906-561732c7c08a",
+  "source_data_id": "2b396a75-ed86-45b6-a281-c481d4a27191",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3388843702131446970",
+      "confidence": 0.9744583382896841,
+      "phi_position": 0.21052631578947367,
+      "content_hash": "f16b3322d5ee84e0",
+      "length": 154,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-4476467540553561732",
+      "confidence": 0.9624616351978943,
+      "phi_position": 0.05263157894736842,
+      "content_hash": "271c5aa224f2b049",
+      "length": 66,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5489382143341269641",
+      "confidence": 0.9489166765793682,
+      "phi_position": 0.42105263157894735,
+      "content_hash": "51e01c55b8f0c7a5",
+      "length": 208,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-698791353771675000",
+      "confidence": 0.9322752069073688,
+      "phi_position": 0.15789473684210525,
+      "content_hash": "8edd7a48fb2d2ddf",
+      "length": 127,
+      "keywords": [
+        "never"
+      ]
+    }
+  ],
+  "hash_verification": "a7366aae56b5191e",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "06a02d69-b88c-4927-9955-14a81527a19e",
+    "frequencies": [
+      440.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3864550413814738,
+      1.0
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "6643f406-5d1c-47c2-9906-561732c7c08a",
+      "source_data_id": "2b396a75-ed86-45b6-a281-c481d4a27191",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743963342.0971267
+    }
+  },
+  "timestamp": 1743963342.0971708
+}

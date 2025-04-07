@@ -1,0 +1,95 @@
+{
+  "extract_id": "34bf43cc-0164-481e-98fc-88cd49774d61",
+  "source_data_id": "exchange_767",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "8865843236372109700",
+      "confidence": 0.9914898207739148,
+      "phi_position": 0.6095238095238096,
+      "content_hash": "d5e57f569f6ed837",
+      "length": 100,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "70729521989657583",
+      "confidence": 0.9860205324410021,
+      "phi_position": 0.0761904761904762,
+      "content_hash": "999d31652d208a0f",
+      "length": 102,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "8104728104916682029",
+      "confidence": 0.9574491038695736,
+      "phi_position": 0.047619047619047616,
+      "content_hash": "b1246076478f28f1",
+      "length": 56,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-2386960930620145203",
+      "confidence": 0.9384014848219545,
+      "phi_position": 0.02857142857142857,
+      "content_hash": "157caa2680bd13e9",
+      "length": 98,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2544896619654385438",
+      "confidence": 0.9193538657743354,
+      "phi_position": 0.009523809523809525,
+      "content_hash": "1a677b1d42a21da1",
+      "length": 24,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "d08f79d5a7ad25f0",
+  "harmony_index": 0.7658592480731385,
+  "wave_representation": {
+    "pattern_id": "36472494-f58b-4566-8e82-0f60da595473",
+    "frequencies": [
+      440.0,
+      495.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3230669141369924,
+      0.9891599095140817,
+      0.31989231096238924
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "34bf43cc-0164-481e-98fc-88cd49774d61",
+      "source_data_id": "exchange_767",
+      "pattern_count": 5,
+      "harmony_index": 0.7658592480731385,
+      "timestamp": 1743976716.748977
+    }
+  },
+  "timestamp": 1743976716.7490563
+}

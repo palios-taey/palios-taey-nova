@@ -1,0 +1,132 @@
+{
+  "extract_id": "e6959d51-7262-41d4-92c6-8cc22ac57aff",
+  "source_data_id": "exchange_242",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3027933927284787835",
+      "confidence": 0.9998521705680766,
+      "phi_position": 0.6181818181818182,
+      "content_hash": "885ea57d5c7aa7cf",
+      "length": 94,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "4708408199648773155",
+      "confidence": 0.9997043411361533,
+      "phi_position": 0.23636363636363636,
+      "content_hash": "76f3e556f2712607",
+      "length": 39,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "551539472386593084",
+      "confidence": 0.9822616701139518,
+      "phi_position": 0.8363636363636363,
+      "content_hash": "c605819d4584e99a",
+      "length": 92,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "551539472386593084",
+      "confidence": 0.9822616701139518,
+      "phi_position": 0.8363636363636363,
+      "content_hash": "c605819d4584e99a",
+      "length": 92,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-1877633917541304782",
+      "confidence": 0.9821138406820286,
+      "phi_position": 0.21818181818181817,
+      "content_hash": "ee99f44d30f4f84f",
+      "length": 24,
+      "keywords": [
+        "principle"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-444615723798228407",
+      "confidence": 0.9819660112501052,
+      "phi_position": 0.6,
+      "content_hash": "e052b62d966d708a",
+      "length": 147,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-444615723798228407",
+      "confidence": 0.9819660112501052,
+      "phi_position": 0.6,
+      "content_hash": "e052b62d966d708a",
+      "length": 147,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "4283272051178136209",
+      "confidence": 0.9280118744323441,
+      "phi_position": 0.01818181818181818,
+      "content_hash": "4462ef4a6ca522a4",
+      "length": 134,
+      "keywords": [
+        "charter"
+      ]
+    }
+  ],
+  "hash_verification": "8022ba7408e844dc",
+  "harmony_index": 0.6950808663705008,
+  "wave_representation": {
+    "pattern_id": "24fb0cba-2174-470e-af75-61be2b9a15e3",
+    "frequencies": [
+      440.0,
+      660.0,
+      715.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.6546768584849418,
+      0.6626755391035704,
+      0.22218937123735036,
+      0.22025129667932797
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.625,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "e6959d51-7262-41d4-92c6-8cc22ac57aff",
+      "source_data_id": "exchange_242",
+      "pattern_count": 8,
+      "harmony_index": 0.6950808663705008,
+      "timestamp": 1743976691.3101444
+    }
+  },
+  "timestamp": 1743976691.310223
+}

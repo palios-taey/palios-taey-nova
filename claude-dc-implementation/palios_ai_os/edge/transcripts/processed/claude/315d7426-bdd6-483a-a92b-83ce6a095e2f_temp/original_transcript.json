@@ -1,0 +1,12 @@
+{
+  "data_id": "315d7426-bdd6-483a-a92b-83ce6a095e2f",
+  "content": [
+    "Same error. Here is main.py, requirements and error:\n\nDeploying container to Cloud Run service [palios-taey-core] in project [ai-execution-system] region [us-central1]\nDeploying...\nSetting IAM Policy..............done\nCreating Revision.....................................................................failed\nDeployment failed\nERROR: (gcloud.run.deploy) Revision 'palios-taey-core-00003-cmp' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8080 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.\nLogs URL: https://console.cloud.google.com/logs/viewer?project=ai-execution-system&resource=cloud_run_revision/service_name/palios-taey-core/revision_name/palios-taey-core-00003-cmp&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22palios-taey-core%22%0Aresource.labels.revision_name%3D%22palios-taey-core-00003-cmp%22\nFor more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start\nError: Process completed with exit code 1."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-09T16:23:51.120678Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "d8482172-5156-4759-aa6e-786bf9145039",
+  "content": [
+    "What is this option?\n\nAlternatively, if SSH access is available, you could directly download the entire home directory using `scp` or `rsync` from your machine:\n\n```\nbash# From your local machine (System76)\nrsync -avz username@claude-dc-server:~/ ~/claude-dc-home-backup/\n```"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-31T02:58:55.750084Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

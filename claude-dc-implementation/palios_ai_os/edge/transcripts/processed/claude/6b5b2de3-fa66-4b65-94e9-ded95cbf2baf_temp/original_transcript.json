@@ -1,0 +1,12 @@
+{
+  "data_id": "6b5b2de3-fa66-4b65-94e9-ded95cbf2baf",
+  "content": [
+    " To have Claude DC load his cache, you can try these commands:\n\n```bash\n# Navigate to the cache directory\ncd ~/cache\n\n# List the cache files to see what's available\nls -la\n\n# If there's a specific cache file, you can use a command like:\ncat claude-dc-cache.md > /tmp/cache-input.txt\n```\n\nThen in your conversation with Claude DC, you could use a prompt like:\n\n```\nCACHE.LOAD.REQUEST\nTOKEN: conductor-implementation-harmony-20250327\n\nPlease load the cache file from /tmp/cache-input.txt and confirm when you have processed it. Once loaded, please provide a summary of the current implementation status and what components are already built.\n```\n\nIf there are multiple cache files that need to be combined, you might need to concatenate them first:\n\n```bash\n# Combine multiple cache files\ncat ~/cache/claude-dc-cache.md ~/cache/cache-update.md > /tmp/combined-cache.txt\n```\n\nThen reference the combined file in your prompt to Claude DC.\n\nOnce he has loaded the cache, you can ask him to rebuild the core components of the implementation focusing on the most critical parts first: the transcript processor, pattern extraction system, and Bach visualization."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-31T15:14:42.731839Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

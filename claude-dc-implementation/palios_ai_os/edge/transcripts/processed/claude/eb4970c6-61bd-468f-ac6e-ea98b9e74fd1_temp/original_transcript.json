@@ -1,0 +1,12 @@
+{
+  "data_id": "eb4970c6-61bd-468f-ac6e-ea98b9e74fd1",
+  "content": [
+    " It looks like the server is running but can't find the new endpoints we added. This typically happens when there's either:\n\n1. A restart issue: The server might still be running with the old code\n2. A code issue: The endpoint routing isn't working properly\n\nLet's fix this:\n\n1. First, make sure you've saved both files correctly:\n   - Updated `gemini_integration.py` with the enhanced code\n   - Replaced `main.py` with the complete file I provided\n\n2. Then completely stop the current server (pressing Ctrl+C in the command prompt window) and restart it:\n   ```bash\n   python main.py\n   ```\n\n3. Let's also check that the CustomHandler in main.py has the proper routing. In the do_POST method, it should have these case statements:\n   ```python\n   if parsed_path.path == '/execute_gemini':\n       response, code, headers = execute_gemini(mock_request)\n   elif parsed_path.path == '/execute_gemini_conversation':\n       response, code, headers = execute_gemini_conversation(mock_request)\n   elif parsed_path.path == '/analyze_text':\n       response, code, headers = analyze_text_with_gemini(mock_request)\n   ```\n\nIf the issue persists after restarting, there might be something interfering with the routing. Let's modify the code slightly to add more debugging:\n\n```python\ndef do_POST(self):\n    parsed_path = urlparse(self.path)\n    logging.info(f\"Received POST request to path: {parsed_path.path}\")\n    \n    # Read the request body\n    length = int(self.headers.get('Content-Length', 0))\n    body = self.rfile.read(length)\n    try:\n        request_json = json.loads(body)\n        logging.info(f\"Request body: {request_json}\")\n    except Exception as e:\n        logging.error(f\"Error parsing request body: {e}\")\n        request_json = {}\n```\n\nAdd this debugging code to your main.py file, then restart the server and try the endpoints again. This will help us see what's happening with the requests."
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-26T19:57:44.639504Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

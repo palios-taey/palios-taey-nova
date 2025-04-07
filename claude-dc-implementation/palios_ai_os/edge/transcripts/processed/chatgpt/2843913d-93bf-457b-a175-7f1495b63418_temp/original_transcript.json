@@ -1,0 +1,12 @@
+{
+  "data_id": "2843913d-93bf-457b-a175-7f1495b63418",
+  "content": [
+    "Here\u2019s a short, clear, **AI-FIRST-oriented** statement you can paste directly under your priority #1 (GitHub/Secrets):\n\n---\n\n### \ud83d\udccc **Managing Secrets (Instructions for Claude DC)**\n\n- **Do NOT push secrets or sensitive credentials to GitHub.**\n- All secrets will be stored locally on my machine in the following directory path:\n```\n/home/jesse/secrets/\n```\n- Please clearly define the exact file structure, naming conventions, and file format you prefer for secrets management (JSON, .env, plain text, etc.).  \n- To do this, create a clearly named example file (e.g., `secrets_example.json` or similar) locally in your environment now, populate it with placeholder values, and leave it open in your editor. I\u2019ll replicate this exact format and structure on my end immediately, allowing you to continue uninterrupted.\n\n---"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743465103.299911,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

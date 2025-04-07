@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1733",
+  "content": [
+    "User: {\"data\": [1, 2, 3], \"config\": {\"timeout\": 30}} \u2192 maybe summarize if it\u2019s not a message.\n\nGrok: But this might be overcomplicating it. Perhaps the simplest approach is to only remove code blocks that are explicitly marked with triple backticks or indented, and leave everything else as is."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4237845,
+  "data_type": "exchange",
+  "metadata": {}
+}

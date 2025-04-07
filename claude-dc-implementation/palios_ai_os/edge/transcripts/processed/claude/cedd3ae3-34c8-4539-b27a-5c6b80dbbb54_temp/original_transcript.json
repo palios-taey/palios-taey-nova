@@ -1,0 +1,12 @@
+{
+  "data_id": "cedd3ae3-34c8-4539-b27a-5c6b80dbbb54",
+  "content": [
+    "sselarose@Jesses-MacBook-Pro terraform % terraform plan -out=tfplan\n\n\n\u2577\n\u2502 **Error: Unsupported argument**\n\u2502\n\u2502 \u00a0 on main.tf line 68:\n\u2502 \u00a0 68: \u00a0 project = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id\n\u2502\n\u2502 An argument named \"project\" is not expected here.\n\u2575\n\u2577\n\u2502 **Error: Unsupported argument**\n\u2502\n\u2502 \u00a0 on main.tf line 69:\n\u2502 \u00a0 69: \u00a0 service = each.value\n\u2502\n\u2502 An argument named \"service\" is not expected here.\n\u2575\n\u2577\n\u2502 **Error: Unsupported argument**\n\u2502\n\u2502 \u00a0 on main.tf line 71:\n\u2502 \u00a0 71: \u00a0 disable_dependent_services = false\n\u2502\n\u2502 An argument named \"disable_dependent_services\" is not expected here.\n\u2575\n\u2577\n\u2502 **Error: Unsupported argument**\n\u2502\n\u2502 \u00a0 on main.tf line 72:\n\u2502 \u00a0 72: \u00a0 disable_on_destroy \u00a0 \u00a0 \u00a0 \u00a0 = false\n\u2502\n\u2502 An argument named \"disable_on_destroy\" is not expected here.\n\u2575\n\u2577\n\u2502 **Error: Argument or block definition required**\n\u2502\n\u2502 \u00a0 on main.tf line 73:\n\u2502 \u00a0 73: }\n\u2502\n\u2502 An argument or block definition is required here.\n\u2575\njesselarose@Jesses-MacBook-Pro terraform %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-14T22:38:47.975455Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

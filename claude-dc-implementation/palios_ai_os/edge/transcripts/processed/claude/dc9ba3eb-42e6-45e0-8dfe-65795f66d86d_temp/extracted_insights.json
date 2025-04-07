@@ -1,0 +1,86 @@
+{
+  "extract_id": "48e27459-68f4-40fd-ac83-8608c9eabc5a",
+  "source_data_id": "dc9ba3eb-42e6-45e0-8dfe-65795f66d86d",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "1852865654107795630",
+      "confidence": 0.9973506266347206,
+      "phi_position": 0.6153846153846154,
+      "content_hash": "3c1b70d98b0519c5",
+      "length": 268,
+      "keywords": [
+        "important",
+        "believe"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1852865654107795630",
+      "confidence": 0.9973506266347206,
+      "phi_position": 0.6153846153846154,
+      "content_hash": "3c1b70d98b0519c5",
+      "length": 268,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-5325319097353670805",
+      "confidence": 0.9310250431727614,
+      "phi_position": 0.9230769230769231,
+      "content_hash": "314c13b6486b8e7e",
+      "length": 106,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "3220257308427858718",
+      "confidence": 0.9124794296158054,
+      "phi_position": 0.38461538461538464,
+      "content_hash": "4bcc723eca92acd2",
+      "length": 228,
+      "keywords": [
+        "implement",
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "3647769ac40b92d8",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "10802e0a-f2ab-4314-abcf-8f6ed7fb90f1",
+    "frequencies": [
+      550.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.39947012532694415,
+      0.7819660112501052,
+      0.3862050086345523
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.2,
+      1.3
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "48e27459-68f4-40fd-ac83-8608c9eabc5a",
+      "source_data_id": "dc9ba3eb-42e6-45e0-8dfe-65795f66d86d",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743965144.577591
+    }
+  },
+  "timestamp": 1743965144.5779784
+}

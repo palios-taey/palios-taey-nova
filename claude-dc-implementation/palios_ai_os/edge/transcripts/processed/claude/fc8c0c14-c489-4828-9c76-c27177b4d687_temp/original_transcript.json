@@ -1,0 +1,12 @@
+{
+  "data_id": "fc8c0c14-c489-4828-9c76-c27177b4d687",
+  "content": [
+    "File Name                                Tokens     Size       Tokens/KB \n----------------------------------------------------------------------\ncache-update.md                          Error: 'MessageTokensCount' object has no attribute 'usage'\nclaude-dc-cache_part-1.md                Error: 'MessageTokensCount' object has no attribute 'usage'\nIMPLEMENTATION_REPORT.md                 Error: 'MessageTokensCount' object has no attribute 'usage'\nCACHE.UPDATE.IMPLEMENTATION.md           Error: 'MessageTokensCount' object has no attribute 'usage'\nwebhook-integration-instructions.md      Error: 'MessageTokensCount' object has no attribute 'usage'\nclaude-dc-cache_part-2.md                Error: 'MessageTokensCount' object has no attribute 'usage'\nDetailed results saved to: cache_token_analysis_20250403_153209.json\n\nThis is something I might need to do regularly. Can we get this set up right with Anthropic SDK and most recent versions etc and properly store my api key in it?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-03T19:33:41.706054Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

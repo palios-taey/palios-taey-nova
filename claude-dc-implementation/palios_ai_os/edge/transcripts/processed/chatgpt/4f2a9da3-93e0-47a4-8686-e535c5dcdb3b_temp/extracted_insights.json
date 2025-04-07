@@ -1,0 +1,58 @@
+{
+  "extract_id": "79b8abc7-bef7-4738-ab47-9ecb3562b2df",
+  "source_data_id": "4f2a9da3-93e0-47a4-8686-e535c5dcdb3b",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-8231299915549915165",
+      "confidence": 0.9639320225002104,
+      "phi_position": 0.2,
+      "content_hash": "2dc680fbd922a65a",
+      "length": 135,
+      "keywords": [
+        "priority"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-8231299915549915165",
+      "confidence": 0.9639320225002104,
+      "phi_position": 0.2,
+      "content_hash": "2dc680fbd922a65a",
+      "length": 135,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "1d32e00d69c98d94",
+  "harmony_index": 0.8217233145831581,
+  "wave_representation": {
+    "pattern_id": "c6bfa74e-2697-4936-898a-4556b7980929",
+    "frequencies": [
+      550.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.6546440075000701,
+      0.6546440075000701
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.3
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "79b8abc7-bef7-4738-ab47-9ecb3562b2df",
+      "source_data_id": "4f2a9da3-93e0-47a4-8686-e535c5dcdb3b",
+      "pattern_count": 2,
+      "harmony_index": 0.8217233145831581,
+      "timestamp": 1743963371.1440609
+    }
+  },
+  "timestamp": 1743963371.144141
+}

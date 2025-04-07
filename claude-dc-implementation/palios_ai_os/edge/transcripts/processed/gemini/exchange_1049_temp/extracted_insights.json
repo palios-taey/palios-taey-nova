@@ -1,0 +1,88 @@
+{
+  "extract_id": "fc32bb44-0a45-4521-bb8b-ca157d900ff8",
+  "source_data_id": "exchange_1049",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-978851172863910640",
+      "confidence": 0.9983570501437581,
+      "phi_position": 0.8524590163934426,
+      "content_hash": "839d364a6cc1765f",
+      "length": 175,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-978851172863910640",
+      "confidence": 0.9983570501437581,
+      "phi_position": 0.8524590163934426,
+      "content_hash": "839d364a6cc1765f",
+      "length": 175,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-8850369655889429143",
+      "confidence": 0.99179726936528,
+      "phi_position": 0.08196721311475409,
+      "content_hash": "20edc0ea581f7c6c",
+      "length": 76,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "1334312226886283434",
+      "confidence": 0.9868804384430439,
+      "phi_position": 0.45901639344262296,
+      "content_hash": "b328f5e0203d7fd8",
+      "length": 174,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "40cebf34d34f8b73",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "f174f035-3cf5-41d7-9d0d-08ff5a8d0f71",
+    "frequencies": [
+      440.0,
+      495.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.3996714100287516,
+      0.398359453873056,
+      0.3996714100287516,
+      0.39737608768860877
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.5,
+      1.625
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "fc32bb44-0a45-4521-bb8b-ca157d900ff8",
+      "source_data_id": "exchange_1049",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743976730.094475
+    }
+  },
+  "timestamp": 1743976730.0945039
+}

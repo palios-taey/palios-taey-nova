@@ -1,0 +1,12 @@
+{
+  "data_id": "4c2e86a1-771c-40a6-9315-690b8543bbcc",
+  "content": [
+    "C:\\AI-Execution-System\\paliostypescript>npm run build\n> paliostypescript@1.0.0 build\n> tsc\npatternEngine.test.ts:62:18 - error TS1005: ';' expected.\n62 }); 'C', 'A', 'B'];\n                    ~\npatternEngine.test.ts:71:5 - error TS1128: Declaration or statement expected.\n71     });\n       ~\npatternEngine.test.ts:71:6 - error TS1128: Declaration or statement expected.\n71     });\n        ~\npatternEngine.test.ts:180:43 - error TS1005: ']' expected.\n180         const components = ['A', 'B', 'A',\n  patternEngine.test.ts:180:28\n    180         const components = ['A', 'B', 'A',\n                                   ~\n    The parser expected to find a ']' to match the '[' token here.\nFound 4 errors in the same file, starting at: patternEngine.test.ts:62"
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-24T18:22:26.385638Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

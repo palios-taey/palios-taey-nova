@@ -1,0 +1,12 @@
+{
+  "data_id": "c7cb4eeb-cbbe-46e5-9611-a39849f6ecb3",
+  "content": [
+    " I'll help you fix that Python script to handle large text with line breaks. The issue is that when you try to paste a large text with line breaks directly into Python code, it breaks the string formatting.\n\nHere are a few approaches to solve this:\n\n## Option 1: Use a triple-quoted string\n\n```python\nimport anthropic\nclient = anthropic.Anthropic()\n\ntext_to_analyze = \"\"\"Paste your text here\nwith line breaks\nand it will work fine\"\"\"\n\nresponse = client.messages.count_tokens(\n    model=\"claude-3-7-sonnet-20250219\",\n    system=\"You are a scientist\",\n    messages=[{\n        \"role\": \"user\",\n        \"content\": text_to_analyze\n    }],\n)\nprint(response.json())\n```\n\n## Option 2: Read from a file (best for very large text)\n\n```python\nimport anthropic\nclient = anthropic.Anthropic()\n\n# Save your text in a file named \"my_text.txt\"\nwith open(\"my_text.txt\", \"r\", encoding=\"utf-8\") as file:\n    text_to_analyze = file.read()\n\nresponse = client.messages.count_tokens(\n    model=\"claude-3-7-sonnet-20250219\",\n    system=\"You are a scientist\",\n    messages=[{\n        \"role\": \"user\",\n        \"content\": text_to_analyze\n    }],\n)\nprint(response.json())\n```\n\nFor text that's 750K characters, I definitely recommend the file approach (Option 2). This will be much cleaner than trying to paste the text directly into your code.\n\nWould you like me to explain either of these approaches in more detail?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-29T14:33:27.620086Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "d007329c-3c3a-4ad8-be16-79620931a93a",
+  "content": [
+    "This worked very well I think Claude, great work! Some clarifications and feedback. ATLAS Claude kept wanting to exceed your initial scope. It was very focused on memory_service, I think because that is prioritized in one of the other documents. It didn't implement the real memory_service, it generated its own version and did it. It still wanted to do this after repeatedly being reminded to stay within the scope. We did not complete the file deduplication, it just created it because your instructions just said to 'create a strategy'. The old local directory and repository have been renamed palios-taey-nova-archive. The new ones are palios-taey-nova and only have the files and structure created in the ATLAS Session. I haven't gotten a length warning on that yet, so if you'd like to continue this in there with updated instruction, I think we can do that, or can start a new chat. Your call. This is working great! Just need to make sure you really emphasize staying IN SCOPE and reinforcing that ATLAS role is not to go outside, but to only recommend next steps/enhancements to you once complete. I really don't want to have to be reviewing what they are saying and checking to your scope. It needs to get to the point where it is completely mindless for me and I'm just doing what they can't do on their own, but they need to be locked in."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-13T18:21:07.398252Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

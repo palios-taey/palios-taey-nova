@@ -1,0 +1,84 @@
+{
+  "extract_id": "235ccfd6-6018-4927-9530-c8aea103e2ba",
+  "source_data_id": "b5addd2f-2574-4673-b918-5a5b9294082d",
+  "patterns": [
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "3707832252845811109",
+      "confidence": 0.9992261401472693,
+      "phi_position": 0.23529411764705882,
+      "content_hash": "0f24b5e6a5eb82b0",
+      "length": 91,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2482376193729845868",
+      "confidence": 0.9702013053677523,
+      "phi_position": 0.5882352941176471,
+      "content_hash": "0b8ff241f8816173",
+      "length": 84,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1816504249117152159",
+      "confidence": 0.9686535856622907,
+      "phi_position": 0.058823529411764705,
+      "content_hash": "94bf6a1037bf956c",
+      "length": 145,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "3567545413346094380",
+      "confidence": 0.9404026107355046,
+      "phi_position": 0.17647058823529413,
+      "content_hash": "3bf475a3e1b810a6",
+      "length": 93,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "2978320c05c8f585",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "be108268-cb67-4da3-86b6-2fcc1016897c",
+    "frequencies": [
+      660.0,
+      715.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.7877709782060086,
+      0.3880805221471009,
+      0.3998452280294539
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.0833333333333333,
+      1.25
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "235ccfd6-6018-4927-9530-c8aea103e2ba",
+      "source_data_id": "b5addd2f-2574-4673-b918-5a5b9294082d",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743963374.7535782
+    }
+  },
+  "timestamp": 1743963374.7535913
+}

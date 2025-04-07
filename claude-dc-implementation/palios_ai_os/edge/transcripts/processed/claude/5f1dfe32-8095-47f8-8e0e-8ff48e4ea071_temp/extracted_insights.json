@@ -1,0 +1,84 @@
+{
+  "extract_id": "28ed382d-16d2-46a9-ac1b-6c292e70ddcb",
+  "source_data_id": "5f1dfe32-8095-47f8-8e0e-8ff48e4ea071",
+  "patterns": [
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "3272925202039978267",
+      "confidence": 0.982061835641366,
+      "phi_position": 0.10810810810810811,
+      "content_hash": "36b14e8a782c34df",
+      "length": 49,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "444511841066503060",
+      "confidence": 0.9503705967910665,
+      "phi_position": 0.04054054054054054,
+      "content_hash": "26da8d714745a844",
+      "length": 85,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "534736096904125598",
+      "confidence": 0.9233435697640394,
+      "phi_position": 0.013513513513513514,
+      "content_hash": "a83706a011bea5b6",
+      "length": 63,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-8077316822339204359",
+      "confidence": 0.867615479763198,
+      "phi_position": 0.9864864864864865,
+      "content_hash": "92d11c335a907ee6",
+      "length": 114,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "5e09bfae71b71628",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "c97c7ced-5e61-4c15-8ccf-5343002446b2",
+    "frequencies": [
+      660.0,
+      715.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.39007411935821334,
+      0.3964123671282732,
+      0.7581918099054475
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.0833333333333333,
+      1.25
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "28ed382d-16d2-46a9-ac1b-6c292e70ddcb",
+      "source_data_id": "5f1dfe32-8095-47f8-8e0e-8ff48e4ea071",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743965084.5149865
+    }
+  },
+  "timestamp": 1743965084.5150142
+}

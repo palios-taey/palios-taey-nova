@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1301",
+  "content": [
+    "User: Instructions: These should be detailed, telling Grok DeepSearch to tag each [JESSE PROMPT] and [GROK RESPONSE] separately, use base tags, add #STRATEGIC or #EXECUTION to Jesse\u2019s prompts, generate new tags as needed, and include the full text with tags in the JSON.\n\nGrok: I should also consider the character limit. Since Jesse mentioned that Grok DeepSearch can handle up to 500K characters, I'll make sure the prompt is designed to accommodate larger chunks, but I'll still recommend splitting the transcript into manageable pieces to ensure smooth processing."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4236593,
+  "data_type": "exchange",
+  "metadata": {}
+}

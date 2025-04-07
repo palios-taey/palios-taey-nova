@@ -1,0 +1,54 @@
+{
+  "extract_id": "1b995943-d6b9-41ad-b43e-17fa191cb77e",
+  "source_data_id": "exchange_1227",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2180381183097817665",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "aebb2368c562e70d",
+      "length": 59,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4048052331811632907",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "b9589b811e450644",
+      "length": 104,
+      "keywords": [
+        "should"
+      ]
+    }
+  ],
+  "hash_verification": "2960f90d7a4c42ba",
+  "harmony_index": 1.0,
+  "wave_representation": {
+    "pattern_id": "ca988b8e-e8cb-4789-a394-91b5a37574c6",
+    "frequencies": [
+      660.0
+    ],
+    "amplitudes": [
+      1.0
+    ],
+    "phases": [
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "1b995943-d6b9-41ad-b43e-17fa191cb77e",
+      "source_data_id": "exchange_1227",
+      "pattern_count": 2,
+      "harmony_index": 1.0,
+      "timestamp": 1743978503.1837263
+    }
+  },
+  "timestamp": 1743978503.1838055
+}

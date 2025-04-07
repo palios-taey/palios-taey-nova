@@ -1,0 +1,91 @@
+{
+  "extract_id": "4b000505-749f-4d64-9fe7-1163cd0ca586",
+  "source_data_id": "exchange_972",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "5008824917094992968",
+      "confidence": 0.9956059804842918,
+      "phi_position": 0.46774193548387094,
+      "content_hash": "9f6b3a295c5edc4f",
+      "length": 26,
+      "keywords": [
+        "value"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-7215307360169859102",
+      "confidence": 0.9904752175408486,
+      "phi_position": 0.08064516129032258,
+      "content_hash": "8602d958c4bce27d",
+      "length": 124,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "2299147223387844047",
+      "confidence": 0.9897384741131137,
+      "phi_position": 0.22580645161290322,
+      "content_hash": "3b3c8f8a34793d4d",
+      "length": 32,
+      "keywords": [
+        "value"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "3810392089098754167",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "5347cbcc04ea3d8d",
+      "length": 61,
+      "keywords": [
+        "value"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "495750377942451294",
+      "confidence": 0.8973583000804348,
+      "phi_position": 0.3387096774193548,
+      "content_hash": "d94255c3d28f22b3",
+      "length": 79,
+      "keywords": [
+        "value"
+      ]
+    }
+  ],
+  "hash_verification": "34f5a304921fecfb",
+  "harmony_index": 0.8505510575057106,
+  "wave_representation": {
+    "pattern_id": "14ee3508-898c-4d3e-a3be-4bd9273c95b8",
+    "frequencies": [
+      550.0,
+      715.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.3317458695901414
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.3
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "4b000505-749f-4d64-9fe7-1163cd0ca586",
+      "source_data_id": "exchange_972",
+      "pattern_count": 5,
+      "harmony_index": 0.8505510575057106,
+      "timestamp": 1743976726.2408652
+    }
+  },
+  "timestamp": 1743976726.2409077
+}

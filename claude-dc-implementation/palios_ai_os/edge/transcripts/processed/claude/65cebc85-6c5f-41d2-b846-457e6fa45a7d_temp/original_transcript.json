@@ -1,0 +1,12 @@
+{
+  "data_id": "65cebc85-6c5f-41d2-b846-457e6fa45a7d",
+  "content": [
+    " You're right - the `transcript_processor_enhanced.py` file is created by the installation script itself rather than being a pre-existing file. \n\nThe installation script will automatically generate that file as a compatibility layer. Here's what happens:\n\n1. You save the `enhanced_transcript_processor.py` file that I provided\n2. You run the installation script\n3. The script creates the `transcript_processor_enhanced.py` file with the compatibility code\n\nLet me clarify the file creation process:\n\n1. Files you need to save first:\n   - `enhanced_transcript_processor.py` (main processor)\n   - `test_transcript_processor.py` (test script)\n   - `bach_router.py` (router component)\n   - `dashboard_mcp_connector.py` (MCP connector)\n   - `dashboard_app.py` (main dashboard)\n   - `install_dashboard_components.sh` (installation script)\n\n2. Files the installation script will create:\n   - `transcript_processor_enhanced.py` (compatibility layer)\n   - `run_dashboard.sh` (dashboard runner)\n   - `test_components.sh` (component tester)\n\nThis approach ensures that we maintain compatibility with the existing codebase while adding our enhanced functionality."
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-02T20:37:39.453088Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

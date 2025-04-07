@@ -16,8 +16,8 @@ echo ""
 
 # Configuration
 MCP_PORT=8001
-DASHBOARD_PORT=8080
-INSTALL_DIR="/home/computeruse/github/palios-taey-nova/claude-dc-implementation"
+DASHBOARD_PORT=8502  # Changed from 8080 to 8502
+INSTALL_DIR="$(pwd)"
 GOLDEN_RATIO=1.618033988749895
 
 # Set current directory
@@ -43,14 +43,22 @@ echo "Installing complete. Starting PALIOS AI OS..."
 echo "Golden Ratio (φ): $GOLDEN_RATIO"
 echo "Starting PALIOS AI OS..."
 
+# Find Python executable path
+PYTHON_PATH=$(which python3 || which python)
+if [ -z "$PYTHON_PATH" ]; then
+    echo "Error: Python executable not found. Please ensure Python is installed and in your PATH."
+    exit 1
+fi
+
 # Start the dashboard in the background
 echo "Starting Dashboard on port $DASHBOARD_PORT..."
-python dashboard.py & 
+sed -i "s/port=8080/port=$DASHBOARD_PORT/g" dashboard.py  # Update port in dashboard.py
+$PYTHON_PATH dashboard.py & 
 DASHBOARD_PID=$!
 
 # Start the main PALIOS AI OS in the background
 echo "Starting PALIOS AI OS core on port $MCP_PORT..."
-python start_palios.py &
+$PYTHON_PATH start_palios.py &
 MAIN_PID=$!
 
 echo ""

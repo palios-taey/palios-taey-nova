@@ -1,0 +1,88 @@
+{
+  "extract_id": "abf68832-6d42-445b-bc3a-7e099886bac6",
+  "source_data_id": "exchange_90",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-6721276112078607591",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "86e8151a05564328",
+      "length": 79,
+      "keywords": [
+        "worth"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "7057996252080560655",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "61e54cf96e5c8c83",
+      "length": 102,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7057996252080560655",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "61e54cf96e5c8c83",
+      "length": 102,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-425782924003551192",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "16c04f5c6999446f",
+      "length": 108,
+      "keywords": [
+        "ratio"
+      ]
+    }
+  ],
+  "hash_verification": "c8982111eb2b09d3",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "158e37f5-9eed-46fa-9c2e-ce0e5e7b3494",
+    "frequencies": [
+      495.0,
+      550.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.39442719099991586,
+      0.39721359549995794,
+      0.39442719099991586,
+      0.3819660112501052
+    ],
+    "phases": [
+      0.4487989505128276,
+      1.3463968515384828,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.1111111111111112,
+      1.3333333333333333,
+      1.4444444444444444
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "abf68832-6d42-445b-bc3a-7e099886bac6",
+      "source_data_id": "exchange_90",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743981001.544873
+    }
+  },
+  "timestamp": 1743981001.5449023
+}

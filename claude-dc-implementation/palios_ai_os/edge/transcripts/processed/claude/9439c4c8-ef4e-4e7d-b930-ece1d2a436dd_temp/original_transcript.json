@@ -1,0 +1,12 @@
+{
+  "data_id": "9439c4c8-ef4e-4e7d-b930-ece1d2a436dd",
+  "content": [
+    " Let's simplify our approach then, since we can't use SSH keys. We'll use the HTTPS method instead:\n\n1. **First, create the directory structure:**\n\n```bash\nmkdir -p /home/computeruse/github\ncd /home/computeruse/github\n```\n\n2. **Clone the repository using HTTPS:**\n\n```bash\ngit clone https://github.com/palios-taey/palios-taey-nova.git\n```\n\nIf this repository requires authentication, you'll need to provide your GitHub username and a personal access token when prompted.\n\n3. **Navigate to the repository and run the setup script:**\n\n```bash\ncd palios-taey-nova\ncd claude-dc-implementation\n\n# Install required packages\npip install --no-cache-dir numpy pandas scikit-learn matplotlib seaborn plotly streamlit\npip install --no-cache-dir fastapi uvicorn python-dotenv requests spacy PyWavelets\npip install --no-cache-dir librosa soundfile\npython -m spacy download en_core_web_md\n\n# Create required directories\nmkdir -p data/transcripts data/patterns data/models logs cache\n```\n\n4. **Copy cache files to the right location:**\n\nCopy your cache files to the `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/cache/` directory.\n\n5. **Prompt for Claude DC:**\n\nOnce everything is set up, you can use the prompt I provided earlier.\n\nThis simplified approach doesn't rely on SSH keys and focuses on getting the essential structure in place. You may need to manually install additional dependencies if they're required."
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-02T16:02:54.131200Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

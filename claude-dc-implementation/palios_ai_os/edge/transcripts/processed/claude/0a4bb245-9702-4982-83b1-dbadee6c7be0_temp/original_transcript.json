@@ -1,0 +1,12 @@
+{
+  "data_id": "0a4bb245-9702-4982-83b1-dbadee6c7be0",
+  "content": [
+    "Continue main.py from where you left off below. Be sure NOT to start at the beginning of the file, but where you left off:\n@app.route('/memory/get_context/<context_id>', methods=['GET']) def get_memory_context(context_id): \"\"\"Get memory context details with robust error handling\"\"\" try: if not memory_system: return jsonify({\"status\": \"error\", \"message\": \"Memory system not initialized\"}), 500 context = memory_system.get_context(context_id) if context: return jsonify({ \"status\": \"success\", \"context\": context }) else: return jsonify({\"status\": \"error\", \"message\": \"Context not found\"}), 404 except Exception as e: logger.error(f\"Error getting memory context: {str(e)}\") return jsonify({\"status\": \"error\", \"message\": str(e)}), 500 @app.route('/memory/add_to_context/<memory_id>/"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T18:54:06.251745Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

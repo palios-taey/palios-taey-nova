@@ -1,0 +1,80 @@
+{
+  "extract_id": "01bbb179-cb13-4b20-bd84-c7a4c320383a",
+  "source_data_id": "d7dea507-f3cb-49ed-a2ea-5ad468399257",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-4575752102767368805",
+      "confidence": 0.9639320225002104,
+      "phi_position": 0.2,
+      "content_hash": "0f47c23958bd0fa2",
+      "length": 236,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-7757319570364624710",
+      "confidence": 0.940169943749474,
+      "phi_position": 0.15,
+      "content_hash": "2801f72c8cbff825",
+      "length": 264,
+      "keywords": [
+        "believe"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-7757319570364624710",
+      "confidence": 0.940169943749474,
+      "phi_position": 0.15,
+      "content_hash": "2801f72c8cbff825",
+      "length": 264,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6349815655123430756",
+      "confidence": 0.9278640450004209,
+      "phi_position": 0.4,
+      "content_hash": "69c9f0877d266e70",
+      "length": 181,
+      "keywords": [
+        "create"
+      ]
+    }
+  ],
+  "hash_verification": "f5e14e0191290df0",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "70fb58f8-8cfe-4d1b-acb1-34d0b4eeb318",
+    "frequencies": [
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.38803398874989486,
+      1.0
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.2
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "01bbb179-cb13-4b20-bd84-c7a4c320383a",
+      "source_data_id": "d7dea507-f3cb-49ed-a2ea-5ad468399257",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743963254.9960983
+    }
+  },
+  "timestamp": 1743963254.996178
+}

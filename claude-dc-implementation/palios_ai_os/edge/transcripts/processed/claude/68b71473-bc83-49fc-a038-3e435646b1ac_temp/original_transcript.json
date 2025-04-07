@@ -1,0 +1,12 @@
+{
+  "data_id": "68b71473-bc83-49fc-a038-3e435646b1ac",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro palios-taey-nova % grep -n \"use_mock\" memory_service.py\n\njesselarose@Jesses-MacBook-Pro palios-taey-nova % grep -n \"mock_\" memory_service.py\n\n5:\u00a0 \u00a0 \u00a0 \u00a0 store=lambda **kwargs: \"mock_memory_id\",\n8:\u00a0 \u00a0 \u00a0 \u00a0 create_context=lambda **kwargs: \"mock_context_id\",\njesselarose@Jesses-MacBook-Pro palios-taey-nova % python3 workflow_verification.py --file .github/workflows/deploy.yml\n\n2025-03-11 16:45:47,636 - INFO - Verifying workflow file: .github/workflows/deploy.yml\n2025-03-11 16:45:47,640 - WARNING - \u26a0\ufe0f Workflow file has issues:\n2025-03-11 16:45:47,640 - WARNING - \u00a0 - Warning: No environment variables found in workflow\n2025-03-11 16:45:47,640 - WARNING - \u00a0 - Recommended fixes:\njesselarose@Jesses-MacBook-Pro palios-taey-nova %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-11T20:45:59.742080Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

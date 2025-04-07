@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_964",
+  "content": [
+    "User: Immediate Situation & Actions  \nTechnical Blocker: Artifact Registry Access  \nPrimary Issue: Deployment\u2019s dead in the water because of an 'OAuthError' object has no attribute 'content' when accessing Artifact Registry.\n\nGrok: Root Cause: APIs aren\u2019t enabled, and the repository might not exist."
+  ],
+  "source": "grok",
+  "timestamp": 1743980946.9176276,
+  "data_type": "exchange",
+  "metadata": {}
+}

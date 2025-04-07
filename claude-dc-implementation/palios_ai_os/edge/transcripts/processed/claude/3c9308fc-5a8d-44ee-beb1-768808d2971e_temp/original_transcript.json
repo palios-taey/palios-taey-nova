@@ -1,0 +1,12 @@
+{
+  "data_id": "3c9308fc-5a8d-44ee-beb1-768808d2971e",
+  "content": [
+    " In a terminal, you can open the file manager to view a directory using one of these commands:\n\n```bash\n# If using a Gnome-based environment (like Ubuntu's default)\nnautilus ~/ &\n\n# If using KDE\ndolphin ~/ &\n\n# If using XFCE\nthunar ~/ &\n\n# If using a more generic approach\nxdg-open ~/ &\n```\n\nThe `&` at the end runs the file manager in the background so you can continue using the terminal.\n\nTry each command until one works - it depends on what file manager is installed in Claude DC's environment. The command will open the file manager showing the home directory, where you'll be able to see all the folders and files.\n\nIf you're using a remote connection with a graphical interface, this should open the file manager in that interface. If you're using a text-only connection, these commands won't work."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-31T11:44:52.689270Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

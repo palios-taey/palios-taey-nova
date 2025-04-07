@@ -1,0 +1,32 @@
+{
+  "data_id": "daaf1025-3085-4e85-a709-c05ed27631c2",
+  "content": [
+    {
+      "content_type": "image_asset_pointer",
+      "asset_pointer": "file-service://file-9X6iDD9sBC1NM2kon5Yv9k",
+      "size_bytes": 389312,
+      "width": 1717,
+      "height": 1151,
+      "fovea": null,
+      "metadata": {
+        "dalle": null,
+        "gizmo": null,
+        "generation": null,
+        "container_pixel_height": null,
+        "container_pixel_width": null,
+        "emu_omit_glimpse_image": null,
+        "emu_patches_override": null,
+        "sanitized": true,
+        "asset_pointer_link": null,
+        "watermarked_asset_pointer": null
+      }
+    },
+    "Ok, there are 2 different json formats, 1 for you and 1 for Claude. That was Claude's, here is your's. Can you update the script to handle both JSON formats and .txt?"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743946691.207,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

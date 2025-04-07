@@ -1,0 +1,12 @@
+{
+  "data_id": "5ff85427-fb67-49ac-bece-3b15f509328e",
+  "content": [
+    " After examining the files in Project Knowledge, I found the issue in the `dashboard_app.py` file. The problem is in how the server status is being determined from the health check response.\n\nHere's the specific part that needs to be updated:\n\n```python\n# In dashboard_app.py, in the display_header function\nwith col2:\n    st.write(\"\")\n    st.write(\"\")\n    st.write(f\"Server Status: {'\ud83d\udfe2 Online' if st.session_state.system_health['status'] == 'ok' else '\ud83d\udd34 Offline'}\")\n```\n\nThe issue is that the code is checking if `system_health['status']` equals \"ok\", but in the `dashboard_mcp_connector.py` file, the health check function is returning a status that might be \"healthy\" or some other value. \n\nLet's update the `display_header` function in `dashboard_app.py` to properly handle the status from the MCP server:\n\n```python\nwith col2:\n    st.write(\"\")\n    st.write(\"\")\n    server_status = st.session_state.system_health.get(\"status\", \"unknown\")\n    # Check for various positive status values\n    is_online = server_status in [\"ok\", \"healthy\", \"online\", \"running\"]\n    st.write(f\"Server Status: {'\ud83d\udfe2 Online' if is_online else '\ud83d\udd34 Offline'}\")\n```\n\nAdditionally, make sure the health check is being correctly initialized in the `initialize_session_state` function and properly updated in the `main` function:\n\n```python\n# In the main function, make sure we're calling the health check:\n# Update system health\nst.session_state.system_health = components[\"connector\"].check_server_health()\n```\n\nThis modification will make the dashboard properly recognize the MCP server status and should allow the system to function correctly."
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-03T17:48:09.138274Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

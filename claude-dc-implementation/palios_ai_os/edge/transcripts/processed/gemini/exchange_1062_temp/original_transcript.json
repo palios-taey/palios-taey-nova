@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1062",
+  "content": [
+    "User: NO! Do it again without crazy tags everywhere! Come on Gemini. What happened to you today? You were ROCKING yesterday! Come back. Let's go, get it right. TAGS at the top, topic related. Concise instructions. GO! I'm not letting you off the hook, when I do, you get sloppy and regress. Come on, let's do this!\n\nGemini: Verify \"Location\" is \"Repository\".\nExpected: Correct ai-execution-system repo name.\nIf fails: \"Connect repository\" button again.\n[SECTION_TAG] 3. CREATE TRIGGER:\n\nClick \"Create\" button.\nExpected: Trigger listed in Cloud Build.\nIf fails: Check error, retry \"Create\".\n[SECTION_TAG] NEXT: Confirm trigger created, then verify trigger and Firestore setup. Let me know when done.\n\nLogo for Gemini Apps\nGemini Apps"
+  ],
+  "source": "gemini",
+  "timestamp": 1743976679.6537776,
+  "data_type": "exchange",
+  "metadata": {}
+}

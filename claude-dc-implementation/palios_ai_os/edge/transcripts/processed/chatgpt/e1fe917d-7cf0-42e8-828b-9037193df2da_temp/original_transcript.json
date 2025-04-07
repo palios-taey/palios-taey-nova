@@ -1,0 +1,12 @@
+{
+  "data_id": "e1fe917d-7cf0-42e8-828b-9037193df2da",
+  "content": [
+    ">>> import shutil\r\n>>> print(\"gcloud executable path:\", shutil.which(\"gcloud\"))\r\ngcloud executable path: C:\\Program Files (x86)\\Google\\Cloud SDK\\google-cloud-sdk\\bin\\gcloud.CMD\r\n>>>\r\n\r\n\r"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741358284.945,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

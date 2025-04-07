@@ -1,0 +1,80 @@
+{
+  "extract_id": "98ecc0b6-5f7b-4bd9-b1de-a87d65ee677c",
+  "source_data_id": "453c736d-6808-45ff-a9b8-fd153eea8b11",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-3765303148261969530",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "f40fdeb4cd0fabfe",
+      "length": 97,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-5522995650321205980",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "399bb21f66cda68d",
+      "length": 71,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5522995650321205980",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "399bb21f66cda68d",
+      "length": 71,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1819157973651474823",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "5f68f39cc4bd5126",
+      "length": 82,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "c162de6e04f23abe",
+  "harmony_index": 0.8217233145831581,
+  "wave_representation": {
+    "pattern_id": "4f2af95e-3f45-40d2-bfc8-f6e900525e6b",
+    "frequencies": [
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.7916407864998738,
+      0.7763932022500211
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.2
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "98ecc0b6-5f7b-4bd9-b1de-a87d65ee677c",
+      "source_data_id": "453c736d-6808-45ff-a9b8-fd153eea8b11",
+      "pattern_count": 4,
+      "harmony_index": 0.8217233145831581,
+      "timestamp": 1743963344.7758574
+    }
+  },
+  "timestamp": 1743963344.7758698
+}

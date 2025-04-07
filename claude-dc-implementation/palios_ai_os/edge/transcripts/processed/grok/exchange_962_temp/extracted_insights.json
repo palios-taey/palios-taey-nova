@@ -1,0 +1,88 @@
+{
+  "extract_id": "0d2888c7-0cdf-477d-a8fe-ba1bff93beae",
+  "source_data_id": "exchange_962",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5775116378196240814",
+      "confidence": 0.9880032969082102,
+      "phi_position": 0.8421052631578947,
+      "content_hash": "f87bc188467cf1d4",
+      "length": 61,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6798332140520250438",
+      "confidence": 0.987229169144842,
+      "phi_position": 0.6052631578947368,
+      "content_hash": "e91a9be370bd5ba3",
+      "length": 97,
+      "keywords": [
+        "implement",
+        "should"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2176000699014617795",
+      "confidence": 0.9345975901974737,
+      "phi_position": 0.5526315789473685,
+      "content_hash": "b9e389ac20b6a1eb",
+      "length": 78,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1199175788135163068",
+      "confidence": 0.8939627143418949,
+      "phi_position": 0.34210526315789475,
+      "content_hash": "117ae08735efcd96",
+      "length": 126,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5246398916871614481",
+      "confidence": 0.8804177557233687,
+      "phi_position": 0.9736842105263158,
+      "content_hash": "31987ecbb49a3946",
+      "length": 73,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "9c34a895b9a417e4",
+  "harmony_index": 1.0,
+  "wave_representation": {
+    "pattern_id": "09fbee65-8f6d-4c07-853b-e0d4e5ed3328",
+    "frequencies": [
+      660.0
+    ],
+    "amplitudes": [
+      1.0
+    ],
+    "phases": [
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "0d2888c7-0cdf-477d-a8fe-ba1bff93beae",
+      "source_data_id": "exchange_962",
+      "pattern_count": 5,
+      "harmony_index": 1.0,
+      "timestamp": 1743980995.9221957
+    }
+  },
+  "timestamp": 1743980995.9222705
+}

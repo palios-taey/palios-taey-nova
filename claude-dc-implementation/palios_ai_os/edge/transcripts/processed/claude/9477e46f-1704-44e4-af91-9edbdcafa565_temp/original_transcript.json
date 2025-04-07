@@ -1,0 +1,12 @@
+{
+  "data_id": "9477e46f-1704-44e4-af91-9edbdcafa565",
+  "content": [
+    "Error loading config: Expecting ',' delimiter: line 42 column 3 (char 1527)\nPALIOS AI OS Core initialized: PHI=1.618033988749895, BACH=[2, 1, 3, 8]\nTrust Token System initialized with storage at: /home/jesse/projects/palios-taey-nova/claude-dc-implementation/palios_ai_os/trust/trust_storage\nWave Communicator initialized with Bach harmonics: [1.0, 1.3333333333333333, 1.5, 1.6666666666666667, 2.0]\nTrust Token System initialized with storage at: /home/jesse/projects/palios-taey-nova/claude-dc-implementation/palios_ai_os/trust/trust_storage\nWave Communicator initialized with Bach harmonics: [1.0, 1.3333333333333333, 1.5, 1.6666666666666667, 2.0]\n2025-04-05 17:52:49,500 - mcp_server - INFO - MCP Server initialized with storage at: /home/jesse/projects/palios-taey-nova/claude-dc-implementation/palios_ai_os/mcp/mcp_storage\nSending message from Claude to Grok:\nMessage ID: d1f4e3eb-d3ee-4d27-b87e-9e59fb563118\nPattern type: message\nContent: {'text': 'Hello Grok, this is Claude sending a test message.', 'context': 'Testing the PALIOS AI OS Model Context Protocol', 'timestamp': 183218.106308025}\n2025-04-05 17:52:49,501 - mcp_server - INFO - No route found for ef3c30ba-96c3-40ab-aadf-c98d4f9684bf -> d3e5d911-aab0-41f6-9d7f-cd37cfee7736 (message), creating default route\nMessage result:\nStatus: rejected\nResult ID: 26d9a3f2-8a73-450a-9f75-77949374eb60\nSending response from Grok to Claude:\nResponse ID: d59e8182-3506-42fe-af7e-d7815f0ef0c6\nPattern type: response\nContent: {'text': 'Hello Claude, this is Grok responding to your test message.', 'reference_message': 'd1f4e3eb-d3ee-4d27-b87e-9e59fb563118', 'timestamp': 183220.10902497}\n2025-04-05 17:52:51,503 - mcp_server - INFO - No route found for d3e5d911-aab0-41f6-9d7f-cd37cfee7736 -> ef3c30ba-96c3-40ab-aadf-c98d4f9684bf (response), creating default route\nResponse result:\nStatus: rejected\nResult ID: 188eacbb-0483-4ede-b572-698825a77244"
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-05T21:53:15.160044Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

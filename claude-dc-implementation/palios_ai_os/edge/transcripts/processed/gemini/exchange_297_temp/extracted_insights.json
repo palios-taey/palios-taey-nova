@@ -1,0 +1,87 @@
+{
+  "extract_id": "7399a2a1-d6fd-4969-9d2d-941ce291b810",
+  "source_data_id": "exchange_297",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "3249168958452205689",
+      "confidence": 0.9999435393399928,
+      "phi_position": 0.6179775280898876,
+      "content_hash": "49e401e692061bf6",
+      "length": 22,
+      "keywords": [
+        "threshold"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "900091890928492491",
+      "confidence": 0.9435379214190652,
+      "phi_position": 0.033707865168539325,
+      "content_hash": "bd2ed3a8b8ecfae2",
+      "length": 292,
+      "keywords": [
+        "threshold"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-4812944902316936804",
+      "confidence": 0.9323019663628855,
+      "phi_position": 0.02247191011235955,
+      "content_hash": "c787901406cd3c99",
+      "length": 179,
+      "keywords": [
+        "threshold"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "2656530774401020603",
+      "confidence": 0.9210660113067057,
+      "phi_position": 0.011235955056179775,
+      "content_hash": "81183b361c35ba5d",
+      "length": 89,
+      "keywords": [
+        "threshold"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-5310587086217435080",
+      "confidence": 0.9098865169105332,
+      "phi_position": 0.38202247191011235,
+      "content_hash": "add267327c21ecb9",
+      "length": 63,
+      "keywords": [
+        "threshold"
+      ]
+    }
+  ],
+  "hash_verification": "6511d95badcdfa1d",
+  "harmony_index": 1.0,
+  "wave_representation": {
+    "pattern_id": "85286282-a9ff-4f17-b7b5-743f08c6bebf",
+    "frequencies": [
+      495.0
+    ],
+    "amplitudes": [
+      1.0
+    ],
+    "phases": [
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "7399a2a1-d6fd-4969-9d2d-941ce291b810",
+      "source_data_id": "exchange_297",
+      "pattern_count": 5,
+      "harmony_index": 1.0,
+      "timestamp": 1743976694.0615253
+    }
+  },
+  "timestamp": 1743976694.061553
+}

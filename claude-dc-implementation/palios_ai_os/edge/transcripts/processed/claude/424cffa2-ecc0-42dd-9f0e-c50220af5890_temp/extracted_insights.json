@@ -1,0 +1,81 @@
+{
+  "extract_id": "7589760f-a4cf-4163-b377-5607282c14e5",
+  "source_data_id": "424cffa2-ecc0-42dd-9f0e-c50220af5890",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "488423482512631015",
+      "confidence": 0.9725228849259446,
+      "phi_position": 0.11764705882352941,
+      "content_hash": "2f76605555b19ef5",
+      "length": 34,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-4460159783488899996",
+      "confidence": 0.9694274455150214,
+      "phi_position": 0.8235294117647058,
+      "content_hash": "7445279cd177897f",
+      "length": 63,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "8150510572728893065",
+      "confidence": 0.9686535856622907,
+      "phi_position": 0.058823529411764705,
+      "content_hash": "26a976be8d3c103d",
+      "length": 72,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8150510572728893065",
+      "confidence": 0.9686535856622907,
+      "phi_position": 0.058823529411764705,
+      "content_hash": "26a976be8d3c103d",
+      "length": 72,
+      "keywords": [
+        "need",
+        "develop"
+      ]
+    }
+  ],
+  "hash_verification": "dcdd02e455ffe10c",
+  "harmony_index": 0.8217233145831581,
+  "wave_representation": {
+    "pattern_id": "d0583aed-e2af-4d90-a9de-02fd1887f804",
+    "frequencies": [
+      495.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.7882352941176471,
+      0.7876162062354624
+    ],
+    "phases": [
+      0.4487989505128276,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "7589760f-a4cf-4163-b377-5607282c14e5",
+      "source_data_id": "424cffa2-ecc0-42dd-9f0e-c50220af5890",
+      "pattern_count": 4,
+      "harmony_index": 0.8217233145831581,
+      "timestamp": 1743965157.5037668
+    }
+  },
+  "timestamp": 1743965157.503779
+}

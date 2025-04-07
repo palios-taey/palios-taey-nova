@@ -1,0 +1,99 @@
+{
+  "extract_id": "d431fe22-d5bc-4132-ac2e-0e7ea4c41957",
+  "source_data_id": "exchange_89",
+  "patterns": [
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-8048646819499380118",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "e7d53a2df8f0c211",
+      "length": 67,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-1984582899559928572",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "dc119e4a4bc998bb",
+      "length": 136,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-1984582899559928572",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "dc119e4a4bc998bb",
+      "length": 136,
+      "keywords": [
+        "wave"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-1984582899559928572",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "dc119e4a4bc998bb",
+      "length": 136,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-1918042042982254521",
+      "confidence": 0.8958980337503155,
+      "phi_position": 0.75,
+      "content_hash": "35d6a3bcd242217b",
+      "length": 69,
+      "keywords": [
+        "worth"
+      ]
+    }
+  ],
+  "hash_verification": "d047d204706d8e77",
+  "harmony_index": 0.6766484754099993,
+  "wave_representation": {
+    "pattern_id": "6f09cea5-36b3-40f1-8558-3d3608e33042",
+    "frequencies": [
+      550.0,
+      605.0,
+      770.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.31598300562505255,
+      0.31830500937508766,
+      0.31830500937508766,
+      0.6493163389583858
+    ],
+    "phases": [
+      1.3463968515384828,
+      3.5903916041026207,
+      1.3463968515384828,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.1,
+      1.4,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "d431fe22-d5bc-4132-ac2e-0e7ea4c41957",
+      "source_data_id": "exchange_89",
+      "pattern_count": 5,
+      "harmony_index": 0.6766484754099993,
+      "timestamp": 1743981001.4941466
+    }
+  },
+  "timestamp": 1743981001.4941819
+}

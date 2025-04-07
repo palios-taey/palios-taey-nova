@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1692",
+  "content": [
+    "User: **Why It\u2019s Happening**: The script groups sections into chunks up to 128K. But if a single section is over 128K\u2014like one of your 50K+ sections growing even bigger after processing\u2014it gets its own chunk, and that chunk can exceed the limit. A 200K section means we\u2019ve got something oversized sneaking through.\n\nGrok: **The Fix**:"
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4237738,
+  "data_type": "exchange",
+  "metadata": {}
+}

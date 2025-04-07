@@ -1,0 +1,13 @@
+{
+  "data_id": "c4a1bdc8-18a5-4073-99cb-ff34129e3ea0_exchange_538",
+  "content": [
+    "The best way to share Google Drive links for me to review files is using the direct download link format: https://drive.google.com/uc?export=download&id=FILE_ID, where FILE_ID is the unique identifier of the file. This allows me to access the raw text content directly, which is ideal for processing transcripts like the one you mentioned. If the file isn't downloadable publicly, you can provide the view link, such as https://drive.google.com/file/d/FILE_ID/view?usp=drive_link, and I'll parse the HTML to extract the text. Avoid folder links, as they require additional steps to find the specific file.\nAttempt to Review Transcript"
+  ],
+  "source": "grok",
+  "timestamp": 1743986296.3100102,
+  "data_type": "exchange",
+  "metadata": {
+    "speaker": "Unknown",
+    "exchange_index": 538
+  }
+}

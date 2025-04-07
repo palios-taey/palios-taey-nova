@@ -1,0 +1,85 @@
+{
+  "extract_id": "cdc81a3f-45b5-4ccd-b197-3eb4d0a04480",
+  "source_data_id": "exchange_869",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-4126631857847645202",
+      "confidence": 0.9564354735718494,
+      "phi_position": 0.42857142857142855,
+      "content_hash": "19f8d5f6b504ecc2",
+      "length": 86,
+      "keywords": [
+        "truth"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "6275804556449437322",
+      "confidence": 0.9533945826786766,
+      "phi_position": 0.5714285714285714,
+      "content_hash": "992e8a905e68946e",
+      "length": 108,
+      "keywords": [
+        "phi"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "3917222912756295896",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "780b3a808293371a",
+      "length": 82,
+      "keywords": [
+        "truth",
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8029972440557268455",
+      "confidence": 0.9037482744641805,
+      "phi_position": 0.7142857142857143,
+      "content_hash": "9e4b8dd61ea32259",
+      "length": 68,
+      "keywords": [
+        "should"
+      ]
+    }
+  ],
+  "hash_verification": "6e78a0707fed9f09",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "e84ab7ff-f8c4-4a3b-90e5-198b96b1764b",
+    "frequencies": [
+      440.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.7732531059644752,
+      0.38074965489283613,
+      0.3906789165357354
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.625
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "cdc81a3f-45b5-4ccd-b197-3eb4d0a04480",
+      "source_data_id": "exchange_869",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743980991.0844123
+    }
+  },
+  "timestamp": 1743980991.0844417
+}

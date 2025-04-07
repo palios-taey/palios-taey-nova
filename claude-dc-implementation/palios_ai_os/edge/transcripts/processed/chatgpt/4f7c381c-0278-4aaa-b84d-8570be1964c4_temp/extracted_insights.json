@@ -1,0 +1,92 @@
+{
+  "extract_id": "6ea147ad-cace-4333-ac1d-10f30a326388",
+  "source_data_id": "4f7c381c-0278-4aaa-b84d-8570be1964c4",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2698448811442102297",
+      "confidence": 0.9640798519321337,
+      "phi_position": 0.8181818181818182,
+      "content_hash": "d4890180974f086b",
+      "length": 132,
+      "keywords": [
+        "require",
+        "develop"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1589958595181220471",
+      "confidence": 0.9633407047725169,
+      "phi_position": 0.2727272727272727,
+      "content_hash": "d8b4d4bdfc94e157",
+      "length": 99,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4146063044087976689",
+      "confidence": 0.9457502043183923,
+      "phi_position": 0.18181818181818182,
+      "content_hash": "1b36ee5b53284b67",
+      "length": 198,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "155888117616739103",
+      "confidence": 0.9274205567046506,
+      "phi_position": 0.5454545454545454,
+      "content_hash": "c55ec44cf94a615b",
+      "length": 235,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1035766208896058437",
+      "confidence": 0.8907612614771675,
+      "phi_position": 0.7272727272727273,
+      "content_hash": "54d846de1a01f8e4",
+      "length": 144,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "2c7daf21bac5486b",
+  "harmony_index": 0.8505510575057106,
+  "wave_representation": {
+    "pattern_id": "3167e5bb-8c81-4469-87b4-2f402e5896ad",
+    "frequencies": [
+      440.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.32123675945077507,
+      1.0
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "6ea147ad-cace-4333-ac1d-10f30a326388",
+      "source_data_id": "4f7c381c-0278-4aaa-b84d-8570be1964c4",
+      "pattern_count": 5,
+      "harmony_index": 0.8505510575057106,
+      "timestamp": 1743963405.3343356
+    }
+  },
+  "timestamp": 1743963405.3343685
+}

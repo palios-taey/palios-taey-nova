@@ -1,0 +1,12 @@
+{
+  "data_id": "3215eea9-bfc3-4f2a-8757-e0325254c6f4",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro palios-taey-app % curl -H \"Authorization: Bearer $(gcloud auth print-identity-token)\" $SERVICE_URL/health\n\nService Unavailable**%**"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-15T22:40:16.315056Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

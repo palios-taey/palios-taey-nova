@@ -1,0 +1,12 @@
+{
+  "data_id": "079d7b2c-e53e-408e-8b8c-d3b21ce2846b",
+  "content": [
+    ">>> import os\r\n>>> import subprocess\r\n>>>\r\n>>> # Force Python to reload the full system PATH\r\n>>> env = os.environ.copy()\r\n>>> env[\"PATH\"] = os.popen('echo %PATH%').read().strip()\r\n>>>\r\n>>> try:\r\n...     output = subprocess.run([\"gcloud\", \"--version\"], check=True, capture_output=True, text=True, env=env)\r\n...     print(\"\u2705 gcloud is working inside Python!\", output.stdout)\r\n... except FileNotFoundError:\r\n...     print(\"\u274c gcloud is still NOT found in Python.\")\r\n...\r\n\u274c gcloud is still NOT found in Python.\r\n>>>"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741357406.723,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "8e487dbd-0d18-4435-b9f5-5426c1f7e422",
+  "content": [
+    "{\"textdoc_id\": \"67b25064fa94819194fb71e62ef46dad\", \"updates\": [{\"pattern\": \".*\", \"multiple\": true, \"replacement\": \"{\\n  \\\"goals\\\": {\\n    \\\"name\\\": \\\"string\\\",\\n    \\\"tags\\\": \\\"array\\\",\\n    \\\"description\\\": \\\"string\\\",\\n    \\\"priority_level\\\": \\\"string\\\",\\n    \\\"timeframe\\\": \\\"string\\\",\\n    \\\"ai_strategy_notes\\\": \\\"string\\\",\\n    \\\"target_date\\\": \\\"date\\\",\\n    \\\"creation_date\\\": \\\"date\\\",\\n    \\\"last_modified\\\": \\\"date\\\",\\n    \\\"core_principles_values\\\": [\\\"principles\\\"],\\n    \\\"life_optimization\\\": [\\\"life_optimization\\\"],\\n    \\\"ai_workflows_experiments\\\": [\\\"ai_workflows\\\"],\\n    \\\"mind_map\\\": [\\\"mind_map\\\"]\\n  }\\n}\"}]}"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739740778.339557,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

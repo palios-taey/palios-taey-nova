@@ -1,0 +1,69 @@
+{
+  "extract_id": "a0080cc9-9dfb-409c-a860-bb28c7e02be3",
+  "source_data_id": "477338a0-875a-4bb4-bc73-0b57ea7decef",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-6761021198876128861",
+      "confidence": 0.9984522802945385,
+      "phi_position": 0.47058823529411764,
+      "content_hash": "2524b2b04add8781",
+      "length": 159,
+      "keywords": [
+        "never"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8538328185511633759",
+      "confidence": 0.998065350368173,
+      "phi_position": 0.08823529411764706,
+      "content_hash": "4d763ea7ca3dc905",
+      "length": 88,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3532230261208628458",
+      "confidence": 0.9392418209564083,
+      "phi_position": 0.029411764705882353,
+      "content_hash": "a3aee2728ae38eca",
+      "length": 90,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "8be3971f81bb8b5e",
+  "harmony_index": 0.8449475395938787,
+  "wave_representation": {
+    "pattern_id": "18a3ed4a-b97a-4c70-a421-a77b19045b90",
+    "frequencies": [
+      440.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.49961307007363465,
+      0.9843267928311453
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "a0080cc9-9dfb-409c-a860-bb28c7e02be3",
+      "source_data_id": "477338a0-875a-4bb4-bc73-0b57ea7decef",
+      "pattern_count": 3,
+      "harmony_index": 0.8449475395938787,
+      "timestamp": 1743963189.4538498
+    }
+  },
+  "timestamp": 1743963189.4539247
+}

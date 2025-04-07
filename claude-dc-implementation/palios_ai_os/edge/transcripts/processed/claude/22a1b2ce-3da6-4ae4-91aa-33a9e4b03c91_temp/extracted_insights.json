@@ -1,0 +1,88 @@
+{
+  "extract_id": "36df4423-8e6f-4504-b248-589a55f6d1d5",
+  "source_data_id": "22a1b2ce-3da6-4ae4-91aa-33a9e4b03c91",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5693810297510524449",
+      "confidence": 0.9973506266347206,
+      "phi_position": 0.6153846153846154,
+      "content_hash": "83517112082e6d38",
+      "length": 107,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "1457075061297115532",
+      "confidence": 0.9894025065388824,
+      "phi_position": 0.46153846153846156,
+      "content_hash": "cf2c582557b681ac",
+      "length": 55,
+      "keywords": [
+        "notice"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-516427194663030526",
+      "confidence": 0.9482915947120644,
+      "phi_position": 0.038461538461538464,
+      "content_hash": "13001c11384683a4",
+      "length": 108,
+      "keywords": [
+        "value"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-1224402128131986773",
+      "confidence": 0.9283756698074819,
+      "phi_position": 0.3076923076923077,
+      "content_hash": "679eb92e7e83bc0e",
+      "length": 127,
+      "keywords": [
+        "always"
+      ]
+    }
+  ],
+  "hash_verification": "7b2f863826df7c2f",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "3b1dc439-46ed-49c1-a9b2-9870374971fc",
+    "frequencies": [
+      440.0,
+      550.0,
+      605.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3856751339614964,
+      0.3896583189424129,
+      0.3978805013077765,
+      0.39947012532694415
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      3.5903916041026207,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.375,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "36df4423-8e6f-4504-b248-589a55f6d1d5",
+      "source_data_id": "22a1b2ce-3da6-4ae4-91aa-33a9e4b03c91",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743965035.8916457
+    }
+  },
+  "timestamp": 1743965035.8916736
+}

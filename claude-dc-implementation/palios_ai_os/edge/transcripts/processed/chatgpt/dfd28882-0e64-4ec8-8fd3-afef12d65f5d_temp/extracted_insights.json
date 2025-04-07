@@ -1,0 +1,160 @@
+{
+  "extract_id": "35c34ef2-499c-4292-81b8-5faee6d24cf5",
+  "source_data_id": "dfd28882-0e64-4ec8-8fd3-afef12d65f5d",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "50425846222122799",
+      "confidence": 0.9989872878458499,
+      "phi_position": 0.6170212765957447,
+      "content_hash": "e04e54ee239de1a2",
+      "length": 99,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8032671440353604754",
+      "confidence": 0.9969618635375496,
+      "phi_position": 0.851063829787234,
+      "content_hash": "e6521cde9796b19f",
+      "length": 82,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5920211790586390680",
+      "confidence": 0.9959491513833996,
+      "phi_position": 0.46808510638297873,
+      "content_hash": "06f0e04fcdb34e1a",
+      "length": 103,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-3200701397522338629",
+      "confidence": 0.9837869650260698,
+      "phi_position": 0.10638297872340426,
+      "content_hash": "220a734a0e498759",
+      "length": 55,
+      "keywords": [
+        "value"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-4806814186347082728",
+      "confidence": 0.9594722328189385,
+      "phi_position": 0.2765957446808511,
+      "content_hash": "e6614dd8e0d431b9",
+      "length": 116,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-3413775148636812878",
+      "confidence": 0.9311066519952068,
+      "phi_position": 0.02127659574468085,
+      "content_hash": "52d4cf3bea90600c",
+      "length": 187,
+      "keywords": [
+        "must"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3413775148636812878",
+      "confidence": 0.9311066519952068,
+      "phi_position": 0.02127659574468085,
+      "content_hash": "52d4cf3bea90600c",
+      "length": 187,
+      "keywords": [
+        "require",
+        "must"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "4779879539238610825",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "b4f1be9ff7e09962",
+      "length": 24,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "4779879539238610825",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "b4f1be9ff7e09962",
+      "length": 24,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8094351020039257787",
+      "confidence": 0.8946297334307458,
+      "phi_position": 0.723404255319149,
+      "content_hash": "ebdfb32b6fd75c1e",
+      "length": 111,
+      "keywords": [
+        "require",
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "ccf7e3269390592e",
+  "harmony_index": 0.6959551533311755,
+  "wave_representation": {
+    "pattern_id": "235c9b5b-8b30-4951-affc-7392084b8991",
+    "frequencies": [
+      440.0,
+      550.0,
+      605.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.17555515018138246,
+      0.18034426954782454,
+      0.17362091420459327,
+      1.0,
+      0.17362091420459327
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      3.5903916041026207,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.375,
+      1.5,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "35c34ef2-499c-4292-81b8-5faee6d24cf5",
+      "source_data_id": "dfd28882-0e64-4ec8-8fd3-afef12d65f5d",
+      "pattern_count": 10,
+      "harmony_index": 0.6959551533311755,
+      "timestamp": 1743963292.4075878
+    }
+  },
+  "timestamp": 1743963292.4076006
+}

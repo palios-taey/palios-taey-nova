@@ -1,0 +1,12 @@
+{
+  "data_id": "59bf5201-2033-4e8b-9109-cdb10a02abf5",
+  "content": [
+    "sudo dkms status\namdgpu/6.10.5-2125197.22.04: added\nsystem76/1.0.18~1743109511~22.04~8b1da53, 6.12.10-76061203-generic, x86_64: installed\nsystem76/1.0.18~1743109511~22.04~8b1da53, 6.9.3-76060903-generic, x86_64: installed\nsystem76_acpi/1.0.2~1719257749~22.04~7bae1af, 6.12.10-76061203-generic, x86_64: installed (original_module exists)\nsystem76_acpi/1.0.2~1719257749~22.04~7bae1af, 6.9.3-76060903-generic, x86_64: installed (original_module exists)\nsystem76-io/1.0.4~1732138800~22.04~fc71f15, 6.12.10-76061203-generic, x86_64: installed\nsystem76-io/1.0.4~1732138800~22.04~fc71f15, 6.9.3-76060903-generic, x86_64: installed\n\nBuilding module:\ncleaning build area...(bad exit status: 2)\n. /tmp/amd.5hTIXlDw/.env && make -j24 KERNELRELEASE=6.12.10-76061203-generic TTM_NAME=amdttm SCHED_NAME=amd-sched -C /lib/modules/6.12.10-76061203-generic/build M=/tmp/amd.5hTIXlDw...(bad exit status: 2)\nERROR (dkms apport): kernel package linux-headers-6.12.10-76061203-generic is not supported\nError! Bad return status for module build on kernel: 6.12.10-76061203-generic (x86_64)\nConsult /var/lib/dkms/amdgpu/6.10.5-2125197.22.04/build/make.log for more information."
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743554457.225,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

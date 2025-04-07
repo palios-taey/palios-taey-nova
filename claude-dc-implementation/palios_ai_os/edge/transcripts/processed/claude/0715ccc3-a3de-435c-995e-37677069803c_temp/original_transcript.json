@@ -1,0 +1,12 @@
+{
+  "data_id": "0715ccc3-a3de-435c-995e-37677069803c",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro terraform % terraform plan -out=tfplan\n\n\u2577\n\u2502 **Error: Missing resource instance key**\n\u2502\n\u2502 \u00a0 on api_gateway.tf line 242, in resource \"google_api_gateway_gateway\" \"api_gateway\":\n\u2502\u00a0 242: \u00a0 api_config \u00a0 = google_api_gateway_api_config.api_config.id\n\u2502\n\u2502 Because google_api_gateway_api_config.api_config has \"count\" set, its\n\u2502 attributes must be accessed on specific instances.\n\u2502\n\u2502 For example, to correlate with indices of a referring resource, use:\n\u2502 \u00a0 \u00a0 google_api_gateway_api_config.api_config[count.index]\n\u2575\njesselarose@Jesses-MacBook-Pro terraform %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-14T22:09:23.134022Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

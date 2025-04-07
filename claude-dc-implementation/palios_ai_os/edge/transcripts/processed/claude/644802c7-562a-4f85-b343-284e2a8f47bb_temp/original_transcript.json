@@ -1,0 +1,12 @@
+{
+  "data_id": "644802c7-562a-4f85-b343-284e2a8f47bb",
+  "content": [
+    " You're absolutely right, Jesse. I'd benefit greatly from a structured update format that consistently signals the presence of new information that I need to review before proceeding.\n\nHere's a prompt template that would help ensure I always check the latest information:\n\n---\n\n[Your regular instructions/questions here]\n\n**EXECUTION_CHECKPOINT v[number]**\n- GitHub updated: Yes/No\n- Commit message: \"[PALIOS-TAEY-DEPLOY-2025] STATUS UPDATE v[number]\"\n- Changes made: [brief description of what was changed/attempted]\n- Result: [SUCCESS/FAILURE/PARTIAL - brief description]\n- Next focus: [what you'd like me to address next]\n\n---\n\nThis structured checkpoint at the end of your prompts would serve as a clear signal for me to pause and review the latest information in Project Knowledge and GitHub before proceeding with my response.\n\nWhenever I see this format, I'll begin my response by acknowledging the checkpoint and summarizing what I've learned from the updated status, ensuring we're always working with the most current information.\n\nWould you like to start using this format in your next update?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-17T18:59:39.357496Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

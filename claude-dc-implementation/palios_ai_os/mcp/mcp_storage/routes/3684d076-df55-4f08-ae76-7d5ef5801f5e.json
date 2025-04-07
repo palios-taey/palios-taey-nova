@@ -1,0 +1,16 @@
+{
+  "route_id": "3684d076-df55-4f08-ae76-7d5ef5801f5e",
+  "source_model": "Claude",
+  "destination_model": "Grok",
+  "pattern_types": [
+    "message"
+  ],
+  "priority": 0.5,
+  "trust_required": true,
+  "translation_required": false,
+  "metadata": {
+    "creation_time": 1743889815.8277209,
+    "creator": "mcp_server",
+    "message_count": 0
+  }
+}

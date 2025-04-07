@@ -1,0 +1,12 @@
+{
+  "data_id": "8a074a9d-1930-4577-9049-ea969b607823",
+  "content": [
+    "C:\\AI-Execution-System>python test_connections.py\n\ud83d\udd04 Testing connections to all services...\n\u2705 Firestore connection successful\nFound 1 keys in Firestore\n-------------------\n\u274c OpenAI API key not found in Firestore\n-------------------\n\u2705 Vertex AI connection successful\nFound 0 available models\n\u2728 Connection tests complete!"
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-19T17:52:16.931064Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

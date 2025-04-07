@@ -1,0 +1,80 @@
+{
+  "extract_id": "640d4d8b-3c83-44ed-9ac6-c40892127f92",
+  "source_data_id": "5d361dc0-6852-4ff1-a467-9d6233b76e23",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-3585456594817705317",
+      "confidence": 0.9824094995458754,
+      "phi_position": 0.45454545454545453,
+      "content_hash": "5ee13d6b7eed465c",
+      "length": 142,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6879443001370769558",
+      "confidence": 0.9633407047725169,
+      "phi_position": 0.2727272727272727,
+      "content_hash": "78ce2d96d463da05",
+      "length": 169,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6451429141566650244",
+      "confidence": 0.9274205567046506,
+      "phi_position": 0.5454545454545454,
+      "content_hash": "7e5a652863e86ad2",
+      "length": 131,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6566848506184445188",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "986413d862877440",
+      "length": 241,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "cae372d6f5ba5a4b",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "b6d39069-0191-4e35-a70f-c5e2e483be27",
+    "frequencies": [
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3964818999091751,
+      1.0
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.2
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "640d4d8b-3c83-44ed-9ac6-c40892127f92",
+      "source_data_id": "5d361dc0-6852-4ff1-a467-9d6233b76e23",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743965082.5315344
+    }
+  },
+  "timestamp": 1743965082.531563
+}

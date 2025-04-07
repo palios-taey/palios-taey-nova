@@ -1,0 +1,12 @@
+{
+  "data_id": "31ffb27b-e25b-48fb-8696-ce4f6312263c",
+  "content": [
+    "It told me to do nvcc I had to run this: \nsudo apt install nvidia-cuda-toolkit\n\nnvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2021 NVIDIA Corporation\nBuilt on Thu_Nov_18_09:45:30_PST_2021\nCuda compilation tools, release 11.5, V11.5.119\nBuild cuda_11.5.r11.5/compiler.30672275_0\n\nThen I got this, looks like a lot to install. Is there an easier way to do this than running all these commands separately?\n"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743550776.862,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

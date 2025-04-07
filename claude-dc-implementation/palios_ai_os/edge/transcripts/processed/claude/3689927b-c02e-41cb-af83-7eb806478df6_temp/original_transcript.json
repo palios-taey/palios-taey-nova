@@ -1,0 +1,12 @@
+{
+  "data_id": "3689927b-c02e-41cb-af83-7eb806478df6",
+  "content": [
+    " I see the issue - GPT-4 is returning JSON with markdown formatting (inside ```json blocks). Let me clean that up in the response processing: \n\n\n\nChanges made:\n1. Added stronger prompting to get raw JSON only\n2. Added cleanup for markdown formatting\n3. Enhanced error reporting to show the cleaning process\n4. Made system prompt more explicit about format requirements\n\nRun the test again:\n```bash\npython test_ai_system.py\n```\n\nThis should now properly handle the JSON parsing regardless of whether GPT-4 returns it with markdown formatting or not."
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-19T22:15:55.464802Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

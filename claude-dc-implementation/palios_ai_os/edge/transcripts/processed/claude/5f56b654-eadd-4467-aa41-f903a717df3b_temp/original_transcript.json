@@ -1,0 +1,12 @@
+{
+  "data_id": "5f56b654-eadd-4467-aa41-f903a717df3b",
+  "content": [
+    "C:\\AI-Execution-System\\paliostypescript>node dist/integration-tests.js\nStarting Integration Test Suite...\nTest Summary: {\n  totalTests: 2,\n  passed: 2,\n  failed: 0,\n  averageDuration: 3.50545,\n  totalMemoryUsage: 0.29117584228515625\n}\nTest: Basic Message Processing\nSuccess: true\nDuration: 6.86ms\nMemory Usage: 0.29MB\nPerformance Metrics:\n  - Average Processing Time: 6.86ms\n  - Peak Memory Usage: 4.59MB\n  - Throughput: 145.76 msg/sec\nTest: Invalid Message Processing\nSuccess: true\nDuration: 0.15ms\nMemory Usage: 0.00MB\nPerformance Metrics:\n  - Average Processing Time: 0.15ms\n  - Peak Memory Usage: 4.60MB\n  - Throughput: 6662.23 msg/sec\nIntegration tests completed: 2 tests executed"
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-23T21:50:05.127848Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

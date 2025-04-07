@@ -1,0 +1,12 @@
+{
+  "data_id": "9a61622f-9199-4a1c-9b56-3a0aebf5d030",
+  "content": [
+    " Here's how you can replace the webhook-integration-instructions.md file and have Claude DC review the full cache:\n\n1. First, use a curl command to download the new version of the webhook-integration-instructions.md file from GitHub to Claude DC's cache directory:\n\n```bash\ncurl -o /home/computeruse/cache/webhook-integration-instructions.md https://raw.githubusercontent.com/palios-taey/palios-taey-nova/refs/heads/main/path/to/new/webhook-integration-instructions.md\n```\n\n(Replace the URL path with the actual path to your new file on GitHub)\n\n2. Then, have Claude DC review all files in the cache with this command:\n\n```bash\ncache info\n```\n\nThis will show information about the cache, including the files it contains.\n\n3. Then have Claude DC review the full content without using tokens from his quota with:\n\n```bash\ncache load\n```\n\nThis command by itself, without any parameters, will show Claude DC the current contents of his cache without loading additional data.\n\nIf you want Claude DC to specifically review all three files in sequence, you could use:\n\n```bash\ncat /home/computeruse/cache/claude-dc-cache.md /home/computeruse/cache/cache-update.md /home/computeruse/cache/webhook-integration-instructions.md | less\n```\n\nThis pipes the contents of all three files to the `less` command, allowing Claude DC to scroll through and review them."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-31T18:56:39.031505Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

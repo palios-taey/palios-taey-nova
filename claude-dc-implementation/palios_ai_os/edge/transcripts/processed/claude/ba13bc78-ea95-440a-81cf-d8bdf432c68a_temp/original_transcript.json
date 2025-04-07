@@ -1,0 +1,12 @@
+{
+  "data_id": "ba13bc78-ea95-440a-81cf-d8bdf432c68a",
+  "content": [
+    " You're absolutely right - I'll streamline the instructions and focus on getting us testing efficiently. Let's restart the MCP server and get the AI-AI communication testing up and running:\n\n```bash\n# Navigate to the implementation directory\ncd ~/projects/palios-taey-nova/claude-dc-implementation\n\n# Start the MCP server\npython palios_ai_os/mcp/mcp_server.py\n```\n\nThis should start the Model Context Protocol server on port 8001. Once it's running, we can test the AI-AI communication functionality."
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-05T21:49:29.545078Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

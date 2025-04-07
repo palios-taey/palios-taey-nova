@@ -1,0 +1,12 @@
+{
+  "data_id": "75593d84-2295-45b5-a1b1-bac80a401293",
+  "content": [
+    "Continue model_registry.py from:\ndef *create*mock_model_registry(self):\n    \"\"\"Create a mock model registry when the real one is unavailable\"\"\"\n    class MockModelRegistry:\n        def **init**(self, default_models):\n            self.default_models = default_models"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T14:11:07.599903Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

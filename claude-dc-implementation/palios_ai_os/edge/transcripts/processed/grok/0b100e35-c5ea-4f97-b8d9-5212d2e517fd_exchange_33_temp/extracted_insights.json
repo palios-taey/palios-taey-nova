@@ -1,0 +1,73 @@
+{
+  "extract_id": "48020d87-f3fb-40ba-9535-3a06c9922ca5",
+  "source_data_id": "0b100e35-c5ea-4f97-b8d9-5212d2e517fd_exchange_33",
+  "patterns": [
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-3146672770641470357",
+      "confidence": 0.9931633895838593,
+      "phi_position": 0.08333333333333333,
+      "content_hash": "8eb40ed9110a0a22",
+      "length": 111,
+      "keywords": [
+        "worth"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-5560082755312686553",
+      "confidence": 0.9930771223612164,
+      "phi_position": 0.6111111111111112,
+      "content_hash": "b53ea7910fac8fca",
+      "length": 144,
+      "keywords": [
+        "truth"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-5560082755312686553",
+      "confidence": 0.9930771223612164,
+      "phi_position": 0.6111111111111112,
+      "content_hash": "b53ea7910fac8fca",
+      "length": 144,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "8a9e157890fbb495",
+  "harmony_index": 0.7239109667302018,
+  "wave_representation": {
+    "pattern_id": "56ec7b06-ecdf-4a0c-8606-f33e2b3ddcf0",
+    "frequencies": [
+      440.0,
+      550.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.49826928059030406,
+      0.49829084739596485,
+      0.49826928059030406
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "48020d87-f3fb-40ba-9535-3a06c9922ca5",
+      "source_data_id": "0b100e35-c5ea-4f97-b8d9-5212d2e517fd_exchange_33",
+      "pattern_count": 3,
+      "harmony_index": 0.7239109667302018,
+      "timestamp": 1743986267.1716518
+    }
+  },
+  "timestamp": 1743986267.1716588
+}

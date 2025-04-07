@@ -1,0 +1,12 @@
+{
+  "data_id": "3a4498e7-e662-42d6-b6b4-e45f77217b03",
+  "content": [
+    "The existing code was a little different than what you had, but I found the /health and updated. Is this correct? It's not the same as what you have, but what was there wasn't what you thought, so I'm trying to figure out how to address this:\n\n    def check_server_status(self) -> Dict[str, Any]:\n        \"\"\"\n        Check the status of the MCP server.\n        \n        Returns:\n            Status information from the server\n        \"\"\"\n        try:\n            # Send request to health endpoint\n            response = self.session.get(f\"{self.server_url}/api/health\")\n            \n            # Check for success\n            if response.status_code == 200:\n                return response.json()\n            else:\n                error_msg = f\"Server status check failed with status {response.status_code}: {response.text}\"\n                logger.error(error_msg)\n                return {\"status\": \"error\", \"message\": error_msg}\n                \n        except Exception as e:\n            error_msg = f\"Error checking server status: {str(e)}\"\n            logger.error(error_msg)\n            return {\"status\": \"error\", \"message\": error_msg}"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743697200.82,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

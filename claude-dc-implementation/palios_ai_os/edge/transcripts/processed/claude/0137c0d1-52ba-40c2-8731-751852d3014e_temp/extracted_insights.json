@@ -1,0 +1,128 @@
+{
+  "extract_id": "2f2045b6-7236-4dab-b82f-a7f249e2d433",
+  "source_data_id": "0137c0d1-52ba-40c2-8731-751852d3014e",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "3606530419571345833",
+      "confidence": 0.9881291274229435,
+      "phi_position": 0.10204081632653061,
+      "content_hash": "03115f9701f309b8",
+      "length": 153,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-7472239010576581191",
+      "confidence": 0.9826327276278666,
+      "phi_position": 0.8367346938775511,
+      "content_hash": "162f94af63fa6733",
+      "length": 187,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "5676480620841078522",
+      "confidence": 0.9710545460464443,
+      "phi_position": 0.061224489795918366,
+      "content_hash": "5a634dfed981a400",
+      "length": 207,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5676480620841078522",
+      "confidence": 0.9710545460464443,
+      "phi_position": 0.061224489795918366,
+      "content_hash": "5a634dfed981a400",
+      "length": 207,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-5317578636498335415",
+      "confidence": 0.9707618550508099,
+      "phi_position": 0.2653061224489796,
+      "content_hash": "1de6288371b11ae4",
+      "length": 210,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3286636805263347201",
+      "confidence": 0.9564354735718494,
+      "phi_position": 0.42857142857142855,
+      "content_hash": "d8af5356ca3f133d",
+      "length": 197,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "8393327822701052641",
+      "confidence": 0.9302382195158321,
+      "phi_position": 0.02040816326530612,
+      "content_hash": "24d9ed9ee7c5c35d",
+      "length": 28,
+      "keywords": [
+        "foundation"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "3097683467789779313",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "7bd90bb04488d5d7",
+      "length": 84,
+      "keywords": [
+        "foundation"
+      ]
+    }
+  ],
+  "hash_verification": "6feed53b0f65d903",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "25566cd3-be2f-4959-8711-33e46ffc5d1a",
+    "frequencies": [
+      440.0,
+      495.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.4266742528629286,
+      0.4379796001219171,
+      0.8775835416299004
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "2f2045b6-7236-4dab-b82f-a7f249e2d433",
+      "source_data_id": "0137c0d1-52ba-40c2-8731-751852d3014e",
+      "pattern_count": 8,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743965027.4919796
+    }
+  },
+  "timestamp": 1743965027.4920113
+}

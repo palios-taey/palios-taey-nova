@@ -1,0 +1,125 @@
+{
+  "extract_id": "cd98eb8b-a73f-4f8b-ae67-b6139a3191df",
+  "source_data_id": "b9220185-743e-48ee-a61a-6d7f2e37095c",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6011521492162660917",
+      "confidence": 0.9790588326383629,
+      "phi_position": 0.1111111111111111,
+      "content_hash": "1ef8285dbc4f7c5d",
+      "length": 200,
+      "keywords": [
+        "require",
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2336232929237051286",
+      "confidence": 0.9723084894448653,
+      "phi_position": 0.4444444444444444,
+      "content_hash": "c607a5c0ab182227",
+      "length": 134,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "3649531200777667624",
+      "confidence": 0.9375215668056608,
+      "phi_position": 0.5555555555555556,
+      "content_hash": "d449aa1600df6151",
+      "length": 86,
+      "keywords": [
+        "foundation",
+        "charter"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "5590665658100464515",
+      "confidence": 0.9236758115280933,
+      "phi_position": 0.7777777777777778,
+      "content_hash": "61109ed22c9bbe4a",
+      "length": 192,
+      "keywords": [
+        "principle",
+        "charter"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "4726392919631058917",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "ec20830080fef2ec",
+      "length": 158,
+      "keywords": [
+        "principle",
+        "charter"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "4726392919631058917",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "ec20830080fef2ec",
+      "length": 158,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "4726392919631058917",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "ec20830080fef2ec",
+      "length": 158,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "c9c789627f42f7e2",
+  "harmony_index": 0.6924866357972425,
+  "wave_representation": {
+    "pattern_id": "4404812a-2d14-4daa-9fce-8ebfb2003920",
+    "frequencies": [
+      440.0,
+      660.0,
+      715.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.721378429323035,
+      0.4939209152604035,
+      0.23872875703131574,
+      0.23872875703131574
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.625,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "cd98eb8b-a73f-4f8b-ae67-b6139a3191df",
+      "source_data_id": "b9220185-743e-48ee-a61a-6d7f2e37095c",
+      "pattern_count": 7,
+      "harmony_index": 0.6924866357972425,
+      "timestamp": 1743965013.6937668
+    }
+  },
+  "timestamp": 1743965013.6937797
+}

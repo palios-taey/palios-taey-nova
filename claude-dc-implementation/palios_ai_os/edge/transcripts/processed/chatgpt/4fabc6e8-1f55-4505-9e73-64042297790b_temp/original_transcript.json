@@ -1,0 +1,12 @@
+{
+  "data_id": "4fabc6e8-1f55-4505-9e73-64042297790b",
+  "content": [
+    "Here's concise and explicit language to clearly guide port management in your README:\n\n---\n\n## \ud83d\udea6 Port Mapping and Management\n\nExplicitly manage port assignments clearly listed below.  \n**If adding new services:**  \n- Increment from the last-used port, clearly avoiding conflicts.  \n- Explicitly update this README immediately to document your change.\n\n### \ud83d\udd0c Current Port Assignments:\n\n| Service              | Port(s)                    |\n|----------------------|----------------------------|\n| Claude DC            | 8080, 8501, 6080           |\n| MCP Server           | 8001                       |\n| Webhook              | 8000                       |\n| Demo Server          | 8002                       |\n| Streamlit Dashboard  | 8502                       |\n\n**To verify active ports:**\n```bash\nsudo lsof -i -P -n | grep LISTEN\n```\n\nAlways keep this section explicitly updated to prevent port conflicts.\n\n---"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743549932.225827,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

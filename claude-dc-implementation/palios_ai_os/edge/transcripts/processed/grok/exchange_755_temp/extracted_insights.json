@@ -1,0 +1,113 @@
+{
+  "extract_id": "914d2230-9d6b-4b18-813c-659f5fa22113",
+  "source_data_id": "exchange_755",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "5630926565197775325",
+      "confidence": 0.9901699437494741,
+      "phi_position": 0.1,
+      "content_hash": "796cddf6e6a5b97e",
+      "length": 191,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5630926565197775325",
+      "confidence": 0.9901699437494741,
+      "phi_position": 0.1,
+      "content_hash": "796cddf6e6a5b97e",
+      "length": 191,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "2430654658160723210",
+      "confidence": 0.9819660112501052,
+      "phi_position": 0.6,
+      "content_hash": "3c80d1f6a551cd35",
+      "length": 144,
+      "keywords": [
+        "truth"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6287022879807059308",
+      "confidence": 0.9721359549995792,
+      "phi_position": 0.5,
+      "content_hash": "0861bcbde0117314",
+      "length": 183,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-6259777852104066896",
+      "confidence": 0.9541019662496845,
+      "phi_position": 0.9,
+      "content_hash": "571bdeea4879ea56",
+      "length": 140,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "4225364898899080439",
+      "confidence": 0.9458980337503156,
+      "phi_position": 0.8,
+      "content_hash": "a727463d045106f9",
+      "length": 187,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8465759541729713243",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "cd274ebf5f402c70",
+      "length": 237,
+      "keywords": [
+        "develop"
+      ]
+    }
+  ],
+  "hash_verification": "815485aba9e85bea",
+  "harmony_index": 0.833979908983283,
+  "wave_representation": {
+    "pattern_id": "3efd89d0-a3d9-4f81-bc26-d0e3ce43374a",
+    "frequencies": [
+      440.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.9840169943749474,
+      0.7340169943749474
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "914d2230-9d6b-4b18-813c-659f5fa22113",
+      "source_data_id": "exchange_755",
+      "pattern_count": 7,
+      "harmony_index": 0.833979908983283,
+      "timestamp": 1743980985.260994
+    }
+  },
+  "timestamp": 1743980985.2610078
+}

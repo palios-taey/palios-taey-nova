@@ -1,0 +1,114 @@
+{
+  "extract_id": "17f05fd9-0bb0-463d-95a3-6f0f2e69a102",
+  "source_data_id": "55a72113-719f-4561-9e13-760d47dc6908",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2214066193255005614",
+      "confidence": 0.9723300562505259,
+      "phi_position": 0.0625,
+      "content_hash": "42043f48d47e3eae",
+      "length": 238,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8156451991580967807",
+      "confidence": 0.9653640450004208,
+      "phi_position": 0.4375,
+      "content_hash": "d8ad703cfe32e819",
+      "length": 305,
+      "keywords": [
+        "implement",
+        "require"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "5080363368280728129",
+      "confidence": 0.9583980337503155,
+      "phi_position": 0.8125,
+      "content_hash": "f388890f725e9499",
+      "length": 260,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5080363368280728129",
+      "confidence": 0.9583980337503155,
+      "phi_position": 0.8125,
+      "content_hash": "f388890f725e9499",
+      "length": 260,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "3288806670048798367",
+      "confidence": 0.9514320225002104,
+      "phi_position": 0.1875,
+      "content_hash": "0d7bcbfea0d9c9e4",
+      "length": 247,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2943249137918902322",
+      "confidence": 0.9444660112501052,
+      "phi_position": 0.5625,
+      "content_hash": "3316d4b3ebac7f04",
+      "length": 227,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7438842873995717924",
+      "confidence": 0.9166019662496845,
+      "phi_position": 0.9375,
+      "content_hash": "45cdc8b0b08e71b3",
+      "length": 205,
+      "keywords": [
+        "implement"
+      ]
+    }
+  ],
+  "hash_verification": "6ed7ec589b576e4e",
+  "harmony_index": 0.8498527756108095,
+  "wave_representation": {
+    "pattern_id": "58b17d4a-4f4b-4ba4-a663-c15c8afebedd",
+    "frequencies": [
+      495.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.24479975421878944,
+      1.0
+    ],
+    "phases": [
+      0.4487989505128276,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "17f05fd9-0bb0-463d-95a3-6f0f2e69a102",
+      "source_data_id": "55a72113-719f-4561-9e13-760d47dc6908",
+      "pattern_count": 7,
+      "harmony_index": 0.8498527756108095,
+      "timestamp": 1743965019.4435916
+    }
+  },
+  "timestamp": 1743965019.4436715
+}

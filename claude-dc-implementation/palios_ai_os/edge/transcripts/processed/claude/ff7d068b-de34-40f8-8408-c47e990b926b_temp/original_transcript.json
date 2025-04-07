@@ -1,0 +1,12 @@
+{
+  "data_id": "ff7d068b-de34-40f8-8408-c47e990b926b",
+  "content": [
+    " Here's the updated code to fix the memory store issue:\n\n```python\n        # Generate a unique ID if not provided in metadata\n        memory_id = str(uuid.uuid4())\n        if metadata and 'memory_id' in metadata:\n            memory_id = metadata['memory_id']\n        \n        # Create timestamp\n        now = datetime.datetime.now()\n        \n        # Prepare base metadata\n        base_metadata = {\n            \"created_at\": now,\n            \"updated_at\": now,\n            \"creator_id\": \"system\",  # Default value\n            \"access_count\": 0,\n            \"last_accessed\": now,\n            \"importance_score\": 0.5,  # Default value\n            \"current_tier\": initial_tier,\n            \"ttl\": None\n        }\n        \n        # Update with values from metadata if provided\n        if metadata:\n            if \"creator_id\" in metadata:\n                base_metadata[\"creator_id\"] = metadata[\"creator_id\"]\n            if \"importance_score\" in metadata:\n                base_metadata[\"importance_score\"] = metadata[\"importance_score\"]\n```\n\nThis fixes the issue by ensuring that we don't attempt to call `.get()` on `metadata` when it could be None. Instead, we set default values directly and then conditionally update them if metadata is provided."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T20:38:56.309916Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

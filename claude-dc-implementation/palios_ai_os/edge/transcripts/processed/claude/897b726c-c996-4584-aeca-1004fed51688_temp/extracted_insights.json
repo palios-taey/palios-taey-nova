@@ -1,0 +1,102 @@
+{
+  "extract_id": "96a83677-419e-4fd3-b89e-1377e863c9dc",
+  "source_data_id": "897b726c-c996-4584-aeca-1004fed51688",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1528762734724733101",
+      "confidence": 0.9678640450004208,
+      "phi_position": 0.44,
+      "content_hash": "6594038d76390ab5",
+      "length": 85,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5050830764544636220",
+      "confidence": 0.9639320225002104,
+      "phi_position": 0.2,
+      "content_hash": "cd9786090ec07822",
+      "length": 114,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8336511667577944483",
+      "confidence": 0.949830056250526,
+      "phi_position": 0.04,
+      "content_hash": "9d9728f84167e08c",
+      "length": 80,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-8336511667577944483",
+      "confidence": 0.949830056250526,
+      "phi_position": 0.04,
+      "content_hash": "9d9728f84167e08c",
+      "length": 80,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8000205498287340203",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "10c73783e7967ea6",
+      "length": 105,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1640025247148757192",
+      "confidence": 0.8941019662496845,
+      "phi_position": 0.96,
+      "content_hash": "8f772fdafda3af6a",
+      "length": 68,
+      "keywords": [
+        "should"
+      ]
+    }
+  ],
+  "hash_verification": "2c1d016d61ced3b2",
+  "harmony_index": 0.8503309576779687,
+  "wave_representation": {
+    "pattern_id": "b9b99593-ef65-41ac-b45b-5c7fb0a0dd61",
+    "frequencies": [
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.27854715089293225
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.0833333333333333
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "96a83677-419e-4fd3-b89e-1377e863c9dc",
+      "source_data_id": "897b726c-c996-4584-aeca-1004fed51688",
+      "pattern_count": 6,
+      "harmony_index": 0.8503309576779687,
+      "timestamp": 1743965091.1574812
+    }
+  },
+  "timestamp": 1743965091.1574936
+}

@@ -1,0 +1,80 @@
+{
+  "extract_id": "cdb0ddd9-cf2a-4487-9073-863972f7bb23",
+  "source_data_id": "ef31a3b8-1bec-4e5f-a908-86177233dcd4",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7709313079694125746",
+      "confidence": 0.9930339887498948,
+      "phi_position": 0.625,
+      "content_hash": "ef7aa9726b8fdea9",
+      "length": 259,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "3666592502115926334",
+      "confidence": 0.9791019662496845,
+      "phi_position": 0.875,
+      "content_hash": "394fa167ee8f4d42",
+      "length": 133,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "3666592502115926334",
+      "confidence": 0.9791019662496845,
+      "phi_position": 0.875,
+      "content_hash": "394fa167ee8f4d42",
+      "length": 133,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6332237109864460291",
+      "confidence": 0.9651699437494741,
+      "phi_position": 0.125,
+      "content_hash": "a6fc474018dc66e5",
+      "length": 121,
+      "keywords": [
+        "should"
+      ]
+    }
+  ],
+  "hash_verification": "944ab340a0c6fab7",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "4e7a897b-6571-4134-82d4-5ddd2b8513de",
+    "frequencies": [
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3958203932499369,
+      1.0
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.2
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "cdb0ddd9-cf2a-4487-9073-863972f7bb23",
+      "source_data_id": "ef31a3b8-1bec-4e5f-a908-86177233dcd4",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743965116.6281817
+    }
+  },
+  "timestamp": 1743965116.628218
+}

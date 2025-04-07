@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_492",
+  "content": [
+    "User: Known IssuesServer Not Running: Initial test showed server connection refused - need to verify run_server.py works correctly\nAPI Key Management: Need to test with actual API keys to verify integration\nModel Registry: New models added but not tested with the routing system\n\nGrok: ResourcesKey files and directories:main.py - Main Flask application\nrun_server.py - Server execution script\ntest_system.py - Testing script\ninit_models.py - Model registry initialization\nsetup.sh - Setup script for local development\ntest_with_mocks.sh - Testing script with mock responses\nkeys/ - Directory for API keys\nlogs/ - Directory for log files"
+  ],
+  "source": "grok",
+  "timestamp": 1743980946.9173484,
+  "data_type": "exchange",
+  "metadata": {}
+}

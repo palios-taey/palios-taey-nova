@@ -1,0 +1,135 @@
+{
+  "extract_id": "707484c1-b58c-4a30-a8f2-9e4bca760332",
+  "source_data_id": "37c5be30-5831-4e25-84fc-2805a0ed1259",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1380614653913669682",
+      "confidence": 0.9931633895838593,
+      "phi_position": 0.08333333333333333,
+      "content_hash": "1f0eb5643e5d2e8c",
+      "length": 165,
+      "keywords": [
+        "develop",
+        "build"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "206289915524243345",
+      "confidence": 0.9792313670836489,
+      "phi_position": 0.8333333333333334,
+      "content_hash": "a2644bc8115d191a",
+      "length": 260,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "206289915524243345",
+      "confidence": 0.9792313670836489,
+      "phi_position": 0.8333333333333334,
+      "content_hash": "a2644bc8115d191a",
+      "length": 260,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8188493017799725934",
+      "confidence": 0.9513673220832282,
+      "phi_position": 0.6666666666666666,
+      "content_hash": "4c0717396f0b2b37",
+      "length": 378,
+      "keywords": [
+        "implement",
+        "need",
+        "create"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "8188493017799725934",
+      "confidence": 0.9513673220832282,
+      "phi_position": 0.6666666666666666,
+      "content_hash": "4c0717396f0b2b37",
+      "length": 378,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5814457579425710489",
+      "confidence": 0.9445307116670876,
+      "phi_position": 0.4166666666666667,
+      "content_hash": "bc1799bbb3434503",
+      "length": 201,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "5814457579425710489",
+      "confidence": 0.9445307116670876,
+      "phi_position": 0.4166666666666667,
+      "content_hash": "bc1799bbb3434503",
+      "length": 201,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "399448173461441548",
+      "confidence": 0.9374352995830179,
+      "phi_position": 0.9166666666666666,
+      "content_hash": "7c7f2ea4823d3bd9",
+      "length": 195,
+      "keywords": [
+        "foundation"
+      ]
+    }
+  ],
+  "hash_verification": "f8ff905c6769ba6c",
+  "harmony_index": 0.7072779290956537,
+  "wave_representation": {
+    "pattern_id": "6dd5f381-d24f-467d-829d-1830c78d9e84",
+    "frequencies": [
+      440.0,
+      660.0,
+      715.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.2152705888425575,
+      0.8742547544908693,
+      0.4367331876852085,
+      0.21605896796300972
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      0.4487989505128276,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.625,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "707484c1-b58c-4a30-a8f2-9e4bca760332",
+      "source_data_id": "37c5be30-5831-4e25-84fc-2805a0ed1259",
+      "pattern_count": 8,
+      "harmony_index": 0.7072779290956537,
+      "timestamp": 1743965157.1295507
+    }
+  },
+  "timestamp": 1743965157.1296349
+}

@@ -1,0 +1,154 @@
+{
+  "extract_id": "a361f4fe-ce4d-4256-940f-e4eacbd799a5",
+  "source_data_id": "7419ed12-cbb7-4ca0-99a3-1932424275d0",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-1719449601667509434",
+      "confidence": 0.9834442176221616,
+      "phi_position": 0.21951219512195122,
+      "content_hash": "eefbcf3442353d94",
+      "length": 127,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5420210806224491601",
+      "confidence": 0.983000787957843,
+      "phi_position": 0.07317073170731707,
+      "content_hash": "08b759ad6b4594c6",
+      "length": 16,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-2574059957972274319",
+      "confidence": 0.9751663264332423,
+      "phi_position": 0.8292682926829268,
+      "content_hash": "0db96c580b05f011",
+      "length": 204,
+      "keywords": [
+        "must"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2574059957972274319",
+      "confidence": 0.9751663264332423,
+      "phi_position": 0.8292682926829268,
+      "content_hash": "0db96c580b05f011",
+      "length": 204,
+      "keywords": [
+        "must"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-2574059957972274319",
+      "confidence": 0.9751663264332423,
+      "phi_position": 0.8292682926829268,
+      "content_hash": "0db96c580b05f011",
+      "length": 204,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-3536907946167154907",
+      "confidence": 0.968218724237279,
+      "phi_position": 0.12195121951219512,
+      "content_hash": "140b93d732ced00e",
+      "length": 250,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3536907946167154907",
+      "confidence": 0.968218724237279,
+      "phi_position": 0.12195121951219512,
+      "content_hash": "140b93d732ced00e",
+      "length": 250,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-3536907946167154907",
+      "confidence": 0.968218724237279,
+      "phi_position": 0.12195121951219512,
+      "content_hash": "140b93d732ced00e",
+      "length": 250,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-4319118603998716602",
+      "confidence": 0.9590539737197226,
+      "phi_position": 0.1951219512195122,
+      "content_hash": "46142658ee20af80",
+      "length": 51,
+      "keywords": [
+        "verify"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "469644032663432001",
+      "confidence": 0.958610544055404,
+      "phi_position": 0.04878048780487805,
+      "content_hash": "33080a8a97237fe5",
+      "length": 174,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "35d4dc7c19f70d0f",
+  "harmony_index": 0.6774287881472659,
+  "wave_representation": {
+    "pattern_id": "d70f1483-2c99-4c34-95bd-e3459ea0b969",
+    "frequencies": [
+      440.0,
+      495.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.17956057513029478,
+      0.5373379014162875,
+      0.5387623489662149,
+      0.5365450540659932
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.5,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "a361f4fe-ce4d-4256-940f-e4eacbd799a5",
+      "source_data_id": "7419ed12-cbb7-4ca0-99a3-1932424275d0",
+      "pattern_count": 10,
+      "harmony_index": 0.6774287881472659,
+      "timestamp": 1743965140.142063
+    }
+  },
+  "timestamp": 1743965140.1420853
+}

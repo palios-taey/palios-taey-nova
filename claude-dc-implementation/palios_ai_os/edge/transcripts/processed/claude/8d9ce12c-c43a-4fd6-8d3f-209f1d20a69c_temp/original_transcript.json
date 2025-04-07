@@ -1,0 +1,12 @@
+{
+  "data_id": "8d9ce12c-c43a-4fd6-8d3f-209f1d20a69c",
+  "content": [
+    "jesse@cloudshell:~/palios-taey-nova/terraform (palios-taey-dev)$ gsutil acl get gs://palios-taey-terraform-state\nBadRequestException: 400 Cannot get legacy ACL for a bucket that has uniform bucket-level access. Read more at https://cloud.google.com/storage/docs/uniform-bucket-level-access\njesse@cloudshell:~/palios-taey-nova/terraform (palios-taey-dev)$"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-15T00:45:34.438765Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

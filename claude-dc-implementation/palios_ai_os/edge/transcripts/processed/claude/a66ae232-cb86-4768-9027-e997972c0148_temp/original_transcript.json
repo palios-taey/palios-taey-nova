@@ -1,0 +1,12 @@
+{
+  "data_id": "a66ae232-cb86-4768-9027-e997972c0148",
+  "content": [
+    "C:\\AI-Execution-System>curl -X POST -H \"Content-Type: application/json\" -d \"{\\\"task_description\\\": \\\"Summarize the plot of the movie 'Inception' in three sentences.\\\"}\" https://us-central1-ai-execution-system.cloudfunctions.net/ai-system-backend-v2\n{\"error\": \"Exception in execute_task: 404 Endpoint `projects/ai-execution-system/locations/us-central1/endpoints/text-bison` not found.\"}"
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-25T15:01:18.039984Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

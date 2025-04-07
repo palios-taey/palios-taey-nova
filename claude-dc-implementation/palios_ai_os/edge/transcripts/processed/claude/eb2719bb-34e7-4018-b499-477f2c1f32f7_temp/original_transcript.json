@@ -1,0 +1,12 @@
+{
+  "data_id": "eb2719bb-34e7-4018-b499-477f2c1f32f7",
+  "content": [
+    "Same thing on both:\nAnnotations\n1 error and 1 warning\n**deploy**\nProcess completed with exit code 1.\n**deploy**\nNo authentication found for gcloud, authenticate with `google-github-actions/auth`.\n\nI just checked the Actions secrets. The json code I pasted from the key you had me generate is not there after I saved it. The box is blank."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-11T18:16:24.395179Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

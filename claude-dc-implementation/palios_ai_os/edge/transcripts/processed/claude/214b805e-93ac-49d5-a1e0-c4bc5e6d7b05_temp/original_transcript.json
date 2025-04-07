@@ -1,0 +1,12 @@
+{
+  "data_id": "214b805e-93ac-49d5-a1e0-c4bc5e6d7b05",
+  "content": [
+    "esselarose@Jesses-MacBook-Pro palios-taey-nova % gcloud run services list --platform managed --region us-central1\n\n\u00a0\u00a0 SERVICE \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 REGION \u00a0 \u00a0 \u00a0 URL\u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 LAST DEPLOYED BY \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 LAST DEPLOYED AT\n\u2714\u00a0 palios-taey-core\u00a0 us-central1\u00a0 https://palios-taey-core-711898853198.us-central1.run.app\u00a0 github-actions-sa@ai-execution-system.iam.gserviceaccount.com\u00a0 2025-03-09T16:31:22.640531Z\njesselarose@Jesses-MacBook-Pro palios-taey-nova % SERVICE_URL=$(gcloud run services describe palios-taey-core --platform managed --region us-central1 --format=\"value(status.url)\")\n\njesselarose@Jesses-MacBook-Pro palios-taey-nova % echo $SERVICE_URL\n\nhttps://palios-taey-core-pnedkjprrq-uc.a.run.app\njesselarose@Jesses-MacBook-Pro palios-taey-nova % curl $SERVICE_URL\n\nService Unavailable**%**\u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 jesselarose@Jesses-MacBook-Pro palios-taey-nova % curl $SERVICE_URL/api/health\n\njesselarose@Jesses-MacBook-Pro palios-taey-nova %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-09T16:34:10.875567Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

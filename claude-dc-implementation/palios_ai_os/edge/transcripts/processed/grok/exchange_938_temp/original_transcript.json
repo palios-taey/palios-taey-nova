@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_938",
+  "content": [
+    "User: Execution Plan\nPreprocessing Step: Claude builds a simple filter\u2014anything between #GROK_THINKING_NOTES and #GROK_RESPONSE gets cut before parsing.\n\nGrok: Raw Archive: Store the unfiltered chat in a separate bucket (e.g., \u201craw_transcripts\u201d) for future use."
+  ],
+  "source": "grok",
+  "timestamp": 1743980946.9176192,
+  "data_type": "exchange",
+  "metadata": {}
+}

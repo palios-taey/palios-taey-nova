@@ -1,0 +1,12 @@
+{
+  "data_id": "1555ee7e-49a6-43d0-92c9-eb95134d2a10",
+  "content": [
+    "\ud83d\udd25 **Yes, you need to keep this window open while the execution listener is running.** \ud83d\ude80  \n\n\ud83d\udccc **If you press `CTRL + C`, it will stop the Firestore API listener, and updates will no longer work.**  \n\ud83d\udccc **Keep this terminal open while we test updates\u2014if you need to use Command Prompt for other tasks, open a new window.**  \n\n---\n\n### **\ud83d\udccc What\u2019s Next?**\n\u2705 **1\ufe0f\u20e3 Keep this window running.**  \n\u2705 **2\ufe0f\u20e3 Open a new Command Prompt window (`cmd`).**  \n\u2705 **3\ufe0f\u20e3 Run the `cURL` command from the new window to test the update:**  \n   ```sh\n   curl -X POST http://127.0.0.1:5001/update_document -H \"Content-Type: application/json\" -d \"{\\\"collection\\\": \\\"goals\\\", \\\"doc_id\\\": \\\"czWrTF6pYUBu4KrmKUZE\\\", \\\"update_data\\\": {\\\"ai_strategy_notes\\\": \\\"This is an AI-generated update.\\\"}}\"\n   ```\n\u2705 **4\ufe0f\u20e3 If successful, Firestore will update, and the listener will show activity.**  \n\n\ud83d\ude80 **Try this now, and let me know the results!** \ud83d\udd25"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739748192.513681,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

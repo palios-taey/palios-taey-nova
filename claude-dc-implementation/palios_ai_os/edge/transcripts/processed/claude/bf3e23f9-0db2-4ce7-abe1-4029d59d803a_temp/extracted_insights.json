@@ -1,0 +1,80 @@
+{
+  "extract_id": "750d96b0-f5a5-4607-950f-d0dc29dd658c",
+  "source_data_id": "bf3e23f9-0db2-4ce7-abe1-4029d59d803a",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "4593292341302733263",
+      "confidence": 0.9819660112501052,
+      "phi_position": 0.6,
+      "content_hash": "52e7ee49e3be3c5d",
+      "length": 974,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4593292341302733263",
+      "confidence": 0.9819660112501052,
+      "phi_position": 0.6,
+      "content_hash": "52e7ee49e3be3c5d",
+      "length": 974,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "2688883483879504111",
+      "confidence": 0.9639320225002104,
+      "phi_position": 0.2,
+      "content_hash": "0ba6ffce58f7ad9a",
+      "length": 143,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "7907336813356570154",
+      "confidence": 0.9278640450004209,
+      "phi_position": 0.4,
+      "content_hash": "ab2fec4a21cf499b",
+      "length": 168,
+      "keywords": [
+        "limit"
+      ]
+    }
+  ],
+  "hash_verification": "d986257ca2f1d06e",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "04f8c77c-49ae-4e9c-8926-c44c12fe763e",
+    "frequencies": [
+      495.0,
+      660.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.39639320225002106
+    ],
+    "phases": [
+      0.4487989505128276,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "750d96b0-f5a5-4607-950f-d0dc29dd658c",
+      "source_data_id": "bf3e23f9-0db2-4ce7-abe1-4029d59d803a",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743965121.8426564
+    }
+  },
+  "timestamp": 1743965121.8426688
+}

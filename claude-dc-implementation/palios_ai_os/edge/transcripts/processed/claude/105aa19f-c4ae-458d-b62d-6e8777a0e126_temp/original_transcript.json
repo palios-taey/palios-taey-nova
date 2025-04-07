@@ -1,0 +1,12 @@
+{
+  "data_id": "105aa19f-c4ae-458d-b62d-6e8777a0e126",
+  "content": [
+    "Let me know if I need to do manually, lots of cycles on this:\n\njesselarose@Jesses-MacBook-Pro palios-taey-nova % gcloud iam service-accounts add-iam-policy-binding \"github-actions-sa@ai-execution-system.iam.gserviceaccount.com\" \\\n\u00a0 --project=\"ai-execution-system\" \\\n\u00a0 --role=\"roles/iam.workloadIdentityUser\" \\\n\u00a0 --member=\"principalSet://iam.googleapis.com/projects/711898853198/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider:assertion.repository=palios-taey/palios-taey-nova\"\nERROR: Policy modification failed. For a binding with condition, run \"gcloud alpha iam policies lint-condition\" to identify issues in condition.\n**ERROR:** (gcloud.iam.service-accounts.add-iam-policy-binding) INVALID_ARGUMENT: Invalid principalSet member (principalSet://iam.googleapis.com/projects/711898853198/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider:assertion.repository=palios-taey/palios-taey-nova).\njesselarose@Jesses-MacBook-Pro palios-taey-nova % gcloud iam service-accounts add-iam-policy-binding \"github-actions-sa@ai-execution-system.iam.gserviceaccount.com\" \\\n\u00a0 --project=\"ai-execution-system\" \\\n\u00a0 --role=\"roles/iam.workloadIdentityUser\" \\\n\u00a0 --member=\"principalSet://iam.googleapis.com/projects/711898853198/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider:*\"\nERROR: Policy modification failed. For a binding with condition, run \"gcloud alpha iam policies lint-condition\" to identify issues in condition.\n**ERROR:** (gcloud.iam.service-accounts.add-iam-policy-binding) INVALID_ARGUMENT: Invalid principalSet member (principalSet://iam.googleapis.com/projects/711898853198/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider:*).\njesselarose@Jesses-MacBook-Pro palios-taey-nova %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-11T20:03:12.169957Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

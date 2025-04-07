@@ -1,0 +1,12 @@
+{
+  "data_id": "10dd0642-3470-4ed7-bfaa-25a4ad7a3093",
+  "content": [
+    ">>> import shutil\r\n>>> print(\"Python sees gcloud.exe at:\", shutil.which(\"gcloud\"))\r\nPython sees gcloud.exe at: C:\\Windows\\System32\\gcloud.BAT\r\n>>>"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741371756.559,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

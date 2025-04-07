@@ -1,0 +1,70 @@
+{
+  "extract_id": "26e8dfc7-1034-449b-9aca-d1b84b501bd9",
+  "source_data_id": "0b100e35-c5ea-4f97-b8d9-5212d2e517fd_exchange_9",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-6543408755465501366",
+      "confidence": 0.9975773511568815,
+      "phi_position": 0.09259259259259259,
+      "content_hash": "3be629219a8cc552",
+      "length": 138,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-2402511184685349933",
+      "confidence": 0.9908270079633839,
+      "phi_position": 0.46296296296296297,
+      "content_hash": "7deadff9d5611407",
+      "length": 195,
+      "keywords": [
+        "truth",
+        "principle"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-1833330655860043780",
+      "confidence": 0.9283485747690444,
+      "phi_position": 0.018518518518518517,
+      "content_hash": "4442e52f4d15d258",
+      "length": 29,
+      "keywords": [
+        "observe"
+      ]
+    }
+  ],
+  "hash_verification": "0f2df503c70fbf60",
+  "harmony_index": 0.8449475395938787,
+  "wave_representation": {
+    "pattern_id": "7304b9a3-033f-4953-8c02-eda2301224c5",
+    "frequencies": [
+      440.0,
+      605.0
+    ],
+    "amplitudes": [
+      0.9971010897800663,
+      0.48208714369226113
+    ],
+    "phases": [
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.375
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "26e8dfc7-1034-449b-9aca-d1b84b501bd9",
+      "source_data_id": "0b100e35-c5ea-4f97-b8d9-5212d2e517fd_exchange_9",
+      "pattern_count": 3,
+      "harmony_index": 0.8449475395938787,
+      "timestamp": 1743986265.9653418
+    }
+  },
+  "timestamp": 1743986265.965349
+}

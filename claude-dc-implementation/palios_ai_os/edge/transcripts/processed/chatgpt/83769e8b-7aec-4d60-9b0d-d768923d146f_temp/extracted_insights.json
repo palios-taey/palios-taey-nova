@@ -1,0 +1,84 @@
+{
+  "extract_id": "c5f18b67-eb06-4e18-b912-5cf1c41d4ab2",
+  "source_data_id": "83769e8b-7aec-4d60-9b0d-d768923d146f",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2005816000214378421",
+      "confidence": 0.9746725556387187,
+      "phi_position": 0.44680851063829785,
+      "content_hash": "f6b18aafef543eae",
+      "length": 141,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "2005816000214378421",
+      "confidence": 0.9746725556387187,
+      "phi_position": 0.44680851063829785,
+      "content_hash": "f6b18aafef543eae",
+      "length": 141,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-3700245722593444271",
+      "confidence": 0.8753785619943654,
+      "phi_position": 0.9787234042553191,
+      "content_hash": "f9a184252bcb8c12",
+      "length": 144,
+      "keywords": [
+        "significant"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3700245722593444271",
+      "confidence": 0.8753785619943654,
+      "phi_position": 0.9787234042553191,
+      "content_hash": "f9a184252bcb8c12",
+      "length": 144,
+      "keywords": [
+        "develop"
+      ]
+    }
+  ],
+  "hash_verification": "a0e701a3bd8da7cd",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "49f3ead4-2c9c-4d0e-8644-c1c5d938e79c",
+    "frequencies": [
+      550.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.37507571239887305,
+      0.7700102235266169,
+      0.39493451112774375
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.2,
+      1.3
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "c5f18b67-eb06-4e18-b912-5cf1c41d4ab2",
+      "source_data_id": "83769e8b-7aec-4d60-9b0d-d768923d146f",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743963406.8716464
+    }
+  },
+  "timestamp": 1743963406.8717268
+}

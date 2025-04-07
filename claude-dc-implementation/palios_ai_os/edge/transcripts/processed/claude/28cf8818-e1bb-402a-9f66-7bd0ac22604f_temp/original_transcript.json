@@ -1,0 +1,12 @@
+{
+  "data_id": "28cf8818-e1bb-402a-9f66-7bd0ac22604f",
+  "content": [
+    "First one worked, 2nd one error message:\n\njesselarose@Jesses-MacBook-Pro palios-taey-nova % gcloud iam workload-identity-pools providers create-oidc \"github-provider\" \\\n\u00a0 --project=\"ai-execution-system\" \\\n\u00a0 --location=\"global\" \\\n\u00a0 --workload-identity-pool=\"github-actions-pool\" \\\n\u00a0 --display-name=\"GitHub Actions Provider\" \\\n\u00a0 --attribute-mapping=\"google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository\" \\\n\u00a0 --issuer-uri=\"https://token.actions.githubusercontent.com\"\n**ERROR:** (gcloud.iam.workload-identity-pools.providers.create-oidc) INVALID_ARGUMENT: The attribute condition must reference one of the provider's claims. For more information, see https://cloud.google.com/iam/docs/workload-identity-federation-with-deployment-pipelines#conditions\njesselarose@Jesses-MacBook-Pro palios-taey-nova %"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-11T19:35:25.248941Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

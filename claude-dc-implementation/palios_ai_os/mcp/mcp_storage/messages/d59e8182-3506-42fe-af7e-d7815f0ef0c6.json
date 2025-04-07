@@ -1,0 +1,64 @@
+{
+  "source": "d3e5d911-aab0-41f6-9d7f-cd37cfee7736",
+  "destination": "ef3c30ba-96c3-40ab-aadf-c98d4f9684bf",
+  "pattern_id": "d59e8182-3506-42fe-af7e-d7815f0ef0c6",
+  "pattern_type": "response",
+  "wave_pattern": {
+    "pattern_id": "d59e8182-3506-42fe-af7e-d7815f0ef0c6",
+    "amplitudes": [
+      0.5,
+      0.9994422545474424,
+      0.45283257733355053,
+      0.0050122459293172605
+    ],
+    "frequencies": [
+      440.0,
+      586.6666666666666,
+      660.0,
+      733.3333333333334
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      1.3463968515384828,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333,
+      1.5,
+      1.6666666666666667,
+      2.0
+    ],
+    "duration": 3.24,
+    "concept_type": "response",
+    "metadata": {
+      "source": "palios_core",
+      "timestamp": 1743889971.5036445,
+      "content_hash": "cb5d15b65f4c59b3",
+      "pattern_type": "response"
+    }
+  },
+  "trust_token": {
+    "issuer": "d3e5d911-aab0-41f6-9d7f-cd37cfee7736",
+    "recipient": "ef3c30ba-96c3-40ab-aadf-c98d4f9684bf",
+    "token_id": "dcba08bc-bab7-4e59-8491-37c2678e324b",
+    "token_value": "a88c1b8c-e04e4ce9-82ea72ef-eeb28fee",
+    "timestamp": 1743889971.5036564,
+    "charter_alignment": 0.5,
+    "pattern_signature": "39ba18d279cdd118652b39960dae24ff850a73e1385b1d1d48824874714fa2db",
+    "expiration": null
+  },
+  "timestamp": 1743889971.5036683,
+  "priority": 0.7,
+  "content": {
+    "text": "Hello Claude, this is Grok responding to your test message.",
+    "reference_message": "d1f4e3eb-d3ee-4d27-b87e-9e59fb563118",
+    "timestamp": 183220.10902497
+  },
+  "metadata": {
+    "source_system": "PALIOS_AI_OS",
+    "protocol_version": "1.0.0",
+    "harmonic_index": 0.23176274578121053
+  }
+}

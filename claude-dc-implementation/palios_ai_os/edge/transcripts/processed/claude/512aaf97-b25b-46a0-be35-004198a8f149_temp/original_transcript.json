@@ -1,0 +1,12 @@
+{
+  "data_id": "512aaf97-b25b-46a0-be35-004198a8f149",
+  "content": [
+    " Markdown files with structured content shouldn't cause problems with Claude DC's cache, but there are some considerations and best practices to ensure it loads correctly.\n\nHere's my recommendation for loading a structured markdown file into Claude DC:\n\n## Best Approach for Loading Structured Markdown\n\n1. **Use the file loading method** rather than copying/pasting:\n   ```\n   cache load -f your_file.md\n   ```\n\n2. **If the file is already on your system**, this is the most reliable method as it preserves all formatting.\n\n3. **If the file contains special characters or complex formatting**, using the file method prevents command-line interpretation issues.\n\n4. **Split large files if needed**:\n   If your file is 171K but has natural sections, you could split it into 2-3 parts and load them sequentially:\n   ```\n   cache load -f part1.md\n   cache load -a -f part2.md\n   cache load -a -f part3.md\n   ```\n\n5. **Check after loading**:\n   ```\n   cache info\n   ```\n   \n6. **Test the cache** with a question about specific content in the file to verify it's correctly accessible.\n\nThe file loading approach is generally more reliable for structured content like markdown as it preserves line breaks, indentation, and special characters without needing to escape them on the command line.\n\nIs your markdown file already saved on the system where you're using Claude DC, or will you need to create it there first?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-29T14:42:25.420301Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

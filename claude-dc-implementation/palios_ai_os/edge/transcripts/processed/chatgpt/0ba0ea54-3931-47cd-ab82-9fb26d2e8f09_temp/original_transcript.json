@@ -1,0 +1,12 @@
+{
+  "data_id": "0ba0ea54-3931-47cd-ab82-9fb26d2e8f09",
+  "content": [
+    "### How to use this script:\n\n1. Save it as something like `split_json.py`.\n2. Change the `input_file` variable to the path of your large Claude JSON file.\n3. Set the `chunk_size` to however many conversations you want per JSON chunk (e.g., 50).\n4. Run the script using `python3 split_json.py`.\n\nThis will produce smaller JSON files in a folder named `claude_chunks`. You can then easily process these smaller files using the batch processor.\n\nLet me know if you need any more adjustments or additional tools!"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743951410.999901,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

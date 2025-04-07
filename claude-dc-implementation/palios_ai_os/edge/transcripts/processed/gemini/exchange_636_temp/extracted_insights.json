@@ -1,0 +1,80 @@
+{
+  "extract_id": "91302c16-c454-4cef-96a3-c4042d2d40d6",
+  "source_data_id": "exchange_636",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8858306998499154268",
+      "confidence": 0.994382882235164,
+      "phi_position": 0.8484848484848485,
+      "content_hash": "8c833579b680c174",
+      "length": 53,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2414413708374136110",
+      "confidence": 0.9824094995458754,
+      "phi_position": 0.45454545454545453,
+      "content_hash": "035df2d7879c6dc7",
+      "length": 51,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "1566322703755632033",
+      "confidence": 0.9816703523862584,
+      "phi_position": 0.6363636363636364,
+      "content_hash": "b86cae5b611c0199",
+      "length": 114,
+      "keywords": [
+        "important"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2741888106331024629",
+      "confidence": 0.9218034389398148,
+      "phi_position": 0.3939393939393939,
+      "content_hash": "6f17178e3f46da87",
+      "length": 89,
+      "keywords": [
+        "should"
+      ]
+    }
+  ],
+  "hash_verification": "6f375d2b066e032d",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "406fef71-5de6-4632-9562-aca893a76956",
+    "frequencies": [
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3963340704772517,
+      1.0
+    ],
+    "phases": [
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.2
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "91302c16-c454-4cef-96a3-c4042d2d40d6",
+      "source_data_id": "exchange_636",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743976710.9445453
+    }
+  },
+  "timestamp": 1743976710.9446242
+}

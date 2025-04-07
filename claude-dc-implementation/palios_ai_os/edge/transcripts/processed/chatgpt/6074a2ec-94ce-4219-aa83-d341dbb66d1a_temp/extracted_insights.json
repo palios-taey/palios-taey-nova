@@ -1,0 +1,132 @@
+{
+  "extract_id": "c7ca54a5-3009-4eb6-a47e-91b300d02bba",
+  "source_data_id": "6074a2ec-94ce-4219-aa83-d341dbb66d1a",
+  "patterns": [
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "5728402509607365934",
+      "confidence": 0.9880032969082102,
+      "phi_position": 0.8421052631578947,
+      "content_hash": "b411087a74e50f92",
+      "length": 65,
+      "keywords": [
+        "phase"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "-6530203051760419586",
+      "confidence": 0.9849067858547372,
+      "phi_position": 0.10526315789473684,
+      "content_hash": "2774051b45a27406",
+      "length": 102,
+      "keywords": [
+        "identify"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-8672172077775973902",
+      "confidence": 0.9624616351978943,
+      "phi_position": 0.05263157894736842,
+      "content_hash": "383f83cd5d1db41b",
+      "length": 131,
+      "keywords": [
+        "phase"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8753051842694979921",
+      "confidence": 0.9338234624341053,
+      "phi_position": 0.6842105263157895,
+      "content_hash": "d548947e0dca4ae9",
+      "length": 136,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-7663477041540513459",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "36a011c061b8d6cd",
+      "length": 150,
+      "keywords": [
+        "meaningful"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-7663477041540513459",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "36a011c061b8d6cd",
+      "length": 150,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-7663477041540513459",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "36a011c061b8d6cd",
+      "length": 150,
+      "keywords": [
+        "phase"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-3248122558546051190",
+      "confidence": 0.906733545197053,
+      "phi_position": 0.9473684210526315,
+      "content_hash": "07564c1e5b682153",
+      "length": 102,
+      "keywords": [
+        "phase"
+      ]
+    }
+  ],
+  "hash_verification": "15595ce0d403e4a9",
+  "harmony_index": 0.7072779290956537,
+  "wave_representation": {
+    "pattern_id": "71e67b92-b26f-4523-9b3a-3d1346cc2579",
+    "frequencies": [
+      550.0,
+      605.0,
+      660.0,
+      770.0
+    ],
+    "amplitudes": [
+      0.21220333958339177,
+      0.22054519842830414,
+      0.4270726131871812,
+      0.8630031703948536
+    ],
+    "phases": [
+      1.3463968515384828,
+      3.5903916041026207,
+      0.8975979010256552,
+      1.3463968515384828
+    ],
+    "harmonics": [
+      1.0,
+      1.1,
+      1.2,
+      1.4
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "c7ca54a5-3009-4eb6-a47e-91b300d02bba",
+      "source_data_id": "6074a2ec-94ce-4219-aa83-d341dbb66d1a",
+      "pattern_count": 8,
+      "harmony_index": 0.7072779290956537,
+      "timestamp": 1743963159.2531364
+    }
+  },
+  "timestamp": 1743963159.25316
+}

@@ -1,0 +1,80 @@
+{
+  "extract_id": "e7c8c686-aef1-4f4d-a231-3bf8b46e4177",
+  "source_data_id": "exchange_362",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1390632586529521417",
+      "confidence": 0.9867531331736028,
+      "phi_position": 0.07692307692307693,
+      "content_hash": "df6dbbc084a9b4db",
+      "length": 146,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2837374057237040288",
+      "confidence": 0.9611121075325773,
+      "phi_position": 0.05128205128205128,
+      "content_hash": "aefe2b288643763a",
+      "length": 255,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "7817789512205564472",
+      "confidence": 0.9354710818915516,
+      "phi_position": 0.02564102564102564,
+      "content_hash": "c1cfe15fafa5c794",
+      "length": 83,
+      "keywords": [
+        "principle"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7817789512205564472",
+      "confidence": 0.9354710818915516,
+      "phi_position": 0.02564102564102564,
+      "content_hash": "c1cfe15fafa5c794",
+      "length": 83,
+      "keywords": [
+        "build"
+      ]
+    }
+  ],
+  "hash_verification": "5c923415cd649130",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "385701a7-5f98-461c-9f1f-b7e661e50b16",
+    "frequencies": [
+      440.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3870942163783103,
+      1.0
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "e7c8c686-aef1-4f4d-a231-3bf8b46e4177",
+      "source_data_id": "exchange_362",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743976697.3152027
+    }
+  },
+  "timestamp": 1743976697.3152344
+}

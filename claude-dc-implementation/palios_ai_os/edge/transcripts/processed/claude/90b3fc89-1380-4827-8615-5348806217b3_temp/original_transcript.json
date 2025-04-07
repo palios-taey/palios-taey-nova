@@ -1,0 +1,12 @@
+{
+  "data_id": "90b3fc89-1380-4827-8615-5348806217b3",
+  "content": [
+    "Here is the code you mentioned. Can you update it so I can copy/paste back in?\n\n        # Generate a unique ID if not provided in metadata\n        memory_id = str(uuid.uuid4())\n        if metadata and 'memory_id' in metadata:\n            memory_id = metadata['memory_id']\n        \n        # Create timestamp\n        now = datetime.datetime.now()\n        \n        # Prepare base metadata\n        base_metadata = {\n            \"created_at\": now,\n            \"updated_at\": now,\n            \"creator_id\": metadata.get(\"creator_id\", \"system\"),\n            \"access_count\": 0,\n            \"last_accessed\": now,\n            \"importance_score\": metadata.get(\"importance_score\", 0.5),\n            \"current_tier\": initial_tier,\n            \"ttl\": None\n        }"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T20:38:50.326373Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

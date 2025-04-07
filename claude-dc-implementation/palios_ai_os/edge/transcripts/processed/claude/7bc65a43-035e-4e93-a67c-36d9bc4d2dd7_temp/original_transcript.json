@@ -1,0 +1,12 @@
+{
+  "data_id": "7bc65a43-035e-4e93-a67c-36d9bc4d2dd7",
+  "content": [
+    " No need to close those windows. Keep both of them open as they're running your local servers.\n\nOpen a new command window to run the test script. So you should have:\n\n1. First window running functions-framework for task_endpoint (port 8080)\n2. Second window running functions-framework for health_endpoint (port 8081)\n3. A new third window where you'll run `python test_local.py`\n\nThe first two windows need to stay open during testing since they're hosting the endpoints that the test script will connect to."
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-25T20:57:57.116431Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

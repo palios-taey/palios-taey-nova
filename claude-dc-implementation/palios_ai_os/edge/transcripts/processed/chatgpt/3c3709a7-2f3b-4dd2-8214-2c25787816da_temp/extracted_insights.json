@@ -1,0 +1,95 @@
+{
+  "extract_id": "79745f35-364c-4dc5-9b57-b6592492cc78",
+  "source_data_id": "3c3709a7-2f3b-4dd2-8214-2c25787816da",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7478403777049087081",
+      "confidence": 0.9564354735718494,
+      "phi_position": 0.42857142857142855,
+      "content_hash": "053fc75f893cc38e",
+      "length": 49,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2092343879204375513",
+      "confidence": 0.9533945826786766,
+      "phi_position": 0.5714285714285714,
+      "content_hash": "9af0e743bb5f28bb",
+      "length": 76,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1448991070770887067",
+      "confidence": 0.9473128008923313,
+      "phi_position": 0.14285714285714285,
+      "content_hash": "2d8653e3e5d0e934",
+      "length": 159,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-1448991070770887067",
+      "confidence": 0.9473128008923313,
+      "phi_position": 0.14285714285714285,
+      "content_hash": "2d8653e3e5d0e934",
+      "length": 159,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-6109700063906482642",
+      "confidence": 0.9037482744641805,
+      "phi_position": 0.7142857142857143,
+      "content_hash": "03f82dff877b0616",
+      "length": 135,
+      "keywords": [
+        "truth"
+      ]
+    }
+  ],
+  "hash_verification": "cb14a3d38805d0b1",
+  "harmony_index": 0.7658592480731385,
+  "wave_representation": {
+    "pattern_id": "bc461083-d6d7-4026-afbc-da5cecc0d934",
+    "frequencies": [
+      440.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.3172913790773634,
+      0.9761904761904763,
+      0.3245521334820552
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.625
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "79745f35-364c-4dc5-9b57-b6592492cc78",
+      "source_data_id": "3c3709a7-2f3b-4dd2-8214-2c25787816da",
+      "pattern_count": 5,
+      "harmony_index": 0.7658592480731385,
+      "timestamp": 1743963405.9820082
+    }
+  },
+  "timestamp": 1743963405.9820385
+}

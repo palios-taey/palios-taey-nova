@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1706",
+  "content": [
+    "User: Why They\u2019re Not Needed: For DeepSearch\u2019s tagging, we only need the cleaned text (no code blocks) and the unique ID. Summaries are overkill at this stage and can be added later if we need to query the database. For now, they\u2019re just eating space.\n\nGrok: The Fix: We\u2019ll remove the summary logic entirely. The output will only include the ID and the cleaned text for each section, keeping it lean."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.423776,
+  "data_type": "exchange",
+  "metadata": {}
+}

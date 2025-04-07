@@ -1,0 +1,12 @@
+{
+  "data_id": "2a1a2c07-3794-4214-b2ed-b045ac16ec5b",
+  "content": [
+    " Great question! In the current implementation, the model selection happens in the `_select_model_for_subtask` method:\n\n```python\ndef _select_model_for_subtask(self, subtask: dict) -> str:\n    \"\"\"Select the most appropriate model for a subtask based on required capabilities\"\"\"\n    required_capabilities = subtask.get('capabilities', [])\n    \n    # Score each model based on capability match\n    model_scores = {}\n    for model, info in self.ai_capabilities.items():\n        score = sum(1 for cap in required_capabilities if cap in info['capabilities'])\n        model_scores[model] = score\n    \n    # Select model with highest capability match\n    best_model = max(model_scores.items(), key=lambda x: x[1])[0]\n    return best_model\n```\n\nIt works by:\n1. Looking at what capabilities the subtask needs (e.g., 'text_generation', 'analysis', 'planning', 'reasoning')\n2. Comparing those against each model's registered capabilities (which we defined in `register_ai_capabilities`)\n3. Scoring each model by counting how many of the required capabilities it has\n4. Choosing the model with the highest score\n\nFor example, if a subtask requires 'analysis' and 'planning':\n- GPT-4 would score 2 (has both capabilities)\n- GPT-3.5 would score 1 (only has 'analysis')\n- Vertex would score 0 (has neither)\n\nWe could make this smarter by:\n1. Adding capability weights (some capabilities might be more important)\n2. Considering model load/cost\n3. Looking at past performance for similar tasks\n4. Factoring in response time requirements\n\nWould you like me to implement any of those improvements?"
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-19T19:29:18.524817Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

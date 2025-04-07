@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1689",
+  "content": [
+    "User: The script looks for anything between ``` and ``` and replaces it with `[CODE_BLOCK_SUMMARY]`. But if your code isn\u2019t formatted this way, it won\u2019t catch it.\n\nGrok: **Why It\u2019s Not Working**: Your transcript might have code formatted differently\u2014like indented with four spaces (another Markdown style), wrapped in single backticks (`code`), or not marked at all. For example:"
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4237728,
+  "data_type": "exchange",
+  "metadata": {}
+}

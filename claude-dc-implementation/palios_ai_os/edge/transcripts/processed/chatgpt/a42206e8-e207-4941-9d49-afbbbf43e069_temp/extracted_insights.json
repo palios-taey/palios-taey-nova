@@ -1,0 +1,81 @@
+{
+  "extract_id": "9791525e-d26b-4997-ba3d-41c586aa198a",
+  "source_data_id": "a42206e8-e207-4941-9d49-afbbbf43e069",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "2551363975990182506",
+      "confidence": 0.9992608528403831,
+      "phi_position": 0.09090909090909091,
+      "content_hash": "59309e9b59b61b5c",
+      "length": 32,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-2716393286794737813",
+      "confidence": 0.9640798519321337,
+      "phi_position": 0.8181818181818182,
+      "content_hash": "c259082242a68288",
+      "length": 82,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-2716393286794737813",
+      "confidence": 0.9640798519321337,
+      "phi_position": 0.8181818181818182,
+      "content_hash": "c259082242a68288",
+      "length": 82,
+      "keywords": [
+        "trust"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-3371317094187156043",
+      "confidence": 0.9274205567046506,
+      "phi_position": 0.5454545454545454,
+      "content_hash": "bb38432392e47f85",
+      "length": 151,
+      "keywords": [
+        "principle",
+        "charter"
+      ]
+    }
+  ],
+  "hash_verification": "eca5a167f2d15818",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "b92fa999-3e1d-4f8b-b7e3-726bf7b50e10",
+    "frequencies": [
+      440.0,
+      495.0
+    ],
+    "amplitudes": [
+      1.0,
+      0.39281597038642674
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.125
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "9791525e-d26b-4997-ba3d-41c586aa198a",
+      "source_data_id": "a42206e8-e207-4941-9d49-afbbbf43e069",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743963419.739493
+    }
+  },
+  "timestamp": 1743963419.7395024
+}

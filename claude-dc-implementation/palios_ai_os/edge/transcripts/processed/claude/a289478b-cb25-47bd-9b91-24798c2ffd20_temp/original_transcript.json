@@ -1,0 +1,12 @@
+{
+  "data_id": "a289478b-cb25-47bd-9b91-24798c2ffd20",
+  "content": [
+    "Sounds good. Line 1650 and the rest of that is below. The first line appears to be indented properly as def is aligned with the rest \n    def *get*transcript_messages(self, transcript_id: str) -> List[Dict[str, Any]]:\n        \"\"\"\n        Retrieve all messages for a transcript with robust error handling\n        \n        Args:\n            transcript_id: Transcript identifier\n            \n        Returns:\n            List of messages\n        \"\"\"\n        try:\n            # Query memory system for messages\n            messages = self.memory.query(\n                filters={\"metadata.transcript_id\": transcript_id},\n                limit=1000  # Set a high limit to get all messages\n            )\n            \n            # Check mock storage if in mock mode or no messages found\n            if self.use_mock and hasattr(self, '_messages'):\n                # Filter messages from mock storage\n                mock_messages = [msg for msg in self._messages.values() \n                               if msg.get(\"transcript_id\") == transcript_id]\n                \n                # Combine with any messages from memory system\n                if messages:\n                    # Make sure we don't have duplicates\n                    message_ids = {msg.get(\"message_id\") for msg in messages}\n                    additional_messages = [msg for msg in mock_messages \n                                         if msg.get(\"message_id\") not in message_ids]\n                    messages.extend(additional_messages)\n                else:\n                    messages = mock_messages\n            \n            # Sort by position if available\n            return sorted(messages, key=lambda m: m.get(\"metadata\", {}).get(\"position\", 0))\n        except Exception as e:\n            logger.error(f\"Error retrieving messages for transcript {transcript_id}: {str(e)}\")\n            \n            # Fallback to mock storage\n            if self.use_mock and hasattr(self, '_messages'):\n                mock_messages = [msg for msg in self._messages.values() \n                               if msg.get(\"transcript_id\") == transcript_id]\n                return sorted(mock_messages, key=lambda m: m.get(\"metadata\", {}).get(\"position\", 0))\n            \n            return []"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T22:38:49.479295Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

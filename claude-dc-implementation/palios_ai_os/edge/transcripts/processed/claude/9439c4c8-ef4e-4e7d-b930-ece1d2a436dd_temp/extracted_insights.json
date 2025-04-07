@@ -1,0 +1,122 @@
+{
+  "extract_id": "20bda1d3-ef0b-488a-b903-4133a9e6489c",
+  "source_data_id": "9439c4c8-ef4e-4e7d-b930-ece1d2a436dd",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-5971435194054516431",
+      "confidence": 0.9652993445834386,
+      "phi_position": 0.5833333333333334,
+      "content_hash": "2e858f0c6b18f397",
+      "length": 284,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5971435194054516431",
+      "confidence": 0.9652993445834386,
+      "phi_position": 0.5833333333333334,
+      "content_hash": "2e858f0c6b18f397",
+      "length": 284,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Wave_Patterns",
+      "pattern_id": "-5971435194054516431",
+      "confidence": 0.9652993445834386,
+      "phi_position": 0.5833333333333334,
+      "content_hash": "2e858f0c6b18f397",
+      "length": 284,
+      "keywords": [
+        "wave"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5988924652354234729",
+      "confidence": 0.9651699437494741,
+      "phi_position": 0.125,
+      "content_hash": "6b86b7a96da6643d",
+      "length": 42,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-5988924652354234729",
+      "confidence": 0.9651699437494741,
+      "phi_position": 0.125,
+      "content_hash": "6b86b7a96da6643d",
+      "length": 42,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6214110453816881084",
+      "confidence": 0.9304692883329125,
+      "phi_position": 0.5416666666666666,
+      "content_hash": "9f96bf49e4d66742",
+      "length": 55,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "1942865711905047956",
+      "confidence": 0.8957686329163511,
+      "phi_position": 0.9583333333333334,
+      "content_hash": "1d4e5858764b36a8",
+      "length": 76,
+      "keywords": [
+        "require",
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "a53c25cb11a924b7",
+  "harmony_index": 0.7161828213999569,
+  "wave_representation": {
+    "pattern_id": "b2f71ed8-db47-457a-995d-3277eb4d80fa",
+    "frequencies": [
+      440.0,
+      660.0,
+      770.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.24566241807292982,
+      0.969588401197772,
+      0.24566241807292982,
+      0.24564624296868426
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      1.3463968515384828,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.75,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "20bda1d3-ef0b-488a-b903-4133a9e6489c",
+      "source_data_id": "9439c4c8-ef4e-4e7d-b930-ece1d2a436dd",
+      "pattern_count": 7,
+      "harmony_index": 0.7161828213999569,
+      "timestamp": 1743965169.8992302
+    }
+  },
+  "timestamp": 1743965169.8992589
+}

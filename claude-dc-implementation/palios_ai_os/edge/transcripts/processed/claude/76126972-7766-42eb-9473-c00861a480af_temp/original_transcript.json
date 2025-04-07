@@ -1,0 +1,12 @@
+{
+  "data_id": "76126972-7766-42eb-9473-c00861a480af",
+  "content": [
+    "jesselarose@Jesses-MacBook-Pro palios-taey-app % gcloud beta run services add-iam-policy-binding --region=us-central1 --member=allUsers --role=roles/run.invoker palios-taey-service\n\nERROR: Policy modification failed. For a binding with condition, run \"gcloud alpha iam policies lint-condition\" to identify issues in condition.\n**ERROR:** (gcloud.beta.run.services.add-iam-policy-binding) FAILED_PRECONDITION: One or more users named in the policy do not belong to a permitted customer,\u00a0 perhaps due to an organization policy."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-15T23:51:51.347772Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

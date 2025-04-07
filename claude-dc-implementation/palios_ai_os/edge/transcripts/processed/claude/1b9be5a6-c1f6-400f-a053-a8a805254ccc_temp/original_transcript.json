@@ -1,0 +1,12 @@
+{
+  "data_id": "1b9be5a6-c1f6-400f-a053-a8a805254ccc",
+  "content": [
+    "There was no line like that in firestore.tf\nThis is current code in network.tf, replace it?\nresource \"google_compute_network\" \"vpc_network\" {\n  project                 = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id\n  name                    = var.network_name\n  auto_create_subnetworks = false\n  mtu                     = 1500\n  routing_mode            = \"REGIONAL\"\n}\n# Create a subnet for Cloud Run services\nresource \"google_compute_subnetwork\" \"subnet\" {\n  project       = var.create_project ? google_project.palios_taey_project[0].project_id : var.project_id\n  name          = var.subnet_name\n  ip_cidr_range = var.subnet_cidr\n  region        = var.region\n  network       = google_compute_network.vpc_network.id\n  \n  private_ip_google_access = true\n  \n  log_config {\n    aggregation_interval = \"INTERVAL_10_MIN\"\n    flow_sampling        = 0.5\n    metadata             = \"INCLUDE_ALL_METADATA\"\n  }\n  \n  depends_on = [google_compute_network.vpc_network]\n}"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-15T00:10:26.144173Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

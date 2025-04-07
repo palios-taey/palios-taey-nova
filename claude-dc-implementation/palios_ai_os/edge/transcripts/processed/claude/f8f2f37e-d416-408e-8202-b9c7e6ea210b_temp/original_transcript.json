@@ -1,0 +1,12 @@
+{
+  "data_id": "f8f2f37e-d416-408e-8202-b9c7e6ea210b",
+  "content": [
+    "Continue from where you left off below. Be sure you do NOT start at the top of the file:\nexcept Exception as e: logger.error(f\"Error storing transcript metadata: {str(e)}\") # Store in mock storage if memory system fails if self.use_mock: self._transcripts[transcript_id] = { \"transcript_id\": transcript_id, \"content\": {\"structured_transcript\": transcript_data}, \"metadata\": transcript_metadata,"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T23:09:40.175438Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

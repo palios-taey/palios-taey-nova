@@ -1,0 +1,12 @@
+{
+  "data_id": "40df0146-ff04-4914-90c3-cd6344fa30eb",
+  "content": [
+    "jesse@cloudshell:~/palios-taey-nova/terraform (palios-taey-dev)$ terraform plan -out=tfplan\n\u2577\n\u2502 Error: Backend initialization required, please run \"terraform init\"\n\u2502 \n\u2502 Reason: Initial configuration of the requested backend \"gcs\"\n\u2502 \n\u2502 The \"backend\" is the interface that Terraform uses to store state,\n\u2502 perform operations, etc. If this message is showing up, it means that the\n\u2502 Terraform configuration you're using is using a custom configuration for\n\u2502 the Terraform backend.\n\u2502 \n\u2502 Changes to backend configurations require reinitialization. This allows\n\u2502 Terraform to set up the new configuration, copy existing state, etc. Please run\n\u2502 \"terraform init\" with either the \"-reconfigure\" or \"-migrate-state\" flags to\n\u2502 use the current configuration.\n\u2502 \n\u2502 If the change reason above is incorrect, please verify your configuration\n\u2502 hasn't changed and try again. At this point, no changes to your existing\n\u2502 configuration or state have been made."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-15T00:34:27.808018Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

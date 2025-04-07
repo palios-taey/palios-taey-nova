@@ -1,0 +1,12 @@
+{
+  "data_id": "576c8488-5768-45c5-861c-1ba4bdc6defd",
+  "content": [
+    "ERROR:root:Error from Gemini Pro: 401 - {\r\n  \"error\": {\r\n    \"code\": 401,\r\n    \"message\": \"Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.\",\r\n    \"status\": \"UNAUTHENTICATED\"\r\n  }\r\n}\r\n\r\nERROR:root:Exception in execute_gemini: Gemini Pro API error: 401\r\n127.0.0.1 - - [26/Feb/2025 13:17:43] \"POST /execute_gemini HTTP/1.1\" 500 -"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1740593883.236521,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

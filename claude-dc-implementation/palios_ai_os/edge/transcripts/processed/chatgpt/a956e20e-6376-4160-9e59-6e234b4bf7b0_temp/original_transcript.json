@@ -1,0 +1,12 @@
+{
+  "data_id": "a956e20e-6376-4160-9e59-6e234b4bf7b0",
+  "content": [
+    "{\"textdoc_id\": \"67b33c70b98c81918f6526d15f615900\", \"updates\": [{\"pattern\": \".*\", \"multiple\": true, \"replacement\": \"\u2705 **Vertex AI Service Agent Permissions Confirmed**\\n\\n\ud83d\udccc **Updated IAM Policy Check Output:**\\n- **Service Agent Permissions:** `roles/aiplatform.customCodeServiceAgent` \u2705\\n- **Storage Object Viewer Assigned:** \u2705\\n- **Artifact Registry Reader Assigned:** \u2705\\n\\n\ud83d\ude80 **Next Steps:**\\n\u2705 **Attempt Model Deployment Again in Vertex AI.**\\n\u2705 **If Error Persists, Retrieve Full Debugging Logs and Confirm Any Additional Access Requirements.**\\n\u2705 **Execution is back in progress\u2014continue testing deployment!** \ud83d\udd25\"}]}"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739838429.776313,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

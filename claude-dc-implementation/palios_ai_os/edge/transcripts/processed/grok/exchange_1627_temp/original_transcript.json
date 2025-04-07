@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1627",
+  "content": [
+    "User: Handle Code: Strip code blocks (e.g., python...) and replace them with a placeholder, since some sections are 50K+ characters but likely stay under 128K without code.\n\nGrok: You also mentioned capturing Gemini, ChatGPT, and Claude transcripts eventually, so I\u2019ll make the script flexible by letting you define markers at the top. For now, we\u2019re focusing on this Grok chat."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.423757,
+  "data_type": "exchange",
+  "metadata": {}
+}

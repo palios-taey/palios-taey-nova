@@ -1,0 +1,118 @@
+{
+  "extract_id": "141e090c-7b25-49f0-b3f0-33b28190e2fe",
+  "source_data_id": "28f9a18f-b9fb-4209-b091-32e1a6118916",
+  "patterns": [
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-3545682037285210528",
+      "confidence": 0.9992926164289923,
+      "phi_position": 0.4714285714285714,
+      "content_hash": "e305e50647d68096",
+      "length": 230,
+      "keywords": [
+        "truth",
+        "core",
+        "principle",
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5571985866622732935",
+      "confidence": 0.9982789861312679,
+      "phi_position": 0.8523809523809524,
+      "content_hash": "7174687b97fc0c1d",
+      "length": 66,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "3731784841694984948",
+      "confidence": 0.9741632155950277,
+      "phi_position": 0.2619047619047619,
+      "content_hash": "c12fd4cae2719565",
+      "length": 46,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1705141498782809898",
+      "confidence": 0.9323197030356091,
+      "phi_position": 0.6857142857142857,
+      "content_hash": "84534865aa7601b0",
+      "length": 38,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4151099448490207680",
+      "confidence": 0.9145919610124307,
+      "phi_position": 0.004761904761904762,
+      "content_hash": "f997b4a98c0174eb",
+      "length": 55,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "5318442854840048332",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "655f253d5eedfbce",
+      "length": 56,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5932811255027739588",
+      "confidence": 0.8588638710115892,
+      "phi_position": 0.9952380952380953,
+      "content_hash": "085faddeb9854e91",
+      "length": 218,
+      "keywords": [
+        "implement",
+        "need",
+        "should"
+      ]
+    }
+  ],
+  "hash_verification": "23eadf4b91ee376e",
+  "harmony_index": 0.8498527756108095,
+  "wave_representation": {
+    "pattern_id": "fb5eb878-b678-467c-b98e-51e1b97e01c8",
+    "frequencies": [
+      440.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.24991157705362405,
+      1.0
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "141e090c-7b25-49f0-b3f0-33b28190e2fe",
+      "source_data_id": "28f9a18f-b9fb-4209-b091-32e1a6118916",
+      "pattern_count": 7,
+      "harmony_index": 0.8498527756108095,
+      "timestamp": 1743965082.141534
+    }
+  },
+  "timestamp": 1743965082.1415474
+}

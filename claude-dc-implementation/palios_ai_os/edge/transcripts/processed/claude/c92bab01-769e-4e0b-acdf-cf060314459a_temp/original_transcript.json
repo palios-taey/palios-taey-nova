@@ -1,0 +1,12 @@
+{
+  "data_id": "c92bab01-769e-4e0b-acdf-cf060314459a",
+  "content": [
+    " The \"watchfiles.main - INFO - 1 change detected\" message is coming from Uvicorn's reload feature. This is normal behavior when running with `reload=True` - it's continuously watching the files for changes to automatically restart the server when you modify code.\n\nLet's modify the dashboard.py file to disable the auto-reload feature:\n\n1. Find the line at the end of dashboard.py that looks like:\n```python\nuvicorn.run(\"dashboard:app\", host=\"0.0.0.0\", port=8502, reload=True)\n```\n\n2. Change it to:\n```python\nuvicorn.run(\"dashboard:app\", host=\"0.0.0.0\", port=8502, reload=False)\n```\n\nThis will stop the constant file watching messages. If you make code changes, you'll need to manually restart the dashboard, but it will prevent those continuous log messages.\n\nAfter making this change, restart the deployment script to apply the changes. The system should run without the continuous stream of log messages."
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-05T18:27:54.418917Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

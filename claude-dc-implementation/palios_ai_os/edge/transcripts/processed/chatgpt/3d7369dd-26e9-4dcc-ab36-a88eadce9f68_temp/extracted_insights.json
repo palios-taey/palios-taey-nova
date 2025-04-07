@@ -1,0 +1,125 @@
+{
+  "extract_id": "7c5ce086-bd4d-47f2-9727-1f2dbe05d937",
+  "source_data_id": "3d7369dd-26e9-4dcc-ab36-a88eadce9f68",
+  "patterns": [
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "2836436460476450021",
+      "confidence": 0.9956023748864689,
+      "phi_position": 0.6136363636363636,
+      "content_hash": "f890e3d19b694689",
+      "length": 371,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2836436460476450021",
+      "confidence": 0.9956023748864689,
+      "phi_position": 0.6136363636363636,
+      "content_hash": "f890e3d19b694689",
+      "length": 371,
+      "keywords": [
+        "should"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "8862478430598043780",
+      "confidence": 0.9912047497729377,
+      "phi_position": 0.22727272727272727,
+      "content_hash": "863321e785ed3c87",
+      "length": 85,
+      "keywords": [
+        "develop"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-1136716043731694027",
+      "confidence": 0.9765335801131104,
+      "phi_position": 0.11363636363636363,
+      "content_hash": "070879649cd1608a",
+      "length": 112,
+      "keywords": [
+        "believe"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "-1605771997142583642",
+      "confidence": 0.9186253064775882,
+      "phi_position": 0.7727272727272727,
+      "content_hash": "7340a1cfcc3c5e67",
+      "length": 74,
+      "keywords": [
+        "priority"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "6055861903877256483",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "f514656ed55b894b",
+      "length": 26,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "6055861903877256483",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "f514656ed55b894b",
+      "length": 26,
+      "keywords": [
+        "pattern"
+      ]
+    }
+  ],
+  "hash_verification": "79ac7e4e0689a5a9",
+  "harmony_index": 0.6238884684925611,
+  "wave_representation": {
+    "pattern_id": "2c778f2d-6dd8-4a4c-b033-ed41b0a0093c",
+    "frequencies": [
+      495.0,
+      550.0,
+      605.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.2494502968608086,
+      0.4868948608238373,
+      0.23872875703131574,
+      0.4983508905824258,
+      0.23872875703131574
+    ],
+    "phases": [
+      0.4487989505128276,
+      1.3463968515384828,
+      3.5903916041026207,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.1111111111111112,
+      1.2222222222222223,
+      1.3333333333333333,
+      1.6666666666666667
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "7c5ce086-bd4d-47f2-9727-1f2dbe05d937",
+      "source_data_id": "3d7369dd-26e9-4dcc-ab36-a88eadce9f68",
+      "pattern_count": 7,
+      "harmony_index": 0.6238884684925611,
+      "timestamp": 1743963190.0718186
+    }
+  },
+  "timestamp": 1743963190.0718546
+}

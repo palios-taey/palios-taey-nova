@@ -1,0 +1,12 @@
+{
+  "data_id": "68fb3621-f239-4bd7-bf75-61493686a43c",
+  "content": [
+    " You can update your Anthropic API key in several ways:\n\n1. **Set as an environment variable** (recommended):\n   ```bash\n   export ANTHROPIC_API_KEY=\"your-api-key-here\"\n   ```\n   \n   To make this permanent, add it to your shell profile:\n   ```bash\n   echo 'export ANTHROPIC_API_KEY=\"your-api-key-here\"' >> ~/.bashrc\n   source ~/.bashrc\n   ```\n\n2. **Specify in the script directly**:\n   Modify the script to include your API key:\n   ```python\n   # Initialize Anthropic client\n   client = anthropic.Anthropic(api_key=\"your-api-key-here\")\n   ```\n\n3. **Use a configuration file**:\n   Create a config file (e.g., `.env` or `config.json`) and load it in the script.\n   ```python\n   # Load from config file\n   import json\n   with open('config.json') as f:\n       config = json.load(f)\n   client = anthropic.Anthropic(api_key=config[\"api_key\"])\n   ```\n\n4. **Use a credentials manager**:\n   If you prefer a more secure approach, you can use a credentials manager like `keyring`:\n   ```python\n   import keyring\n   api_key = keyring.get_password(\"anthropic\", \"api_key\")\n   client = anthropic.Anthropic(api_key=api_key)\n   ```\n\nFor security best practices, the environment variable approach (option 1) is typically recommended as it keeps sensitive credentials out of your code."
+  ],
+  "source": "claude",
+  "timestamp": "2025-04-03T19:26:24.412362Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

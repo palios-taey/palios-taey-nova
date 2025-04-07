@@ -1,0 +1,85 @@
+{
+  "extract_id": "9c3ed985-5782-458c-8816-751e88ace15f",
+  "source_data_id": "exchange_613",
+  "patterns": [
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-1033297671226036998",
+      "confidence": 0.9947012532694413,
+      "phi_position": 0.23076923076923078,
+      "content_hash": "837c141937f96cf9",
+      "length": 91,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3974134737767828038",
+      "confidence": 0.967093020672551,
+      "phi_position": 0.12307692307692308,
+      "content_hash": "f807055dd138ca93",
+      "length": 121,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "3742870411421658454",
+      "confidence": 0.9405992870197567,
+      "phi_position": 0.03076923076923077,
+      "content_hash": "66dd27cec590be24",
+      "length": 160,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "3742870411421658454",
+      "confidence": 0.9405992870197567,
+      "phi_position": 0.03076923076923077,
+      "content_hash": "66dd27cec590be24",
+      "length": 160,
+      "keywords": [
+        "structure",
+        "pattern"
+      ]
+    }
+  ],
+  "hash_verification": "70bf51dd7dd1fdcc",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "6b621a3f-b64a-4b09-9303-fd790eacac56",
+    "frequencies": [
+      605.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.38811985740395133,
+      0.39341860413451024,
+      0.7870601080578397
+    ],
+    "phases": [
+      3.5903916041026207,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.0909090909090908,
+      1.3636363636363635
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "9c3ed985-5782-458c-8816-751e88ace15f",
+      "source_data_id": "exchange_613",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743976709.8290296
+    }
+  },
+  "timestamp": 1743976709.8290737
+}

@@ -1,0 +1,12 @@
+{
+  "data_id": "099aeaa4-5783-4e62-bd3f-3c18b79dd0cf",
+  "content": [
+    ">>> import os\r\n>>> print(\"Python sees this PATH:\", os.environ[\"PATH\"])\r\nPython sees this PATH: C:\\Program Files\\Python312\\Scripts\\;C:\\Program Files\\Python312\\;C:\\Program Files\\Git\\cmd;C:\\Windows\\System32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Users\\jesse\\AppData\\Local\\Muse Hub\\lib;C:\\Program Files (x86)\\Google\\Cloud SDK\\google-cloud-sdk\\bin;C:\\Program Files\\Docker\\Docker\\resources\\bin;\r\n>>>"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741370096.077,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

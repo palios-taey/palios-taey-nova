@@ -1,0 +1,12 @@
+{
+  "data_id": "e0b08516-7ba3-4ed6-82c5-a69514479541",
+  "content": [
+    "The current issue you're seeing (`404 Not Found` when accessing the `/health` endpoint) indicates that your MCP server (`mcp_server.py`) does not implement or does not properly expose the `/health` route, while your dashboard (`dashboard_mcp_connector.py`) expects such an endpoint.\n\nHere's exactly what's happening:\n\n- Your **dashboard connector** (`dashboard_mcp_connector.py`) calls the MCP client (`mcp_client.py`), which sends a GET request to `/health` on the MCP server to check if it's running.\n- The **MCP server** (`mcp_server.py`) does not have a route defined for `/health`, hence returns a 404 error.\n\n## How to Fix:\n\nYou need to explicitly add a health check endpoint to your MCP server. \n\n### Step-by-step fix:\n\n**1.** Open your `mcp_server.py` file.\n\n**2.** Add the following health check endpoint implementation to your `FastAPI` application:\n\n```python\n@app.get(\"/health\")\nasync def health_check():\n    return {\"status\": \"online\", \"message\": \"MCP server running successfully\"}\n```\n\nMake sure your imports at the top include:\n```python\nfrom fastapi import FastAPI\n```\n\nYour server file structure should resemble this after adding the endpoint:\n\n```python\nfrom fastapi import FastAPI\nimport logging\n\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(\"mcp_server\")\n\napp = FastAPI()\n\n@app.get(\"/health\")\nasync def health_check():\n    logger.info(\"Health check accessed.\")\n    return {\"status\": \"online\", \"message\": \"MCP server running successfully\"}\n\n# ... existing endpoints below ...\n```\n\n**3.** Save changes and restart the MCP server:\n\n```bash\npython3 -m uvicorn src.mcp.mcp_server:app --host 0.0.0.0 --port 8001\n```\n\n**4.** Restart the dashboard:\n\n```bash\n./run_dashboard.sh\n```\n\n---\n\n### After applying these changes:\n\n- The MCP server will correctly respond to health check requests at `/health`.\n- Your dashboard connector will successfully verify the MCP server is running, resolving your connection error.\n\nThis will fully resolve your current issue with minimal changes to your existing system and no disruption to other logic."
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743695407.223243,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

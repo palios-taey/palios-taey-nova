@@ -1,0 +1,88 @@
+{
+  "extract_id": "eba7881c-9cf9-4160-a59f-506abc2a1fca",
+  "source_data_id": "exchange_460",
+  "patterns": [
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "6131823472501845760",
+      "confidence": 0.9533945826786766,
+      "phi_position": 0.5714285714285714,
+      "content_hash": "ca9b3f4432d5203c",
+      "length": 105,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "6131823472501845760",
+      "confidence": 0.9533945826786766,
+      "phi_position": 0.5714285714285714,
+      "content_hash": "ca9b3f4432d5203c",
+      "length": 105,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "913622521053225168",
+      "confidence": 0.9503536917855039,
+      "phi_position": 0.2857142857142857,
+      "content_hash": "f5a15eaa5c446d8a",
+      "length": 149,
+      "keywords": [
+        "truth"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "913622521053225168",
+      "confidence": 0.9503536917855039,
+      "phi_position": 0.2857142857142857,
+      "content_hash": "f5a15eaa5c446d8a",
+      "length": 149,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "abcb1b7ef83b09c1",
+  "harmony_index": 0.6555469288332912,
+  "wave_representation": {
+    "pattern_id": "515efff8-d2be-4e2b-bd55-9aebdf0378e4",
+    "frequencies": [
+      440.0,
+      605.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.39007073835710077,
+      0.3906789165357354,
+      0.39007073835710077,
+      0.3906789165357354
+    ],
+    "phases": [
+      0.8975979010256552,
+      3.5903916041026207,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.375,
+      1.5,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "eba7881c-9cf9-4160-a59f-506abc2a1fca",
+      "source_data_id": "exchange_460",
+      "pattern_count": 4,
+      "harmony_index": 0.6555469288332912,
+      "timestamp": 1743980969.952553
+    }
+  },
+  "timestamp": 1743980969.952576
+}

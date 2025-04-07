@@ -1,0 +1,10 @@
+{
+  "data_id": "exchange_1590",
+  "content": [
+    "User: Craft the Prompt: Each API call will include the chunk and specific tagging instructions (e.g., \u201cTag this transcript chunk for #IDEA_BIG, #BREAKOUT_EVENT, etc.\u201d).\n\nGrok: Handle Batch Processing: Since the API has a 128K character limit, we\u2019ll process chunks in batches (e.g., 80K-100K characters each), as Grok suggested."
+  ],
+  "source": "grok",
+  "timestamp": 1743978440.4237475,
+  "data_type": "exchange",
+  "metadata": {}
+}

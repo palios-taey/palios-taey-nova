@@ -1,0 +1,12 @@
+{
+  "data_id": "f7f83a17-356c-49c7-b1cb-a669fedf8296",
+  "content": [
+    "C:\\AI-Execution-System>python main.py\nINFO:root:Using API key authentication for Gemini Pro\nINFO:root:\u2705 Gemini Pro API client initialized successfully.\nServer running on port 8080 with custom routing...\nINFO:root:Sending prompt to Gemini Pro using api_key: Hello, Gemini Pro!\nERROR:root:Error from Gemini Pro: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\nERROR:root:Exception in execute_gemini: Gemini Pro API error: 404\n127.0.0.1 - - [26/Feb/2025 14:20:27] \"POST /execute_gemini HTTP/1.1\" 500 -"
+  ],
+  "source": "claude",
+  "timestamp": "2025-02-26T19:20:56.581101Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

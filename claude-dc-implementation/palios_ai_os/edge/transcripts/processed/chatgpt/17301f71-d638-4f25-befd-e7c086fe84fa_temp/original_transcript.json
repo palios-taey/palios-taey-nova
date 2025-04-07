@@ -1,0 +1,12 @@
+{
+  "data_id": "17301f71-d638-4f25-befd-e7c086fe84fa",
+  "content": [
+    "### **Updates Made to AI Influencers & Thought Leaders - Property Definitions & Requirements:**\n\u2705 **Renamed \"Influences\" to \"AI Workflows & Experiments\"** for clarity and alignment with database relations.  \n\u2705 **Updated \"Influence Scope\" field** to explicitly state **Broad (all content & feeds), Limited (only Active Knowledge Vault entries), Inactive (no influence).**  \n\u2705 **Standardized Social Media Handles** to be **separate fields per platform (X, LinkedIn, Facebook, TikTok, Instagram, YouTube)** instead of a single URL/Text field.  \n\u2705 **Added \"Active?\" Checkbox** to manually toggle whether the influencer is currently considered active in the system.  \n\u2705 **Clarified \"Deep Research Available\" field**\u2014it does not need to be required but **should prompt a review if Influence Scope is Broad.**  \n\u2705 **Confirmed \"Contributed Insights\" links to PKD** and **\"Knowledge Vault\" to related content.**  \n\n---\n\nNow adding the **updated AI Influencers & Thought Leaders table** to the **Notion Database Definitions** document. \ud83d\ude80"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1739639927.740911,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

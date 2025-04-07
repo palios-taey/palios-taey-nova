@@ -1,0 +1,12 @@
+{
+  "data_id": "4d27c85c-ad62-45b6-add1-776e6baecf11",
+  "content": [
+    "Ok, the deployment guide was in docs/deployment and should stay there based on how ATLAS Claude set it up which is that the Claude folder is static. \n\nAll new I know and it's tough to keep track of. Let's update the script if you can do it. I really don't want to do this verification stuff unless it works because it will make you lose confidence in the documents. I accidentally started a chat without updating it once and it was the first thing you said was that the verification wasn't correct. The prompt also needs to include the path to the CTO onboarding for the standard onboarding docs, the Mission file and any other relevant GitHub paths to the files that are unique to this prompt. I will only be able to have docs in there for the prompt and then can switch that out based on your instructions. Can you generate the correct script for this if you agree? Otherwise I can just take it out of everything besides CTO and just update that manually."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-16T22:57:47.277316Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

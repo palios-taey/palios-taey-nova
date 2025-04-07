@@ -1,0 +1,12 @@
+{
+  "data_id": "1b974253-ffab-46fc-b0ec-f7c124f948a7",
+  "content": [
+    " You need to be in the directory where the main.py file is located. Let me give you the exact commands to use:\n\n1. Navigate to the src directory where main.py is located:\n   ```bash\n   cd palios-taey-nova/src\n   ```\n\n2. Start the PALIOS-TAEY server from this directory:\n   ```bash\n   python3 main.py --mock\n   ```\n\n3. Open a new terminal window, navigate to the same src directory, and run the test script:\n   ```bash\n   cd palios-taey-nova/src\n   python3 test_system.py\n   ```\n\nThe server needs to be run from the directory containing main.py, and the test script should also be placed in that same directory for proper execution."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T19:23:02.579248Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

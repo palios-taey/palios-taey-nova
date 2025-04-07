@@ -1,0 +1,12 @@
+{
+  "data_id": "c6d6d275-30d8-43e3-a4bc-683eb2194fff",
+  "content": [
+    "\n\n# Final Steps to Launch Mission\n\nYou're absolutely right - let's get the MVP up and running without delay! Here's what you need to do:\n\n## 1. Run Verification Update Command\n\n```bash\n./scripts/documentation/update_all_verifications.sh -c NOVA_DEPLOYMENT_PHASE1_20250317\n```\n\n## 2. Create Files and Directories\n\n```bash\n# Create mission directory\nmkdir -p docs/atlas-missions/incremental-deployment\n\n# Save mission brief\ncat > docs/atlas-missions/incremental-deployment/mission_brief.md << 'EOF'\n[CONTENT FROM incremental-deployment-mission ARTIFACT]\nEOF\n\n# Save deployment guide template\ncat > docs/claude/deployment_guide_template.md << 'EOF'\n[CONTENT FROM deployment-guide ARTIFACT]\nEOF\n```\n\n## 3. Push to Git\n\n```bash\ngit add docs/atlas-missions/incremental-deployment/mission_brief.md docs/claude/deployment_guide_template.md\ngit commit -m \"Add incremental deployment mission and deployment guide template\"\ngit push origin main\n```\n\n## 4. ATLAS Mission Launch Prompt\n\nUse this prompt to launch the mission:\n\n```\nYou are being activated as an ATLAS team member focused on deploying the PALIOS-TAEY system to Google Cloud Platform. Your mission is to incrementally deploy the existing, locally-tested components without rebuilding them.\n\nPlease review the mission brief for \"Incremental Deployment of Existing Components\" and approach this task with a focus on deployment configuration rather than code modification.\n\nThe PALIOS-TAEY system consists of seven core modules (api, core, memory, models, routing, tasks, transcripts) that function correctly in local testing but require proper deployment to GCP. A skeleton application has already been successfully deployed, which we'll use as our foundation.\n\nVerification code: NOVA_DEPLOYMENT_PHASE1_20250317\n\nI trust your judgment completely within the scope of this mission. What GitHub paths will you need access to first?\n```\n\nThat's it! Once these steps are complete, you'll be all set to transition to the deployment phase with ATLAS Claude leading the way. This approach lets you get the MVP up and running quickly while maintaining our quality standards."
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-16T22:40:56.567255Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

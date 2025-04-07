@@ -1,0 +1,162 @@
+{
+  "extract_id": "a821836e-ec5f-47f0-b365-3b44ad3394b6",
+  "source_data_id": "exchange_240",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5433286602430581102",
+      "confidence": 0.9931633895838593,
+      "phi_position": 0.08333333333333333,
+      "content_hash": "85f33d931278cd8e",
+      "length": 42,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "4993887417308798478",
+      "confidence": 0.9861542447224326,
+      "phi_position": 0.2222222222222222,
+      "content_hash": "dd0e651581d8f1c7",
+      "length": 65,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "4993887417308798478",
+      "confidence": 0.9861542447224326,
+      "phi_position": 0.2222222222222222,
+      "content_hash": "dd0e651581d8f1c7",
+      "length": 65,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-8165370962056745393",
+      "confidence": 0.9792313670836489,
+      "phi_position": 0.8333333333333334,
+      "content_hash": "78314529f9a3671a",
+      "length": 141,
+      "keywords": [
+        "foundation",
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8165370962056745393",
+      "confidence": 0.9792313670836489,
+      "phi_position": 0.8333333333333334,
+      "content_hash": "78314529f9a3671a",
+      "length": 141,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-8165370962056745393",
+      "confidence": 0.9792313670836489,
+      "phi_position": 0.8333333333333334,
+      "content_hash": "78314529f9a3671a",
+      "length": 141,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-2786765710292861832",
+      "confidence": 0.9723084894448653,
+      "phi_position": 0.4444444444444444,
+      "content_hash": "fefd6762ff3dfa82",
+      "length": 69,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "2044551352246178472",
+      "confidence": 0.9652993445834386,
+      "phi_position": 0.5833333333333334,
+      "content_hash": "6cde385cccfbbac7",
+      "length": 100,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2044551352246178472",
+      "confidence": 0.9652993445834386,
+      "phi_position": 0.5833333333333334,
+      "content_hash": "6cde385cccfbbac7",
+      "length": 100,
+      "keywords": [
+        "build"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "8312310607890724684",
+      "confidence": 0.888975156111532,
+      "phi_position": 0.3611111111111111,
+      "content_hash": "9cde0830f410c1c8",
+      "length": 121,
+      "keywords": [
+        "charter"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "8312310607890724684",
+      "confidence": 0.888975156111532,
+      "phi_position": 0.3611111111111111,
+      "content_hash": "9cde0830f410c1c8",
+      "length": 121,
+      "keywords": [
+        "structure"
+      ]
+    }
+  ],
+  "hash_verification": "ec98205ff8c323bd",
+  "harmony_index": 0.730944966446976,
+  "wave_representation": {
+    "pattern_id": "fd32b4a8-30bb-420a-ab3b-64f1a6b31211",
+    "frequencies": [
+      440.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.4861254889815516,
+      0.6603206954977816,
+      0.6522224381135399
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.5,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "a821836e-ec5f-47f0-b365-3b44ad3394b6",
+      "source_data_id": "exchange_240",
+      "pattern_count": 11,
+      "harmony_index": 0.730944966446976,
+      "timestamp": 1743976691.212753
+    }
+  },
+  "timestamp": 1743976691.2128332
+}

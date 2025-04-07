@@ -1,0 +1,86 @@
+{
+  "extract_id": "f5916052-3a47-4f34-94f1-31cc9a670215",
+  "source_data_id": "ecf1d3ab-02fe-437b-b760-77d865cd2c7d",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6615577934051850504",
+      "confidence": 0.9455443419648116,
+      "phi_position": 0.03571428571428571,
+      "content_hash": "33983ac0f4768f78",
+      "length": 103,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "5328271264525253942",
+      "confidence": 0.942503451071639,
+      "phi_position": 0.17857142857142858,
+      "content_hash": "df23213836221f41",
+      "length": 83,
+      "keywords": [
+        "core",
+        "principle"
+      ]
+    },
+    {
+      "category": "Value_Statements",
+      "pattern_id": "5328271264525253942",
+      "confidence": 0.942503451071639,
+      "phi_position": 0.17857142857142858,
+      "content_hash": "df23213836221f41",
+      "length": 83,
+      "keywords": [
+        "value"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "6808749307574926413",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "5bad60d19ef5885b",
+      "length": 32,
+      "keywords": [
+        "core",
+        "principle"
+      ]
+    }
+  ],
+  "hash_verification": "580ec2ec37cd92f2",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "1417d725-6d1a-44ae-a7fa-00c6140937f0",
+    "frequencies": [
+      440.0,
+      550.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.7704667014644331,
+      0.3885006902143278,
+      0.3891088683929623
+    ],
+    "phases": [
+      0.8975979010256552,
+      1.3463968515384828,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.25,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "f5916052-3a47-4f34-94f1-31cc9a670215",
+      "source_data_id": "ecf1d3ab-02fe-437b-b760-77d865cd2c7d",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743963299.1787689
+    }
+  },
+  "timestamp": 1743963299.1788487
+}

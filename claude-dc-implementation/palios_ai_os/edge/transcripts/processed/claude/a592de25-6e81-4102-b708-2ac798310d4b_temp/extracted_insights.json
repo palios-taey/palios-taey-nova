@@ -1,0 +1,155 @@
+{
+  "extract_id": "74aa3570-58e0-4845-b062-ed483bf5fac4",
+  "source_data_id": "a592de25-6e81-4102-b708-2ac798310d4b",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3836536873223445189",
+      "confidence": 0.9983070225002104,
+      "phi_position": 0.234375,
+      "content_hash": "890f4c38642b2834",
+      "length": 83,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "3828563089812519995",
+      "confidence": 0.9896480337503155,
+      "phi_position": 0.84375,
+      "content_hash": "54c8a36304ee386f",
+      "length": 31,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "522221667299810780",
+      "confidence": 0.9651699437494741,
+      "phi_position": 0.125,
+      "content_hash": "9e4667f0d5491caf",
+      "length": 50,
+      "keywords": [
+        "core"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "522221667299810780",
+      "confidence": 0.9651699437494741,
+      "phi_position": 0.125,
+      "content_hash": "9e4667f0d5491caf",
+      "length": 50,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "-783383060585347774",
+      "confidence": 0.9567050562505259,
+      "phi_position": 0.046875,
+      "content_hash": "0b0659a9c0bb0905",
+      "length": 24,
+      "keywords": [
+        "structure"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "3316196620803474928",
+      "confidence": 0.9408859549995792,
+      "phi_position": 0.53125,
+      "content_hash": "1a31f88c5a980466",
+      "length": 134,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "3316196620803474928",
+      "confidence": 0.9408859549995792,
+      "phi_position": 0.53125,
+      "content_hash": "1a31f88c5a980466",
+      "length": 134,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Mathematical_Structures",
+      "pattern_id": "3316196620803474928",
+      "confidence": 0.9408859549995792,
+      "phi_position": 0.53125,
+      "content_hash": "1a31f88c5a980466",
+      "length": 134,
+      "keywords": [
+        "pattern"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6702620777428178461",
+      "confidence": 0.9254550562505259,
+      "phi_position": 0.015625,
+      "content_hash": "5c526c7d7a04af5c",
+      "length": 129,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6900344784322897366",
+      "confidence": 0.8697269662496845,
+      "phi_position": 0.984375,
+      "content_hash": "ff1349e0fc4d707f",
+      "length": 176,
+      "keywords": [
+        "implement",
+        "should"
+      ]
+    }
+  ],
+  "hash_verification": "9885262abb7c82e9",
+  "harmony_index": 0.7318586721273315,
+  "wave_representation": {
+    "pattern_id": "068c219a-bdd6-485c-ac2f-6efaa4a46318",
+    "frequencies": [
+      440.0,
+      605.0,
+      660.0,
+      825.0
+    ],
+    "amplitudes": [
+      0.17865181306813402,
+      0.17644417772723447,
+      1.0,
+      0.35432645556819137
+    ],
+    "phases": [
+      0.8975979010256552,
+      3.5903916041026207,
+      0.8975979010256552,
+      3.5903916041026207
+    ],
+    "harmonics": [
+      1.0,
+      1.375,
+      1.5,
+      1.875
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "74aa3570-58e0-4845-b062-ed483bf5fac4",
+      "source_data_id": "a592de25-6e81-4102-b708-2ac798310d4b",
+      "pattern_count": 10,
+      "harmony_index": 0.7318586721273315,
+      "timestamp": 1743965061.679737
+    }
+  },
+  "timestamp": 1743965061.6797698
+}

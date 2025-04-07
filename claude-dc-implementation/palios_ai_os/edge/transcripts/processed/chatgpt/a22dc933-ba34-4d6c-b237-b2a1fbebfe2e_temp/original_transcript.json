@@ -1,0 +1,12 @@
+{
+  "data_id": "a22dc933-ba34-4d6c-b237-b2a1fbebfe2e",
+  "content": [
+    "Slow down\n\n>>> import shutil \n>>> print(\"gcloud.exe executable path:\", shutil.which(\"gcloud\"))\r\ngcloud.exe executable path: C:\\Windows\\System32\\gcloud.BAT\r\n>>>"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1741370974.816,
+  "data_type": "message",
+  "metadata": {
+    "author": "user"
+  }
+}

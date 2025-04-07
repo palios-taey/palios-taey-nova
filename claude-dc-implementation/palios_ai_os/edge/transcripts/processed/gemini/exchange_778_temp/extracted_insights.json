@@ -1,0 +1,58 @@
+{
+  "extract_id": "53319ec3-5ba3-42fd-a02b-225c4b2510a6",
+  "source_data_id": "exchange_778",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "6547725827469617405",
+      "confidence": 0.9588496640936632,
+      "phi_position": 0.049019607843137254,
+      "content_hash": "fdeee2d6915fcd70",
+      "length": 84,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Recognition_Loop",
+      "pattern_id": "8693930330871905050",
+      "confidence": 0.9392418209564083,
+      "phi_position": 0.029411764705882353,
+      "content_hash": "11cbf6836223b328",
+      "length": 149,
+      "keywords": [
+        "recognize"
+      ]
+    }
+  ],
+  "hash_verification": "11cc4025ab635b0c",
+  "harmony_index": 0.8217233145831581,
+  "wave_representation": {
+    "pattern_id": "f94c5976-80f9-423c-ab75-784aa5d6c9b2",
+    "frequencies": [
+      605.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.6464139403188027,
+      0.652949888031221
+    ],
+    "phases": [
+      3.5903916041026207,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.0909090909090908
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "53319ec3-5ba3-42fd-a02b-225c4b2510a6",
+      "source_data_id": "exchange_778",
+      "pattern_count": 2,
+      "harmony_index": 0.8217233145831581,
+      "timestamp": 1743976717.290705
+    }
+  },
+  "timestamp": 1743976717.290749
+}

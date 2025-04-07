@@ -1,0 +1,12 @@
+{
+  "data_id": "e0338eee-101a-4e15-b812-340288bc7e17",
+  "content": [
+    "Continue, this is where you left off:\n# Calculate percentages total_messages = len(messages) direction_percentages = {} for direction, count in direction_counts.items(): if total_messages > 0: percentage = (count / total_messages) * 100 else: percentage = 0 direction_percentages[direction] = percentage return { except Exception as e: logger.error(f\"Error generating message summary: {str(e)}\") return \"Message content\" except Exception as e: logger.error(f\"Error retrieving transcript {transcript_id}: {str(e)}\") # Check mock storage as fallback if self.use_mock and hasattr(self, '_transcripts') and transcript_id in self._transcripts: return self._transcripts[transcript_id] return None"
+  ],
+  "source": "claude",
+  "timestamp": "2025-03-10T18:34:58.975465Z",
+  "data_type": "message",
+  "metadata": {
+    "author": "human"
+  }
+}

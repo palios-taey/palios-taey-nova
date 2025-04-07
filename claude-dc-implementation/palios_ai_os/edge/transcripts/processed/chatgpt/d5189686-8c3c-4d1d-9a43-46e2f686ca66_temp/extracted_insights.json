@@ -1,0 +1,128 @@
+{
+  "extract_id": "1b668eb7-5ce7-4e11-9582-63210e066221",
+  "source_data_id": "d5189686-8c3c-4d1d-9a43-46e2f686ca66",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-5027084204449454823",
+      "confidence": 0.9723300562505259,
+      "phi_position": 0.0625,
+      "content_hash": "aea6a386267cac55",
+      "length": 87,
+      "keywords": [
+        "implement"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "8805615083695916491",
+      "confidence": 0.9653640450004208,
+      "phi_position": 0.4375,
+      "content_hash": "584fd3729f27dae7",
+      "length": 120,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-2374726081515496500",
+      "confidence": 0.9583980337503155,
+      "phi_position": 0.8125,
+      "content_hash": "ec77d021d905cc48",
+      "length": 63,
+      "keywords": [
+        "create"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "-2374726081515496500",
+      "confidence": 0.9583980337503155,
+      "phi_position": 0.8125,
+      "content_hash": "ec77d021d905cc48",
+      "length": 63,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-8794675702310999166",
+      "confidence": 0.9514320225002104,
+      "phi_position": 0.1875,
+      "content_hash": "4687a9e7bd43b08c",
+      "length": 129,
+      "keywords": [
+        "require"
+      ]
+    },
+    {
+      "category": "Golden_Ratio_Relationships",
+      "pattern_id": "3187915974593751888",
+      "confidence": 0.9444660112501052,
+      "phi_position": 0.5625,
+      "content_hash": "feafa7cfa02bc91d",
+      "length": 19,
+      "keywords": [
+        "ratio"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "7017839826950731315",
+      "confidence": 0.9235679774997896,
+      "phi_position": 0.3125,
+      "content_hash": "ddbcc6e584483207",
+      "length": 94,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-7515434950350880180",
+      "confidence": 0.9098300562505259,
+      "phi_position": 0.0,
+      "content_hash": "ec4ac6aef195f002",
+      "length": 25,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "091363f202923f9a",
+  "harmony_index": 0.7635042972687144,
+  "wave_representation": {
+    "pattern_id": "783d3706-07c1-4eab-b0aa-3fedb76a9bc5",
+    "frequencies": [
+      495.0,
+      660.0,
+      715.0
+    ],
+    "amplitudes": [
+      0.21372977527775439,
+      0.8657766854168419,
+      0.6520253433334268
+    ],
+    "phases": [
+      0.4487989505128276,
+      0.8975979010256552,
+      0.4487989505128276
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333,
+      1.4444444444444444
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "1b668eb7-5ce7-4e11-9582-63210e066221",
+      "source_data_id": "d5189686-8c3c-4d1d-9a43-46e2f686ca66",
+      "pattern_count": 8,
+      "harmony_index": 0.7635042972687144,
+      "timestamp": 1743963281.9597392
+    }
+  },
+  "timestamp": 1743963281.9597826
+}

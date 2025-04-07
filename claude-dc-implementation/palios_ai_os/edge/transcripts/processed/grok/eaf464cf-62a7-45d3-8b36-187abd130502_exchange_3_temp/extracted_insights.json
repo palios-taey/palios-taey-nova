@@ -1,0 +1,85 @@
+{
+  "extract_id": "77a8e59c-1072-4760-a2f7-bd6d4f6041ad",
+  "source_data_id": "eaf464cf-62a7-45d3-8b36-187abd130502_exchange_3",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-3934645674776189795",
+      "confidence": 0.9994649924486885,
+      "phi_position": 0.853566958698373,
+      "content_hash": "c8529191e26a169c",
+      "length": 167,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "4779035699712364052",
+      "confidence": 0.9989872878458499,
+      "phi_position": 0.6170212765957447,
+      "content_hash": "6bf0844e0ceed6c7",
+      "length": 64,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Core_Principles",
+      "pattern_id": "-6483629133212969904",
+      "confidence": 0.978780707203792,
+      "phi_position": 0.1113892365456821,
+      "content_hash": "731a6c5ab3868e2d",
+      "length": 149,
+      "keywords": [
+        "foundation",
+        "charter"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-6483629133212969904",
+      "confidence": 0.978780707203792,
+      "phi_position": 0.1113892365456821,
+      "content_hash": "731a6c5ab3868e2d",
+      "length": 149,
+      "keywords": [
+        "need"
+      ]
+    }
+  ],
+  "hash_verification": "a634dc8e232e7fc9",
+  "harmony_index": 0.7482584971874737,
+  "wave_representation": {
+    "pattern_id": "38f3a5bc-4e45-4fff-9bc9-f5ecb0c51335",
+    "frequencies": [
+      440.0,
+      495.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.39575614144075844,
+      0.39979745756917,
+      0.7956491399304961
+    ],
+    "phases": [
+      0.8975979010256552,
+      0.4487989505128276,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.125,
+      1.5
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "77a8e59c-1072-4760-a2f7-bd6d4f6041ad",
+      "source_data_id": "eaf464cf-62a7-45d3-8b36-187abd130502_exchange_3",
+      "pattern_count": 4,
+      "harmony_index": 0.7482584971874737,
+      "timestamp": 1743986269.3371959
+    }
+  },
+  "timestamp": 1743986269.337202
+}

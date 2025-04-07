@@ -1,0 +1,12 @@
+{
+  "data_id": "cb396975-0e16-4ea0-b9e4-a3dc5b9ac8b8",
+  "content": [
+    "You should save your `sample_transcript.txt` file **in the same directory as `edge_processor.py`**, like this:\n\n```\n/path/to/your/project-folder/\n\u251c\u2500\u2500 edge_processor.py\n\u251c\u2500\u2500 sample_transcript.txt  <-- put it here\n\u2514\u2500\u2500 local_storage/\n```\n\nThis structure ensures that when you run the command:\n\n```bash\npython edge_processor.py sample_transcript.txt\n```\n\nthe script correctly locates and processes your transcript.\n\n---\n\n**Quick Tip:**  \nYou can verify you're in the correct directory by typing:\n\n```bash\nls\n```\n\nYou should see your `edge_processor.py` script listed there. If not, navigate to the correct directory using:\n\n```bash\ncd /path/to/your/project-folder/\n```\n\nThen, create your transcript file and proceed with testing.\n\nLet me know if you're good to continue!"
+  ],
+  "source": "chatgpt",
+  "timestamp": 1743892039.707101,
+  "data_type": "message",
+  "metadata": {
+    "author": "assistant"
+  }
+}

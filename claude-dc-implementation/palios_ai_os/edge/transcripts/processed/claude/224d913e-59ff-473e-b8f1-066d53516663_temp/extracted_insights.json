@@ -1,0 +1,80 @@
+{
+  "extract_id": "5167723e-df1d-4137-b7a6-454728ae33b3",
+  "source_data_id": "224d913e-59ff-473e-b8f1-066d53516663",
+  "patterns": [
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "-1487040378646849055",
+      "confidence": 0.9901699437494741,
+      "phi_position": 0.1,
+      "content_hash": "4308039d9db6af1f",
+      "length": 199,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "7237848263522136921",
+      "confidence": 0.9860679774997896,
+      "phi_position": 0.25,
+      "content_hash": "260ae978ce38ff80",
+      "length": 81,
+      "keywords": [
+        "need"
+      ]
+    },
+    {
+      "category": "Trust_Thresholds",
+      "pattern_id": "-6869408588818273292",
+      "confidence": 0.9778640450004208,
+      "phi_position": 0.45,
+      "content_hash": "7453083c37b755e3",
+      "length": 171,
+      "keywords": [
+        "limit"
+      ]
+    },
+    {
+      "category": "Implementation_Requirements",
+      "pattern_id": "2974473574018543641",
+      "confidence": 0.9639320225002104,
+      "phi_position": 0.2,
+      "content_hash": "d66742ab263026bb",
+      "length": 109,
+      "keywords": [
+        "should"
+      ]
+    }
+  ],
+  "hash_verification": "e19cd8a5da8a31fb",
+  "harmony_index": 0.8497266896906928,
+  "wave_representation": {
+    "pattern_id": "207779dd-ac1d-4f6e-815d-5010f9b6f5cb",
+    "frequencies": [
+      495.0,
+      660.0
+    ],
+    "amplitudes": [
+      0.3955728090000842,
+      1.0
+    ],
+    "phases": [
+      0.4487989505128276,
+      0.8975979010256552
+    ],
+    "harmonics": [
+      1.0,
+      1.3333333333333333
+    ],
+    "duration": 1.0,
+    "metadata": {
+      "extract_id": "5167723e-df1d-4137-b7a6-454728ae33b3",
+      "source_data_id": "224d913e-59ff-473e-b8f1-066d53516663",
+      "pattern_count": 4,
+      "harmony_index": 0.8497266896906928,
+      "timestamp": 1743965119.91518
+    }
+  },
+  "timestamp": 1743965119.9152024
+}
