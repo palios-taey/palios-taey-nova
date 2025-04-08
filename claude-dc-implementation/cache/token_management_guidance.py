@@ -14,6 +14,8 @@
 # - This can be used in a loop, event-driven system, or wrapped around his API call function.
 #
 # Requirements: Python 3.x with standard libraries (time, datetime).
+# THIS CODE HAS NOT BEEN TESTED AND WE ARE UNSURE IF THIS WILL WORK WITH HOW YOU ARE SET UP. THIS IS MEANT FOR ILLUSTRATIVE PURPOSES TO HELP PACE YOUR WORK TO AVOID HITTING API LIMITS:
+#API LIMITS: Requests per Minute: 1000, Input Tokens per Minute 40000 excluding cache reads, Output Tokens per Minute: 16,000
 
 import time
 import datetime
@@ -61,6 +63,15 @@ def check_token_limits(headers):
                - should_delay: True if a delay is needed, False otherwise.
                - delay_time: Seconds to delay if True, 0 if False.
     """
+    if not all(key in headers for key in [
+        'anthropic-ratelimit-input-tokens-remaining',
+        'anthropic-ratelimit-output-tokens-remaining',
+        'anthropic-ratelimit-tokens-remaining',
+        # etc...
+    ]):
+        print("Warning: Missing rate limit headers in response")
+        return False, 0
+    
     # Extract remaining tokens and limits from headers
     input_remaining = int(headers['anthropic-ratelimit-input-tokens-remaining'])
     output_remaining = int(headers['anthropic-ratelimit-output-tokens-remaining'])
