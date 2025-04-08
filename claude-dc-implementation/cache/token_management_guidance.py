@@ -1,3 +1,18 @@
+# Add at top of file
+stats = {
+    "calls_made": 0,
+    "delays_required": 0,
+    "total_delay_time": 0,
+    "input_tokens_used": 0,
+    "output_tokens_used": 0,
+}
+
+# Update in check_token_limits
+stats["calls_made"] += 1
+if should_delay:
+    stats["delays_required"] += 1
+    stats["total_delay_time"] += delay_time
+
 # This script helps Claude DC manage his API token usage with Anthropic's Claude Computer Use feature.
 # Purpose: Prevent Claude DC from exceeding his API rate limits by monitoring token usage after each API call
 #          and introducing delays when limits are close to being hit. This ensures efficient operation without
@@ -50,6 +65,11 @@ def calculate_delay(reset_time):
     now = datetime.datetime.now(datetime.timezone.utc)
     delay = (reset_time - now).total_seconds()
     return max(delay, 0)
+    
+    # Calculate a proportional delay based on percentage of tokens remaining
+    proportion_remaining = min(input_remaining/input_limit, output_remaining/output_limit, tokens_remaining/tokens_limit)
+    if proportion_remaining < 0.1:  # Less than 10% remaining
+        proportional_delay = delay_time * 1.5  # Increase delay by 50%
 
 def check_token_limits(headers):
     """
