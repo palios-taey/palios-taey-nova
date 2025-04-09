@@ -104,6 +104,10 @@ async def sampling_loop(
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
+        
+        # Add extended output beta flag
+        betas.append("output-128k-2025-02-19")
+        
         image_truncation_threshold = only_n_most_recent_images or 0
         if provider == APIProvider.ANTHROPIC:
             client = Anthropic(api_key=api_key, max_retries=4)
@@ -150,22 +154,26 @@ async def sampling_loop(
                 extra_body=extra_body,
                 stream=True,  # Enable streaming to prevent timeouts
             )
+            
+            # For a streaming response, we need to capture and process content differently
+            response = raw_response.parse()
+            
+            # Handle API callback for the response object, not the raw_response
+            api_response_callback(
+                raw_response.http_response.request, 
+                {"status_code": raw_response.http_response.status_code, "headers": dict(raw_response.http_response.headers)}, 
+                None
+            )
+            
+            # Manage token usage to prevent rate limits - only process headers
+            token_manager.manage_request(raw_response.http_response.headers)
+            
         except (APIStatusError, APIResponseValidationError) as e:
             api_response_callback(e.request, e.response, e)
             return messages
         except APIError as e:
             api_response_callback(e.request, e.body, e)
             return messages
-
-        api_response_callback(
-            raw_response.http_response.request, raw_response.http_response, None
-        )
-
-        response = raw_response.parse()
-
-        # Manage token usage to prevent rate limits
-        if not isinstance(raw_response.http_response, Exception):
-            token_manager.manage_request(raw_response.http_response.headers)
 
         response_params = _response_to_params(response)
         messages.append(

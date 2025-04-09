@@ -421,6 +421,10 @@ def _tool_output_callback(
     tool_state[tool_id] = tool_output
     _render_message(Sender.TOOL, tool_output)
 
+"""
+This is a fix for the _render_api_response function in streamlit.py
+The function needs to handle streaming responses differently
+"""
 
 def _render_api_response(
     request: httpx.Request,
@@ -438,13 +442,24 @@ def _render_api_response(
             st.json(request.read().decode())
             st.markdown("---")
             if isinstance(response, httpx.Response):
-                st.markdown(
-                    f"`{response.status_code}`{newline}{newline.join(f'`{k}: {v}`' for k, v in response.headers.items())}"
-                )
-                st.json(response.text)
+                # Safely handle streaming responses
+                try:
+                    st.markdown(
+                        f"`{response.status_code}`{newline}{newline.join(f'`{k}: {v}`' for k, v in response.headers.items())}"
+                    )
+                    response_text = response.text if hasattr(response, 'text') and callable(response.text) else str(response)
+                    st.text(response_text[:1000] + "..." if len(response_text) > 1000 else response_text)
+                except Exception as e:
+                    st.text(f"Streaming response (content not available): {type(response)}")
+                    st.text(f"Headers: {dict(response.headers) if hasattr(response, 'headers') else 'N/A'}")
+            elif isinstance(response, dict):
+                # Handle our custom dictionary response
+                st.markdown(f"`{response.get('status_code', 'N/A')}`")
+                headers = response.get('headers', {})
+                st.markdown(f"{newline.join(f'`{k}: {v}`' for k, v in headers.items())}")
+                st.text("Streaming response (content being processed)")
             else:
                 st.write(response)
-
 
 def _render_error(error: Exception):
     if isinstance(error, RateLimitError):
