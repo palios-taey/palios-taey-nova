@@ -144,7 +144,7 @@ async def sampling_loop(
         # implementation may be able call the SDK directly with:
         # `response = client.messages.create(...)` instead.
         try:
-            # Use non-streaming API for simplicity until we fix all streaming issues
+            # IMPORTANT: Streaming must be enabled for long operations
             raw_response = client.beta.messages.with_raw_response.create(
                 max_tokens=max_tokens,
                 messages=messages,
@@ -153,19 +153,20 @@ async def sampling_loop(
                 tools=tool_collection.to_params(),
                 betas=betas,
                 extra_body=extra_body,
-                stream=False,  # Temporarily disable streaming to avoid errors
+                stream=True,  # Enable streaming to prevent timeouts
             )
             
             response = raw_response.parse()
             
-            # Process API response and token management
+            # Since we're now using streaming, we need to handle the API callback carefully
+            # Only pass the request and headers, not the entire response object
             api_response_callback(
                 raw_response.http_response.request, 
-                raw_response.http_response, 
+                {"status_code": raw_response.http_response.status_code, "headers": dict(raw_response.http_response.headers)}, 
                 None
             )
             
-            # Manage token usage to prevent rate limits
+            # Manage token usage based on headers
             token_manager.manage_request(raw_response.http_response.headers)
             
         except (APIStatusError, APIResponseValidationError) as e:
