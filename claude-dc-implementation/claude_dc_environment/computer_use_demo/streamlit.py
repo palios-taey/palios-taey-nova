@@ -191,20 +191,44 @@ async def main():
     with chat:
         # Display existing messages
         for message in st.session_state.messages:
-            # ... [existing code]
+            role = message["role"]
+            content = message["content"]
+            
+            if isinstance(content, str):
+                with st.chat_message(role):
+                    st.markdown(content)
+            elif isinstance(content, list):
+                with st.chat_message(role):
+                    for block in content:
+                        if block.get("type") == "text":
+                            st.markdown(block.get("text", ""))
+                        elif block.get("type") == "tool_use":
+                            st.code(f'Tool Use: {block.get("name", "Unknown")}\nInput: {block.get("input", {})}')
+                        elif block.get("type") == "tool_result":
+                            st.code(f'Tool Result: {block.get("content", "")}')
+                        elif block.get("type") == "thinking":
+                            st.markdown(f"[Thinking]\n\n{block.get('thinking', '')}")
 
         if new_message:
-            # ... [existing code]
+            # Display the user's message
+            with st.chat_message("user"):
+                st.markdown(new_message)
+            
+            # Add to session state
+            st.session_state.messages.append({"role": "user", "content": new_message})
+            
+            # Re-render to show the updated UI
+            st.rerun()
 
         try:
             most_recent_message = st.session_state.messages[-1]
         except IndexError:
             return
 
-        if most_recent_message["role"] != Sender.USER:
+        if most_recent_message["role"] != "user":
             return
 
-        with track_sampling_loop():
+        with st.spinner("Claude is thinking..."):
             try:
                 # Generate a unique ID for this API request
                 identity = str(uuid.uuid4())
@@ -215,7 +239,7 @@ async def main():
                     model=st.session_state.model,
                     provider=st.session_state.provider,
                     messages=st.session_state.messages,
-                    output_callback=partial(_render_message, Sender.BOT),
+                    output_callback=partial(_render_message, "assistant"),
                     tool_output_callback=partial(_tool_output_callback, tool_state=st.session_state.tools),
                     api_response_callback=partial(_api_response_callback, tab=http_logs, response_state=st.session_state.responses, identity=identity),
                     api_key=st.session_state.api_key,
