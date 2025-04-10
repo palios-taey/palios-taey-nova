@@ -13,7 +13,7 @@ import streamlit as st
 from anthropic.types.beta import BetaContentBlockParam, BetaTextBlockParam, BetaToolUseBlockParam
 from streamlit.delta_generator import DeltaGenerator
 
-from .loop import APIProvider, sampling_loop
+from computer_use_demo.loop import APIProvider, sampling_loop
 from .tools import ToolResult, ToolVersion
 
 # Constants
