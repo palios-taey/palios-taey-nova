@@ -17,12 +17,14 @@ from anthropic import (
     APIResponseValidationError,
     APIStatusError,
 )
-from token_manager import TokenManager
+from utils.token_manager import TokenManager
 from anthropic.types.beta import (
     BetaCacheControlEphemeralParam,
+    BetaContentBlockParam,
     BetaImageBlockParam,
     BetaMessage,
     BetaMessageParam,
+    BetaTextBlock,
     BetaTextBlockParam,
     BetaToolResultBlockParam,
     BetaToolUseBlockParam,
@@ -37,8 +39,21 @@ from .tools import (
 
 # Constants
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
-SYSTEM_PROMPT = "You are a helpful AI assistant."  # Default system prompt
-logger = __import__('logging').getLogger(__name__)
+SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
+* You are utilising an Ubuntu virtual machine using {platform.machine()} architecture with internet access.
+* You can feel free to install Ubuntu applications with your bash tool. Use curl instead of wget.
+* To open firefox, please just click on the firefox icon.  Note, firefox-esr is what is installed on your system.
+* Using bash tool you can start GUI applications, but you need to set export DISPLAY=:1 and use a subshell. For example "(DISPLAY=:1 xterm &)". GUI apps run with bash tool will appear within your desktop environment, but they may take some time to appear. Take a screenshot to confirm it did.
+* When using your bash tool with commands that are expected to output very large quantities of text, redirect into a tmp file and use str_replace_editor or `grep -n -B <lines before> -A <lines after> <query> <filename>` to confirm output.
+* When viewing a page it can be helpful to zoom out so that you can see everything on the page.  Either that, or make sure you scroll down to see everything before deciding something isn't available.
+* When using your computer function calls, they take a while to run and send back to you.  Where possible/feasible, try to chain multiple of these calls all into one function calls request.
+* The current date is {datetime.today().strftime('%A, %B %-d, %Y')}.
+</SYSTEM_CAPABILITY>
+
+<IMPORTANT>
+* When using Firefox, if a startup wizard appears, IGNORE IT.  Do not even click "skip this step".  Instead, click on the address bar where it says "Search or enter address", and enter the appropriate search term or URL there.
+* If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
+</IMPORTANT>"""
 
 # Initialize token manager
 token_manager = TokenManager()
@@ -48,44 +63,16 @@ class APIProvider(StrEnum):
     VERTEX = "vertex"
     BEDROCK = "bedrock"
 
-def _inject_prompt_caching(messages: list[BetaMessageParam]) -> None:
-    """Inject prompt caching instructions into messages."""
-    for message in messages:
-        if "content" in message and isinstance(message["content"], list):
-            for block in message["content"]:
-                if block["type"] == "text":
-                    block["cache_control"] = {"type": "ephemeral"}
-
-def _maybe_filter_to_n_most_recent_images(
-    messages: list[BetaMessageParam], n: int, min_removal_threshold: int
-) -> None:
-    """Filter messages to keep only the n most recent images."""
-    image_count = sum(
-        1 for m in messages for c in m.get("content", []) if c.get("type") == "image"
-    )
-    if image_count <= min_removal_threshold:
-        return
-    images_kept = 0
-    for message in reversed(messages):
-        if "content" not in message or not isinstance(message["content"], list):
-            continue
-        for i, block in enumerate(message["content"]):
-            if block.get("type") == "image":
-                if images_kept < n:
-                    images_kept += 1
-                else:
-                    message["content"][i] = {"type": "text", "text": "[Image removed]"}
-
 async def sampling_loop(
     *,
     model: str,
     provider: APIProvider,
     system_prompt_suffix: str,
     messages: list[BetaMessageParam],
-    output_callback: Callable[[BetaToolUseBlockParam | BetaTextBlockParam], None],
+    output_callback: Callable[[BetaContentBlockParam], None],
     tool_output_callback: Callable[[ToolResult, str], None],
     api_response_callback: Callable[
-        [httpx.Request | None, httpx.Response | dict | BetaMessage | None, Exception | None], None
+        [httpx.Request | None, httpx.Response | object | None, Exception | None], None
     ],
     api_key: str,
     only_n_most_recent_images: int | None = None,
@@ -93,43 +80,20 @@ async def sampling_loop(
     tool_version: ToolVersion,
     thinking_budget: int | None = None,
     token_efficient_tools_beta: bool = False,
-    stream: bool = True,
-) -> list[BetaMessageParam]:
+):
     """
     Agentic sampling loop for assistant/tool interaction with computer use.
-
-    Args:
-        model: The Anthropic model to use.
-        provider: The API provider (Anthropic, Vertex, or Bedrock).
-        system_prompt_suffix: Additional text to append to the system prompt.
-        messages: List of messages in the conversation.
-        output_callback: Callback for rendering assistant output.
-        tool_output_callback: Callback for rendering tool results.
-        api_response_callback: Callback for logging API requests/responses.
-        api_key: API key for authentication.
-        only_n_most_recent_images: Limit to n most recent images in messages.
-        max_tokens: Maximum tokens for the response.
-        tool_version: Version of the toolset to use.
-        thinking_budget: Budget for thinking tokens, if enabled.
-        token_efficient_tools_beta: Enable token-efficient tools beta.
-        stream: Whether to stream the response (default: True).
-
-    Returns:
-        Updated list of messages after processing.
     """
     tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
     tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
-    system = BetaTextBlockParam(
-        type="text",
-        text=f"{SYSTEM_PROMPT}{' ' + system_prompt_suffix if system_prompt_suffix else ''}",
-    )
+    system = SYSTEM_PROMPT + (f" {system_prompt_suffix}" if system_prompt_suffix else "")
 
     while True:
         enable_prompt_caching = False
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
-        betas.append("output-128k-2025-02-19")
+        betas.append("output-128k-2025-02-19")  # Extended output beta
 
         image_truncation_threshold = only_n_most_recent_images or 0
         if provider == APIProvider.ANTHROPIC:
@@ -144,93 +108,195 @@ async def sampling_loop(
             betas.append(PROMPT_CACHING_BETA_FLAG)
             _inject_prompt_caching(messages)
             only_n_most_recent_images = 0
-            system["cache_control"] = {"type": "ephemeral"}  # type: ignore
 
         if only_n_most_recent_images:
             _maybe_filter_to_n_most_recent_images(
-                messages, only_n_most_recent_images, image_truncation_threshold
+                messages,
+                only_n_most_recent_images,
+                min_removal_threshold=image_truncation_threshold,
             )
+        extra_body = {}
+        if thinking_budget:
+            extra_body = {
+                "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
+            }
 
-        extra_body = {"thinking": {"type": "enabled", "budget_tokens": thinking_budget}} if thinking_budget else {}
+        # Create a dummy request for error logging
+        dummy_request = httpx.Request("POST", "https://api.anthropic.com/v1/messages", headers={"x-api-key": "REDACTED"})
 
         try:
-            if stream:
-                with client.messages.with_raw_response.create(
-                    max_tokens=max_tokens,
-                    messages=messages,
-                    model=model,
-                    system=system["text"],
-                    tools=tool_collection.to_params(),
-                    betas=betas,
-                    stream=True,
-                    **extra_body,
-                ) as raw_response_stream:
-                    headers = dict(raw_response_stream.headers)
-                    response_blocks = []
-                    for event in raw_response_stream:
-                        if event.type == "content_block_start":
-                            block = event.content_block
-                            if block.type == "text":
-                                response_blocks.append(BetaTextBlockParam(type="text", text=""))
-                            elif block.type == "tool_use":
-                                response_blocks.append(cast(BetaToolUseBlockParam, block.model_dump()))
-                            elif block.type == "thinking":
-                                response_blocks.append({"type": "thinking", "thinking": ""})
-                        elif event.type == "content_block_delta":
-                            if event.delta.type == "text_delta":
-                                response_blocks[-1]["text"] += event.delta.text
-                            elif event.delta.type == "thinking_delta":
-                                response_blocks[-1]["thinking"] += event.delta.text
-                        elif event.type == "message_stop":
-                            api_response_callback(None, {"status_code": 200, "headers": headers}, None)
-                    token_manager.manage_request(headers)
-            else:
-                with client.messages.with_raw_response.create(
-                    max_tokens=max_tokens,
-                    messages=messages,
-                    model=model,
-                    system=system["text"],
-                    tools=tool_collection.to_params(),
-                    betas=betas,
-                    stream=False,
-                    **extra_body,
-                ) as raw_response:
-                    response = raw_response.parse()
-                    headers = dict(raw_response.headers)
-                    api_response_callback(None, response, None)
-                    token_manager.manage_request(headers)
-                    response_blocks = []
-                    for block in response.content:
-                        if block.type == "text":
+            with client.messages.with_raw_response.create(
+                max_tokens=max_tokens,
+                messages=messages,
+                model=model,
+                system=system,
+                tools=tool_collection.to_params(),
+                betas=betas,
+                stream=False,  # Disable streaming temporarily
+                **extra_body,
+            ) as raw_response:
+                response = raw_response.parse()
+                
+                # Manage token usage
+                token_manager.manage_request(raw_response.http_response.headers)
+                
+                # Safe API callback
+                api_response_callback(
+                    raw_response.http_response.request, 
+                    raw_response.http_response, 
+                    None
+                )
+                
+                response_blocks = []
+                for block in response.content:
+                    if isinstance(block, BetaTextBlock):
+                        if block.text:
                             response_blocks.append(BetaTextBlockParam(type="text", text=block.text))
-                        elif block.type == "tool_use":
-                            response_blocks.append(cast(BetaToolUseBlockParam, block.model_dump()))
-                        elif block.type == "thinking":
-                            response_blocks.append({"type": "thinking", "thinking": block.thinking})
-                        elif block.type == "redacted_thinking":
-                            response_blocks.append({"type": "redacted_thinking", "data": block.data})
-                        else:
-                            logger.warning(f"Unknown block type: {block.type}")
-
-            messages.append({"role": "assistant", "content": response_blocks})
-            tool_result_content = []
-            for content_block in response_blocks:
-                output_callback(content_block)
-                if content_block.get("type") == "tool_use":
-                    result = await tool_collection.run(
-                        name=content_block["name"],
-                        tool_input=cast(dict[str, Any], content_block["input"]),
-                    )
-                    tool_result = {"type": "tool_result", "tool_use_id": content_block["id"], "content": result.output}
-                    tool_result_content.append(tool_result)
-                    tool_output_callback(result, content_block["id"])
-            if not tool_result_content:
-                return messages
-            messages.append({"content": tool_result_content, "role": "user"})
-
+                        elif getattr(block, "type", None) == "thinking":
+                            # Handle thinking blocks
+                            thinking_block = {
+                                "type": "thinking",
+                                "thinking": getattr(block, "thinking", ""),
+                            }
+                            if hasattr(block, "signature"):
+                                thinking_block["signature"] = getattr(block, "signature", "")
+                            response_blocks.append(cast(BetaContentBlockParam, thinking_block))
+                    else:
+                        # Handle tool use blocks
+                        response_blocks.append(cast(BetaToolUseBlockParam, block.model_dump()))
+                
+                messages.append(
+                    {
+                        "role": "assistant",
+                        "content": response_blocks,
+                    }
+                )
+                
+                tool_result_content = []
+                for content_block in response_blocks:
+                    output_callback(content_block)
+                    if content_block.get("type") == "tool_use":
+                        result = await tool_collection.run(
+                            name=content_block["name"],
+                            tool_input=cast(dict[str, Any], content_block["input"]),
+                        )
+                        tool_result = _make_api_tool_result(result, content_block["id"]) 
+                        tool_result_content.append(tool_result)
+                        tool_output_callback(result, content_block["id"])
+                
+                if not tool_result_content:
+                    return messages
+                    
+                messages.append({"content": tool_result_content, "role": "user"})
+                
         except (APIStatusError, APIResponseValidationError, APIError) as e:
-            api_response_callback(getattr(e, 'request', None), getattr(e, 'response', None) or getattr(e, 'body', None), e)
+            # Always provide a valid request object, use dummy if none available
+            request = getattr(e, 'request', dummy_request)
+            response_or_body = getattr(e, 'response', None) or getattr(e, 'body', None)
+            api_response_callback(request, response_or_body, e)
             return messages
         except Exception as e:
-            api_response_callback(None, None, e)
+            # For any unexpected error
+            api_response_callback(dummy_request, None, e)
             return messages
+
+def _maybe_filter_to_n_most_recent_images(
+    messages: list[BetaMessageParam],
+    images_to_keep: int,
+    min_removal_threshold: int,
+):
+    """Filter messages to keep only the n most recent images."""
+    if images_to_keep is None:
+        return messages
+
+    tool_result_blocks = cast(
+        list[BetaToolResultBlockParam],
+        [
+            item
+            for message in messages
+            for item in (
+                message["content"] if isinstance(message["content"], list) else []
+            )
+            if isinstance(item, dict) and item.get("type") == "tool_result"
+        ],
+    )
+
+    total_images = sum(
+        1
+        for tool_result in tool_result_blocks
+        for content in tool_result.get("content", [])
+        if isinstance(content, dict) and content.get("type") == "image"
+    )
+
+    images_to_remove = total_images - images_to_keep
+    # for better cache behavior, we want to remove in chunks
+    images_to_remove -= images_to_remove % min_removal_threshold
+
+    for tool_result in tool_result_blocks:
+        if isinstance(tool_result.get("content"), list):
+            new_content = []
+            for content in tool_result.get("content", []):
+                if isinstance(content, dict) and content.get("type") == "image":
+                    if images_to_remove > 0:
+                        images_to_remove -= 1
+                        continue
+                new_content.append(content)
+            tool_result["content"] = new_content
+
+def _inject_prompt_caching(
+    messages: list[BetaMessageParam],
+):
+    """Set cache breakpoints for the 3 most recent turns."""
+    breakpoints_remaining = 3
+    for message in reversed(messages):
+        if message["role"] == "user" and isinstance(
+            content := message["content"], list
+        ):
+            if breakpoints_remaining:
+                breakpoints_remaining -= 1
+                content[-1]["cache_control"] = BetaCacheControlEphemeralParam(  # type: ignore
+                    {"type": "ephemeral"}
+                )
+            else:
+                content[-1].pop("cache_control", None)
+                break
+
+def _make_api_tool_result(
+    result: ToolResult, tool_use_id: str
+) -> BetaToolResultBlockParam:
+    """Convert an agent ToolResult to an API ToolResultBlockParam."""
+    tool_result_content: list[BetaTextBlockParam | BetaImageBlockParam] | str = []
+    is_error = False
+    if result.error:
+        is_error = True
+        tool_result_content = _maybe_prepend_system_tool_result(result, result.error)
+    else:
+        if result.output:
+            tool_result_content.append(
+                {
+                    "type": "text",
+                    "text": _maybe_prepend_system_tool_result(result, result.output),
+                }
+            )
+        if result.base64_image:
+            tool_result_content.append(
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": "image/png",
+                        "data": result.base64_image,
+                    },
+                }
+            )
+    return {
+        "type": "tool_result",
+        "content": tool_result_content,
+        "tool_use_id": tool_use_id,
+        "is_error": is_error,
+    }
+
+def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
+    if result.system:
+        result_text = f"<s>{result.system}</s>\n{result_text}"
+    return result_text
