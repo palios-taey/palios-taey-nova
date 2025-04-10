@@ -40,14 +40,16 @@ class Sender(StrEnum):
 
 # Model Configuration
 class ModelConfig:
-    def __init__(self, tool_version: ToolVersion, max_output_tokens: int, default_output_tokens: int, has_thinking: bool = False):
+    def __init__(self, tool_version, max_output_tokens: int, default_output_tokens: int, has_thinking: bool = False):
         self.tool_version = tool_version
         self.max_output_tokens = max_output_tokens
         self.default_output_tokens = default_output_tokens
         self.has_thinking = has_thinking
 
+# Fix: Use the correct ToolVersion value instead of V2
+# Using "computer_use_20250124" string value for Claude 3.7 Sonnet
 MODEL_CONFIGS = {
-    "claude-3-7-sonnet-20250219": ModelConfig(ToolVersion.V2, 128000, 4096, has_thinking=True),
+    "claude-3-7-sonnet-20250219": ModelConfig("computer_use_20250124", 128000, 4096, has_thinking=True),
 }
 
 def setup_state():
@@ -61,7 +63,7 @@ def setup_state():
         st.session_state.provider = APIProvider.ANTHROPIC
         st.session_state.api_key = ""
         st.session_state.hide_images = False
-        st.session_state.tool_version = ToolVersion.V2
+        st.session_state.tool_version = "computer_use_20250124"  # Fix: Set the correct tool version string
         st.session_state.output_tokens = MODEL_CONFIGS["claude-3-7-sonnet-20250219"].default_output_tokens
         st.session_state.thinking = False
         st.session_state.thinking_budget = 8192
@@ -231,4 +233,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

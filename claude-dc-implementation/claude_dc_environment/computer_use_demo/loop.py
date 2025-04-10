@@ -30,7 +30,7 @@ from anthropic.types.beta import (
     BetaToolUseBlockParam,
 )
 
-from .tools import (
+from tools import (
     TOOL_GROUPS_BY_VERSION,
     ToolCollection,
     ToolResult,
