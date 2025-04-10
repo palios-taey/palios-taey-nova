@@ -119,7 +119,7 @@ def _render_api_response(
                 st.text("No response data available")
             else:
                 # Fallback for any other response type
-                st.write("Response type: {type(response)}")
+                st.write(f"Response type: {type(response)}")
                 st.write(response)
 
 def _render_message(sender: Sender, message: str | dict | ToolResult):
