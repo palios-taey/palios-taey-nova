@@ -80,11 +80,22 @@ def _render_api_response(
     with tab:
         with st.expander(f"Request/Response ({response_id})"):
             newline = "\n\n"
-            st.markdown(
-                f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}"
-            )
-            st.json(request.read().decode())
+            
+            # Safely display request information
+            if request is None:
+                st.markdown("*No request data available*")
+            else:
+                try:
+                    st.markdown(
+                        f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}"
+                    )
+                    st.json(request.read().decode())
+                except Exception as e:
+                    st.markdown(f"*Error displaying request: {str(e)}*")
+            
             st.markdown("---")
+            
+            # Handle response display with careful type checking
             if isinstance(response, httpx.Response):
                 # Safely handle streaming responses
                 try:
@@ -102,6 +113,8 @@ def _render_api_response(
                 headers = response.get('headers', {})
                 st.markdown(f"{newline.join(f'`{k}: {v}`' for k, v in headers.items())}")
                 st.text("Streaming response (content being processed)")
+            elif response is None:
+                st.text("No response data available")
             else:
                 st.write(response)
 
