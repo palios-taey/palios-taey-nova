@@ -52,7 +52,8 @@ if "model" not in st.session_state:
 if "provider" not in st.session_state:
     st.session_state.provider = APIProvider.ANTHROPIC
 if "api_key" not in st.session_state:
-    st.session_state.api_key = ""
+    # REPLACE "your-api-key-here" WITH YOUR ACTUAL API KEY
+    st.session_state.api_key = "your-api-key-here"  # <-- REPLACE THIS WITH YOUR ACTUAL API KEY
 if "hide_images" not in st.session_state:
     st.session_state.hide_images = False
 if "tool_version" not in st.session_state:
@@ -186,36 +187,33 @@ async def main():
     
     st.warning(WARNING_TEXT)
 
-    # Add API Key input if not validated
-    if not st.session_state.auth_validated:
-        st.session_state.api_key = st.text_input("Enter Anthropic API Key", type="password")
-        if st.session_state.api_key:
-            if auth_error := validate_auth(st.session_state.provider, st.session_state.api_key):
-                st.warning(f"Please resolve: {auth_error}")
-                return
-            st.session_state.auth_validated = True
-            st.experimental_rerun()
+    # Always validate the API key
+    if st.session_state.api_key != "your-api-key-here":
+        st.session_state.auth_validated = True
     
-    # Only show chat interface after API key is validated
-    if st.session_state.auth_validated:
-        # Create tabs for the application
-        chat, http_logs = st.tabs(["Chat", "HTTP Exchange Logs"])
-        new_message = st.chat_input("Type a message to control the computer...")
+    # If API key is hardcoded placeholder, show error
+    if st.session_state.api_key == "your-api-key-here":
+        st.error("Please edit streamlit.py to add your Anthropic API key in the hardcoded placeholder.")
+        return
+    
+    # Create tabs for the application
+    chat, http_logs = st.tabs(["Chat", "HTTP Exchange Logs"])
+    new_message = st.chat_input("Type a message to control the computer...")
 
-        with chat:
-            for message in st.session_state.messages:
-                if isinstance(message["content"], str):
-                    _render_message(message["role"], message["content"])
-                elif isinstance(message["content"], list):
-                    for block in message["content"]:
-                        if isinstance(block, dict) and block.get("type") == "tool_result":
-                            _render_message(Sender.TOOL, st.session_state.tools.get(block["tool_use_id"]))
-                        else:
-                            _render_message(message["role"], cast(BetaContentBlockParam | ToolResult, block))
+    with chat:
+        for message in st.session_state.messages:
+            if isinstance(message["content"], str):
+                _render_message(message["role"], message["content"])
+            elif isinstance(message["content"], list):
+                for block in message["content"]:
+                    if isinstance(block, dict) and block.get("type") == "tool_result":
+                        _render_message(Sender.TOOL, st.session_state.tools.get(block["tool_use_id"]))
+                    else:
+                        _render_message(message["role"], cast(BetaContentBlockParam | ToolResult, block))
 
-            if new_message:
-                st.session_state.messages.append({"role": Sender.USER, "content": [BetaTextBlockParam(type="text", text=new_message)]})
-                _render_message(Sender.USER, new_message)
+        if new_message:
+            st.session_state.messages.append({"role": Sender.USER, "content": [BetaTextBlockParam(type="text", text=new_message)]})
+            _render_message(Sender.USER, new_message)
 
             try:
                 most_recent_message = st.session_state.messages[-1]
@@ -226,6 +224,9 @@ async def main():
                 return
 
             with track_sampling_loop():
+                # Print API key length for debugging (without revealing the actual key)
+                print(f"API Key length: {len(st.session_state.api_key)}")
+                
                 st.session_state.messages = await sampling_loop(
                     system_prompt_suffix="",
                     model=st.session_state.model,
