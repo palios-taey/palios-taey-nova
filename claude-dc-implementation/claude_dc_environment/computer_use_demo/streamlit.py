@@ -7,14 +7,17 @@ import base64
 from functools import partial
 from pathlib import PosixPath
 from typing import cast
+from contextlib import contextmanager
+from enum import StrEnum
 
 import httpx
 import streamlit as st
 from anthropic.types.beta import BetaContentBlockParam, BetaTextBlockParam, BetaToolUseBlockParam
 from streamlit.delta_generator import DeltaGenerator
 
-from .loop import APIProvider, sampling_loop
-from .tools import ToolResult, ToolVersion
+# Change from relative import to absolute import
+from loop import APIProvider, sampling_loop
+from tools import ToolResult, ToolVersion
 
 # Constants
 CONFIG_DIR = PosixPath("~/.anthropic").expanduser()
@@ -224,8 +227,8 @@ async def main():
                 max_tokens=st.session_state.output_tokens,
                 thinking_budget=st.session_state.thinking_budget if st.session_state.thinking else None,
                 token_efficient_tools_beta=st.session_state.token_efficient_tools_beta,
-                stream=True,
             )
 
 if __name__ == "__main__":
     asyncio.run(main())
+
