@@ -30,6 +30,7 @@ from anthropic.types.beta import (
     BetaToolUseBlockParam,
 )
 
+# Change from relative import to absolute import
 from tools import (
     TOOL_GROUPS_BY_VERSION,
     ToolCollection,
@@ -139,13 +140,13 @@ async def sampling_loop(
                 "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
             }
 
-        # Call the API
-        # we use raw_response to provide debug information to streamlit. Your
-        # implementation may be able call the SDK directly with:
-        # `response = client.messages.create(...)` instead.
         try:
             # Use non-streaming for simpler handling
-            raw_response = client.beta.messages.with_raw_response.create(
+            print(f"API key being used: {api_key[:4]}...{api_key[-4:]}")
+            print(f"Creating message with model: {model}, max_tokens: {max_tokens}, betas: {betas}")
+            
+            # Standard, non-streaming API call
+            response = client.beta.messages.create(
                 max_tokens=max_tokens,
                 messages=messages,
                 model=model,
@@ -153,33 +154,33 @@ async def sampling_loop(
                 tools=tool_collection.to_params(),
                 betas=betas,
                 extra_body=extra_body,
-                stream=False,  # Disable streaming to avoid errors
+                stream=False,  # Disable streaming
             )
             
-            # Create a dummy request object for API callback
-            dummy_request = httpx.Request("POST", "https://api.anthropic.com/v1/messages")
+            # Create a dummy response for API callback
+            response_data = {
+                "status_code": 200,
+                "headers": {},
+                "content": str(response)
+            }
             
-            # Process the response
-            response = raw_response.parse()
-            
-            # Process API response and token management
+            # Simplified API response callback
             api_response_callback(
-                raw_response.http_response.request or dummy_request, 
-                raw_response.http_response, 
+                httpx.Request("POST", "https://api.anthropic.com/v1/messages"), 
+                response_data, 
                 None
             )
             
-            # Manage token usage to prevent rate limits
-            token_manager.manage_request(raw_response.http_response.headers)
-            
         except (APIStatusError, APIResponseValidationError) as e:
+            print(f"API Error: {str(e)}")
             api_response_callback(e.request, e.response, e)
             return messages
         except APIError as e:
+            print(f"API Error: {str(e)}")
             api_response_callback(e.request, e.body, e)
             return messages
         except Exception as e:
-            # Handle unexpected errors
+            print(f"Unexpected error: {str(e)}")
             api_response_callback(httpx.Request("POST", "https://api.anthropic.com/v1/messages"), None, e)
             return messages
 
