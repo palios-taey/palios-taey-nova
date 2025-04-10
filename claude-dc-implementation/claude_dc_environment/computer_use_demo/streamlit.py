@@ -63,11 +63,12 @@ def setup_state():
         st.session_state.provider = APIProvider.ANTHROPIC
         st.session_state.api_key = ""
         st.session_state.hide_images = False
-        st.session_state.tool_version = "computer_use_20250124"  # Fix: Set the correct tool version string
-        st.session_state.output_tokens = MODEL_CONFIGS["claude-3-7-sonnet-20250219"].default_output_tokens
-        st.session_state.thinking = False
-        st.session_state.thinking_budget = 8192
-        st.session_state.token_efficient_tools_beta = False
+        # Set optimized values for Claude DC
+        st.session_state.tool_version = "computer_use_20250124"
+        st.session_state.output_tokens = 64000  # Set to 64K for optimal use
+        st.session_state.thinking = True
+        st.session_state.thinking_budget = 32000  # Set to 32K for optimal use
+        st.session_state.token_efficient_tools_beta = True
 
 def validate_auth(provider: APIProvider, api_key: str) -> str | None:
     """Validate API authentication."""
@@ -179,108 +180,73 @@ async def main():
     setup_state()
     st.markdown(STREAMLIT_STYLE, unsafe_allow_html=True)
     st.title("PALIOS-AI-OS Chat")
+    
+    # Display configuration information as simple text
+    st.markdown("### Configuration")
+    st.markdown(f"• Model: {st.session_state.model}")
+    st.markdown(f"• Output tokens: {st.session_state.output_tokens}")
+    st.markdown(f"• Thinking budget: {st.session_state.thinking_budget}")
+    st.markdown(f"• Token-efficient tools: {'Enabled' if st.session_state.token_efficient_tools_beta else 'Disabled'}")
+    st.markdown(f"• Tool version: {st.session_state.tool_version}")
+    
     st.warning(WARNING_TEXT)
 
-    # Add sidebar for settings
-    with st.sidebar:
-        st.header("Settings")
-        
-        # API Key input
-        if not st.session_state.auth_validated:
-            st.session_state.api_key = st.text_input("Enter Anthropic API Key", type="password")
+    # API Key input - placed prominently at the top
+    if not st.session_state.auth_validated:
+        st.header("Enter API Key")
+        st.session_state.api_key = st.text_input("Anthropic API Key", type="password", help="Enter your Anthropic API key to access Claude.")
+        if st.button("Submit API Key"):
             if auth_error := validate_auth(st.session_state.provider, st.session_state.api_key):
                 st.warning(f"Please resolve: {auth_error}")
                 return
             st.session_state.auth_validated = True
-        
-        # Add model selection
-        st.subheader("Model Settings")
-        st.session_state.model = st.selectbox(
-            "Model",
-            options=["claude-3-7-sonnet-20250219"],
-            index=0
-        )
-        
-        # Add token settings
-        st.session_state.output_tokens = st.number_input(
-            "Max Output Tokens",
-            min_value=1024,
-            max_value=128000,
-            value=64000,  # Set to 64K default for optimal use
-            step=1024
-        )
-        
-        # Add thinking settings
-        st.session_state.thinking = st.checkbox("Enable Thinking", value=True)
-        if st.session_state.thinking:
-            st.session_state.thinking_budget = st.number_input(
-                "Thinking Budget",
-                min_value=1024,
-                max_value=64000,
-                value=32000,  # Set to 32K default for optimal use
-                step=1024
-            )
-        
-        # Add token-efficient tools beta
-        st.session_state.token_efficient_tools_beta = st.checkbox("Enable Token-Efficient Tools Beta", value=True)
-        
-        # Add image visibility toggle
-        st.session_state.hide_images = st.checkbox("Hide Images", value=False)
-        
-        # Display current tool version
-        st.subheader("Advanced")
-        st.text(f"Tool Version: {st.session_state.tool_version}")
-        
-        # Add a button to clear the chat
-        if st.button("Clear Chat"):
-            st.session_state.messages = []
-            st.session_state.responses = {}
-            st.session_state.tools = {}
-            st.experimental_rerun()
+            st.experimental_rerun()  # Rerun after validating to refresh the UI
+    
+    # Only show chat interface after API key is validated
+    if st.session_state.auth_validated:
+        # Create tabs for the application
+        chat, http_logs = st.tabs(["Chat", "HTTP Exchange Logs"])
+        new_message = st.chat_input("Type a message to control the computer...")
 
-    # Create tabs for the application
-    chat, http_logs = st.tabs(["Chat", "HTTP Exchange Logs"])
-    new_message = st.chat_input("Type a message to control the computer...")
+        with chat:
+            for message in st.session_state.messages:
+                if isinstance(message["content"], str):
+                    _render_message(message["role"], message["content"])
+                elif isinstance(message["content"], list):
+                    for block in message["content"]:
+                        if isinstance(block, dict) and block.get("type") == "tool_result":
+                            _render_message(Sender.TOOL, st.session_state.tools.get(block["tool_use_id"]))
+                        else:
+                            _render_message(message["role"], cast(BetaContentBlockParam | ToolResult, block))
 
-    with chat:
-        for message in st.session_state.messages:
-            if isinstance(message["content"], str):
-                _render_message(message["role"], message["content"])
-            elif isinstance(message["content"], list):
-                for block in message["content"]:
-                    if isinstance(block, dict) and block.get("type") == "tool_result":
-                        _render_message(Sender.TOOL, st.session_state.tools.get(block["tool_use_id"]))
-                    else:
-                        _render_message(message["role"], cast(BetaContentBlockParam | ToolResult, block))
+            if new_message:
+                st.session_state.messages.append({"role": Sender.USER, "content": [BetaTextBlockParam(type="text", text=new_message)]})
+                _render_message(Sender.USER, new_message)
 
-        if new_message:
-            st.session_state.messages.append({"role": Sender.USER, "content": [BetaTextBlockParam(type="text", text=new_message)]})
-            _render_message(Sender.USER, new_message)
+            try:
+                most_recent_message = st.session_state.messages[-1]
+            except IndexError:
+                return
 
-        try:
-            most_recent_message = st.session_state.messages[-1]
-        except IndexError:
-            return
+            if most_recent_message["role"] != Sender.USER:
+                return
 
-        if most_recent_message["role"] != Sender.USER:
-            return
-
-        with track_sampling_loop():
-            st.session_state.messages = await sampling_loop(
-                system_prompt_suffix="",
-                model=st.session_state.model,
-                provider=st.session_state.provider,
-                messages=st.session_state.messages,
-                output_callback=partial(_render_message, Sender.BOT),
-                tool_output_callback=partial(_tool_output_callback, tool_state=st.session_state.tools),
-                api_response_callback=partial(_api_response_callback, tab=http_logs, response_state=st.session_state.responses),
-                api_key=st.session_state.api_key,
-                only_n_most_recent_images=None,
-                tool_version=st.session_state.tool_version,
-                max_tokens=st.session_state.output_tokens,
-                thinking_budget=st.session_state.thinking_budget if st.session_state.thinking else None,
-                token_efficient_tools_beta=st.session_state.token_efficient_tools_beta,
-            )
+            with track_sampling_loop():
+                st.session_state.messages = await sampling_loop(
+                    system_prompt_suffix="",
+                    model=st.session_state.model,
+                    provider=st.session_state.provider,
+                    messages=st.session_state.messages,
+                    output_callback=partial(_render_message, Sender.BOT),
+                    tool_output_callback=partial(_tool_output_callback, tool_state=st.session_state.tools),
+                    api_response_callback=partial(_api_response_callback, tab=http_logs, response_state=st.session_state.responses),
+                    api_key=st.session_state.api_key,
+                    only_n_most_recent_images=None,
+                    tool_version=st.session_state.tool_version,
+                    max_tokens=st.session_state.output_tokens,
+                    thinking_budget=st.session_state.thinking_budget if st.session_state.thinking else None,
+                    token_efficient_tools_beta=st.session_state.token_efficient_tools_beta,
+                )
 
 if __name__ == "__main__":
     asyncio.run(main())
