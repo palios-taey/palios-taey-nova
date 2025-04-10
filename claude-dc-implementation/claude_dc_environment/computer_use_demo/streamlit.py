@@ -192,14 +192,14 @@ async def main():
     st.warning(WARNING_TEXT)
 
     # Add API Key input if not validated
-if not st.session_state.auth_validated:
-    st.session_state.api_key = st.text_input("Enter Anthropic API Key", type="password")
-    if st.session_state.api_key:
-        if auth_error := validate_auth(st.session_state.provider, st.session_state.api_key):
-            st.warning(f"Please resolve: {auth_error}")
-            return
-        st.session_state.auth_validated = True
-        st.experimental_rerun()
+    if not st.session_state.auth_validated:
+        st.session_state.api_key = st.text_input("Enter Anthropic API Key", type="password")
+        if st.session_state.api_key:
+            if auth_error := validate_auth(st.session_state.provider, st.session_state.api_key):
+                st.warning(f"Please resolve: {auth_error}")
+                return
+            st.session_state.auth_validated = True
+            st.experimental_rerun()
     
     # Only show chat interface after API key is validated
     if st.session_state.auth_validated:
