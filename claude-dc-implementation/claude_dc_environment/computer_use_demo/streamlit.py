@@ -38,37 +38,33 @@ class Sender(StrEnum):
     BOT = "assistant"
     TOOL = "tool"
 
-# Model Configuration
-class ModelConfig:
-    def __init__(self, tool_version, max_output_tokens: int, default_output_tokens: int, has_thinking: bool = False):
-        self.tool_version = tool_version
-        self.max_output_tokens = max_output_tokens
-        self.default_output_tokens = default_output_tokens
-        self.has_thinking = has_thinking
-
-# Fix: Use the correct ToolVersion value instead of V2
-# Using "computer_use_20250124" string value for Claude 3.7 Sonnet
-MODEL_CONFIGS = {
-    "claude-3-7-sonnet-20250219": ModelConfig("computer_use_20250124", 128000, 4096, has_thinking=True),
-}
-
-def setup_state():
-    """Initialize Streamlit session state."""
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-        st.session_state.responses = {}
-        st.session_state.tools = {}
-        st.session_state.auth_validated = False
-        st.session_state.model = "claude-3-7-sonnet-20250219"
-        st.session_state.provider = APIProvider.ANTHROPIC
-        st.session_state.api_key = ""
-        st.session_state.hide_images = False
-        # Set optimized values for Claude DC
-        st.session_state.tool_version = "computer_use_20250124"
-        st.session_state.output_tokens = 64000  # Set to 64K for optimal use
-        st.session_state.thinking = True
-        st.session_state.thinking_budget = 32000  # Set to 32K for optimal use
-        st.session_state.token_efficient_tools_beta = True
+# Initialize session state variables
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if "responses" not in st.session_state:
+    st.session_state.responses = {}
+if "tools" not in st.session_state:
+    st.session_state.tools = {}
+if "auth_validated" not in st.session_state:
+    st.session_state.auth_validated = False
+if "model" not in st.session_state:
+    st.session_state.model = "claude-3-7-sonnet-20250219"
+if "provider" not in st.session_state:
+    st.session_state.provider = APIProvider.ANTHROPIC
+if "api_key" not in st.session_state:
+    st.session_state.api_key = ""
+if "hide_images" not in st.session_state:
+    st.session_state.hide_images = False
+if "tool_version" not in st.session_state:
+    st.session_state.tool_version = "computer_use_20250124"  # Set the correct tool version string
+if "output_tokens" not in st.session_state:
+    st.session_state.output_tokens = 64000  # Set to 64K for optimal use
+if "thinking" not in st.session_state:
+    st.session_state.thinking = True
+if "thinking_budget" not in st.session_state:
+    st.session_state.thinking_budget = 32000  # Set to 32K for optimal use
+if "token_efficient_tools_beta" not in st.session_state:
+    st.session_state.token_efficient_tools_beta = True
 
 def validate_auth(provider: APIProvider, api_key: str) -> str | None:
     """Validate API authentication."""
@@ -177,7 +173,6 @@ def track_sampling_loop():
 
 async def main():
     """Main Streamlit app entrypoint."""
-    setup_state()
     st.markdown(STREAMLIT_STYLE, unsafe_allow_html=True)
     st.title("PALIOS-AI-OS Chat")
     
