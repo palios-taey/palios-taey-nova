@@ -140,67 +140,74 @@ async def sampling_loop(
             }
 
         # Call the API
-        # we use raw_response to provide debug information to streamlit. Your
-        # implementation may be able call the SDK directly with:
-        # `response = client.messages.create(...)` instead.
         try:
-            # IMPORTANT: Streaming must be enabled for long operations
-            raw_response = client.beta.messages.with_raw_response.create(
+            # Use non-streaming for simpler handling
+            response = client.messages.create(
                 max_tokens=max_tokens,
                 messages=messages,
                 model=model,
-                system=[system],
+                system=system.text,
                 tools=tool_collection.to_params(),
                 betas=betas,
-                extra_body=extra_body,
-                stream=True,  # Enable streaming to prevent timeouts
+                **(extra_body or {}),
+                stream=False,  # Disable streaming for now to avoid issues
             )
             
-            response = raw_response.parse()
-            
-            # Since we're now using streaming, we need to handle the API callback carefully
-            # Only pass the request and headers, not the entire response object
+            # Since we're not using with_raw_response, we don't have access to headers
+            # But we can still simulate token management
             api_response_callback(
-                raw_response.http_response.request, 
-                {"status_code": raw_response.http_response.status_code, "headers": dict(raw_response.http_response.headers)}, 
+                None,  # No request object available
+                response,  # Use the response object directly 
                 None
             )
             
-            # Manage token usage based on headers
-            token_manager.manage_request(raw_response.http_response.headers)
+            # Handle the response
+            response_blocks = []
+            for block in response.content:
+                if block.type == "text":
+                    response_blocks.append(BetaTextBlockParam(type="text", text=block.text))
+                elif block.type == "tool_use":
+                    response_blocks.append(cast(BetaToolUseBlockParam, block.model_dump()))
+                # Add other block types as needed
+                
+            # Add to messages
+            messages.append(
+                {
+                    "role": "assistant",
+                    "content": response_blocks,
+                }
+            )
+            
+            # Process each block
+            tool_result_content = []
+            for content_block in response_blocks:
+                output_callback(content_block)
+                if content_block["type"] == "tool_use":
+                    result = await tool_collection.run(
+                        name=content_block["name"],
+                        tool_input=cast(dict[str, Any], content_block["input"]),
+                    )
+                    tool_result = _make_api_tool_result(result, content_block["id"])
+                    tool_result_content.append(tool_result)
+                    tool_output_callback(result, content_block["id"])
+            
+            # If no tool results, return messages
+            if not tool_result_content:
+                return messages
+                
+            # Add tool results to messages
+            messages.append({"content": tool_result_content, "role": "user"})
             
         except (APIStatusError, APIResponseValidationError) as e:
-            api_response_callback(e.request, e.response, e)
+            api_response_callback(getattr(e, 'request', None), getattr(e, 'response', None), e)
             return messages
         except APIError as e:
-            api_response_callback(e.request, e.body, e)
+            api_response_callback(getattr(e, 'request', None), getattr(e, 'body', None), e)
             return messages
-
-        response_params = _response_to_params(response)
-        messages.append(
-            {
-                "role": "assistant",
-                "content": response_params,
-            }
-        )
-
-        tool_result_content: list[BetaToolResultBlockParam] = []
-        for content_block in response_params:
-            output_callback(content_block)
-            if content_block["type"] == "tool_use":
-                result = await tool_collection.run(
-                    name=content_block["name"],
-                    tool_input=cast(dict[str, Any], content_block["input"]),
-                )
-                tool_result_content.append(
-                    _make_api_tool_result(result, content_block["id"])
-                )
-                tool_output_callback(result, content_block["id"])
-
-        if not tool_result_content:
+        except Exception as e:
+            # Handle unexpected errors
+            api_response_callback(None, None, e)
             return messages
-
-        messages.append({"content": tool_result_content, "role": "user"})
 
 
 def _maybe_filter_to_n_most_recent_images(
@@ -250,29 +257,6 @@ def _maybe_filter_to_n_most_recent_images(
                         continue
                 new_content.append(content)
             tool_result["content"] = new_content
-
-
-def _response_to_params(
-    response: BetaMessage,
-) -> list[BetaContentBlockParam]:
-    res: list[BetaContentBlockParam] = []
-    for block in response.content:
-        if isinstance(block, BetaTextBlock):
-            if block.text:
-                res.append(BetaTextBlockParam(type="text", text=block.text))
-            elif getattr(block, "type", None) == "thinking":
-                # Handle thinking blocks - include signature field
-                thinking_block = {
-                    "type": "thinking",
-                    "thinking": getattr(block, "thinking", None),
-                }
-                if hasattr(block, "signature"):
-                    thinking_block["signature"] = getattr(block, "signature", None)
-                res.append(cast(BetaContentBlockParam, thinking_block))
-        else:
-            # Handle tool use blocks normally
-            res.append(cast(BetaToolUseBlockParam, block.model_dump()))
-    return res
 
 
 def _inject_prompt_caching(
@@ -338,5 +322,5 @@ def _make_api_tool_result(
 
 def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
     if result.system:
-        result_text = f"<system>{result.system}</system>\n{result_text}"
+        result_text = f"<s>{result.system}</s>\n{result_text}"
     return result_text
