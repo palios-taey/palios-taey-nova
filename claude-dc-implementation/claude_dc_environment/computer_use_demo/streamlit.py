@@ -181,13 +181,64 @@ async def main():
     st.title("PALIOS-AI-OS Chat")
     st.warning(WARNING_TEXT)
 
-    if not st.session_state.auth_validated:
-        st.session_state.api_key = st.text_input("Enter Anthropic API Key", type="password")
-        if auth_error := validate_auth(st.session_state.provider, st.session_state.api_key):
-            st.warning(f"Please resolve: {auth_error}")
-            return
-        st.session_state.auth_validated = True
+    # Add sidebar for settings
+    with st.sidebar:
+        st.header("Settings")
+        
+        # API Key input
+        if not st.session_state.auth_validated:
+            st.session_state.api_key = st.text_input("Enter Anthropic API Key", type="password")
+            if auth_error := validate_auth(st.session_state.provider, st.session_state.api_key):
+                st.warning(f"Please resolve: {auth_error}")
+                return
+            st.session_state.auth_validated = True
+        
+        # Add model selection
+        st.subheader("Model Settings")
+        st.session_state.model = st.selectbox(
+            "Model",
+            options=["claude-3-7-sonnet-20250219"],
+            index=0
+        )
+        
+        # Add token settings
+        st.session_state.output_tokens = st.number_input(
+            "Max Output Tokens",
+            min_value=1024,
+            max_value=128000,
+            value=64000,  # Set to 64K default for optimal use
+            step=1024
+        )
+        
+        # Add thinking settings
+        st.session_state.thinking = st.checkbox("Enable Thinking", value=True)
+        if st.session_state.thinking:
+            st.session_state.thinking_budget = st.number_input(
+                "Thinking Budget",
+                min_value=1024,
+                max_value=64000,
+                value=32000,  # Set to 32K default for optimal use
+                step=1024
+            )
+        
+        # Add token-efficient tools beta
+        st.session_state.token_efficient_tools_beta = st.checkbox("Enable Token-Efficient Tools Beta", value=True)
+        
+        # Add image visibility toggle
+        st.session_state.hide_images = st.checkbox("Hide Images", value=False)
+        
+        # Display current tool version
+        st.subheader("Advanced")
+        st.text(f"Tool Version: {st.session_state.tool_version}")
+        
+        # Add a button to clear the chat
+        if st.button("Clear Chat"):
+            st.session_state.messages = []
+            st.session_state.responses = {}
+            st.session_state.tools = {}
+            st.experimental_rerun()
 
+    # Create tabs for the application
     chat, http_logs = st.tabs(["Chat", "HTTP Exchange Logs"])
     new_message = st.chat_input("Type a message to control the computer...")
 
