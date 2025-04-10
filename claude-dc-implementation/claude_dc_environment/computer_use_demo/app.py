@@ -15,6 +15,8 @@ from streamlit.delta_generator import DeltaGenerator
 
 from computer_use_demo.loop import APIProvider, sampling_loop
 from .tools import ToolResult, ToolVersion
+from enum import StrEnum
+from .tools import ToolResult, ToolVersion
 
 # Constants
 CONFIG_DIR = PosixPath("~/.anthropic").expanduser()
