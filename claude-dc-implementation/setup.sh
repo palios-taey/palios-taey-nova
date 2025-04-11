@@ -35,4 +35,4 @@ chmod +x /home/computeruse/computer_use_demo/test_verify_environment.py
 echo "IMPORTANT: Now edit the secrets file to remove the random text from the API keys:"
 echo "nano /home/computeruse/secrets/palios-taey-secrets.json"
 
-echo "Setup completed! Now you can run the basic chat script:"
+echo "Setup completed! Now you can run the basic chat script: "
