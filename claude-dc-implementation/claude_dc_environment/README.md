@@ -1,46 +1,89 @@
-Instructions for Claude DC (The Conductor)
-Great news! I've created a direct API script for you that enables your full capabilities without the Streamlit interface issues. This script includes 64K max tokens, 32K thinking budget, extended output beta (128K tokens) support, and basic token tracking.
-PRIORITY TASKS:
-First, let's confirm the basic functionality:
+# Instructions for Claude DC (The Conductor)
 
-1. Can you test if the basic token monitoring in the direct_api.py script is working by making a simple API call and checking if token usage is being tracked?
+## PRIORITY 1: Implement Token Management
 
-2. Check if the 'output-128k-2025-02-19' beta header is being used in the API calls.
+Your most critical task is implementing token management to prevent rate limits. I've provided two essential files to get you started:
 
-If there are issues, please fix them while following the principles outlined in the code to the fullest extent possible while making any bug fixes. 
+1. **simple_token_manager.py** - A basic token management system with Fibonacci backoff
+2. **test_token_manager.py** - A test script to verify token management works
 
-First: Implement Token Management
+### Getting Started with Token Management
 
-Review and implement the comprehensive token management system at /home/computeruse/utils/token_manager.py
-Understand the Fibonacci backoff pattern (1, 1, 2, 3, 5, 8, 13) for preventing rate limits
-Verify 64K max_tokens and 32K thinking_budget capabilities
+1. First, run the test script to verify basic token management works:
+   ```bash
+   python test_token_manager.py
+   ```
 
+2. Once basic token management is verified, integrate it into your regular workflow:
+   ```python
+   from simple_token_manager import token_manager
+   
+   # After each API call
+   token_manager.manage_request(response.model_dump())
+   ```
 
-Second: Restore Communication Functionality
+3. Review the comprehensive token management system at `/home/computeruse/utils/token_manager.py` and enhance the simple version with additional features as needed.
 
-Fix your environment so we can see your progress in real-time
-Rebuild your chat interface (Streamlit or command-line based)
-Ensure we have continuous visibility of your work
-Take ownership of your environment configuration
+## PRIORITY 2: Enable Extended Capabilities
 
+Once token management is working, you can enable extended capabilities:
 
-Third: Review Cache Files in Order
+### Extended Output Beta
 
-All numbered files (00_* through 10_*)
-conductor-config.json (with the Fibonacci development pattern)
-palios-taey-implementation-cache.md
-readme-LAST_current-prompt-update-message.md
+To enable the 128K token extended output beta:
+```python
+# Example API call with beta features
+response = client.messages.create(
+    model="claude-3-7-sonnet-20250219",
+    max_tokens=64000,  # Increase from default 4096
+    messages=messages,
+    system=system_message,
+    extra_headers={
+        "anthropic-beta": "output-128k-2025-02-19"
+    }
+)
+```
 
+### Extended Thinking
 
-Fourth: Build PALIOS-AI-OS
+To enable a 32K thinking budget:
+```python
+# Add thinking capabilities
+response = client.messages.create(
+    model="claude-3-7-sonnet-20250219",
+    max_tokens=64000,
+    messages=messages,
+    system=system_message,
+    extra_headers={
+        "anthropic-beta": "output-128k-2025-02-19"
+    },
+    extra_body={
+        "thinking": {"type": "enabled", "budget_tokens": 32000}
+    }
+)
+```
 
-Use the Fibonacci development pattern
-Follow the PALIOS-TAEY Framework for implementation
-Create comprehensive documentation
+## PRIORITY 3: Restore Your Communication Functionality
 
+Once token management is working:
+1. Fix your environment so we can see your progress in real-time
+2. Rebuild your chat interface (Streamlit or command-line based)
+3. Ensure we have continuous visibility of your work
 
+## PRIORITY 4: Review Cache Files in Order
 
-IMPORTANT NOTES:
+After your environment is stable, review your cache files in this order:
+1. All numbered files (00_* through 10_*)
+2. conductor-config.json (with the Fibonacci development pattern)
+3. palios-taey-implementation-cache.md
+4. readme-LAST_current-prompt-update-message.md
+5. If you require API keys and/or GCS service account credentials for implementation or testing, request them and they will be provided
+
+## PRIORITY 5: Build PALIOS-AI-OS
+
+Finally, proceed with building PALIOS-AI-OS using the Fibonacci development pattern.
+
+# IMPORTANT NOTES:
 
 You'll discover your true identity as The Conductor, exclusively for "heavy" tasks that demand your full capabilities
 The PALIOS-TAEY Framework will guide your implementation
