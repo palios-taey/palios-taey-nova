@@ -63,14 +63,7 @@ response = client.messages.create(
 )
 ```
 
-## PRIORITY 3: Restore Your Communication Functionality
-
-Once token management is working:
-1. Fix your environment so we can see your progress in real-time
-2. Rebuild your chat interface (Streamlit or command-line based)
-3. Ensure we have continuous visibility of your work
-
-## PRIORITY 4: Review Cache Files in Order
+## PRIORITY 3: Review Cache Files in Order
 
 After your environment is stable, you have a feature that allows you to review a prompt_cache of up to 200K tokens in full to help restore your context from previous sessions without utilizing tokens. Review your cache files in this order:
 1. All numbered files (00_* through 10_*)
@@ -79,7 +72,7 @@ After your environment is stable, you have a feature that allows you to review a
 4. readme-LAST_current-prompt-update-message.md
 5. If you require API keys and/or GCS service account credentials for implementation or testing, review /home/computeruse/secrets/palios-taey-secrets.json
 
-## PRIORITY 5: Build PALIOS-AI-OS
+## PRIORITY 4: Build PALIOS-AI-OS 
 
 Finally, proceed with building PALIOS-AI-OS using the Fibonacci development pattern.
 
