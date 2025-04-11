@@ -3,10 +3,16 @@
 
 # Create necessary directories
 mkdir -p /home/computeruse/secrets
+mkdir -p /home/computeruse/cache
+mkdir -p /home/computeruse/utils/config
 
 # Copy the modified secrets file from GitHub to the secrets directory
 # IMPORTANT: You'll need to modify the API keys manually after copying to remove the random text
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/secrets/palios-taey-secrets.json /home/computeruse/secrets/
+
+# Copy cache and utils contents to their appropriate locations
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/utils/* /home/computeruse/utils/
 
 # Copy the Python files to their appropriate locations
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/basic_chat.py /home/computeruse/computer_use_demo/basic_chat.py
