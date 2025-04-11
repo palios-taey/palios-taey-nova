@@ -1,21 +1,40 @@
 #!/usr/bin/env python3
 """
 Basic chat script that works with any Anthropic SDK version
+Using secrets from the secrets file
 """
 
 import os
+import json
 import time
 from anthropic import Anthropic
 
+def load_secrets():
+    """Load API keys from the secrets file"""
+    secrets_path = "/home/computeruse/secrets/palios-taey-secrets.json"
+    try:
+        with open(secrets_path, 'r') as f:
+            secrets = json.load(f)
+        return secrets
+    except Exception as e:
+        print(f"Error loading secrets file: {e}")
+        return None
+
 def basic_chat():
-    """Simple chat function with minimal parameters"""
+    """Simple chat function with minimal parameters using secrets"""
     print("\n=== Basic Anthropic Chat ===")
     
-    # Get API key
-    api_key = input("Enter your Anthropic API key: ").strip()
-    if not api_key:
-        print("Error: API key is required")
-        return
+    # Load secrets
+    secrets = load_secrets()
+    if not secrets or "api_keys" not in secrets or "anthropic" not in secrets["api_keys"]:
+        print("Error: Couldn't load Anthropic API key from secrets file")
+        api_key = input("Enter your Anthropic API key manually: ").strip()
+        if not api_key:
+            print("Error: API key is required")
+            return
+    else:
+        api_key = secrets["api_keys"]["anthropic"]
+        print("Successfully loaded API key from secrets file")
     
     # Initialize Anthropic client
     client = Anthropic(api_key=api_key)

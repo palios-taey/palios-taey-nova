@@ -1,20 +1,39 @@
 """
 Test script for token management with Anthropic API
+Using secrets from the secrets file
 """
 
+import json
 import time
 from anthropic import Anthropic
 from simple_token_manager import token_manager
+
+def load_secrets():
+    """Load API keys from the secrets file"""
+    secrets_path = "/home/computeruse/secrets/palios-taey-secrets.json"
+    try:
+        with open(secrets_path, 'r') as f:
+            secrets = json.load(f)
+        return secrets
+    except Exception as e:
+        print(f"Error loading secrets file: {e}")
+        return None
 
 def test_token_management():
     """Test the token management system with standard API calls"""
     print("\n=== Token Management Test ===")
     
-    # Get API key
-    api_key = input("Enter your Anthropic API key: ").strip()
-    if not api_key:
-        print("Error: API key is required")
-        return
+    # Load secrets
+    secrets = load_secrets()
+    if not secrets or "api_keys" not in secrets or "anthropic" not in secrets["api_keys"]:
+        print("Error: Couldn't load Anthropic API key from secrets file")
+        api_key = input("Enter your Anthropic API key manually: ").strip()
+        if not api_key:
+            print("Error: API key is required")
+            return
+    else:
+        api_key = secrets["api_keys"]["anthropic"]
+        print("Successfully loaded API key from secrets file")
     
     # Initialize Anthropic client
     client = Anthropic(api_key=api_key)
