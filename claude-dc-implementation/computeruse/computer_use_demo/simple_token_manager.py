@@ -2,13 +2,13 @@
 Simple Token Management System for Anthropic API
 -------------------------------------------------
 Prevents rate limit errors by monitoring token usage and introducing strategic delays.
-This version works with standard API limits before enabling beta features.
+Compatible with different Anthropic SDK versions.
 """
 
 import time
 import datetime
 import logging
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, Union
 
 # Configure basic logging
 logging.basicConfig(
@@ -150,15 +150,60 @@ class TokenManager:
         logger.info(f"Applied Fibonacci backoff (level {self.delay_count}): {final_delay:.2f} seconds")
         return final_delay
     
-    def manage_request(self, response_headers: Dict[str, str]) -> None:
+    def manage_request(self, response_data: Union[Dict, Any]) -> None:
         """
         Check limits and delay if necessary
         
         Args:
-            response_headers: Headers from the API response
+            response_data: Response object from Anthropic API (either dict or object)
         """
+        # Extract headers from response based on response type
+        headers = {}
+        
+        # Try different methods to extract headers depending on API version
+        try:
+            # Method 1: Try to access http_response.headers (newer SDK versions)
+            if hasattr(response_data, 'http_response') and hasattr(response_data.http_response, 'headers'):
+                headers = dict(response_data.http_response.headers)
+            # Method 2: Try to access .headers directly (some SDK versions)
+            elif hasattr(response_data, 'headers'):
+                headers = dict(response_data.headers)
+            # Method 3: Try model_dump() method (Pydantic v2)
+            elif hasattr(response_data, 'model_dump'):
+                model_data = response_data.model_dump()
+                if isinstance(model_data, dict) and 'headers' in model_data:
+                    headers = model_data['headers']
+            # Method 4: Try dict() method (Pydantic v1)
+            elif hasattr(response_data, 'dict'):
+                dict_data = response_data.dict()
+                if isinstance(dict_data, dict) and 'headers' in dict_data:
+                    headers = dict_data['headers']
+            # Method 5: Direct dictionary access
+            elif isinstance(response_data, dict) and 'headers' in response_data:
+                headers = response_data['headers']
+            # Final fallback - just use the response_data as headers if it's a dict
+            elif isinstance(response_data, dict):
+                headers = response_data
+        except Exception as e:
+            logger.warning(f"Error extracting headers: {e}, using empty headers")
+        
+        # If we have usage data but not in headers, also track it
+        if hasattr(response_data, 'usage'):
+            try:
+                usage = response_data.usage
+                if hasattr(usage, 'input_tokens'):
+                    self.stats["input_tokens_used"] += usage.input_tokens
+                    headers['anthropic-input-tokens'] = str(usage.input_tokens)
+                if hasattr(usage, 'output_tokens'):
+                    self.stats["output_tokens_used"] += usage.output_tokens
+                    headers['anthropic-output-tokens'] = str(usage.output_tokens)
+                
+                logger.info(f"Used token tracking from response.usage")
+            except Exception as e:
+                logger.warning(f"Error extracting usage: {e}")
+        
         # Check if we need to delay
-        should_delay, base_delay = self.check_token_limits(response_headers)
+        should_delay, base_delay = self.check_token_limits(headers)
         
         if should_delay:
             # Calculate final delay with backoff strategy

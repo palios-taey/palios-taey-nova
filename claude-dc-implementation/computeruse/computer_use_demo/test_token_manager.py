@@ -5,6 +5,7 @@ Using secrets from the secrets file
 
 import json
 import time
+import sys
 from anthropic import Anthropic
 from simple_token_manager import token_manager
 
@@ -43,10 +44,13 @@ def test_token_management():
     print(f"Using recommended settings: {settings}")
     
     # Initial system message
-    system_message = "You are Claude, the AI assistant with token management capabilities."
+    system_message = """You are Claude, the AI assistant with token management capabilities."""
     
     # Make several test calls to demonstrate token management
     messages = []
+    
+    # Test different beta flags if requested
+    test_beta = input("Would you like to test beta features? (y/n): ").strip().lower() == 'y'
     
     for i in range(5):
         print(f"\n--- Test Call {i+1} ---")
@@ -58,12 +62,41 @@ def test_token_management():
         try:
             # Make API call
             start_time = time.time()
-            response = client.messages.create(
-                model="claude-3-7-sonnet-20250219",
-                max_tokens=settings["max_tokens"],
-                messages=messages,
-                system=system_message
-            )
+            
+            # Conditional use of beta features
+            if test_beta:
+                try:
+                    # Try with betas parameter first
+                    print("Attempting call with 'betas' parameter...")
+                    response = client.messages.create(
+                        model="claude-3-7-sonnet-20250219",
+                        max_tokens=settings["max_tokens"],
+                        messages=messages,
+                        system=system_message,
+                        betas=["output-128k-2025-02-19"]
+                    )
+                except Exception as e:
+                    print(f"Error with 'betas' parameter: {e}")
+                    print("Trying with extra_headers instead...")
+                    # Fall back to extra_headers approach
+                    response = client.messages.create(
+                        model="claude-3-7-sonnet-20250219",
+                        max_tokens=settings["max_tokens"],
+                        messages=messages,
+                        system=system_message,
+                        extra_headers={
+                            "anthropic-beta": "output-128k-2025-02-19"
+                        }
+                    )
+            else:
+                # Standard call without beta features
+                response = client.messages.create(
+                    model="claude-3-7-sonnet-20250219",
+                    max_tokens=settings["max_tokens"],
+                    messages=messages,
+                    system=system_message
+                )
+                
             end_time = time.time()
             
             # Display token usage
@@ -84,6 +117,8 @@ def test_token_management():
             
         except Exception as e:
             print(f"Error: {str(e)}")
+            import traceback
+            traceback.print_exc()
     
     # Show final stats
     print("\n=== Final Token Statistics ===")
