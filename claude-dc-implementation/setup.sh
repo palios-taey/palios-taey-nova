@@ -17,8 +17,7 @@ cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computerus
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/utils/* /home/computeruse/utils/
 
 # Overwrite computer_use_demo with optimized configurations
-cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/utils/
-cp -r /home/computeruse/computer_use_demo/ /home/computeruse/computer_use_demo/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
 
 # Copy the README files
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/EMERGENCY_README.md /home/computeruse/
