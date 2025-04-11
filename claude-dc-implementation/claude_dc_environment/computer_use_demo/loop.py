@@ -7,6 +7,7 @@ from collections.abc import Callable
 from datetime import datetime
 from enum import StrEnum
 from typing import Any, cast
+import time
 
 import httpx
 from anthropic import (
@@ -17,7 +18,6 @@ from anthropic import (
     APIResponseValidationError,
     APIStatusError,
 )
-from utils.token_manager import TokenManager  # Import the token manager
 from anthropic.types.beta import (
     BetaCacheControlEphemeralParam,
     BetaContentBlockParam,
@@ -40,8 +40,45 @@ from tools import (
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
 
-# Initialize token manager
-token_manager = TokenManager()
+# Simple built-in token management
+class SimpleTokenManager:
+    """A simple token manager to prevent API rate limits"""
+    
+    def __init__(self):
+        self.calls_made = 0
+        self.total_tokens_used = 0
+        self.last_request_time = datetime.now()
+    
+    def manage_request(self, headers):
+        """Check token usage and add delay if needed"""
+        self.calls_made += 1
+        
+        # Extract token usage information from headers
+        try:
+            input_tokens = int(headers.get('anthropic-input-tokens', 0))
+            output_tokens = int(headers.get('anthropic-output-tokens', 0))
+            self.total_tokens_used += input_tokens + output_tokens
+            
+            # Check if we're approaching rate limits
+            remaining_tokens = int(headers.get('anthropic-ratelimit-tokens-remaining', 100000))
+            limit_tokens = int(headers.get('anthropic-ratelimit-tokens-limit', 100000))
+            
+            # If we're using more than 80% of our limit, add a delay
+            if remaining_tokens < (limit_tokens * 0.2):
+                delay_time = 5.0  # Base delay of 5 seconds
+                print(f"🕒 Token limit approaching - waiting for {delay_time:.2f} seconds to avoid rate limits...")
+                time.sleep(delay_time)
+                print("✅ Resuming operations after delay")
+                
+            print(f"Token usage: {input_tokens} input, {output_tokens} output, {remaining_tokens} remaining")
+            
+        except (ValueError, TypeError, KeyError) as e:
+            # If we can't parse the headers, just continue
+            print(f"Warning: Could not parse token information from headers: {e}")
+            pass
+
+# Initialize our simple token manager
+token_manager = SimpleTokenManager()
 
 class APIProvider(StrEnum):
     ANTHROPIC = "anthropic"
@@ -168,7 +205,7 @@ async def sampling_loop(
 
         response = raw_response.parse()
         
-        # Manage token usage with token manager to prevent rate limits
+        # Manage token usage with our simple token manager
         token_manager.manage_request(raw_response.http_response.headers)
 
         response_params = _response_to_params(response)
@@ -333,5 +370,5 @@ def _make_api_tool_result(
 
 def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
     if result.system:
-        result_text = f"<system>{result.system}</system>\n{result_text}"
+        result_text = f"<s>{result.system}</s>\n{result_text}"
     return result_text
