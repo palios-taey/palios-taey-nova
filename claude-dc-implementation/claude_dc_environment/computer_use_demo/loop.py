@@ -17,7 +17,7 @@ from anthropic import (
     APIResponseValidationError,
     APIStatusError,
 )
-from utils.token_manager import TokenManager
+from utils.token_manager import TokenManager  # Import the token manager
 from anthropic.types.beta import (
     BetaCacheControlEphemeralParam,
     BetaContentBlockParam,
@@ -40,6 +40,8 @@ from tools import (
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
 
+# Initialize token manager
+token_manager = TokenManager()
 
 class APIProvider(StrEnum):
     ANTHROPIC = "anthropic"
@@ -68,9 +70,6 @@ SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
 * If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
 </IMPORTANT>"""
 
-# Initialize token manager
-token_manager = TokenManager()
-
 
 async def sampling_loop(
     *,
@@ -89,6 +88,7 @@ async def sampling_loop(
     tool_version: ToolVersion,
     thinking_budget: int | None = None,
     token_efficient_tools_beta: bool = False,
+    stream: bool = True,  # Let Claude DC decide whether to stream or not
 ):
     """
     Agentic sampling loop for the assistant/tool interaction of computer use.
@@ -106,7 +106,7 @@ async def sampling_loop(
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
         
-        # Add extended output beta flag
+        # Add extended output beta flag for increased limits
         betas.append("output-128k-2025-02-19")
         
         image_truncation_threshold = only_n_most_recent_images or 0
@@ -140,13 +140,12 @@ async def sampling_loop(
                 "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
             }
 
+        # Call the API
+        # we use raw_response to provide debug information to streamlit. Your
+        # implementation may be able call the SDK directly with:
+        # `response = client.messages.create(...)` instead.
         try:
-            # Use non-streaming for simpler handling
-            print(f"API key being used: {api_key[:4]}...{api_key[-4:]}")
-            print(f"Creating message with model: {model}, max_tokens: {max_tokens}, betas: {betas}")
-            
-            # Standard, non-streaming API call
-            response = client.beta.messages.create(
+            raw_response = client.beta.messages.with_raw_response.create(
                 max_tokens=max_tokens,
                 messages=messages,
                 model=model,
@@ -154,35 +153,23 @@ async def sampling_loop(
                 tools=tool_collection.to_params(),
                 betas=betas,
                 extra_body=extra_body,
-                stream=False,  # Disable streaming
+                stream=stream,  # Use the stream parameter passed to the function
             )
-            
-            # Create a dummy response for API callback
-            response_data = {
-                "status_code": 200,
-                "headers": {},
-                "content": str(response)
-            }
-            
-            # Simplified API response callback
-            api_response_callback(
-                httpx.Request("POST", "https://api.anthropic.com/v1/messages"), 
-                response_data, 
-                None
-            )
-            
         except (APIStatusError, APIResponseValidationError) as e:
-            print(f"API Error: {str(e)}")
             api_response_callback(e.request, e.response, e)
             return messages
         except APIError as e:
-            print(f"API Error: {str(e)}")
             api_response_callback(e.request, e.body, e)
             return messages
-        except Exception as e:
-            print(f"Unexpected error: {str(e)}")
-            api_response_callback(httpx.Request("POST", "https://api.anthropic.com/v1/messages"), None, e)
-            return messages
+
+        api_response_callback(
+            raw_response.http_response.request, raw_response.http_response, None
+        )
+
+        response = raw_response.parse()
+        
+        # Manage token usage with token manager to prevent rate limits
+        token_manager.manage_request(raw_response.http_response.headers)
 
         response_params = _response_to_params(response)
         messages.append(
