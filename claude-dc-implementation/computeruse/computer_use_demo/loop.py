@@ -7,7 +7,6 @@ from collections.abc import Callable
 from datetime import datetime
 from enum import StrEnum
 from typing import Any, cast
-import time
 
 import httpx
 from anthropic import (
@@ -30,8 +29,7 @@ from anthropic.types.beta import (
     BetaToolUseBlockParam,
 )
 
-# Change from relative import to absolute import
-from tools import (
+from .tools import (
     TOOL_GROUPS_BY_VERSION,
     ToolCollection,
     ToolResult,
@@ -40,45 +38,6 @@ from tools import (
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
 
-# Simple built-in token management
-class SimpleTokenManager:
-    """A simple token manager to prevent API rate limits"""
-    
-    def __init__(self):
-        self.calls_made = 0
-        self.total_tokens_used = 0
-        self.last_request_time = datetime.now()
-    
-    def manage_request(self, headers):
-        """Check token usage and add delay if needed"""
-        self.calls_made += 1
-        
-        # Extract token usage information from headers
-        try:
-            input_tokens = int(headers.get('anthropic-input-tokens', 0))
-            output_tokens = int(headers.get('anthropic-output-tokens', 0))
-            self.total_tokens_used += input_tokens + output_tokens
-            
-            # Check if we're approaching rate limits
-            remaining_tokens = int(headers.get('anthropic-ratelimit-tokens-remaining', 100000))
-            limit_tokens = int(headers.get('anthropic-ratelimit-tokens-limit', 100000))
-            
-            # If we're using more than 80% of our limit, add a delay
-            if remaining_tokens < (limit_tokens * 0.2):
-                delay_time = 5.0  # Base delay of 5 seconds
-                print(f"🕒 Token limit approaching - waiting for {delay_time:.2f} seconds to avoid rate limits...")
-                time.sleep(delay_time)
-                print("✅ Resuming operations after delay")
-                
-            print(f"Token usage: {input_tokens} input, {output_tokens} output, {remaining_tokens} remaining")
-            
-        except (ValueError, TypeError, KeyError) as e:
-            # If we can't parse the headers, just continue
-            print(f"Warning: Could not parse token information from headers: {e}")
-            pass
-
-# Initialize our simple token manager
-token_manager = SimpleTokenManager()
 
 class APIProvider(StrEnum):
     ANTHROPIC = "anthropic"
@@ -125,7 +84,6 @@ async def sampling_loop(
     tool_version: ToolVersion,
     thinking_budget: int | None = None,
     token_efficient_tools_beta: bool = False,
-    stream: bool = True,  # Let Claude DC decide whether to stream or not
 ):
     """
     Agentic sampling loop for the assistant/tool interaction of computer use.
@@ -142,10 +100,6 @@ async def sampling_loop(
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
-        
-        # Add extended output beta flag for increased limits
-        betas.append("output-128k-2025-02-19")
-        
         image_truncation_threshold = only_n_most_recent_images or 0
         if provider == APIProvider.ANTHROPIC:
             client = Anthropic(api_key=api_key, max_retries=4)
@@ -190,7 +144,6 @@ async def sampling_loop(
                 tools=tool_collection.to_params(),
                 betas=betas,
                 extra_body=extra_body,
-                stream=stream,  # Use the stream parameter passed to the function
             )
         except (APIStatusError, APIResponseValidationError) as e:
             api_response_callback(e.request, e.response, e)
@@ -204,9 +157,6 @@ async def sampling_loop(
         )
 
         response = raw_response.parse()
-        
-        # Manage token usage with our simple token manager
-        token_manager.manage_request(raw_response.http_response.headers)
 
         response_params = _response_to_params(response)
         messages.append(
@@ -370,5 +320,5 @@ def _make_api_tool_result(
 
 def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
     if result.system:
-        result_text = f"<s>{result.system}</s>\n{result_text}"
+        result_text = f"<system>{result.system}</system>\n{result_text}"
     return result_text
