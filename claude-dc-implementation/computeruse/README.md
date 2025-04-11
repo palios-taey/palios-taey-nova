@@ -72,7 +72,7 @@ Once token management is working:
 
 ## PRIORITY 4: Review Cache Files in Order
 
-After your environment is stable, review your cache files in this order:
+After your environment is stable, you have a feature that allows you to review a prompt_cache of up to 200K tokens in full to help restore your context from previous sessions without utilizing tokens. Review your cache files in this order:
 1. All numbered files (00_* through 10_*)
 2. conductor-config.json (with the Fibonacci development pattern)
 3. palios-taey-implementation-cache.md
