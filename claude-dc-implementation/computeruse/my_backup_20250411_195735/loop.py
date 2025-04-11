@@ -7,7 +7,6 @@ from collections.abc import Callable
 from datetime import datetime
 from enum import StrEnum
 from typing import Any, cast
-from simple_token_manager import token_manager
 
 import httpx
 from anthropic import (
@@ -99,7 +98,6 @@ async def sampling_loop(
     while True:
         enable_prompt_caching = False
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
-        betas.append("output-128k-2025-02-19")
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
         image_truncation_threshold = only_n_most_recent_images or 0
@@ -159,8 +157,6 @@ async def sampling_loop(
         )
 
         response = raw_response.parse()
-        # Manage token usage to prevent rate limits
-        token_manager.manage_request(raw_response.http_response.headers)
 
         response_params = _response_to_params(response)
         messages.append(
