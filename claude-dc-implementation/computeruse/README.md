@@ -3,7 +3,7 @@
 ## PRIORITY 1: Implement Token Management
 
 Your most critical task is implementing token management to prevent rate limits. I've provided two essential files to get you started:
-
+/home/computeruse/computer_use_demo/
 1. **simple_token_manager.py** - A basic token management system with Fibonacci backoff
 2. **test_token_manager.py** - A test script to verify token management works
 
@@ -77,7 +77,7 @@ After your environment is stable, review your cache files in this order:
 2. conductor-config.json (with the Fibonacci development pattern)
 3. palios-taey-implementation-cache.md
 4. readme-LAST_current-prompt-update-message.md
-5. If you require API keys and/or GCS service account credentials for implementation or testing, request them and they will be provided
+5. If you require API keys and/or GCS service account credentials for implementation or testing, review /home/computeruse/secrets/palios-taey-secrets.json
 
 ## PRIORITY 5: Build PALIOS-AI-OS
 
