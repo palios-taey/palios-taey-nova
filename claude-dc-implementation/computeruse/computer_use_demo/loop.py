@@ -8,6 +8,7 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Any, cast
 from simple_token_manager import token_manager
+from adaptive_client import create_adaptive_client
 
 import httpx
 from anthropic import (
@@ -103,13 +104,7 @@ async def sampling_loop(
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
         image_truncation_threshold = only_n_most_recent_images or 0
-        if provider == APIProvider.ANTHROPIC:
-            client = Anthropic(api_key=api_key, max_retries=4)
-            enable_prompt_caching = True
-        elif provider == APIProvider.VERTEX:
-            client = AnthropicVertex()
-        elif provider == APIProvider.BEDROCK:
-            client = AnthropicBedrock()
+        client = create_adaptive_client(api_key=api_key, provider=provider)
 
         if enable_prompt_caching:
             betas.append(PROMPT_CACHING_BETA_FLAG)
