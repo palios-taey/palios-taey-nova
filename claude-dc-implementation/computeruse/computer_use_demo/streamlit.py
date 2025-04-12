@@ -429,58 +429,96 @@ def _render_api_response(request, response, response_id, tab=None):
         tab = st
         
     with tab.expander(f"Request/Response ({response_id})"):
-        newline = "\n\n"
-        
         # Render request details
         if request:
-            tab.markdown(
-                f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}"
-            )
             try:
-                request_content = request.read().decode() if hasattr(request, 'read') else str(request)
-                tab.json(request_content)
-            except Exception as e:
-                tab.text(str(request))
-        
-        tab.markdown("---")
-        
-        # Safely render response details
-        if response:
-            # Handle streaming response safely
-            if hasattr(response, 'stream') and response.stream:
-                tab.text("Streaming response - content preview not available")
-                return
-                
-            # Handle regular response
-            if hasattr(response, 'status_code'):
-                tab.markdown(
-                    f"`{response.status_code}`{newline}{newline.join(f'`{k}: {v}`' for k, v in response.headers.items())}"
-                )
-                
-            # Try different ways to get content safely
-            try:
-                if hasattr(response, 'model_dump_json'):
-                    tab.json(response.model_dump_json())
-                elif hasattr(response, 'read'):
-                    tab.json(response.read().decode())
-                elif hasattr(response, 'content'):
-                    if isinstance(response.content, bytes):
-                        tab.json(response.content.decode())
-                    else:
-                        tab.json(response.content)
-                elif hasattr(response, 'text'):
-                    if callable(response.text):
-                        tab.json(response.text())
-                    else:
-                        tab.json(response.text)
+                tab.markdown(f"**Request**: `{request.method} {request.url}`")
+                if hasattr(request, 'headers'):
+                    for k, v in request.headers.items():
+                        tab.markdown(f"`{k}: {v}`")
+                if hasattr(request, 'read') and callable(request.read):
+                    try:
+                        tab.text(request.read().decode())
+                    except:
+                        tab.text(str(request))
                 else:
-                    tab.text(str(response))
+                    tab.text(str(request))
             except Exception as e:
-                tab.error(f"Error rendering response: {str(e)}")
+                tab.error(f"Error rendering request: {e}")
+                tab.text(str(request))
+        else:
+            tab.text("No request information available")
+            
+        tab.markdown("---")
+            
+        # Handle response - improved streaming handling
+        if response:
+            try:
+                # Display response status and headers
+                if hasattr(response, 'status_code'):
+                    tab.markdown(f"**Status**: `{response.status_code}`")
+                    
+                if hasattr(response, 'headers'):
+                    for k, v in response.headers.items():
+                        tab.markdown(f"`{k}: {v}`")
+                
+                # Handle streaming response better
+                if hasattr(response, 'stream') and response.stream:
+                    # Note streaming but don't return early
+                    tab.text("Streaming response detected")
+                    
+                    # Try to extract any available content if possible
+                    if hasattr(response, 'text') and callable(response.text):
+                        try:
+                            tab.text(response.text())
+                            return
+                        except:
+                            pass
+                
+                # Try to display content using various approaches
+                content_displayed = False
+                
+                # Method 1: model_dump_json for Pydantic models
+                if not content_displayed and hasattr(response, 'model_dump_json') and callable(response.model_dump_json):
+                    try:
+                        tab.json(response.model_dump_json())
+                        content_displayed = True
+                    except:
+                        pass
+                
+                # Method 2: read() for httpx responses
+                if not content_displayed and hasattr(response, 'read') and callable(response.read):
+                    try:
+                        content = response.read()
+                        if isinstance(content, bytes):
+                            tab.json(content.decode())
+                        else:
+                            tab.json(content)
+                        content_displayed = True
+                    except:
+                        pass
+                
+                # Method 3: content attribute
+                if not content_displayed and hasattr(response, 'content'):
+                    try:
+                        content = response.content
+                        if isinstance(content, bytes):
+                            tab.json(content.decode())
+                        else:
+                            tab.json(content)
+                        content_displayed = True
+                    except:
+                        pass
+                
+                # Fallback - just show string representation
+                if not content_displayed:
+                    tab.text(str(response))
+                    
+            except Exception as e:
+                tab.error(f"Error rendering response: {e}")
                 tab.text(str(response))
         else:
-            tab.text("No response available")
-
+            tab.text("No response information available")
 
 def _render_error(error: Exception):
     if isinstance(error, RateLimitError):

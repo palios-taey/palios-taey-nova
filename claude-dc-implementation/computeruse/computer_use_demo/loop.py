@@ -277,7 +277,6 @@ def _response_to_params(response):
     
     return res
 
-
 def _inject_prompt_caching(
     messages: list[BetaMessageParam],
 ):
