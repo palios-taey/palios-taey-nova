@@ -7,6 +7,7 @@ import base64
 import os
 import subprocess
 import traceback
+import sys
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -423,39 +424,101 @@ def _tool_output_callback(
 
 
 def _render_api_response(request, response, response_id, tab=None):
-    """Render the API response."""
+    """Render an API response to a streamlit tab"""
     if tab is None:
         tab = st
         
-    # Use JSON schema model validator
-    if hasattr(response, "model_dump_json"):
-        tab.json(response.model_dump_json())
-    # Handle httpx Response objects safely
-    elif hasattr(response, "content") and not hasattr(response, "parse"):
-        try:
-            # Safely handle streaming responses
-            if hasattr(response, "stream") and response.stream:
-                tab.text("Streaming response - content cannot be displayed directly")
-            else:
-                # Read content safely
-                content = response.read() if hasattr(response, "read") else response.content
-                tab.json(content.decode('utf-8') if isinstance(content, bytes) else content)
-        except Exception as e:
-            tab.error(f"Error rendering response: {str(e)}")
-            tab.text(str(response))
-    # For other response types
-    elif hasattr(response, "text"):
-        try:
-            # Handle both callable and property text attribute
-            text = response.text() if callable(response.text) else response.text
-            tab.json(text)
-        except Exception as e:
-            tab.error(f"Error accessing response text: {str(e)}")
-            tab.text(str(response))
-    # Default fallback
-    else:
-        tab.text(str(response))
-
+    with tab.expander(f"Request/Response ({response_id})"):
+        # Render request details
+        if request:
+            try:
+                tab.markdown(f"**Request**: `{request.method} {request.url}`")
+                if hasattr(request, 'headers'):
+                    for k, v in request.headers.items():
+                        tab.markdown(f"`{k}: {v}`")
+                if hasattr(request, 'read') and callable(request.read):
+                    try:
+                        tab.text(request.read().decode())
+                    except:
+                        tab.text(str(request))
+                else:
+                    tab.text(str(request))
+            except Exception as e:
+                tab.error(f"Error rendering request: {e}")
+                tab.text(str(request))
+        else:
+            tab.text("No request information available")
+            
+        tab.markdown("---")
+            
+        # Handle response - improved streaming handling
+        if response:
+            try:
+                # Display response status and headers
+                if hasattr(response, 'status_code'):
+                    tab.markdown(f"**Status**: `{response.status_code}`")
+                    
+                if hasattr(response, 'headers'):
+                    for k, v in response.headers.items():
+                        tab.markdown(f"`{k}: {v}`")
+                
+                # Handle streaming response better
+                if hasattr(response, 'stream') and response.stream:
+                    # Note streaming but don't return early
+                    tab.text("Streaming response detected")
+                    
+                    # Try to extract any available content if possible
+                    if hasattr(response, 'text') and callable(response.text):
+                        try:
+                            tab.text(response.text())
+                            return
+                        except:
+                            pass
+                
+                # Try to display content using various approaches
+                content_displayed = False
+                
+                # Method 1: model_dump_json for Pydantic models
+                if not content_displayed and hasattr(response, 'model_dump_json') and callable(response.model_dump_json):
+                    try:
+                        tab.json(response.model_dump_json())
+                        content_displayed = True
+                    except:
+                        pass
+                
+                # Method 2: read() for httpx responses
+                if not content_displayed and hasattr(response, 'read') and callable(response.read):
+                    try:
+                        content = response.read()
+                        if isinstance(content, bytes):
+                            tab.json(content.decode())
+                        else:
+                            tab.json(content)
+                        content_displayed = True
+                    except:
+                        pass
+                
+                # Method 3: content attribute
+                if not content_displayed and hasattr(response, 'content'):
+                    try:
+                        content = response.content
+                        if isinstance(content, bytes):
+                            tab.json(content.decode())
+                        else:
+                            tab.json(content)
+                        content_displayed = True
+                    except:
+                        pass
+                
+                # Fallback - just show string representation
+                if not content_displayed:
+                    tab.text(str(response))
+                    
+            except Exception as e:
+                tab.error(f"Error rendering response: {e}")
+                tab.text(str(response))
+        else:
+            tab.text("No response information available")
 
 def _render_error(error: Exception):
     if isinstance(error, RateLimitError):

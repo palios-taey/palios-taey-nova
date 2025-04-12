@@ -8,6 +8,7 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Any, cast
 from simple_token_manager import token_manager
+from adaptive_client import create_adaptive_client
 
 import httpx
 from anthropic import (
@@ -91,68 +92,97 @@ async def sampling_loop(
     """
     tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
     tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
-    system = BetaText(
-        # Rest of the function remains the same until you get to the API call section
-        
-    # Add this before the API call section:
-    # Determine if we need to stream based on token size
-    should_stream = max_tokens > 4096 or (thinking_budget is not None and thinking_budget > 4096)
-    
-    # Then find where the API call is made (look for client.beta.messages or similar)
-    # And ensure the stream parameter is set correctly:
-    
-    # Example of what the API call might look like:
-    try:
-        raw_response = client.beta.messages.with_raw_response.create(
-            # Keep all existing parameters
-            # ...
-            stream=should_stream,  # Add this line to enable streaming for large token operations
-            # ...
-        )
-        
-        # After the API call, add handling for streaming responses:
-        if should_stream:
-            # For streaming responses, collect all chunks
-            stream_response = raw_response.parse()
-            final_response = None
-            response_chunks = []
-            
-            async for chunk in stream_response:
-                # Call the output callback for each chunk
-                if hasattr(chunk, 'delta') and chunk.delta and hasattr(chunk.delta, 'text'):
-                    output_callback(chunk.delta)
-                
-                # For API response callback
-                api_response_callback(
-                    raw_response.http_request,
-                    chunk,
-                    None
-                )
-                
-                # Add to our collection
-                response_chunks.append(chunk)
-                
-                # Update final response
-                if not final_response:
-                    final_response = chunk
-            
-            # Use the final response for further processing
-            response = final_response
-        else:
-            # Original non-streaming code
-            response = raw_response.parse()
-            api_response_callback(
-                raw_response.http_request,
-                response,
-                None
+    system = BetaTextBlockParam(
+        type="text",
+        text=f"{SYSTEM_PROMPT}{' ' + system_prompt_suffix if system_prompt_suffix else ''}",
+    )
+
+    while True:
+        enable_prompt_caching = False
+        betas = [tool_group.beta_flag] if tool_group.beta_flag else []
+        betas.append("output-128k-2025-02-19")
+        if token_efficient_tools_beta:
+            betas.append("token-efficient-tools-2025-02-19")
+        image_truncation_threshold = only_n_most_recent_images or 0
+        client = create_adaptive_client(api_key=api_key, provider=provider)
+
+        if enable_prompt_caching:
+            betas.append(PROMPT_CACHING_BETA_FLAG)
+            _inject_prompt_caching(messages)
+            # Because cached reads are 10% of the price, we don't think it's
+            # ever sensible to break the cache by truncating images
+            only_n_most_recent_images = 0
+            # Use type ignore to bypass TypedDict check until SDK types are updated
+            system["cache_control"] = {"type": "ephemeral"}  # type: ignore
+
+        if only_n_most_recent_images:
+            _maybe_filter_to_n_most_recent_images(
+                messages,
+                only_n_most_recent_images,
+                min_removal_threshold=image_truncation_threshold,
             )
-        
-        # Continue with the rest of the function
-        # ...
-    
-    except Exception as e:
-        # Exception handling code
-        # ...
+        extra_body = {}
+        if thinking_budget:
+            # Ensure we only send the required fields for thinking
+            extra_body = {
+                "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
+            }
+
+        # Call the API
+        # we use raw_response to provide debug information to streamlit. Your
+        # implementation may be able call the SDK directly with:
+        # `response = client.messages.create(...)` instead.
+        try:
+            raw_response = client.beta.messages.with_raw_response.create(
+                max_tokens=max_tokens,
+                messages=messages,
+                model=model,
+                system=[system],
+                tools=tool_collection.to_params(),
+                betas=betas,
+                extra_body=extra_body,
+            )
+        except (APIStatusError, APIResponseValidationError) as e:
+            api_response_callback(e.request, e.response, e)
+            return messages
+        except APIError as e:
+            api_response_callback(e.request, e.body, e)
+            return messages
+
+        api_response_callback(
+            raw_response.http_response.request, raw_response.http_response, None
+        )
+
+        response = raw_response.parse()
+        # Manage token usage to prevent rate limits
+        token_manager.manage_request(raw_response.http_response.headers)
+
+        response_params = _response_to_params(response)
+        messages.append(
+            {
+                "role": "assistant",
+                "content": response_params,
+            }
+        )
+
+        tool_result_content: list[BetaToolResultBlockParam] = []
+        for content_block in response_params:
+            output_callback(content_block)
+            if content_block["type"] == "tool_use":
+                result = await tool_collection.run(
+                    name=content_block["name"],
+                    tool_input=cast(dict[str, Any], content_block["input"]),
+                )
+                tool_result_content.append(
+                    _make_api_tool_result(result, content_block["id"])
+                )
+                tool_output_callback(result, content_block["id"])
+
+        if not tool_result_content:
+            return messages
+
+        messages.append({"content": tool_result_content, "role": "user"})
+
 
 def _maybe_filter_to_n_most_recent_images(
     messages: list[BetaMessageParam],
@@ -203,28 +233,49 @@ def _maybe_filter_to_n_most_recent_images(
             tool_result["content"] = new_content
 
 
-def _response_to_params(
-    response: BetaMessage,
-) -> list[BetaContentBlockParam]:
-    res: list[BetaContentBlockParam] = []
-    for block in response.content:
-        if isinstance(block, BetaTextBlock):
-            if block.text:
-                res.append(BetaTextBlockParam(type="text", text=block.text))
-            elif getattr(block, "type", None) == "thinking":
-                # Handle thinking blocks - include signature field
-                thinking_block = {
-                    "type": "thinking",
-                    "thinking": getattr(block, "thinking", None),
-                }
-                if hasattr(block, "signature"):
-                    thinking_block["signature"] = getattr(block, "signature", None)
-                res.append(cast(BetaContentBlockParam, thinking_block))
-        else:
-            # Handle tool use blocks normally
-            res.append(cast(BetaToolUseBlockParam, block.model_dump()))
+def _response_to_params(response):
+    """
+    Convert a response object to parameters.
+    Modified to handle streaming responses properly.
+    """
+    res = []
+    
+    # Handle streaming response
+    if hasattr(response, 'stream') and response.stream:
+        # For streaming responses, create a content placeholder
+        # but continue with the pipeline - don't return early
+        res.append({"type": "text", "text": "Processing response from Claude..."})
+        
+        # Try to extract any available content from the stream
+        try:
+            if hasattr(response, 'text_stream'):
+                combined_text = ""
+                for chunk in response.text_stream:
+                    combined_text += chunk
+                
+                if combined_text:
+                    res = [{"type": "text", "text": combined_text}]
+        except Exception as e:
+            print(f"Error processing stream: {e}")
+    
+    # Process regular response content
+    elif hasattr(response, 'content'):
+        for block in response.content:
+            if isinstance(block, BetaTextBlock):
+                if block.text:
+                    res.append(BetaTextBlockParam(type="text", text=block.text))
+                elif getattr(block, "type", None) == "thinking":
+                    thinking_block = {
+                        "type": "thinking",
+                        "thinking": getattr(block, "thinking", None),
+                    }
+                    if hasattr(block, "signature"):
+                        thinking_block["signature"] = getattr(block, "signature", None)
+                    res.append(cast(BetaContentBlockParam, thinking_block))
+            else:
+                res.append(cast(BetaToolUseBlockParam, block.model_dump()))
+    
     return res
-
 
 def _inject_prompt_caching(
     messages: list[BetaMessageParam],
