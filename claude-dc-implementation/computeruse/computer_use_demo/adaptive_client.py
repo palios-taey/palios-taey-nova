@@ -16,7 +16,7 @@ from anthropic import (
     APIStatusError,
 )
 from anthropic.types.beta import (
-    BetaCacheControlEphemeralParam,
+    BetaCacheControlEphemeralParam, 
     BetaContentBlockParam,
     BetaImageBlockParam,
     BetaMessage,
@@ -26,6 +26,7 @@ from anthropic.types.beta import (
     BetaToolResultBlockParam,
     BetaToolUseBlockParam,
 )
+from anthropic.types import ContentBlock, Message, Usage
 
 # Import token manager
 try:
@@ -129,20 +130,46 @@ class AdaptiveMessagesWithRawResponseClient:
                 for chunk in stream.text_stream:
                     combined_text += chunk
                 
-                # Create a message response object that looks like a non-streaming response
-                message = BetaMessage(
-                    id=getattr(stream, 'id', ''),
-                    type="message",
-                    role="assistant",
-                    content=[BetaTextBlock(type="text", text=combined_text)],
-                    model=getattr(stream, 'model', kwargs.get('model', '')),
-                    stop_reason="end_turn"
-                )
+                # Get message properties from stream if available
+                message_id = getattr(stream, 'id', '')
+                model = getattr(stream, 'model', kwargs.get('model', ''))
+                stop_reason = getattr(stream, 'stop_reason', 'end_turn')
+                
+                # Estimate token usage
+                input_tokens = len(str(kwargs.get('messages', ''))) // 4
+                output_tokens = len(combined_text) // 4
+                
+                # Create a usage object required by BetaMessage
+                usage_obj = {
+                    "input_tokens": input_tokens,
+                    "output_tokens": output_tokens,
+                }
+                
+                # Create a response object directly
+                message_dict = {
+                    "id": message_id,
+                    "type": "message",
+                    "role": "assistant",
+                    "content": [{"type": "text", "text": combined_text}],
+                    "model": model,
+                    "stop_reason": stop_reason,
+                    "usage": usage_obj,
+                }
+                
+                # Mock HTTP response headers for token management
+                mock_headers = {
+                    "x-input-tokens": str(input_tokens),
+                    "x-output-tokens": str(output_tokens)
+                }
+                
+                # Apply token management if available
+                if token_manager:
+                    token_manager.manage_request(mock_headers)
             
             # Create a wrapper that mimics a raw response
             class StreamedRawResponse:
-                def __init__(self, message, headers):
-                    self.message = message
+                def __init__(self, message_dict, headers):
+                    self.message_dict = message_dict
                     self.http_response = type('MockResponse', (), {
                         'headers': headers,
                         'request': httpx.Request("POST", "https://api.anthropic.com/v1/messages"),
@@ -152,23 +179,23 @@ class AdaptiveMessagesWithRawResponseClient:
                     })
                 
                 def parse(self):
-                    return self.message
-            
-            # Mock HTTP response headers for token management
-            mock_headers = {
-                "x-input-tokens": str(len(str(kwargs.get('messages', ''))) // 4),
-                "x-output-tokens": str(len(combined_text) // 4)
-            }
-            
-            # Apply token management if available
-            if token_manager:
-                token_manager.manage_request(mock_headers)
+                    # Use the standard client parser to create a proper Message object
+                    try:
+                        from anthropic.types import Message
+                        return Message(**self.message_dict)
+                    except Exception:
+                        # Fall back to direct dict if Message object fails
+                        return self.message_dict
             
             # Create and return the wrapper
-            return StreamedRawResponse(message, mock_headers)
+            return StreamedRawResponse(message_dict, mock_headers)
             
         except Exception as e:
-            # Re-raise any exceptions
+            # Print detailed error for debugging
+            import traceback
+            print(f"Streaming error: {str(e)}")
+            traceback.print_exc()
+            # Re-raise the exception
             raise e
 
 
