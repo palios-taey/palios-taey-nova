@@ -74,6 +74,3 @@ def direct_chat():
 
 if __name__ == "__main__":
     direct_chat()
-EOF
-
-chmod +x /home/computeruse/computer_use_demo/direct_chat.py
