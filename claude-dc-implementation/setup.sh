@@ -27,6 +27,8 @@ cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computerus
 chmod +x /home/computeruse/computer_use_demo/basic_chat.py
 chmod +x /home/computeruse/computer_use_demo/test_token_manager.py
 chmod +x /home/computeruse/modify_sdk.py
+chmod +x /home/computeruse/comprehensive_fix.py
+
 # Make the test scripts executable
 chmod +x /home/computeruse/computer_use_demo/test_token_manager.py
 chmod +x /home/computeruse/computer_use_demo/test_verify_environment.py
