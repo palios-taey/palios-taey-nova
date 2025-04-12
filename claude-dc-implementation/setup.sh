@@ -26,10 +26,10 @@ cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computerus
 # Make the scripts executable
 chmod +x /home/computeruse/computer_use_demo/basic_chat.py
 chmod +x /home/computeruse/computer_use_demo/test_token_manager.py
+chmod +x /home/computeruse/modify_sdk.py
 # Make the test scripts executable
 chmod +x /home/computeruse/computer_use_demo/test_token_manager.py
 chmod +x /home/computeruse/computer_use_demo/test_verify_environment.py
-
 
 # Now edit the secrets file to remove the random text from API keys
 echo "IMPORTANT: Now edit the secrets file to remove the random text from the API keys:"
