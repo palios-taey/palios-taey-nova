@@ -33,15 +33,15 @@ def direct_chat():
     try:
         start_time = time.time()
         
-        # Create a streaming response
+        # Create a streaming response with correct parameter naming
         with client.messages.stream(
             model="claude-3-7-sonnet-20250219",
             max_tokens=64000,
             messages=messages,
             system=system_message,
             temperature=0,
-            anthropic_beta="output-128k-2025-02-19",
-            thinking={"type": "enabled", "budget_tokens": 32000}
+            extra_headers={"anthropic-beta": "output-128k-2025-02-19"},
+            extra_body={"thinking": {"type": "enabled", "budget_tokens": 32000}}
         ) as stream:
             print("\nClaude is responding:")
             print("-" * 80)
