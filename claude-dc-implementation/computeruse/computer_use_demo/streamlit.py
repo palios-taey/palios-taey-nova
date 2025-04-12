@@ -422,39 +422,28 @@ def _tool_output_callback(
     _render_message(Sender.TOOL, tool_output)
 
 
-def _render_api_response(request, response, response_id, tab=None):
-    """Render the API response."""
-    if tab is None:
-        tab = st
-        
-    # Use JSON schema model validator
-    if hasattr(response, "model_dump_json"):
-        tab.json(response.model_dump_json())
-    # Handle httpx Response objects safely
-    elif hasattr(response, "content") and not hasattr(response, "parse"):
-        try:
-            # Safely handle streaming responses
-            if hasattr(response, "stream") and response.stream:
-                tab.text("Streaming response - content cannot be displayed directly")
+def _render_api_response(
+    request: httpx.Request,
+    response: httpx.Response | object | None,
+    response_id: str,
+    tab: DeltaGenerator,
+):
+    """Render an API response to a streamlit tab"""
+    with tab:
+        with st.expander(f"Request/Response ({response_id})"):
+            newline = "\n\n"
+            st.markdown(
+                f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}"
+            )
+            st.json(request.read().decode())
+            st.markdown("---")
+            if isinstance(response, httpx.Response):
+                st.markdown(
+                    f"`{response.status_code}`{newline}{newline.join(f'`{k}: {v}`' for k, v in response.headers.items())}"
+                )
+                st.json(response.text)
             else:
-                # Read content safely
-                content = response.read() if hasattr(response, "read") else response.content
-                tab.json(content.decode('utf-8') if isinstance(content, bytes) else content)
-        except Exception as e:
-            tab.error(f"Error rendering response: {str(e)}")
-            tab.text(str(response))
-    # For other response types
-    elif hasattr(response, "text"):
-        try:
-            # Handle both callable and property text attribute
-            text = response.text() if callable(response.text) else response.text
-            tab.json(text)
-        except Exception as e:
-            tab.error(f"Error accessing response text: {str(e)}")
-            tab.text(str(response))
-    # Default fallback
-    else:
-        tab.text(str(response))
+                st.write(response)
 
 
 def _render_error(error: Exception):
