@@ -1,9 +1,11 @@
 """
-Adaptive Anthropic Client that handles streaming requirements transparently.
+Adaptive Anthropic Client that handles streaming requirements transparently,
+with proper support for tools and content blocks.
 """
 
 import os
 import time
+import json
 from typing import Dict, Any, List, Union, Optional, cast
 
 import httpx
@@ -26,7 +28,6 @@ from anthropic.types.beta import (
     BetaToolResultBlockParam,
     BetaToolUseBlockParam,
 )
-from anthropic.types import ContentBlock, Message, Usage
 
 # Import token manager
 try:
@@ -103,100 +104,18 @@ class AdaptiveMessagesWithRawResponseClient:
             if thinking and isinstance(thinking, dict):
                 thinking_budget = thinking.get('budget_tokens')
         
-        # Determine if streaming is required
-        requires_streaming = self.parent_client._calculate_streaming_requirement(max_tokens, thinking_budget)
-        
-        # If streaming is required, handle it transparently
-        if requires_streaming:
-            return self._handle_streaming_request(**kwargs)
-        else:
+        # For small token operations, use the standard client
+        if not self.parent_client._calculate_streaming_requirement(max_tokens, thinking_budget):
             # Use the standard client
             return self.parent_client.client.beta.messages.with_raw_response.create(**kwargs)
-    
-    def _handle_streaming_request(self, **kwargs):
-        """Handle a request that requires streaming but present it as non-streaming."""
-        # Make a copy of kwargs to avoid modifying the original
-        stream_kwargs = dict(kwargs)
         
-        # Remove the stream parameter if it exists
-        if 'stream' in stream_kwargs:
-            del stream_kwargs['stream']
+        # For large token operations that require streaming, use standard client but with streaming=True
+        # This is a simple approach that lets the SDK handle the streaming requirement validation
+        modified_kwargs = dict(kwargs)
+        modified_kwargs['stream'] = True
         
-        try:
-            # Make the streaming request using the context manager
-            with self.parent_client.client.beta.messages.stream(**stream_kwargs) as stream:
-                # Collect all text from the text stream
-                combined_text = ""
-                for chunk in stream.text_stream:
-                    combined_text += chunk
-                
-                # Get message properties from stream if available
-                message_id = getattr(stream, 'id', '')
-                model = getattr(stream, 'model', kwargs.get('model', ''))
-                stop_reason = getattr(stream, 'stop_reason', 'end_turn')
-                
-                # Estimate token usage
-                input_tokens = len(str(kwargs.get('messages', ''))) // 4
-                output_tokens = len(combined_text) // 4
-                
-                # Create a usage object required by BetaMessage
-                usage_obj = {
-                    "input_tokens": input_tokens,
-                    "output_tokens": output_tokens,
-                }
-                
-                # Create a response object directly
-                message_dict = {
-                    "id": message_id,
-                    "type": "message",
-                    "role": "assistant",
-                    "content": [{"type": "text", "text": combined_text}],
-                    "model": model,
-                    "stop_reason": stop_reason,
-                    "usage": usage_obj,
-                }
-                
-                # Mock HTTP response headers for token management
-                mock_headers = {
-                    "x-input-tokens": str(input_tokens),
-                    "x-output-tokens": str(output_tokens)
-                }
-                
-                # Apply token management if available
-                if token_manager:
-                    token_manager.manage_request(mock_headers)
-            
-            # Create a wrapper that mimics a raw response
-            class StreamedRawResponse:
-                def __init__(self, message_dict, headers):
-                    self.message_dict = message_dict
-                    self.http_response = type('MockResponse', (), {
-                        'headers': headers,
-                        'request': httpx.Request("POST", "https://api.anthropic.com/v1/messages"),
-                        'status_code': 200,
-                        'read': lambda: b'{"streamed_response": true}',
-                        'text': '{"streamed_response": true}'
-                    })
-                
-                def parse(self):
-                    # Use the standard client parser to create a proper Message object
-                    try:
-                        from anthropic.types import Message
-                        return Message(**self.message_dict)
-                    except Exception:
-                        # Fall back to direct dict if Message object fails
-                        return self.message_dict
-            
-            # Create and return the wrapper
-            return StreamedRawResponse(message_dict, mock_headers)
-            
-        except Exception as e:
-            # Print detailed error for debugging
-            import traceback
-            print(f"Streaming error: {str(e)}")
-            traceback.print_exc()
-            # Re-raise the exception
-            raise e
+        # Use the standard client
+        return self.parent_client.client.beta.messages.with_raw_response.create(**modified_kwargs)
 
 
 def create_adaptive_client(api_key=None, provider="anthropic"):
