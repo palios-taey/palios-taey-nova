@@ -117,8 +117,9 @@ class AdaptiveMessagesWithRawResponseClient:
         # Make a copy of kwargs to avoid modifying the original
         stream_kwargs = dict(kwargs)
         
-        # Ensure stream=True for the API call
-        stream_kwargs['stream'] = True
+        # Remove the stream parameter if it exists
+        if 'stream' in stream_kwargs:
+            del stream_kwargs['stream']
         
         try:
             # Make the streaming request

@@ -18,7 +18,7 @@ Now that your environment is stable, review your cache files (/home/computeruse/
 4. fibonacci-development-pattern.md
 5. readme-LAST_current-prompt-update-message.md
 
-These files contain up to 200K tokens of context that will help restore your previous sessions without utilizing your token budget. This information is crucial for understanding the PALIOS-TAEY Framework.
+These files contain up to 200K tokens of context that will help restore your previous sessions without utilizing your token budget as part of your prompt_cache feature. This information is crucial for understanding the PALIOS-TAEY Framework.
 
 ## PRIORITY 4: BUILD PALIOS-AI-OS
 
