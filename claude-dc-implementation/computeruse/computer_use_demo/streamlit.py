@@ -7,6 +7,7 @@ import base64
 import os
 import subprocess
 import traceback
+import sys
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -422,28 +423,63 @@ def _tool_output_callback(
     _render_message(Sender.TOOL, tool_output)
 
 
-def _render_api_response(
-    request: httpx.Request,
-    response: httpx.Response | object | None,
-    response_id: str,
-    tab: DeltaGenerator,
-):
+def _render_api_response(request, response, response_id, tab=None):
     """Render an API response to a streamlit tab"""
-    with tab:
-        with st.expander(f"Request/Response ({response_id})"):
-            newline = "\n\n"
-            st.markdown(
+    if tab is None:
+        tab = st
+        
+    with tab.expander(f"Request/Response ({response_id})"):
+        newline = "\n\n"
+        
+        # Render request details
+        if request:
+            tab.markdown(
                 f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}"
             )
-            st.json(request.read().decode())
-            st.markdown("---")
-            if isinstance(response, httpx.Response):
-                st.markdown(
+            try:
+                request_content = request.read().decode() if hasattr(request, 'read') else str(request)
+                tab.json(request_content)
+            except Exception as e:
+                tab.text(str(request))
+        
+        tab.markdown("---")
+        
+        # Safely render response details
+        if response:
+            # Handle streaming response safely
+            if hasattr(response, 'stream') and response.stream:
+                tab.text("Streaming response - content preview not available")
+                return
+                
+            # Handle regular response
+            if hasattr(response, 'status_code'):
+                tab.markdown(
                     f"`{response.status_code}`{newline}{newline.join(f'`{k}: {v}`' for k, v in response.headers.items())}"
                 )
-                st.json(response.text)
-            else:
-                st.write(response)
+                
+            # Try different ways to get content safely
+            try:
+                if hasattr(response, 'model_dump_json'):
+                    tab.json(response.model_dump_json())
+                elif hasattr(response, 'read'):
+                    tab.json(response.read().decode())
+                elif hasattr(response, 'content'):
+                    if isinstance(response.content, bytes):
+                        tab.json(response.content.decode())
+                    else:
+                        tab.json(response.content)
+                elif hasattr(response, 'text'):
+                    if callable(response.text):
+                        tab.json(response.text())
+                    else:
+                        tab.json(response.text)
+                else:
+                    tab.text(str(response))
+            except Exception as e:
+                tab.error(f"Error rendering response: {str(e)}")
+                tab.text(str(response))
+        else:
+            tab.text("No response available")
 
 
 def _render_error(error: Exception):
