@@ -236,23 +236,35 @@ def _maybe_filter_to_n_most_recent_images(
 def _response_to_params(response):
     """
     Convert a response object to parameters.
-    Modified to handle streaming responses.
+    Modified to handle streaming responses properly.
     """
     res = []
     
     # Handle streaming response
     if hasattr(response, 'stream') and response.stream:
-        # Create a simple text block to allow the pipeline to continue
-        return [{"type": "text", "text": "Please wait while Claude processes your request..."}]
+        # For streaming responses, create a content placeholder
+        # but continue with the pipeline - don't return early
+        res.append({"type": "text", "text": "Processing response from Claude..."})
+        
+        # Try to extract any available content from the stream
+        try:
+            if hasattr(response, 'text_stream'):
+                combined_text = ""
+                for chunk in response.text_stream:
+                    combined_text += chunk
+                
+                if combined_text:
+                    res = [{"type": "text", "text": combined_text}]
+        except Exception as e:
+            print(f"Error processing stream: {e}")
     
-    # Handle regular response
-    if hasattr(response, 'content'):
+    # Process regular response content
+    elif hasattr(response, 'content'):
         for block in response.content:
             if isinstance(block, BetaTextBlock):
                 if block.text:
                     res.append(BetaTextBlockParam(type="text", text=block.text))
                 elif getattr(block, "type", None) == "thinking":
-                    # Handle thinking blocks - include signature field
                     thinking_block = {
                         "type": "thinking",
                         "thinking": getattr(block, "thinking", None),
@@ -261,7 +273,6 @@ def _response_to_params(response):
                         thinking_block["signature"] = getattr(block, "signature", None)
                     res.append(cast(BetaContentBlockParam, thinking_block))
             else:
-                # Handle tool use blocks normally
                 res.append(cast(BetaToolUseBlockParam, block.model_dump()))
     
     return res
