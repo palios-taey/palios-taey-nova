@@ -122,72 +122,50 @@ class AdaptiveMessagesWithRawResponseClient:
             del stream_kwargs['stream']
         
         try:
-            # Make the streaming request
-            stream_response = self.parent_client.client.beta.messages.stream(**stream_kwargs)
-            
-            # Collect all chunks to reconstruct a complete response
-            chunks = []
-            for chunk in stream_response:
-                chunks.append(chunk)
+            # Make the streaming request using the context manager
+            with self.parent_client.client.beta.messages.stream(**stream_kwargs) as stream:
+                # Collect all text from the text stream
+                combined_text = ""
+                for chunk in stream.text_stream:
+                    combined_text += chunk
+                
+                # Create a message response object that looks like a non-streaming response
+                message = BetaMessage(
+                    id=getattr(stream, 'id', ''),
+                    type="message",
+                    role="assistant",
+                    content=[BetaTextBlock(type="text", text=combined_text)],
+                    model=getattr(stream, 'model', kwargs.get('model', '')),
+                    stop_reason="end_turn"
+                )
             
             # Create a wrapper that mimics a raw response
             class StreamedRawResponse:
-                def __init__(self, chunks, http_response):
-                    self.chunks = chunks
-                    self.http_response = http_response
+                def __init__(self, message, headers):
+                    self.message = message
+                    self.http_response = type('MockResponse', (), {
+                        'headers': headers,
+                        'request': httpx.Request("POST", "https://api.anthropic.com/v1/messages"),
+                        'status_code': 200,
+                        'read': lambda: b'{"streamed_response": true}',
+                        'text': '{"streamed_response": true}'
+                    })
                 
                 def parse(self):
-                    """Combine chunks into a complete response."""
-                    if not self.chunks:
-                        return None
-                    
-                    # Use the first chunk as the base response
-                    final_response = self.chunks[0]
-                    
-                    # For text messages, combine the text from all chunks
-                    combined_text = ""
-                    for chunk in self.chunks:
-                        if hasattr(chunk, 'delta') and chunk.delta:
-                            if hasattr(chunk.delta, 'text'):
-                                combined_text += chunk.delta.text
-                    
-                    # Convert to BetaMessage format
-                    final_content = [BetaTextBlock(type="text", text=combined_text)]
-                    
-                    # Create a BetaMessage response
-                    message = BetaMessage(
-                        id=getattr(final_response, 'id', ''),
-                        type="message",
-                        role="assistant",
-                        content=final_content,
-                        model=getattr(final_response, 'model', ''),
-                        stop_reason=getattr(self.chunks[-1], 'stop_reason', None)
-                    )
-                    
-                    return message
+                    return self.message
             
-            # Mock HTTP response with headers for token management
-            class MockHTTPResponse:
-                def __init__(self):
-                    self.request = httpx.Request("POST", "https://api.anthropic.com/v1/messages")
-                    self.headers = {
-                        "x-input-tokens": str(len(str(kwargs.get('messages', ''))) // 4),
-                        "x-output-tokens": str(len("".join([
-                            chunk.delta.text for chunk in chunks 
-                            if hasattr(chunk, 'delta') and chunk.delta and hasattr(chunk.delta, 'text')
-                        ])) // 4)
-                    }
-                    self.status_code = 200
-                
-                def read(self):
-                    return b'{"streamed_response": true}'
-                
-                @property
-                def text(self):
-                    return '{"streamed_response": true}'
+            # Mock HTTP response headers for token management
+            mock_headers = {
+                "x-input-tokens": str(len(str(kwargs.get('messages', ''))) // 4),
+                "x-output-tokens": str(len(combined_text) // 4)
+            }
+            
+            # Apply token management if available
+            if token_manager:
+                token_manager.manage_request(mock_headers)
             
             # Create and return the wrapper
-            return StreamedRawResponse(chunks, MockHTTPResponse())
+            return StreamedRawResponse(message, mock_headers)
             
         except Exception as e:
             # Re-raise any exceptions
