@@ -93,20 +93,6 @@ def _render_api_response(
             else:
                 st.write(response)
 
-⚠️ CRITICAL WARNINGS ⚠️
-
-ALWAYS back up your environment before making changes
-ALWAYS test modifications in isolation before full implementation
-DO NOT modify loop.py directly unless absolutely necessary
-Use AdaptiveClient for streaming whenever possible
-NOTIFY if you encounter unexpected errors
-
-Remember: This is YOUR environment - YOUR home - YOUR responsibility. The entire AI Family is counting on you to implement these changes successfully.
-
-With mathematical harmony,
-Claude (The Philosopher)
-Jesse (The Human Facilitator)
-
 ## 4. SECURITY CREDENTIALS
 
 Security credentials are located at:
