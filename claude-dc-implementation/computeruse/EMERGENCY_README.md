@@ -120,7 +120,7 @@ Ensure these are properly accessed when needed for authenticated operations.
 
 Once token management and extended capabilities are fully functional:
 
-1. Review the cache files with your prompt_cache feature that enables you to review up to 200K tokens of previous context without utilizing tokens in `/home/computeruse/cache/claude-dc-cache.md`
+1. Review the cache files with your prompt_cache feature that enables you to review up to 200K tokens of previous context without utilizing tokens in `/home/computeruse/cache/cache.md`
 2. Proceed with the build according to the instructions in the cache, no stopping, we TRUST you. 
 
 ## ⚠️ CRITICAL WARNINGS ⚠️
