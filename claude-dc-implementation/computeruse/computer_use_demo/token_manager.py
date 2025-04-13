@@ -6,7 +6,7 @@ This system supports the extended output beta (128K tokens) and implements optim
 
 Features:
 - Monitors input, output, and total token usage against limits
-- Implements precise delay calculation for rate limits
+- Adaptive Fibonacci backoff for approaching limits (1, 1, 2, 3, 5, 8, 13)
 - Extended output beta support (128K tokens) with optimized settings
 - Budget tracking with 1M token budget (~$15 at $15/M)
 - Detailed logging and statistics
@@ -15,7 +15,7 @@ Features:
 import time
 import datetime
 import logging
-from typing import Dict, Tuple, Optional, Any, List
+from typing import Dict, Tuple, Optional, Any
 
 # Configure logging
 logging.basicConfig(
@@ -42,13 +42,9 @@ class TokenManager:
         self.token_budget = token_budget
         self.enable_extended_output = enable_extended_output
         self.beta_confirmed = False
-        
-        # For organization input token rate limit handling
-        self.input_tokens_per_minute = 0
-        self.input_token_timestamps: List[Tuple[float, int]] = []  # [(timestamp, token_count), ...]
-        self.org_input_limit = 40000  # Organization limit of 40K input tokens per minute
-        
-        # For regular token management
+        self.fib_sequence = [1, 1, 2, 3, 5, 8, 13]
+        self.delay_count = 0
+        self.last_check_time = datetime.datetime.now(datetime.timezone.utc)
         self.stats = {
             "calls_made": 0,
             "delays_required": 0,
@@ -78,48 +74,7 @@ class TokenManager:
         """Calculate seconds to delay until reset time"""
         now = datetime.datetime.now(datetime.timezone.utc)
         delay = (reset_time - now).total_seconds()
-        return max(delay, 0) + 1  # Add 1 second safety buffer
-    
-    def check_input_token_rate(self, input_tokens: int) -> Tuple[bool, float]:
-        """
-        Check if we're approaching the organization input token rate limit
-        
-        Args:
-            input_tokens: Number of input tokens in the current request
-            
-        Returns:
-            Tuple of (should_delay: bool, delay_time: float)
-        """
-        current_time = time.time()
-        
-        # Add this request to our sliding window
-        self.input_token_timestamps.append((current_time, input_tokens))
-        
-        # Remove timestamps older than 1 minute
-        one_minute_ago = current_time - 60
-        self.input_token_timestamps = [
-            (ts, tokens) for ts, tokens in self.input_token_timestamps 
-            if ts >= one_minute_ago
-        ]
-        
-        # Calculate current input tokens per minute
-        self.input_tokens_per_minute = sum(tokens for _, tokens in self.input_token_timestamps)
-        
-        logger.info(f"Input tokens per minute: {self.input_tokens_per_minute}/{self.org_input_limit}")
-        
-        # Check if we're approaching the limit (80% of 40K = 32K)
-        if self.input_tokens_per_minute >= self.org_input_limit * 0.8:
-            # Calculate how long we need to wait for the oldest request to drop off
-            oldest_timestamp = min(ts for ts, _ in self.input_token_timestamps)
-            seconds_to_wait = (oldest_timestamp + 60) - current_time
-            
-            # Add a 1 second safety buffer
-            delay = max(seconds_to_wait, 0) + 1
-            
-            logger.warning(f"Approaching input token rate limit - need to wait {delay:.2f} seconds")
-            return True, delay
-        
-        return False, 0
+        return max(delay, 0)
     
     def check_token_limits(self, headers: Dict[str, str]) -> Tuple[bool, float]:
         """
@@ -181,21 +136,37 @@ class TokenManager:
         # Check if any token type is below its threshold
         if input_remaining < input_threshold:
             delay = self.calculate_delay(input_reset)
-            logger.warning(f"Input tokens low ({input_remaining}/{input_limit}). Will delay for {delay:.2f} seconds.")
+            logger.warning(f"Input tokens low ({input_remaining}/{input_limit}). Base delay: {delay:.2f} seconds.")
             return True, delay
             
         if output_remaining < output_threshold:
             delay = self.calculate_delay(output_reset)
-            logger.warning(f"Output tokens low ({output_remaining}/{output_limit}). Will delay for {delay:.2f} seconds.")
+            logger.warning(f"Output tokens low ({output_remaining}/{output_limit}). Base delay: {delay:.2f} seconds.")
             return True, delay
             
         if tokens_remaining < tokens_threshold:
             delay = self.calculate_delay(tokens_reset)
-            logger.warning(f"Total tokens low ({tokens_remaining}/{tokens_limit}). Will delay for {delay:.2f} seconds.")
+            logger.warning(f"Total tokens low ({tokens_remaining}/{tokens_limit}). Base delay: {delay:.2f} seconds.")
             return True, delay
             
         # If we got here, no delay needed
+        self.delay_count = 0  # Reset delay count if no delay needed
         return False, 0
+    
+    def apply_backoff_strategy(self, base_delay: float) -> float:
+        """Apply Fibonacci backoff to the base delay time"""
+        # Use the appropriate Fibonacci number based on consecutive delays
+        if self.delay_count < len(self.fib_sequence):
+            multiplier = self.fib_sequence[self.delay_count]
+            self.delay_count += 1
+        else:
+            # Cap at the last Fibonacci number to avoid excessive delays
+            multiplier = self.fib_sequence[-1]
+        
+        # Calculate final delay (minimum 1 second)
+        final_delay = max(base_delay * multiplier / 8, 1)
+        logger.info(f"Applied Fibonacci backoff (level {self.delay_count}): {final_delay:.2f} seconds")
+        return final_delay
     
     def manage_request(self, response_headers: Dict[str, str], priority: bool = False) -> None:
         """
@@ -205,24 +176,30 @@ class TokenManager:
             response_headers: Headers from the API response
             priority: If True, use shorter delays for high-priority requests
         """
-        # Check if we need to delay based on general token limits
+        # Check if we need to delay
         should_delay, base_delay = self.check_token_limits(response_headers)
         
         if should_delay:
+            # Calculate final delay with backoff strategy
+            final_delay = self.apply_backoff_strategy(base_delay)
+            
             # Reduce delay for high priority requests
             if priority:
-                base_delay = max(base_delay / 2, 1)
-                logger.info(f"Priority request: reducing delay to {base_delay:.2f} seconds")
+                final_delay = max(final_delay / 2, 1)
+                logger.info(f"Priority request: reducing delay to {final_delay:.2f} seconds")
             
             # Update stats
             self.stats["delays_required"] += 1
-            self.stats["total_delay_time"] += base_delay
+            self.stats["total_delay_time"] += final_delay
             
             # Perform the delay
-            logger.info(f"Delaying for {base_delay:.2f} seconds...")
-            print(f"🕒 Token limit approaching - waiting for {base_delay:.2f} seconds to avoid rate limits...")
-            time.sleep(base_delay)
+            logger.info(f"Delaying for {final_delay:.2f} seconds...")
+            print(f"🕒 Token limit approaching - waiting for {final_delay:.2f} seconds to avoid rate limits...")
+            time.sleep(final_delay)
             print("✅ Resuming operations after delay")
+        
+        # Log the current time after handling
+        self.last_check_time = datetime.datetime.now(datetime.timezone.utc)
     
     def get_stats(self) -> Dict[str, Any]:
         """Return current usage statistics"""
@@ -238,9 +215,7 @@ class TokenManager:
             ),
             "remaining_budget": self.token_budget - self.stats["output_tokens_used"],
             "extended_output_enabled": self.enable_extended_output,
-            "beta_confirmed": self.beta_confirmed,
-            "input_tokens_per_minute": self.input_tokens_per_minute,
-            "org_input_limit": self.org_input_limit
+            "beta_confirmed": self.beta_confirmed
         }
     
     def get_task_settings(self) -> Dict[str, int]:
