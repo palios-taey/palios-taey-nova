@@ -1,6 +1,11 @@
 #!/bin/bash
 # Script to launch the Claude Computer Use environment
 
+echo "Stopping any existing computer-use containers..."
+docker ps -a | grep computer-use-demo | awk '{print $1}' | xargs -r docker stop
+echo "Removing stopped containers..."
+docker ps -a | grep computer-use-demo | awk '{print $1}' | xargs -r docker rm
+
 # Check if ANTHROPIC_API_KEY is already set
 if [ -z "$ANTHROPIC_API_KEY" ]; then
     # Try to read from file
@@ -17,6 +22,7 @@ fi
 
 # Create transcripts directory if it doesn't exist
 mkdir -p $HOME/transcripts
+
 
 # Run the Computer Use container
 docker run \
