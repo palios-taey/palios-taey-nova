@@ -7,6 +7,7 @@ mkdir -p /home/computeruse/cache
 mkdir -p /home/computeruse/utils/config
 mkdir -p /home/computeruse/env_backup
 mkdir -p /home/computeruse/my_backup_20250411_195735
+mkdir -p /home/computeruse/my_backup_20250413_201701
 
 # Copy the modified secrets file from GitHub to the secrets directory
 # IMPORTANT: You'll need to modify the API keys manually after copying to remove the random text
@@ -18,6 +19,10 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 
 # Overwrite computer_use_demo with optimized configurations
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
+
+# Copy backups
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_backup_20250413_201701/* /home/computeruse/my_backup_20250413_201701/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_backup_20250413_201701/* /home/computeruse/my_backup_20250413_201701/
 
 # Copy the README files
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/EMERGENCY_README.md /home/computeruse/
