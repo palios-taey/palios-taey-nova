@@ -8,6 +8,7 @@ mkdir -p /home/computeruse/utils/config
 mkdir -p /home/computeruse/env_backup
 mkdir -p /home/computeruse/my_backup_20250411_195735
 mkdir -p /home/computeruse/my_backup_20250413_201701
+mkdir -p /home/computeruse/test 
 
 # Copy the modified secrets file from GitHub to the secrets directory
 # IMPORTANT: You'll need to modify the API keys manually after copying to remove the random text
