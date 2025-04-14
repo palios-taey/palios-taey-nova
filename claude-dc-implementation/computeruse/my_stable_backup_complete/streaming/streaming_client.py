@@ -348,5 +348,43 @@ class StreamingClient:
                 "role": "assistant"
             }
 
+    def get_completion(self, prompt, max_tokens=100):
+        """Convenience method for getting text completions"""
+        # Create a simple message with the prompt
+        messages = [{"role": "user", "content": prompt}]
+        
+        # Make the API call
+        response = self.create_message(
+            messages=messages,
+            max_tokens=max_tokens
+        )
+        
+        # Extract text content
+        if isinstance(response, dict) and "content" in response:
+            content = response["content"]
+            if isinstance(content, list) and len(content) > 0:
+                if isinstance(content[0], dict) and "text" in content[0]:
+                    return content[0]["text"]
+        
+        # Try other possible formats
+        if hasattr(response, "content") and len(response.content) > 0:
+            if hasattr(response.content[0], "text"):
+                return response.content[0].text
+        
+        # Return error message if extraction failed
+        return "Error: Could not extract text from response"
+        
+    @property
+    def last_token_usage(self):
+        """Get the last token usage"""
+        if has_token_manager:
+            # Get the most recent values
+            return {
+                "input": token_manager.input_tokens_per_minute,
+                "output": token_manager.output_tokens_per_minute
+            }
+        else:
+            return {"input": 0, "output": 0}
+
 # Create singleton instance
 streaming_client = StreamingClient()
