@@ -12,7 +12,7 @@ mkdir -p /home/computeruse/test
 
 # Copy the modified secrets file from GitHub to the secrets directory
 # IMPORTANT: You'll need to modify the API keys manually after copying to remove the random text
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/secrets/palios-taey-secrets.json /home/computeruse/secrets/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/secrets/* /home/computeruse/secrets/
 
 # Copy cache and utils contents to their appropriate locations
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
@@ -24,10 +24,6 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 # Copy backups
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_backup_20250413_201701/* /home/computeruse/my_backup_20250413_201701/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_backup_20250413_201701/* /home/computeruse/my_backup_20250413_201701/
-
-# Copy the README files
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/EMERGENCY_README.md /home/computeruse/
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/README.md /home/computeruse/
 
 # Make the scripts executable
 chmod +x /home/computeruse/computer_use_demo/basic_chat.py
