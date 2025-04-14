@@ -6,8 +6,7 @@ mkdir -p /home/computeruse/secrets
 mkdir -p /home/computeruse/cache
 mkdir -p /home/computeruse/utils/config
 mkdir -p /home/computeruse/env_backup
-mkdir -p /home/computeruse/my_backup_20250411_195735
-mkdir -p /home/computeruse/my_backup_20250413_201701
+mkdir -p /home/computeruse/my_stable_backup_complete
 mkdir -p /home/computeruse/test 
 
 # Copy the modified secrets file from GitHub to the secrets directory
@@ -22,18 +21,11 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
 
 # Copy backups
-cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_backup_20250413_201701/* /home/computeruse/my_backup_20250413_201701/
-cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_backup_20250413_201701/* /home/computeruse/my_backup_20250413_201701/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_stable_backup_complete/* /home/computeruse/my_stable_backup_complete/
 
-# Make the scripts executable
-chmod +x /home/computeruse/computer_use_demo/basic_chat.py
-chmod +x /home/computeruse/computer_use_demo/test_token_manager.py
-chmod +x /home/computeruse/modify_sdk.py
-chmod +x /home/computeruse/comprehensive_fix.py
-
-# Make the test scripts executable
-chmod +x /home/computeruse/computer_use_demo/test_token_manager.py
-chmod +x /home/computeruse/computer_use_demo/test_verify_environment.py
+# Setup git config
+git config --global user.email "jesselarose@gmail.com"
+git config --global user.name "palios-taey"
 
 # Now edit the secrets file to remove the random text from API keys
 echo "IMPORTANT: Now edit the secrets file to remove the random text from the API keys:"
