@@ -74,6 +74,9 @@ if "token_usage" not in st.session_state:
 if "system_prompt_suffix" not in st.session_state:
     st.session_state.system_prompt_suffix = ""
 
+if "processing" not in st.session_state:
+    st.session_state.processing = False
+
 # UI components
 st.title("Claude Computer Use")
 
@@ -175,15 +178,19 @@ for i, message in enumerate(st.session_state.messages):
 # Chat input
 prompt = st.chat_input("Message Claude...")
 
-# Process user input
-if prompt:
-    # Add user message to chat
-    st.session_state.messages.append({"role": "user", "content": [{"type": "text", "text": prompt}]})
-    with st.chat_message(Sender.HUMAN):
-        st.write(prompt)
-    
-    # Process with Claude
-    with st.spinner("Claude is thinking..."):
+# Main function for Streamlit
+async def main():
+    # Process user input
+    if prompt and not st.session_state.processing:
+        # Set processing flag to avoid duplicate processing
+        st.session_state.processing = True
+        
+        # Add user message to chat
+        st.session_state.messages.append({"role": "user", "content": [{"type": "text", "text": prompt}]})
+        with st.chat_message(Sender.HUMAN):
+            st.write(prompt)
+        
+        # Process with Claude
         assistant_response_container = st.container()
         
         # Define callback functions
@@ -228,25 +235,26 @@ if prompt:
                 token_manager.process_response_headers(dict(headers))
         
         try:
-            # Process the message
-            updated_messages = await sampling_loop(
-                model=selected_model,
-                provider=selected_provider,
-                system_prompt_suffix=st.session_state.system_prompt_suffix,
-                messages=st.session_state.messages,
-                output_callback=output_callback,
-                tool_output_callback=tool_output_callback,
-                api_response_callback=api_response_callback,
-                api_key=API_KEY,
-                max_tokens=selected_max_tokens,
-                thinking_budget=selected_thinking_budget,
-                tool_version=TOOL_VERSION,
-                token_efficient_tools_beta=token_efficient,
-            )
-            
-            # Update messages with Claude's response
-            st.session_state.messages = updated_messages
-            
+            with st.spinner("Claude is thinking..."):
+                # Process the message
+                updated_messages = await sampling_loop(
+                    model=selected_model,
+                    provider=selected_provider,
+                    system_prompt_suffix=st.session_state.system_prompt_suffix,
+                    messages=st.session_state.messages,
+                    output_callback=output_callback,
+                    tool_output_callback=tool_output_callback,
+                    api_response_callback=api_response_callback,
+                    api_key=API_KEY,
+                    max_tokens=selected_max_tokens,
+                    thinking_budget=selected_thinking_budget,
+                    tool_version=TOOL_VERSION,
+                    token_efficient_tools_beta=token_efficient,
+                )
+                
+                # Update messages with Claude's response
+                st.session_state.messages = updated_messages
+                
         except RateLimitError as e:
             st.error(f"Rate limit exceeded: {str(e)}")
             retry_after = getattr(e, "retry_after", None)
@@ -258,11 +266,9 @@ if prompt:
         
         except Exception as e:
             st.error(f"Error processing message: {str(e)}")
-
-# Main function for Streamlit
-async def main():
-    # Any async initialization
-    pass
+        
+        # Reset processing flag
+        st.session_state.processing = False
 
 if __name__ == "__main__":
     asyncio.run(main())
