@@ -2,13 +2,16 @@
 # Setup script for Claude DC environment
 
 # Create necessary directories
-mkdir -p /home/computeruse/secrets
 mkdir -p /home/computeruse/cache
-mkdir -p /home/computeruse/utils/config
 mkdir -p /home/computeruse/env_backup
-mkdir -p /home/computeruse/my_stable_backup_complete
-mkdir -p /home/computeruse/test 
+mkdir -p /home/computeruse/my_broken_backup_20250414
 mkdir -p /home/computeruse/my_enhanced_protection_system_202504142055
+mkdir -p /home/computeruse/my_stable_backup_complete
+mkdir -p /home/computeruse/secrets
+mkdir -p /home/computeruse/test_rate_protection
+mkdir -p /home/computeruse/utils/config
+mkdir -p /home/computeruse/test 
+
 
 # Copy the modified secrets file from GitHub to the secrets directory
 # IMPORTANT: You'll need to modify the API keys manually after copying to remove the random text
@@ -24,12 +27,17 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 # Copy backups
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_enhanced_protection_system_202504142055/* /home/computeruse/my_enhanced_protection_system_202504142055/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_enhanced_protection_system_202504142055/* /home/computeruse/my_enhanced_protection_system_202504142055/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_enhanced_protection_system_202504142055/* /home/computeruse/my_enhanced_protection_system_202504142055/
 /home/computeruse/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/env_backup/* /home/computeruse/env_backup/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/test_rate_protection/* /home/computeruse/test_rate_protection/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/test/* /home/computeruse/test/
 
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/claude-dc-extended-use-guidance.md /home/computeruse/
+# Files
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/claude-dc-extended-use-guidance.md/home/computeruse/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/chatgpt-input-token-research.md/home/computeruse/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/chatgpt-input-token-research.md/home/computeruse/YOUR_Home.md
 
-#Why the fuck not?
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/* /home/computeruse/
 
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
