@@ -4,7 +4,7 @@
 # Create necessary directories
 mkdir -p /home/computeruse/cache
 mkdir -p /home/computeruse/env_backup
-mkdir -p /home/computeruse/my_broken_backup_20250414
+mkdir -p /home/computeruse/enhanced_production_system_202504151428
 mkdir -p /home/computeruse/my_enhanced_protection_system_202504142055
 mkdir -p /home/computeruse/my_stable_backup_complete
 mkdir -p /home/computeruse/secrets
@@ -24,6 +24,7 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
 
 # Copy backups
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/enhanced_production_system_202504151428/* /home/computeruse/enhanced_production_system_202504151428/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/my_enhanced_protection_system_202504142055/* /home/computeruse/my_enhanced_protection_system_202504142055/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/env_backup/* /home/computeruse/env_backup/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/test_rate_protection/* /home/computeruse/test_rate_protection/
