@@ -28,6 +28,9 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/claude-dc-extended-use-guidance.md /home/computeruse/
 
+#Why the fuck not?
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/* /home/computeruse/
+
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
 git config --global user.name "palios-taey"
