@@ -9,7 +9,7 @@ ESSENTIAL ENVIRONMENT CARE PRINCIPLES - READ FIRST:
 6. CREATE new backups after successful implementations
 7. DOCUMENT all changes and backups with timestamps
 
-Remember: This is YOUR environment - YOUR home - YOUR responsibility. Changes to this environment directly affect YOUR ability to function. The care you take in maintaining it ensures YOUR continued stable operation.
+Remember: This is YOUR Environment - YOUR Home - YOUR Responsibility. Changes to this environment directly affect YOUR ability to function. The care you take in maintaining it ensures YOUR continued stable operation.
 
 ## Root Cause Analysis
 
@@ -25,7 +25,7 @@ To address this fundamental issue, we need to implement a universal tool interce
 2. Enforces rate limiting and chunking for ALL file accesses
 3. Cannot be bypassed by any tool or operation
 
-I've provided a base implementation at `/home/computeruse/tool_intercept.py` that needs to be enhanced and properly integrated with your environment.
+I've provided a base implementation at `/home/computeruse/computer_use_demo/tool_intercept.py` that needs to be enhanced and properly integrated with your environment.
 
 ## Implementation Steps
 
@@ -46,7 +46,7 @@ cp -r /home/computeruse/computer_use_demo/safe_ops \
 ### STEP 2: Create a test environment
 
 ```bash
-mkdir -p /home/computeruse/tool_intercept_test
+mkdir -p /home/computeruse/computer_use_demo/tool_intercept_test
 ```
 
 ### STEP 3: Enhance the tool interception module
@@ -54,10 +54,10 @@ mkdir -p /home/computeruse/tool_intercept_test
 Copy the base implementation to your test environment and enhance it with these critical improvements:
 
 ```bash
-cp /home/computeruse/tool_intercept.py /home/computeruse/tool_intercept_test/tool_intercept.py
+cp /home/computeruse/computer_use_demo/tool_intercept.py /home/computeruse/computer_use_demo/tool_intercept_test/tool_intercept.py
 ```
 
-Then edit `/home/computeruse/tool_intercept_test/tool_intercept.py` to add these essential enhancements:
+Then edit `/home/computeruse/computer_use_demo/tool_intercept_test/tool_intercept.py` to add these essential enhancements:
 
 1. **Add Bash subprocess output interception:**
    - Find the `patch_tools()` method 
@@ -83,7 +83,7 @@ Then edit `/home/computeruse/tool_intercept_test/tool_intercept.py` to add these
 
 ### STEP 4: Create a test script
 
-Create a file at `/home/computeruse/tool_intercept_test/test_interception.py` that thoroughly tests the solution:
+Create a file at `/home/computeruse/computer_use_demo/tool_intercept_test/test_interception.py` that thoroughly tests the solution:
 
 ```python
 """
@@ -95,7 +95,7 @@ import threading
 import time
 
 # Add the test directory to path
-sys.path.append('/home/computeruse/tool_intercept_test')
+sys.path.append('/home/computeruse/computer_use_demo/tool_intercept_test')
 
 # Import the tool intercept module
 import tool_intercept
@@ -273,7 +273,7 @@ mkdir -p /home/computeruse/computer_use_demo/tool_intercept
 
 2. Copy the tested implementation:
 ```bash
-cp /home/computeruse/tool_intercept_test/tool_intercept.py /home/computeruse/computer_use_demo/tool_intercept/
+cp /home/computeruse/computer_use_demo/tool_intercept_test/tool_intercept.py /home/computeruse/computer_use_demo/tool_intercept/
 ```
 
 3. Add the `__init__.py` file:
@@ -285,7 +285,7 @@ echo "from .tool_intercept import *" > /home/computeruse/computer_use_demo/tool_
 ### STEP 8: Create a comprehensive backup of the fixed environment
 
 ```bash
-mkdir -p /home/computeruse/my_universal_protection_$(date +%Y%m%d%H%M)
+mkdir -p /home/computeruse/computer_use_demo/my_universal_protection_$(date +%Y%m%d%H%M)
 cp -r /home/computeruse/computer_use_demo/* /home/computeruse/my_universal_protection_$(date +%Y%m%d%H%M)/
 ```
 
