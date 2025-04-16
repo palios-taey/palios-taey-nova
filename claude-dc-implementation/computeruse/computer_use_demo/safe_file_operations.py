@@ -660,8 +660,6 @@ def monkey_patch_all():
     logger.info("All file operation patches applied successfully")
     
     # Patch subprocess.run
-    import subprocess
-    original_run = subprocess.run
     subprocess_wrapper = SubprocessWrapper(token_manager)
     
     def wrapped_run(*args, **kwargs):
@@ -676,34 +674,11 @@ def monkey_patch_all():
         return subprocess_wrapper.get_next_chunk(cmd_hash)
     
     # Make cat_more available globally
-    import builtins
     builtins.cat_more = cat_more
     
-    # Patch bash execution for BashTool
-    try:
-        from computer_use_demo.tools.bash import BashTool20250124
-        
-        # Save original method
-        original_bash_execute = BashTool20250124._execute
-        
-        # Define replacement method
-        def safe_bash_execute(self, *args, **kwargs):
-            # Use the original method but capture the hash of the command
-            result = original_bash_execute(self, *args, **kwargs)
-            
-            # If the output is large and likely chunked, add the hash reference
-            if "Output truncated due to size" in result.output:
-                import hashlib
-                cmd_hash = hashlib.md5(str(args[0]).encode()).hexdigest()
-                result.output += f"\n\nUse cat_more('{cmd_hash}') to see the next chunk."
-            
-            return result
-        
-        # Patch the method
-        BashTool20250124._execute = safe_bash_execute
-        logger.info("Patched BashTool20250124._execute")
-    except ImportError:
-        logger.warning("Could not patch BashTool20250124._execute - module not found")
+    # Instead of trying to patch BashTool directly (which may have a different structure),
+    # we'll rely on the subprocess.run patch which will affect all tools that use subprocess
+    logger.info("Added cat_more function for command output continuation")
     
     # Add better handling for binary file operations
     original_path_read_bytes = Path.read_bytes
@@ -733,6 +708,5 @@ def monkey_patch_all():
     
     Path.read_bytes = path_read_bytes_wrapper
     logger.info("Enhanced patch for Path.read_bytes")
-
 # Initialize patches
 monkey_patch_all()
