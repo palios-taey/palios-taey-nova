@@ -55,11 +55,19 @@ class _InterceptedFile:
         self.path = path
         self.remaining_data = None
     def read(self, size: int = -1) -> str:
+        # Improved handling of both string and bytes data
         data = self.file.read(size)
-        if not data:
-            return ""
-        # Estimate token count of data
-        if TIKTOKEN_AVAILABLE:
+        # Check if data is bytes or string
+        if isinstance(data, bytes):
+            try:
+                # Try to decode bytes to string first
+                decoded_data = data.decode('utf-8', errors='replace')
+                token_count = len(ENCODING.encode(decoded_data))
+            except (UnicodeDecodeError, AttributeError):
+                # If decoding fails, use a rough estimate based on byte length
+                token_count = max(1, len(data) // 4)  # Rough estimate
+        else:
+            # If it's already a string
             token_count = len(ENCODING.encode(data))
         else:
             token_count = max(1, (len(data) // 4))
