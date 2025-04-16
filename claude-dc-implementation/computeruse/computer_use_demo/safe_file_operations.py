@@ -527,29 +527,41 @@ def monkey_patch_all():
     builtins.open = interceptor.intercept_open
     logger.info("Patched builtins.open")
     
-    # Patch Path.read_text
-    Path.read_text = interceptor.intercept_path_read_text
+    # Patch Path.read_text - create a wrapper that properly calls the instance method
+    original_path_read_text = Path.read_text
+    
+    def path_read_text_wrapper(path_obj, encoding='utf-8', errors=None):
+        return interceptor.intercept_path_read_text(path_obj, encoding, errors)
+    
+    Path.read_text = path_read_text_wrapper
     logger.info("Patched Path.read_text")
     
     # Patch Path.read_bytes
     original_path_read_bytes = Path.read_bytes
-    Path.read_bytes = interceptor.intercept_path_read_bytes
+    
+    def path_read_bytes_wrapper(path_obj):
+        return interceptor.intercept_path_read_bytes(path_obj)
+    
+    Path.read_bytes = path_read_bytes_wrapper
     logger.info("Patched Path.read_bytes")
     
     # Patch other tools as needed
-    from computer_use_demo.tools.edit import EditTool20250124
-    
-    # Save original method
-    original_read_file = EditTool20250124.read_file
-    
-    # Define replacement method that uses our interceptor
-    def safe_read_file_for_edit(self, path):
-        return interceptor.intercept_path_read_text(path)
-    
-    # Patch the method
-    EditTool20250124.interceptor = interceptor
-    EditTool20250124.read_file = safe_read_file_for_edit
-    logger.info("Patched EditTool20250124.read_file")
+    try:
+        from computer_use_demo.tools.edit import EditTool20250124
+        
+        # Save original method
+        original_read_file = EditTool20250124.read_file
+        
+        # Define replacement method that uses our interceptor
+        def safe_read_file_for_edit(self, path):
+            return interceptor.intercept_path_read_text(Path(path))
+        
+        # Patch the method
+        EditTool20250124.interceptor = interceptor
+        EditTool20250124.read_file = safe_read_file_for_edit
+        logger.info("Patched EditTool20250124.read_file")
+    except ImportError:
+        logger.warning("Could not patch EditTool20250124.read_file - module not found")
     
     logger.info("All file operation patches applied successfully")
 
