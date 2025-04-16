@@ -1,0 +1,79 @@
+#!/bin/bash
+# Consolidated setup script for Claude DC environment
+
+# Run the main setup script
+echo "Running main setup script..."
+./scripts/setup.sh
+
+# Run the Claude DC implementation setup
+echo "Running Claude DC implementation setup..."
+cd claude-dc-implementation
+./setup.sh
+
+# Remove 'testkey-' from all files in secrets directory
+echo "Removing 'testkey-' prefixes from secret files..."
+find /home/computeruse/secrets -type f -exec sed -i 's/testkey-//g' {} \;
+
+# Set up SSH configuration
+echo "Setting up SSH configuration..."
+
+# Create .ssh directory if it doesn't exist
+mkdir -p /home/computeruse/.ssh
+chmod 700 /home/computeruse/.ssh
+
+# Copy SSH key to standard location if it exists in secrets
+if [ -f "/home/computeruse/secrets/id_ed25519" ]; then
+    echo "Moving SSH key from secrets to .ssh directory..."
+    cp /home/computeruse/secrets/id_ed25519 /home/computeruse/.ssh/
+    chmod 600 /home/computeruse/.ssh/id_ed25519
+    
+    # Copy public key if it exists
+    if [ -f "/home/computeruse/secrets/id_ed25519.pub" ]; then
+        cp /home/computeruse/secrets/id_ed25519.pub /home/computeruse/.ssh/
+        chmod 644 /home/computeruse/.ssh/id_ed25519.pub
+    fi
+fi
+
+# Create SSH config file
+cat > /home/computeruse/.ssh/config << EOF
+Host github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+EOF
+chmod 600 /home/computeruse/.ssh/config
+
+# Test SSH connection
+echo "Testing SSH connection to GitHub..."
+ssh -o StrictHostKeyChecking=no -T git@github.com || echo "SSH test complete - Note: Exit code 1 is normal for GitHub"
+
+# Change repository remote from HTTPS to SSH
+echo "Changing repository remote from HTTPS to SSH..."
+cd /home/computeruse/github/palios-taey-nova
+git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
+
+# Clean up Python cache files
+echo "Cleaning up Python cache files..."
+pkill -9 python || true
+pkill -9 python3 || true
+pkill -9 streamlit || true
+find /home/computeruse -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+find /home/computeruse -name "*.pyc" -exec rm {} + 2>/dev/null || true
+
+# Set up computer_use_demo directory
+echo "Setting up computer_use_demo environment..."
+rsync -av --delete /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/ /home/computeruse/computer_use_demo/
+mkdir -p /home/computeruse/computer_use_demo/__pycache__/
+
+# Set Claude options
+echo "Please set the following Claude options manually:"
+echo "   - Model: claude-3-7-sonnet-20250219"
+echo "   - Verify end of API key"
+echo "   - Enable tcdoken-efficient tools beta - check"
+echo "   - Max output tokens: 12000"
+echo "   - Thinking Enabled: check"
+echo "   - Thinking Budget: 4000"
+echo "   - Click Reset button"
+echo ""
+echo "Setup complete!"
+echo "You may need to refresh the browser to see the changes."

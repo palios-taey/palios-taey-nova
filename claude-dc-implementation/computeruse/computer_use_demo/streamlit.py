@@ -1,108 +1,133 @@
 import os
 import math
 import streamlit as st
-from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
+from loop import APIProvider, sampling_loop, Sender, ToolResult
+from anthropic.types.beta import BetaTextBlockParam, BetaToolResultBlockParam
+from token_manager import token_manager
 
-# Page title and description
 st.title("Claude DC – Streaming Chat Interface")
-st.markdown("Enter a prompt for Claude and receive a streamed response. "
-            "Token usage is tracked to avoid exceeding Tier 2 limits.")
+st.markdown("Enter a prompt for Claude and receive a streamed response. Token usage is tracked to avoid exceeding rate limits.")
 
-# Initialize Anthropic client (API key from environment)
-api_key = os.environ.get("ANTHROPIC_API_KEY")
+# Ensure Anthropic API key is set
+api_key = os.environ.get("ANTHROPIC_API_KEY", "")
 if not api_key:
     st.error("Anthropic API key not found. Please set the ANTHROPIC_API_KEY environment variable.")
     st.stop()
-anthropic = Anthropic(api_key=api_key)
-MODEL_NAME = "claude-3-7-sonnet-20250219"
+if "api_key" not in st.session_state:
+    st.session_state.api_key = api_key
 
-# Token budget configuration (similar to loop.py)
-SESSION_HOURS = 24  # adjust this if the app runs for less than a full day
-DAILY_INPUT_LIMIT = 5_000_000
-DAILY_OUTPUT_LIMIT = 10_000_000
-MAX_INPUT_TOKENS_SESSION = int(DAILY_INPUT_LIMIT * (SESSION_HOURS / 24))
-MAX_OUTPUT_TOKENS_SESSION = int(DAILY_OUTPUT_LIMIT * (SESSION_HOURS / 24))
-MAX_TOKENS_TO_SAMPLE = 12000  # max tokens for Claude's reply in one go
+# Initialize session state variables
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if "tools" not in st.session_state:
+    st.session_state.tools = {}
+if "responses" not in st.session_state:
+    st.session_state.responses = {}
+if "in_sampling_loop" not in st.session_state:
+    st.session_state.in_sampling_loop = False
+if "provider" not in st.session_state:
+    st.session_state.provider = APIProvider.ANTHROPIC
+if "model" not in st.session_state:
+    st.session_state.model = "claude-3-7-sonnet-20250219"
+if "tool_version" not in st.session_state:
+    st.session_state.tool_version = "computer_use_20250124"
+if "output_tokens" not in st.session_state:
+    st.session_state.output_tokens = token_manager.get_safe_limits()["max_tokens"]
+if "thinking" not in st.session_state:
+    st.session_state.thinking = False
+if "thinking_budget" not in st.session_state:
+    st.session_state.thinking_budget = None
+if "only_n_most_recent_images" not in st.session_state:
+    st.session_state.only_n_most_recent_images = 0
+if "token_efficient_tools_beta" not in st.session_state:
+    st.session_state.token_efficient_tools_beta = False
 
-# Initialize or retrieve session token counters
-if "total_input_tokens" not in st.session_state:
-    st.session_state["total_input_tokens"] = 0
-if "total_output_tokens" not in st.session_state:
-    st.session_state["total_output_tokens"] = 0
+# Helper for rendering messages
+def _render_message(role, content):
+    """Render a message block in the Streamlit app."""
+    role_name = role if isinstance(role, str) else role.value if hasattr(role, "value") else str(role)
+    if role_name.lower() in ["user", "sender.user"]:
+        st.markdown(f"**User:** {content}")
+    elif role_name.lower() in ["assistant", "sender.bot"]:
+        # Assistant content could be partial text or final text
+        if isinstance(content, str):
+            st.markdown(f"**Claude:** {content}")
+        elif isinstance(content, dict) and content.get("type") == "text":
+            st.markdown(f"**Claude:** {content.get('text', '')}")
+        elif isinstance(content, ToolResult):
+            # Assistant role receiving a ToolResult (should not happen directly)
+            if content.error:
+                st.error(content.error)
+            elif content.output:
+                st.code(content.output)
+    elif role_name.lower() in ["tool", "sender.tool"]:
+        # content is a ToolResult from st.session_state.tools
+        if isinstance(content, ToolResult):
+            if content.error:
+                st.error(content.error)
+            elif content.output:
+                st.code(content.output)
+        else:
+            st.write(content)
 
-def estimate_token_count(text: str) -> int:
-    """Approximate the token count of text (used for budgeting)."""
-    return max(1, math.ceil(len(text) / 4))
+INTERRUPT_TOOL_ERROR = "Tool execution interrupted by new prompt"
+INTERRUPT_TEXT = "*[The previous action was interrupted]*"
 
-def truncate_prompt(prompt: str, max_tokens: int) -> str:
-    """Truncate prompt to not exceed max_tokens (approximate)."""
-    tokens = estimate_token_count(prompt)
-    if tokens <= max_tokens:
-        return prompt
-    # Remove excess tokens from the start of the prompt
-    excess = tokens - max_tokens
-    chars_to_remove = excess * 4
-    return prompt[chars_to_remove:]
+def maybe_add_interruption_blocks():
+    if not st.session_state.in_sampling_loop:
+        return []
+    blocks = []
+    last_msg = st.session_state.messages[-1] if st.session_state.messages else None
+    if last_msg and isinstance(last_msg["content"], list):
+        prev_tool_ids = [block["id"] for block in last_msg["content"] if isinstance(block, dict) and block.get("type") == "tool_use"]
+        for tool_use_id in prev_tool_ids:
+            st.session_state.tools[tool_use_id] = ToolResult(error=INTERRUPT_TOOL_ERROR)
+            blocks.append(BetaToolResultBlockParam(tool_use_id=tool_use_id, type="tool_result", content=INTERRUPT_TOOL_ERROR, is_error=True))  # type: ignore
+    blocks.append(BetaTextBlockParam(type="text", text=INTERRUPT_TEXT))
+    return blocks
 
-# User input area in the app
+from contextlib import contextmanager
+@contextmanager
+def track_sampling_loop():
+    st.session_state.in_sampling_loop = True
+    try:
+        yield
+    finally:
+        st.session_state.in_sampling_loop = False
+
+# Input field for user prompt
 user_input = st.text_area("Your Prompt:", value="", placeholder="Type your question or request here...")
 
-# Button to submit the prompt
+# Submit button
 if st.button("Submit"):
     if not user_input.strip():
         st.warning("Please enter a prompt before submitting.")
     else:
-        # Token management for input prompt
-        user_tokens = estimate_token_count(user_input)
-        if user_tokens + st.session_state.total_input_tokens > MAX_INPUT_TOKENS_SESSION:
-            st.warning("Input prompt is too long or session token budget nearly exceeded. The prompt will be truncated.")
-            remaining_tokens = max(0, MAX_INPUT_TOKENS_SESSION - st.session_state.total_input_tokens)
-            user_input = truncate_prompt(user_input, remaining_tokens)
-            user_tokens = estimate_token_count(user_input)
-            if user_tokens == 0:
-                st.error("Cannot process prompt: session input token limit reached.")
-                st.stop()
-        # Update token count for input
-        st.session_state.total_input_tokens += user_tokens
-
-        # Prepare prompt for Claude with Anthropic formatting
-        prompt = f"{HUMAN_PROMPT} {user_input}{AI_PROMPT}"
-
-        # Display the prompt and a placeholder for the response
-        st.write(f"**Prompt:** {user_input}")
-        output_placeholder = st.empty()  # Placeholder for Claude's streaming output
-
-        # Call Claude with streaming
+        # Append user message (with any interruption context) to conversation
+        st.session_state.messages.append({
+            "role": "user",
+            "content": [*maybe_add_interruption_blocks(), BetaTextBlockParam(type="text", text=user_input)]  # type: ignore
+        })
+        _render_message(Sender.USER, user_input)
+        # Call Claude's agent with streaming output
         try:
-            response = anthropic.completions.create(
-                model=MODEL_NAME,
-                prompt=prompt,
-                max_tokens_to_sample=MAX_TOKENS_TO_SAMPLE,
-                stream=True,
-                stop_sequences=[HUMAN_PROMPT]
-            )
+            with track_sampling_loop():
+                # Run sampling_loop synchronously (will stream output via callbacks)
+                st.session_state.messages = asyncio.run(sampling_loop(
+                    system_prompt_suffix=st.session_state.get("custom_system_prompt", ""),
+                    model=st.session_state.model,
+                    provider=st.session_state.provider,
+                    messages=st.session_state.messages,
+                    output_callback=lambda text: _render_message(Sender.BOT, text),
+                    tool_output_callback=lambda tid, result: _render_message(Sender.TOOL, result),
+                    api_response_callback=lambda req, resp, err=None: None,
+                    api_key=st.session_state.api_key,
+                    only_n_most_recent_images=st.session_state.only_n_most_recent_images,
+                    tool_version=st.session_state.tool_version,
+                    max_tokens=st.session_state.output_tokens,
+                    thinking_budget=st.session_state.thinking_budget if st.session_state.thinking else None,
+                    token_efficient_tools_beta=st.session_state.token_efficient_tools_beta
+                ))
         except Exception as e:
-            st.error(f"Error during Claude API call: {e}")
-            st.stop()
-
-        # Stream the response in the placeholder
-        full_response = ""
-        for chunk in response:
-            chunk_text = getattr(chunk, "completion", str(chunk))
-            full_response += str(chunk_text)
-            # Update the placeholder with the latest content (using Markdown for formatting)
-            output_placeholder.markdown(f"**Claude:** {full_response}")
-        # After streaming is done, we have the full response in full_response
-
-        # Update output token count
-        output_tokens = estimate_token_count(full_response)
-        st.session_state.total_output_tokens += output_tokens
-
-        # Check output token budget
-        if st.session_state.total_output_tokens > MAX_OUTPUT_TOKENS_SESSION:
-            st.warning("The session has reached the output token limit. Further queries might be limited.")
-
-        # Optionally, display token usage stats to the user
-        st.info(f"**Session Token Usage:** Input ~{st.session_state.total_input_tokens} tokens, "
-                f"Output ~{st.session_state.total_output_tokens} tokens.")
+            st.error(f"Error during generation: {e}")
 

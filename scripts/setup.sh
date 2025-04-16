@@ -27,6 +27,8 @@ sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker $USER
 
+sudo apt-get install -y rsync
+
 # Python environment setup
 echo "Installing Python dependencies from requirements.txt..."
 pip install --upgrade pip

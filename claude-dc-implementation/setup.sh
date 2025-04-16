@@ -18,12 +18,14 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/* /home/computeruse/references/
 
+
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
 git config --global user.name "palios-taey"
 
 # Now edit the secrets file to remove the random text from API keys
-echo "IMPORTANT: Now edit the secrets file to remove the random text from the API keys:"
+echo "IMPORTANT: Now edit the secrets file to remove the random text from the secrets:"
 echo "nano /home/computeruse/secrets/palios-taey-secrets.json"
+echo "nano /home/computeruse/secrets/id_ed25519"
 
-echo "Setup completed! Now you can run the basic chat script: "
+echo "Setup completed!"
