@@ -654,80 +654,80 @@ def monkey_patch_all():
     
     logger.info("All file operation patches applied successfully")
     
-        # Patch subprocess.run
-        import subprocess
-        original_run = subprocess.run
-        subprocess_wrapper = SubprocessWrapper(token_manager)
+    # Patch subprocess.run
+    import subprocess
+    original_run = subprocess.run
+    subprocess_wrapper = SubprocessWrapper(token_manager)
+    
+    def wrapped_run(*args, **kwargs):
+        return subprocess_wrapper.run(*args, **kwargs)
+    
+    subprocess.run = wrapped_run
+    logger.info("Patched subprocess.run")
+    
+    # Add a method to get the next chunk from bash output
+    def cat_more(cmd_hash):
+        """Get the next chunk of output for a command."""
+        return subprocess_wrapper.get_next_chunk(cmd_hash)
+    
+    # Make cat_more available globally
+    import builtins
+    builtins.cat_more = cat_more
+    
+    # Patch bash execution for BashTool
+    try:
+        from computer_use_demo.tools.bash import BashTool20250124
         
-        def wrapped_run(*args, **kwargs):
-            return subprocess_wrapper.run(*args, **kwargs)
+        # Save original method
+        original_bash_execute = BashTool20250124._execute
         
-        subprocess.run = wrapped_run
-        logger.info("Patched subprocess.run")
+        # Define replacement method
+        def safe_bash_execute(self, *args, **kwargs):
+            # Use the original method but capture the hash of the command
+            result = original_bash_execute(self, *args, **kwargs)
+            
+            # If the output is large and likely chunked, add the hash reference
+            if "Output truncated due to size" in result.output:
+                import hashlib
+                cmd_hash = hashlib.md5(str(args[0]).encode()).hexdigest()
+                result.output += f"\n\nUse cat_more('{cmd_hash}') to see the next chunk."
+            
+            return result
         
-        # Add a method to get the next chunk from bash output
-        def cat_more(cmd_hash):
-            """Get the next chunk of output for a command."""
-            return subprocess_wrapper.get_next_chunk(cmd_hash)
-        
-        # Make cat_more available globally
-        import builtins
-        builtins.cat_more = cat_more
-        
-        # Patch bash execution for BashTool
+        # Patch the method
+        BashTool20250124._execute = safe_bash_execute
+        logger.info("Patched BashTool20250124._execute")
+    except ImportError:
+        logger.warning("Could not patch BashTool20250124._execute - module not found")
+    
+    # Add better handling for binary file operations
+    original_path_read_bytes = Path.read_bytes
+    
+    def path_read_bytes_wrapper(path_obj):
+        """
+        Wrapper for Path.read_bytes that applies basic token tracking.
+        For binary data, we estimate 1 token per 4 bytes as a rough approximation.
+        """
         try:
-            from computer_use_demo.tools.bash import BashTool20250124
+            # Get file size to estimate binary size impact
+            file_size = path_obj.stat().st_size
             
-            # Save original method
-            original_bash_execute = BashTool20250124._execute
+            # Very rough token estimate for binary data
+            estimated_tokens = file_size // 4
             
-            # Define replacement method
-            def safe_bash_execute(self, *args, **kwargs):
-                # Use the original method but capture the hash of the command
-                result = original_bash_execute(self, *args, **kwargs)
-                
-                # If the output is large and likely chunked, add the hash reference
-                if "Output truncated due to size" in result.output:
-                    import hashlib
-                    cmd_hash = hashlib.md5(str(args[0]).encode()).hexdigest()
-                    result.output += f"\n\nUse cat_more('{cmd_hash}') to see the next chunk."
-                
-                return result
+            # Only apply delay for larger files
+            if estimated_tokens > 1000:  # Arbitrary threshold for binary data
+                token_manager.delay_if_needed(estimated_tokens // 2)  # Using half estimate for binary
+                logger.info(f"Reading binary file {path_obj} (~{estimated_tokens} token equivalent)")
             
-            # Patch the method
-            BashTool20250124._execute = safe_bash_execute
-            logger.info("Patched BashTool20250124._execute")
-        except ImportError:
-            logger.warning("Could not patch BashTool20250124._execute - module not found")
-        
-        # Add better handling for binary file operations
-        original_path_read_bytes = Path.read_bytes
-        
-        def path_read_bytes_wrapper(path_obj):
-            """
-            Wrapper for Path.read_bytes that applies basic token tracking.
-            For binary data, we estimate 1 token per 4 bytes as a rough approximation.
-            """
-            try:
-                # Get file size to estimate binary size impact
-                file_size = path_obj.stat().st_size
-                
-                # Very rough token estimate for binary data
-                estimated_tokens = file_size // 4
-                
-                # Only apply delay for larger files
-                if estimated_tokens > 1000:  # Arbitrary threshold for binary data
-                    token_manager.delay_if_needed(estimated_tokens // 2)  # Using half estimate for binary
-                    logger.info(f"Reading binary file {path_obj} (~{estimated_tokens} token equivalent)")
-                
-                # Call original method
-                return original_path_read_bytes(path_obj)
-            except Exception as e:
-                logger.error(f"Error in read_bytes wrapper for {path_obj}: {e}")
-                return original_path_read_bytes(path_obj)
-        
-        Path.read_bytes = path_read_bytes_wrapper
-        logger.info("Enhanced patch for Path.read_bytes")
+            # Call original method
+            return original_path_read_bytes(path_obj)
+        except Exception as e:
+            logger.error(f"Error in read_bytes wrapper for {path_obj}: {e}")
+            return original_path_read_bytes(path_obj)
+    
+    Path.read_bytes = path_read_bytes_wrapper
+    logger.info("Enhanced patch for Path.read_bytes")
 
 # Initialize patches
 monkey_patch_all()
