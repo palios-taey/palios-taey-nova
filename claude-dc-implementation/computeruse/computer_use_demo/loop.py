@@ -106,8 +106,18 @@ async def sampling_loop(
         image_truncation_threshold = only_n_most_recent_images or 0
         if provider == APIProvider.ANTHROPIC:
             client = Anthropic(api_key=api_key)
-            # Enable streaming for large responses
-            client = enable_streaming_for_large_requests(client)
+            
+            # Enable streaming for large responses - simple direct approach
+            original_create = client.beta.messages.create
+            def streaming_create(*args, **kwargs):
+                max_tokens = kwargs.get('max_tokens', 4096)
+                if max_tokens > 20000:
+                    print(f"Enabling streaming for {max_tokens} tokens")
+                    kwargs['stream'] = True
+                return original_create(*args, **kwargs)
+            client.beta.messages.create = streaming_create
+            
+            # Continue with existing code
             enable_prompt_caching = True
         elif provider == APIProvider.VERTEX:
             client = AnthropicVertex()
