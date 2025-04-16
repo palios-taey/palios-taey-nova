@@ -11,6 +11,7 @@ import threading
 import queue
 from datetime import datetime
 from computer_use_demo.token_manager import token_manager
+import subprocess as _subprocess_original
 
 # Configure logging
 logging.basicConfig(
@@ -28,11 +29,16 @@ logger = logging.getLogger('safe_file_operations')
 original_open = builtins.open
 # Original Path.read_text method
 original_path_read_text = Path.read_text
+# Store the original subprocess.run
+_original_subprocess_run = _subprocess_original.run
 
 # Constants
 MAX_TOKENS_PER_CHUNK = 10000  # Maximum tokens per chunk
 MAX_RETRIES = 3  # Maximum retry attempts for file operations
 RETRY_DELAY = 2  # Base delay for retries (in seconds)
+# Create a global output cache
+_output_cache = {}
+CHUNK_SIZE = 10000
 
 class OperationQueue:
     """Queue for file operations to manage token throughput."""
@@ -557,6 +563,124 @@ class ToolInterceptor:
 
 # Create singleton instance
 interceptor = ToolInterceptor()
+
+def safe_subprocess_run(cmd, *args, **kwargs):
+    """
+    A safe wrapper for subprocess.run that respects token limits.
+    Automatically chunks large outputs.
+    """
+    try:
+        # Use the original function
+        result = _original_subprocess_run(cmd, *args, **kwargs)
+        
+        # If there's stdout/stderr content, estimate tokens and apply delays
+        if hasattr(result, 'stdout') and result.stdout:
+            if isinstance(result.stdout, bytes):
+                # Try to decode bytes to get estimated token count
+                try:
+                    stdout_str = result.stdout.decode('utf-8')
+                    stdout_tokens = token_manager.estimate_tokens(stdout_str)
+                    if stdout_tokens > CHUNK_SIZE:
+                        # Store in cache for potential chunking
+                        import hashlib
+                        cmd_hash = hashlib.md5(str(cmd).encode()).hexdigest()
+                        chunks = _chunk_text(stdout_str)
+                        _output_cache[cmd_hash] = {
+                            'content': stdout_str,
+                            'chunks': chunks,
+                            'current_chunk': 0
+                        }
+                        # Replace stdout with first chunk and notification
+                        first_chunk = chunks[0]
+                        warning = f"\n\n[Output truncated due to size. {len(chunks)} chunks total. Use 'cat_more({cmd_hash})' to see more.]"
+                        result.stdout = (first_chunk + warning).encode('utf-8')
+                    else:
+                        # Apply delay based on token usage
+                        token_manager.delay_if_needed(stdout_tokens)
+                except UnicodeDecodeError:
+                    # If we can't decode, it's binary data - let it pass through
+                    pass
+        
+        return result
+    except Exception as e:
+        logging.error(f"Error in safe_subprocess_run: {e}")
+        # Fall back to the original subprocess.run
+        return _original_subprocess_run(cmd, *args, **kwargs)
+
+def _chunk_text(text):
+    """Split large text into chunks based on token count."""
+    chunks = []
+    lines = text.splitlines(True)
+    current_chunk = []
+    current_tokens = 0
+    
+    for line in lines:
+        line_tokens = token_manager.estimate_tokens(line)
+        if current_tokens + line_tokens > CHUNK_SIZE:
+            chunks.append(''.join(current_chunk))
+            current_chunk = [line]
+            current_tokens = line_tokens
+        else:
+            current_chunk.append(line)
+            current_tokens += line_tokens
+    
+    if current_chunk:
+        chunks.append(''.join(current_chunk))
+    
+    return chunks
+
+def cat_more(cmd_hash):
+    """Get the next chunk of output for a previously chunked command."""
+    if cmd_hash not in _output_cache:
+        return "No cached output found for this command."
+    
+    cache_entry = _output_cache[cmd_hash]
+    current_index = cache_entry['current_chunk']
+    
+    if current_index >= len(cache_entry['chunks']):
+        return "End of output reached."
+    
+    chunk = cache_entry['chunks'][current_index]
+    cache_entry['current_chunk'] = current_index + 1
+    
+    # Add status info
+    chunk_info = f"[Chunk {current_index + 1}/{len(cache_entry['chunks'])}]"
+    if current_index + 1 < len(cache_entry['chunks']):
+        chunk_info += " Use 'cat_more' to see next chunk."
+    else:
+        chunk_info += " End of output."
+    
+    return f"{chunk_info}\n\n{chunk}"
+
+def patch_streamlit():
+    """
+    Apply specific patches to streamlit.py to make it use our safe functions.
+    This must be called BEFORE streamlit is imported.
+    """
+    import sys
+    from types import ModuleType
+    
+    # Create a fake subprocess module that redirects to our safe functions
+    class SafeSubprocessModule(ModuleType):
+        def __init__(self):
+            super().__init__("subprocess")
+            # Copy all attributes from the original subprocess
+            import subprocess as orig_subprocess
+            for attr in dir(orig_subprocess):
+                if not attr.startswith('__'):
+                    setattr(self, attr, getattr(orig_subprocess, attr))
+            
+            # Override the run function
+            self.run = safe_subprocess_run
+    
+    # Replace the subprocess module in sys.modules
+    sys.modules['subprocess'] = SafeSubprocessModule()
+    
+    # Make the cat_more function available globally
+    import builtins
+    builtins.cat_more = cat_more
+    
+    logger.info("Applied targeted patch to subprocess for streamlit")
 
 def safe_read_file(path, encoding='utf-8', errors=None, retry_count=0):
     """
