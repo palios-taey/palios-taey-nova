@@ -33,7 +33,7 @@ class AdaptiveAnthropicClient:
         Args:
             api_key: Anthropic API key
             base_client: Optional pre-configured Anthropic client
-            streaming_threshold: Max token count threshold above which to use streaming
+            streaming_threshold: Max token count above which to use streaming
         """
         self.api_key = api_key
         self.client = base_client or Anthropic(api_key=api_key)
