@@ -29,15 +29,15 @@ from anthropic.types.beta import (
     BetaToolUseBlockParam,
 )
 
-from .tools import (
+from computer_use_demo.tools import (
     TOOL_GROUPS_BY_VERSION,
     ToolCollection,
     ToolResult,
     ToolVersion,
 )
-from .token_manager import token_manager
-from .adaptive_client import create_adaptive_client
-from .safe_file_operations import safe_cat, safe_read_file
+from computer_use_demo.token_manager import token_manager
+from computer_use_demo.adaptive_client import create_adaptive_client
+from computer_use_demo.safe_file_operations import safe_cat, safe_read_file
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
 

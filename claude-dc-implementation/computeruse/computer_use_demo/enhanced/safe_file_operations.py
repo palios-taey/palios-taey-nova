@@ -10,8 +10,7 @@ from typing import Callable, List, Optional, Dict, Any
 import threading
 import queue
 from datetime import datetime
-
-from .token_manager import token_manager
+from computer_use_demo.token_manager import token_manager
 
 # Configure logging
 logging.basicConfig(
