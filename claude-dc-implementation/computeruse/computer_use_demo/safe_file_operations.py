@@ -749,16 +749,16 @@ def monkey_patch_all():
         # Import modules needed for patching
         import builtins
         from pathlib import Path
-        import subprocess
+        import subprocess as _subprocess_original
         
         # Store the original subprocess.run BEFORE any patching
-        original_run = subprocess.run
+        _original_subprocess_run = _subprocess_original.run
         
         # Patch builtins.open
         builtins.open = interceptor.intercept_open
         logger.info("Patched builtins.open")
         
-        # Patch Path.read_text - create a wrapper that properly calls the instance method
+        # Patch Path.read_text
         original_path_read_text = Path.read_text
         
         def path_read_text_wrapper(path_obj, encoding='utf-8', errors=None):
@@ -796,19 +796,19 @@ def monkey_patch_all():
         
         logger.info("All file operation patches applied successfully")
         
-        # Create a new subprocess wrapper with the original run function
-        subprocess_wrapper = SubprocessWrapper(token_manager, original_run)
+        # Create a subprocess wrapper with the original run function
+        subprocess_wrapper = SubprocessWrapper(token_manager, _original_subprocess_run)
         
-        # Now define the wrapped run function
+        # Define a wrapped run function that uses the wrapper
         def wrapped_run(*args, **kwargs):
             try:
                 return subprocess_wrapper.run(*args, **kwargs)
             except Exception as e:
-                logger.error(f"Error in wrapped_run, falling back to original: {e}")
-                return original_run(*args, **kwargs)
+                logger.error(f"Error in wrapped_run: {e}")
+                return _original_subprocess_run(*args, **kwargs)
         
         # Patch subprocess.run
-        subprocess.run = wrapped_run
+        _subprocess_original.run = wrapped_run
         logger.info("Patched subprocess.run")
         
         # Add a method to get the next chunk from bash output
@@ -854,6 +854,7 @@ def monkey_patch_all():
         logger.error(f"Error in monkey_patch_all: {e}")
         import traceback
         logger.error(traceback.format_exc())
-        # Don't re-raise - let the program continue even if patching fails
+    
+
 # Initialize patches
 monkey_patch_all()
