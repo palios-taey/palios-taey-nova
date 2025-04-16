@@ -136,6 +136,95 @@ class OperationQueue:
 # Queue instance
 operation_queue = OperationQueue()
 
+class SubprocessWrapper:
+    """Wrapper for subprocess to manage token usage from command outputs."""
+    
+    def __init__(self, token_manager):
+        self.token_manager = token_manager
+        self.output_cache = {}
+        self.CHUNK_SIZE = 10000  # Token chunk size for large outputs
+    
+    def run(self, cmd, *args, **kwargs):
+        """Intercept subprocess.run to manage token usage."""
+        import subprocess
+        
+        original_run = subprocess.run
+        result = original_run(cmd, *args, **kwargs)
+        
+        # If there's stdout/stderr content, estimate tokens and apply delays
+        if hasattr(result, 'stdout') and result.stdout:
+            if isinstance(result.stdout, bytes):
+                # Try to decode bytes to get estimated token count
+                try:
+                    stdout_str = result.stdout.decode('utf-8')
+                    stdout_tokens = self.token_manager.estimate_tokens(stdout_str)
+                    if stdout_tokens > self.CHUNK_SIZE:
+                        # Store in cache for potential chunking
+                        import hashlib
+                        cmd_hash = hashlib.md5(str(cmd).encode()).hexdigest()
+                        self.output_cache[cmd_hash] = {
+                            'content': stdout_str,
+                            'chunks': self._chunk_text(stdout_str),
+                            'current_chunk': 0
+                        }
+                        # Replace stdout with first chunk and notification
+                        first_chunk = self.output_cache[cmd_hash]['chunks'][0]
+                        warning = f"\n\n[Output truncated due to size. {len(self.output_cache[cmd_hash]['chunks'])} chunks total. Use 'cat_more' to see more.]"
+                        result.stdout = (first_chunk + warning).encode('utf-8')
+                    else:
+                        # Apply delay based on token usage
+                        self.token_manager.delay_if_needed(stdout_tokens)
+                except UnicodeDecodeError:
+                    # If we can't decode, it's binary data - let it pass through
+                    pass
+        
+        return result
+    
+    def _chunk_text(self, text):
+        """Split large text into chunks based on token count."""
+        chunks = []
+        lines = text.splitlines(True)
+        current_chunk = []
+        current_tokens = 0
+        
+        for line in lines:
+            line_tokens = self.token_manager.estimate_tokens(line)
+            if current_tokens + line_tokens > self.CHUNK_SIZE:
+                chunks.append(''.join(current_chunk))
+                current_chunk = [line]
+                current_tokens = line_tokens
+            else:
+                current_chunk.append(line)
+                current_tokens += line_tokens
+        
+        if current_chunk:
+            chunks.append(''.join(current_chunk))
+        
+        return chunks
+    
+    def get_next_chunk(self, cmd_hash):
+        """Get the next chunk of output for a previously chunked command."""
+        if cmd_hash not in self.output_cache:
+            return "No cached output found for this command."
+        
+        cache_entry = self.output_cache[cmd_hash]
+        current_index = cache_entry['current_chunk']
+        
+        if current_index >= len(cache_entry['chunks']):
+            return "End of output reached."
+        
+        chunk = cache_entry['chunks'][current_index]
+        cache_entry['current_chunk'] = current_index + 1
+        
+        # Add status info
+        chunk_info = f"[Chunk {current_index + 1}/{len(cache_entry['chunks'])}]"
+        if current_index + 1 < len(cache_entry['chunks']):
+            chunk_info += " Use 'cat_more' to see next chunk."
+        else:
+            chunk_info += " End of output."
+        
+        return f"{chunk_info}\n\n{chunk}"
+
 class ToolInterceptor:
     """Intercepts file operations and ensures they respect token limits."""
     
@@ -564,6 +653,81 @@ def monkey_patch_all():
         logger.warning("Could not patch EditTool20250124.read_file - module not found")
     
     logger.info("All file operation patches applied successfully")
+    
+        # Patch subprocess.run
+        import subprocess
+        original_run = subprocess.run
+        subprocess_wrapper = SubprocessWrapper(token_manager)
+        
+        def wrapped_run(*args, **kwargs):
+            return subprocess_wrapper.run(*args, **kwargs)
+        
+        subprocess.run = wrapped_run
+        logger.info("Patched subprocess.run")
+        
+        # Add a method to get the next chunk from bash output
+        def cat_more(cmd_hash):
+            """Get the next chunk of output for a command."""
+            return subprocess_wrapper.get_next_chunk(cmd_hash)
+        
+        # Make cat_more available globally
+        import builtins
+        builtins.cat_more = cat_more
+        
+        # Patch bash execution for BashTool
+        try:
+            from computer_use_demo.tools.bash import BashTool20250124
+            
+            # Save original method
+            original_bash_execute = BashTool20250124._execute
+            
+            # Define replacement method
+            def safe_bash_execute(self, *args, **kwargs):
+                # Use the original method but capture the hash of the command
+                result = original_bash_execute(self, *args, **kwargs)
+                
+                # If the output is large and likely chunked, add the hash reference
+                if "Output truncated due to size" in result.output:
+                    import hashlib
+                    cmd_hash = hashlib.md5(str(args[0]).encode()).hexdigest()
+                    result.output += f"\n\nUse cat_more('{cmd_hash}') to see the next chunk."
+                
+                return result
+            
+            # Patch the method
+            BashTool20250124._execute = safe_bash_execute
+            logger.info("Patched BashTool20250124._execute")
+        except ImportError:
+            logger.warning("Could not patch BashTool20250124._execute - module not found")
+        
+        # Add better handling for binary file operations
+        original_path_read_bytes = Path.read_bytes
+        
+        def path_read_bytes_wrapper(path_obj):
+            """
+            Wrapper for Path.read_bytes that applies basic token tracking.
+            For binary data, we estimate 1 token per 4 bytes as a rough approximation.
+            """
+            try:
+                # Get file size to estimate binary size impact
+                file_size = path_obj.stat().st_size
+                
+                # Very rough token estimate for binary data
+                estimated_tokens = file_size // 4
+                
+                # Only apply delay for larger files
+                if estimated_tokens > 1000:  # Arbitrary threshold for binary data
+                    token_manager.delay_if_needed(estimated_tokens // 2)  # Using half estimate for binary
+                    logger.info(f"Reading binary file {path_obj} (~{estimated_tokens} token equivalent)")
+                
+                # Call original method
+                return original_path_read_bytes(path_obj)
+            except Exception as e:
+                logger.error(f"Error in read_bytes wrapper for {path_obj}: {e}")
+                return original_path_read_bytes(path_obj)
+        
+        Path.read_bytes = path_read_bytes_wrapper
+        logger.info("Enhanced patch for Path.read_bytes")
 
 # Initialize patches
 monkey_patch_all()
