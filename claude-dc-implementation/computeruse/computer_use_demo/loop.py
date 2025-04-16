@@ -160,7 +160,7 @@ async def sampling_loop(
                 extra_body=extra_body,
             )
             
-            ## If adaptive client returned a stream, process it
+            # If adaptive client returned a stream, process it
             if hasattr(response, '__iter__') and callable(response.__iter__):
                 response_content = []
                 for event in response:
@@ -177,7 +177,7 @@ async def sampling_loop(
                     "role": "assistant",
                     "type": "message",
                 }
-            
+
             # Handle rate limits from headers
             if hasattr(response, 'headers'):
                 token_manager.manage_request(response.headers, estimated_input_tokens)

@@ -3,8 +3,8 @@ Adaptive Anthropic client that automatically chooses streaming for large outputs
 """
 
 import logging
-from typing import Any, Dict, List, Optional, Union
 import time
+from typing import Optional, Dict, List, Any
 
 from anthropic import Anthropic
 
@@ -26,7 +26,7 @@ class AdaptiveAnthropicClient:
     streaming for requests with large max_tokens to prevent timeouts.
     """
     
-    def __init__(self, api_key: str, base_client=None, streaming_threshold: int = 21333):
+    def __init__(self, api_key: str, base_client=None, streaming_threshold: int = 20000):
         """
         Initialize the adaptive client.
         
@@ -101,32 +101,37 @@ class AdaptiveMessagesClient:
         try:
             for chunk in stream:
                 # Handle different chunk types
-                if chunk.type == "content_block_start":
-                    # Start a new content block
-                    current_block = {
-                        "type": chunk.content_block.type,
-                        "text": ""
-                    }
-                
-                elif chunk.type == "content_block_delta":
-                    # Add to the current content block
-                    if current_block is not None:
-                        current_block["text"] += chunk.delta.text
+                if hasattr(chunk, 'type'):
+                    if chunk.type == "content_block_start":
+                        # Start a new content block
+                        current_block = {
+                            "type": chunk.content_block.type,
+                            "text": ""
+                        }
                     
-                    # Also build the full completion text
-                    completion_text += chunk.delta.text
+                    elif chunk.type == "content_block_delta":
+                        # Add to the current content block
+                        if current_block is not None and hasattr(chunk, 'delta') and hasattr(chunk.delta, 'text'):
+                            current_block["text"] += chunk.delta.text
+                        
+                        # Also build the full completion text
+                        if hasattr(chunk, 'delta') and hasattr(chunk.delta, 'text'):
+                            completion_text += chunk.delta.text
+                    
+                    elif chunk.type == "content_block_stop":
+                        # Finalize the current block and add to list
+                        if current_block is not None:
+                            content_blocks.append(current_block)
+                            current_block = None
+                    
+                    elif chunk.type == "message_stop":
+                        # Message is complete
+                        pass
                 
-                elif chunk.type == "content_block_stop":
-                    # Finalize the current block and add to list
-                    if current_block is not None:
-                        content_blocks.append(current_block)
-                        current_block = None
-                
-                elif chunk.type == "message_stop":
-                    # Message is complete
-                    pass
-                
-                # Could handle other types like 'error' here if needed
+                # Some events might be structured differently
+                if hasattr(chunk, 'content_block'):
+                    if chunk.content_block and hasattr(chunk, 'delta'):
+                        content_blocks.append(chunk.content_block)
             
             # Calculate duration
             duration = time.time() - start_time
@@ -154,14 +159,7 @@ class AdaptiveMessagesClient:
             # Re-raise the exception
             raise
 
-    with_raw_response = None  # Will be set up after client is created
-
 def create_adaptive_client(api_key: Optional[str] = None, base_client=None):
     """Create and initialize the adaptive client."""
     client = AdaptiveAnthropicClient(api_key=api_key, base_client=base_client)
-    
-    # Set up with_raw_response attribute - not implemented in this basic version
-    # In a full implementation, this would handle raw response objects similarly
-    client.beta.messages.with_raw_response = None
-    
     return client
