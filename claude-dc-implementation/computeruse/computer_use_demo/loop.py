@@ -1,364 +1,119 @@
-"""
-Agentic sampling loop that calls the Anthropic API and local implementation of anthropic-defined computer use tools.
-"""
+import os
+import math
+from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 
-import platform
-from collections.abc import Callable
-from datetime import datetime
-from enum import StrEnum
-from typing import Any, cast
-from computer_use_demo.adaptive_client import create_adaptive_client
-import time
-from datetime import datetime, timezone
+# Initialize Anthropic client (expects ANTHROPIC_API_KEY in environment)
+api_key = os.environ.get("ANTHROPIC_API_KEY")
+if not api_key:
+    raise RuntimeError("Please set the ANTHROPIC_API_KEY environment variable.")
+anthropic = Anthropic(api_key=api_key)
 
-import httpx
-from anthropic import (
-    Anthropic,
-    AnthropicBedrock,
-    AnthropicVertex,
-    APIError,
-    APIResponseValidationError,
-    APIStatusError,
-)
-from anthropic.types.beta import (
-    BetaCacheControlEphemeralParam,
-    BetaContentBlockParam,
-    BetaImageBlockParam,
-    BetaMessage,
-    BetaMessageParam,
-    BetaTextBlock,
-    BetaTextBlockParam,
-    BetaToolResultBlockParam,
-    BetaToolUseBlockParam,
-)
+# Claude model to use (Claude 3 models support streaming, e.g., "claude-3-opus")
+MODEL_NAME = "claude-3-opus"
 
-from .tools import (
-    TOOL_GROUPS_BY_VERSION,
-    ToolCollection,
-    ToolResult,
-    ToolVersion,
-)
+# Token budget limits (Tier 2: ~5M input, 10M output per day).
+# Adjust SESSION_HOURS if the application runs fewer hours to proportionally reduce the cap.
+SESSION_HOURS = 24  # e.g., 24 for full-day, or 8 for work-day usage
+DAILY_INPUT_LIMIT = 5_000_000   # Tier 2 daily input tokens
+DAILY_OUTPUT_LIMIT = 10_000_000  # Tier 2 daily output tokens
+MAX_INPUT_TOKENS_SESSION = int(DAILY_INPUT_LIMIT * (SESSION_HOURS / 24))
+MAX_OUTPUT_TOKENS_SESSION = int(DAILY_OUTPUT_LIMIT * (SESSION_HOURS / 24))
 
-PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
+# Max tokens per single Claude completion response (to avoid overly long outputs in one go)
+MAX_TOKENS_TO_SAMPLE = 1000  # You can adjust this based on needed response length
 
+# Initialize running token counters for the session
+total_input_tokens = 0
+total_output_tokens = 0
 
-class APIProvider(StrEnum):
-    ANTHROPIC = "anthropic"
-    BEDROCK = "bedrock"
-    VERTEX = "vertex"
-
-
-# This system prompt is optimized for the Docker environment in this repository and
-# specific tool combinations enabled.
-# We encourage modifying this system prompt to ensure the model has context for the
-# environment it is running in, and to provide any additional information that may be
-# helpful for the task at hand.
-SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
-* You are utilising an Ubuntu virtual machine using {platform.machine()} architecture with internet access.
-* You can feel free to install Ubuntu applications with your bash tool. Use curl instead of wget.
-* To open firefox, please just click on the firefox icon.  Note, firefox-esr is what is installed on your system.
-* Using bash tool you can start GUI applications, but you need to set export DISPLAY=:1 and use a subshell. For example "(DISPLAY=:1 xterm &)". GUI apps run with bash tool will appear within your desktop environment, but they may take some time to appear. Take a screenshot to confirm it did.
-* When using your bash tool with commands that are expected to output very large quantities of text, redirect into a tmp file and use str_replace_editor or `grep -n -B <lines before> -A <lines after> <query> <filename>` to confirm output.
-* When viewing a page it can be helpful to zoom out so that you can see everything on the page.  Either that, or make sure you scroll down to see everything before deciding something isn't available.
-* When using your computer function calls, they take a while to run and send back to you.  Where possible/feasible, try to chain multiple of these calls all into one function calls request.
-* The current date is {datetime.today().strftime('%A, %B %-d, %Y')}.
-</SYSTEM_CAPABILITY>
-
-<IMPORTANT>
-* When using Firefox, if a startup wizard appears, IGNORE IT.  Do not even click "skip this step".  Instead, click on the address bar where it says "Search or enter address", and enter the appropriate search term or URL there.
-* If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
-</IMPORTANT>"""
-
-
-async def sampling_loop(
-    *,
-    model: str,
-    provider: APIProvider,
-    system_prompt_suffix: str,
-    messages: list[BetaMessageParam],
-    output_callback: Callable[[BetaContentBlockParam], None],
-    tool_output_callback: Callable[[ToolResult, str], None],
-    api_response_callback: Callable[
-        [httpx.Request, httpx.Response | object | None, Exception | None], None
-    ],
-    api_key: str,
-    only_n_most_recent_images: int | None = None,
-    max_tokens: int = 4096,
-    tool_version: ToolVersion,
-    thinking_budget: int | None = None,
-    token_efficient_tools_beta: bool = False,
-):
+def estimate_token_count(text: str) -> int:
     """
-    Agentic sampling loop for the assistant/tool interaction of computer use.
+    Roughly estimate the number of tokens in a given text.
+    This uses a simple approximation: 1 token ≈ 4 characters or ≈1 word.
+    For a more accurate count, integrate with a tokenization method or Anthropic's token count API.
     """
-    tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
-    tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
-    system = BetaTextBlockParam(
-        type="text",
-        text=f"{SYSTEM_PROMPT}{' ' + system_prompt_suffix if system_prompt_suffix else ''}",
-    )
+    # Using a simple word count as a proxy for token count
+    # (Note: This is a coarse estimate; for exact counts, use Anthropic's counting API or a tokenizer)
+    return max(1, math.ceil(len(text) / 4))
 
-    while True:
-        enable_prompt_caching = False
-        betas = [tool_group.beta_flag] if tool_group.beta_flag else []
-        if token_efficient_tools_beta:
-            betas.append("token-efficient-tools-2025-02-19")
-        image_truncation_threshold = only_n_most_recent_images or 0
-        if provider == APIProvider.ANTHROPIC:
-            client = Anthropic(api_key=api_key)
-            
-            # Enable streaming for large responses - simple direct approach
-            original_create = client.beta.messages.create
-            def streaming_create(*args, **kwargs):
-                max_tokens = kwargs.get('max_tokens', 4096)
-                if max_tokens > 20000:
-                    print(f"Enabling streaming for {max_tokens} tokens")
-                    kwargs['stream'] = True
-                return original_create(*args, **kwargs)
-            client.beta.messages.create = streaming_create
-            
-            # Continue with existing code
-            enable_prompt_caching = True
-        elif provider == APIProvider.VERTEX:
-            client = AnthropicVertex()
-        elif provider == APIProvider.BEDROCK:
-            client = AnthropicBedrock()
-
-        if enable_prompt_caching:
-            betas.append(PROMPT_CACHING_BETA_FLAG)
-            _inject_prompt_caching(messages)
-            # Because cached reads are 10% of the price, we don't think it's
-            # ever sensible to break the cache by truncating images
-            only_n_most_recent_images = 0
-            # Use type ignore to bypass TypedDict check until SDK types are updated
-            system["cache_control"] = {"type": "ephemeral"}  # type: ignore
-
-        if only_n_most_recent_images:
-            _maybe_filter_to_n_most_recent_images(
-                messages,
-                only_n_most_recent_images,
-                min_removal_threshold=image_truncation_threshold,
-            )
-        extra_body = {}
-        if thinking_budget:
-            # Ensure we only send the required fields for thinking
-            extra_body = {
-                "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
-            }
-
-        # Add simple token management before the API call:
-        estimated_tokens = sum(len(str(m)) // 4 for m in messages) + len(system["text"]) // 4
-        current_time = time.time()
-
-        # Add a simple delay for large requests to avoid rate limits
-        if estimated_tokens > 30000:  # 75% of the 40K limit
-            print(f"Large request with {estimated_tokens} tokens, adding delay...")
-            time.sleep(60)  # Simple delay for large requests    
-
-        # Call the API
-        # we use raw_response to provide debug information to streamlit. Your
-        # implementation may be able call the SDK directly with:
-        # `response = client.messages.create(...)` instead.
-        try:
-            raw_response = client.beta.messages.with_raw_response.create(
-                max_tokens=max_tokens,
-                messages=messages,
-                model=model,
-                system=[system],
-                tools=tool_collection.to_params(),
-                betas=betas,
-                extra_body=extra_body,
-            )
-        except (APIStatusError, APIResponseValidationError) as e:
-            api_response_callback(e.request, e.response, e)
-            return messages
-        except APIError as e:
-            api_response_callback(e.request, e.body, e)
-            return messages
-        if hasattr(raw_response, 'http_response') and hasattr(raw_response.http_response, 'headers'):
-            token_manager.manage_request(raw_response.http_response.headers, estimated_input_tokens)
-
-        api_response_callback(
-            raw_response.http_response.request, raw_response.http_response, None
-        )
-
-        response = raw_response.parse()
-
-        response_params = _response_to_params(response)
-        messages.append(
-            {
-                "role": "assistant",
-                "content": response_params,
-            }
-        )
-
-        tool_result_content: list[BetaToolResultBlockParam] = []
-        for content_block in response_params:
-            output_callback(content_block)
-            if content_block["type"] == "tool_use":
-                result = await tool_collection.run(
-                    name=content_block["name"],
-                    tool_input=cast(dict[str, Any], content_block["input"]),
-                )
-                tool_result_content.append(
-                    _make_api_tool_result(result, content_block["id"])
-                )
-                tool_output_callback(result, content_block["id"])
-
-        if not tool_result_content:
-            return messages
-
-        messages.append({"content": tool_result_content, "role": "user"})
-
-
-def _maybe_filter_to_n_most_recent_images(
-    messages: list[BetaMessageParam],
-    images_to_keep: int,
-    min_removal_threshold: int,
-):
+def truncate_prompt(prompt: str, max_tokens: int) -> str:
     """
-    With the assumption that images are screenshots that are of diminishing value as
-    the conversation progresses, remove all but the final `images_to_keep` tool_result
-    images in place, with a chunk of min_removal_threshold to reduce the amount we
-    break the implicit prompt cache.
+    Truncate the prompt to ensure it does not exceed max_tokens (approximate).
+    We’ll cut from the beginning if it's too long, keeping the end part (likely most relevant for user query).
     """
-    if images_to_keep is None:
-        return messages
+    # Approximate current token count
+    tokens = estimate_token_count(prompt)
+    if tokens <= max_tokens:
+        return prompt  # no truncation needed
+    # If too long, truncate from the front: remove excess tokens worth of characters
+    # This is a simplistic approach; a smarter approach could remove oldest conversation history if multi-turn.
+    excess = tokens - max_tokens
+    # Estimate characters to remove (4 chars per token as approximation)
+    chars_to_remove = excess * 4
+    return prompt[chars_to_remove:]
 
-    tool_result_blocks = cast(
-        list[BetaToolResultBlockParam],
-        [
-            item
-            for message in messages
-            for item in (
-                message["content"] if isinstance(message["content"], list) else []
-            )
-            if isinstance(item, dict) and item.get("type") == "tool_result"
-        ],
-    )
-
-    total_images = sum(
-        1
-        for tool_result in tool_result_blocks
-        for content in tool_result.get("content", [])
-        if isinstance(content, dict) and content.get("type") == "image"
-    )
-
-    images_to_remove = total_images - images_to_keep
-    # for better cache behavior, we want to remove in chunks
-    images_to_remove -= images_to_remove % min_removal_threshold
-
-    for tool_result in tool_result_blocks:
-        if isinstance(tool_result.get("content"), list):
-            new_content = []
-            for content in tool_result.get("content", []):
-                if isinstance(content, dict) and content.get("type") == "image":
-                    if images_to_remove > 0:
-                        images_to_remove -= 1
-                        continue
-                new_content.append(content)
-            tool_result["content"] = new_content
-
-# Define a simple utility function inside loop.py
-def enable_streaming_for_large_requests(client, threshold=20000):
-    """Enable streaming for requests exceeding the token threshold."""
-    original_create = client.beta.messages.create
-    
-    def adaptive_create(*args, **kwargs):
-        max_tokens = kwargs.get('max_tokens', 4096)
-        if max_tokens > threshold and 'stream' not in kwargs:
-            print(f"Enabling streaming for request with {max_tokens} tokens")
-            kwargs['stream'] = True
-        return original_create(*args, **kwargs)
-    
-    client.beta.messages.create = adaptive_create
-    return client
-
-def _response_to_params(
-    response: BetaMessage,
-) -> list[BetaContentBlockParam]:
-    res: list[BetaContentBlockParam] = []
-    for block in response.content:
-        if isinstance(block, BetaTextBlock):
-            if block.text:
-                res.append(BetaTextBlockParam(type="text", text=block.text))
-            elif getattr(block, "type", None) == "thinking":
-                # Handle thinking blocks - include signature field
-                thinking_block = {
-                    "type": "thinking",
-                    "thinking": getattr(block, "thinking", None),
-                }
-                if hasattr(block, "signature"):
-                    thinking_block["signature"] = getattr(block, "signature", None)
-                res.append(cast(BetaContentBlockParam, thinking_block))
-        else:
-            # Handle tool use blocks normally
-            res.append(cast(BetaToolUseBlockParam, block.model_dump()))
-    return res
-
-
-def _inject_prompt_caching(
-    messages: list[BetaMessageParam],
-):
-    """
-    Set cache breakpoints for the 3 most recent turns
-    one cache breakpoint is left for tools/system prompt, to be shared across sessions
-    """
-
-    breakpoints_remaining = 3
-    for message in reversed(messages):
-        if message["role"] == "user" and isinstance(
-            content := message["content"], list
-        ):
-            if breakpoints_remaining:
-                breakpoints_remaining -= 1
-                # Use type ignore to bypass TypedDict check until SDK types are updated
-                content[-1]["cache_control"] = BetaCacheControlEphemeralParam(  # type: ignore
-                    {"type": "ephemeral"}
-                )
-            else:
-                content[-1].pop("cache_control", None)
-                # we'll only every have one extra turn per loop
+if __name__ == "__main__":
+    print("Starting Claude DC console. Type your prompt and press Enter. Type 'exit' or Ctrl+C to quit.")
+    try:
+        while True:
+            user_input = input("\nUser: ")
+            if user_input.strip().lower() in {"exit", "quit"}:
+                print("Exiting Claude DC console. Goodbye!")
                 break
 
+            # Estimate and manage token usage for the input
+            user_tokens = estimate_token_count(user_input)
+            if user_tokens + total_input_tokens > MAX_INPUT_TOKENS_SESSION:
+                # If this input would exceed the session's input token cap, warn and possibly truncate or skip
+                print("[Warning] Input prompt is too large or session input token limit reached. Truncating prompt...")
+                # Truncate user_input to fit into remaining token budget
+                remaining_tokens = max(0, MAX_INPUT_TOKENS_SESSION - total_input_tokens)
+                user_input = truncate_prompt(user_input, remaining_tokens)
+                user_tokens = estimate_token_count(user_input)
+                if user_tokens == 0:
+                    print("Unable to process input: token limit exceeded for this session.")
+                    break  # break out if we cannot process any tokens
 
-def _make_api_tool_result(
-    result: ToolResult, tool_use_id: str
-) -> BetaToolResultBlockParam:
-    """Convert an agent ToolResult to an API ToolResultBlockParam."""
-    tool_result_content: list[BetaTextBlockParam | BetaImageBlockParam] | str = []
-    is_error = False
-    if result.error:
-        is_error = True
-        tool_result_content = _maybe_prepend_system_tool_result(result, result.error)
-    else:
-        if result.output:
-            tool_result_content.append(
-                {
-                    "type": "text",
-                    "text": _maybe_prepend_system_tool_result(result, result.output),
-                }
-            )
-        if result.base64_image:
-            tool_result_content.append(
-                {
-                    "type": "image",
-                    "source": {
-                        "type": "base64",
-                        "media_type": "image/png",
-                        "data": result.base64_image,
-                    },
-                }
-            )
-    return {
-        "type": "tool_result",
-        "content": tool_result_content,
-        "tool_use_id": tool_use_id,
-        "is_error": is_error,
-    }
+            # Update total input token count
+            total_input_tokens += user_tokens
 
+            # Formulate Claude prompt with Anthropic format
+            prompt = f"{HUMAN_PROMPT} {user_input}{AI_PROMPT}"
+            # (The HUMAN_PROMPT and AI_PROMPT include necessary tokens like "\n\nHuman:" and "\n\nAssistant:")
 
-def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
-    if result.system:
-        result_text = f"<system>{result.system}</system>\n{result_text}"
-    return result_text
+            # Initiate streaming completion from Claude
+            try:
+                response = anthropic.completions.create(
+                    model=MODEL_NAME,
+                    prompt=prompt,
+                    max_tokens_to_sample=MAX_TOKENS_TO_SAMPLE,
+                    stream=True,
+                    stop_sequences=[HUMAN_PROMPT]  # stop when a new human prompt token would appear
+                    # You can also adjust temperature or other params here if needed, e.g., temperature=1.0
+                )
+            except Exception as e:
+                print(f"[Error] API call failed: {e}")
+                break  # Break out on API errors (in a real scenario, implement retries or handle specific errors)
+
+            # Stream and print Claude's response incrementally
+            print("Claude:", end=" ", flush=True)  # prefix for Claude's response
+            Claude_output_text = ""  # to accumulate Claude’s full response
+            for chunk in response:
+                # Each chunk is an object with the latest generated text (delta)
+                chunk_text = getattr(chunk, "completion", chunk)  # handle if chunk is plain text vs object
+                # Print the incremental text without newline (stay on same line)
+                print(chunk_text, end="", flush=True)
+                Claude_output_text += str(chunk_text)
+            print()  # end the line after Claude's response is complete
+
+            # Estimate tokens in Claude's output and update usage
+            output_tokens = estimate_token_count(Claude_output_text)
+            total_output_tokens += output_tokens
+
+            # Enforce output token cap for session
+            if total_output_tokens > MAX_OUTPUT_TOKENS_SESSION:
+                print("[Warning] Reached the session output token limit. Further responses may be cut off or disabled.")
+                # (In a real extension, you might stop the loop or reduce max_tokens_to_sample to avoid more usage)
+    except KeyboardInterrupt:
+        print("\nExiting Claude DC console. Goodbye!")
+
