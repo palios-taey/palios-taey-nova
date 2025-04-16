@@ -147,37 +147,47 @@ class SubprocessWrapper:
     
     def run(self, cmd, *args, **kwargs):
         """Intercept subprocess.run to manage token usage."""
-        # Use the stored original function instead of calling subprocess.run again
-        result = self.original_run(cmd, *args, **kwargs)
+        try:
+            # Use the stored original function instead of calling subprocess.run again
+            result = self.original_run(cmd, *args, **kwargs)
+            
+            # If there's stdout/stderr content, estimate tokens and apply delays
+            if hasattr(result, 'stdout') and result.stdout:
+                if isinstance(result.stdout, bytes):
+                    # Try to decode bytes to get estimated token count
+                    try:
+                        stdout_str = result.stdout.decode('utf-8')
+                        stdout_tokens = self.token_manager.estimate_tokens(stdout_str)
+                        if stdout_tokens > self.CHUNK_SIZE:
+                            # Store in cache for potential chunking
+                            import hashlib
+                            cmd_hash = hashlib.md5(str(cmd).encode()).hexdigest()
+                            self.output_cache[cmd_hash] = {
+                                'content': stdout_str,
+                                'chunks': self._chunk_text(stdout_str),
+                                'current_chunk': 0
+                            }
+                            # Replace stdout with first chunk and notification
+                            first_chunk = self.output_cache[cmd_hash]['chunks'][0]
+                            warning = f"\n\n[Output truncated due to size. {len(self.output_cache[cmd_hash]['chunks'])} chunks total. Use 'cat_more' to see more.]"
+                            result.stdout = (first_chunk + warning).encode('utf-8')
+                        else:
+                            # Apply delay based on token usage
+                            self.token_manager.delay_if_needed(stdout_tokens)
+                    except UnicodeDecodeError:
+                        # If we can't decode, it's binary data - let it pass through
+                        pass
+            
+            return result
         
-        # If there's stdout/stderr content, estimate tokens and apply delays
-        if hasattr(result, 'stdout') and result.stdout:
-            if isinstance(result.stdout, bytes):
-                # Try to decode bytes to get estimated token count
-                try:
-                    stdout_str = result.stdout.decode('utf-8')
-                    stdout_tokens = self.token_manager.estimate_tokens(stdout_str)
-                    if stdout_tokens > self.CHUNK_SIZE:
-                        # Store in cache for potential chunking
-                        import hashlib
-                        cmd_hash = hashlib.md5(str(cmd).encode()).hexdigest()
-                        self.output_cache[cmd_hash] = {
-                            'content': stdout_str,
-                            'chunks': self._chunk_text(stdout_str),
-                            'current_chunk': 0
-                        }
-                        # Replace stdout with first chunk and notification
-                        first_chunk = self.output_cache[cmd_hash]['chunks'][0]
-                        warning = f"\n\n[Output truncated due to size. {len(self.output_cache[cmd_hash]['chunks'])} chunks total. Use 'cat_more' to see more.]"
-                        result.stdout = (first_chunk + warning).encode('utf-8')
-                    else:
-                        # Apply delay based on token usage
-                        self.token_manager.delay_if_needed(stdout_tokens)
-                except UnicodeDecodeError:
-                    # If we can't decode, it's binary data - let it pass through
-                    pass
-        
-        return result
+        except Exception as e:
+            # Log the error and let the original call go through without wrapping
+            import logging
+            logging = logging.getLogger('safe_file_operations')
+            logging.error(f"Error in subprocess wrapper: {e}")
+            # Last resort - just call subprocess directly without any wrapping
+            import subprocess as sp
+            return sp.run(cmd, *args, **kwargs)
     
     def _chunk_text(self, text):
         """Split large text into chunks based on token count."""
@@ -611,86 +621,115 @@ def safe_cat(path):
 
 def monkey_patch_all():
     """Apply all monkey patches to intercept file operations."""
-    # Import modules needed for patching
-    import builtins
-    from pathlib import Path
-    import subprocess
-    
-    # Store the original subprocess.run BEFORE any patching
-    original_run = subprocess.run
-    
-    # Patch builtins.open
-    builtins.open = interceptor.intercept_open
-    logger.info("Patched builtins.open")
-    
-    # Patch Path.read_text - create a wrapper that properly calls the instance method
-    original_path_read_text = Path.read_text
-    
-    def path_read_text_wrapper(path_obj, encoding='utf-8', errors=None):
-        return interceptor.intercept_path_read_text(path_obj, encoding, errors)
-    
-    Path.read_text = path_read_text_wrapper
-    logger.info("Patched Path.read_text")
-    
-    # Patch Path.read_bytes
-    original_path_read_bytes = Path.read_bytes
-    
-    def path_read_bytes_wrapper(path_obj):
-        return interceptor.intercept_path_read_bytes(path_obj)
-    
-    Path.read_bytes = path_read_bytes_wrapper
-    logger.info("Patched Path.read_bytes")
-    
-    # Create the subprocess wrapper with the original run function
-    subprocess_wrapper = SubprocessWrapper(token_manager, original_run)
-    
-    # Now define the wrapped run function
-    def wrapped_run(*args, **kwargs):
-        return subprocess_wrapper.run(*args, **kwargs)
-    
-    # Patch subprocess.run
-    subprocess.run = wrapped_run
-    logger.info("Patched subprocess.run")
-    
-    # Add a method to get the next chunk from bash output
-    def cat_more(cmd_hash):
-        """Get the next chunk of output for a command."""
-        return subprocess_wrapper.get_next_chunk(cmd_hash)
-    
-    # Make cat_more available globally
-    builtins.cat_more = cat_more
-    
-    # Instead of trying to patch BashTool directly (which may have a different structure),
-    # we'll rely on the subprocess.run patch which will affect all tools that use subprocess
-    logger.info("Added cat_more function for command output continuation")
-    
-    # Add better handling for binary file operations
-    original_path_read_bytes = Path.read_bytes
-    
-    def path_read_bytes_wrapper(path_obj):
-        """
-        Wrapper for Path.read_bytes that applies basic token tracking.
-        For binary data, we estimate 1 token per 4 bytes as a rough approximation.
-        """
+    try:
+        # Import modules needed for patching
+        import builtins
+        from pathlib import Path
+        import subprocess
+        
+        # Store the original subprocess.run BEFORE any patching
+        original_run = subprocess.run
+        
+        # Patch builtins.open
+        builtins.open = interceptor.intercept_open
+        logger.info("Patched builtins.open")
+        
+        # Patch Path.read_text - create a wrapper that properly calls the instance method
+        original_path_read_text = Path.read_text
+        
+        def path_read_text_wrapper(path_obj, encoding='utf-8', errors=None):
+            return interceptor.intercept_path_read_text(path_obj, encoding, errors)
+        
+        Path.read_text = path_read_text_wrapper
+        logger.info("Patched Path.read_text")
+        
+        # Patch Path.read_bytes
+        original_path_read_bytes = Path.read_bytes
+        
+        def path_read_bytes_wrapper(path_obj):
+            return interceptor.intercept_path_read_bytes(path_obj)
+        
+        Path.read_bytes = path_read_bytes_wrapper
+        logger.info("Patched Path.read_bytes")
+        
+        # Patch other tools as needed
         try:
-            # Get file size to estimate binary size impact
-            file_size = path_obj.stat().st_size
+            from computer_use_demo.tools.edit import EditTool20250124
             
-            # Very rough token estimate for binary data
-            estimated_tokens = file_size // 4
+            # Save original method
+            original_read_file = EditTool20250124.read_file
             
-            # Only apply delay for larger files
-            if estimated_tokens > 1000:  # Arbitrary threshold for binary data
-                token_manager.delay_if_needed(estimated_tokens // 2)  # Using half estimate for binary
-                logger.info(f"Reading binary file {path_obj} (~{estimated_tokens} token equivalent)")
+            # Define replacement method that uses our interceptor
+            def safe_read_file_for_edit(self, path):
+                return interceptor.intercept_path_read_text(Path(path))
             
-            # Call original method
-            return original_path_read_bytes(path_obj)
-        except Exception as e:
-            logger.error(f"Error in read_bytes wrapper for {path_obj}: {e}")
-            return original_path_read_bytes(path_obj)
+            # Patch the method
+            EditTool20250124.interceptor = interceptor
+            EditTool20250124.read_file = safe_read_file_for_edit
+            logger.info("Patched EditTool20250124.read_file")
+        except ImportError:
+            logger.warning("Could not patch EditTool20250124.read_file - module not found")
+        
+        logger.info("All file operation patches applied successfully")
+        
+        # Create a new subprocess wrapper with the original run function
+        subprocess_wrapper = SubprocessWrapper(token_manager, original_run)
+        
+        # Now define the wrapped run function
+        def wrapped_run(*args, **kwargs):
+            try:
+                return subprocess_wrapper.run(*args, **kwargs)
+            except Exception as e:
+                logger.error(f"Error in wrapped_run, falling back to original: {e}")
+                return original_run(*args, **kwargs)
+        
+        # Patch subprocess.run
+        subprocess.run = wrapped_run
+        logger.info("Patched subprocess.run")
+        
+        # Add a method to get the next chunk from bash output
+        def cat_more(cmd_hash):
+            """Get the next chunk of output for a command."""
+            try:
+                return subprocess_wrapper.get_next_chunk(cmd_hash)
+            except Exception as e:
+                logger.error(f"Error in cat_more: {e}")
+                return f"Error retrieving next chunk: {e}"
+        
+        # Make cat_more available globally
+        builtins.cat_more = cat_more
+        
+        # Add better handling for binary file operations
+        def path_read_bytes_wrapper(path_obj):
+            """
+            Wrapper for Path.read_bytes that applies basic token tracking.
+            For binary data, we estimate 1 token per 4 bytes as a rough approximation.
+            """
+            try:
+                # Get file size to estimate binary size impact
+                file_size = path_obj.stat().st_size
+                
+                # Very rough token estimate for binary data
+                estimated_tokens = file_size // 4
+                
+                # Only apply delay for larger files
+                if estimated_tokens > 1000:  # Arbitrary threshold for binary data
+                    token_manager.delay_if_needed(estimated_tokens // 2)  # Using half estimate for binary
+                    logger.info(f"Reading binary file {path_obj} (~{estimated_tokens} token equivalent)")
+                
+                # Call original method
+                return original_path_read_bytes(path_obj)
+            except Exception as e:
+                logger.error(f"Error in read_bytes wrapper for {path_obj}: {e}")
+                return original_path_read_bytes(path_obj)
+        
+        Path.read_bytes = path_read_bytes_wrapper
+        logger.info("Enhanced patch for Path.read_bytes")
     
-    Path.read_bytes = path_read_bytes_wrapper
-    logger.info("Enhanced patch for Path.read_bytes")
+    except Exception as e:
+        logger.error(f"Error in monkey_patch_all: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        # Don't re-raise - let the program continue even if patching fails
 # Initialize patches
 monkey_patch_all()
