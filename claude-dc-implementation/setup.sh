@@ -22,8 +22,22 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 git config --global user.email "jesselarose@gmail.com"
 git config --global user.name "palios-taey"
 
+pkill -9 python
+pkill -9 python3
+pkill -9 streamlit
+
+find /home/computeruse -name "__pycache__" -type d -exec rm -rf {} +
+find /home/computeruse -name "*.pyc" -exec rm {} +
+
+# Ensure only these files/directories exist
+ls -la /home/computeruse/computer_use_demo/
+# Should only show loop.py, streamlit.py, requirements.txt, and tools/
+
+cd /home/computeruse
+streamlit run computer_use_demo/streamlit.py
+
 # Now edit the secrets file to remove the random text from API keys
 echo "IMPORTANT: Now edit the secrets file to remove the random text from the API keys:"
 echo "nano /home/computeruse/secrets/palios-taey-secrets.json"
 
-echo "Setup completed! Now you can run the basic chat script: "
+echo "Setup completed! Now you can work with Claude Computer Use!"
