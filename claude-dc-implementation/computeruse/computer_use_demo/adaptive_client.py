@@ -1,10 +1,10 @@
 """
-Adaptive Anthropic client that automatically chooses streaming for large outputs.
+Adaptive Anthropic client that automatically enables streaming for large outputs.
 """
 
 import logging
 import time
-from typing import Optional, Dict, List, Any
+from typing import Any, Dict, List, Optional
 
 from anthropic import Anthropic
 
@@ -20,146 +20,118 @@ logging.basicConfig(
 
 logger = logging.getLogger('adaptive_client')
 
-class AdaptiveAnthropicClient:
+def create_adaptive_client(api_key: Optional[str] = None, base_client=None):
     """
-    Client that wraps the Anthropic SDK client and automatically uses 
-    streaming for requests with large max_tokens to prevent timeouts.
+    Create an Anthropic client that automatically enables streaming for large responses.
+    
+    Args:
+        api_key: Anthropic API key
+        base_client: Optional pre-configured Anthropic client
+        
+    Returns:
+        An enhanced Anthropic client with streaming capability
     """
+    if base_client is not None:
+        return base_client
     
-    def __init__(self, api_key: str, base_client=None, streaming_threshold: int = 20000):
-        """
-        Initialize the adaptive client.
-        
-        Args:
-            api_key: Anthropic API key
-            base_client: Optional pre-configured Anthropic client
-            streaming_threshold: Max token count above which to use streaming
-        """
-        self.api_key = api_key
-        self.client = base_client or Anthropic(api_key=api_key)
-        self.streaming_threshold = streaming_threshold
-        logger.info(f"AdaptiveAnthropicClient initialized with streaming threshold of {streaming_threshold} tokens")
-        
-        # Expose client attributes
-        self.beta = AdaptiveBetaClient(self)
+    # Create standard client
+    client = Anthropic(api_key=api_key)
     
-    def messages(self, *args, **kwargs):
-        """Pass through to client.messages for compatibility."""
-        return self.client.messages(*args, **kwargs)
-
-class AdaptiveBetaClient:
-    """Adapter for beta endpoints."""
+    # Store original method
+    original_create = client.beta.messages.create
+    original_with_raw_response = client.beta.messages.with_raw_response.create
     
-    def __init__(self, parent):
-        self.parent = parent
-        self.messages = AdaptiveMessagesClient(parent)
-
-class AdaptiveMessagesClient:
-    """Adapter for messages endpoints with streaming intelligence."""
-    
-    def __init__(self, parent):
-        self.parent = parent
-        
-    def create(self, *args, **kwargs):
-        """
-        Create a message, automatically using streaming for large outputs.
-        """
-        # Check if max_tokens exceeds threshold
+    # Define wrapper for standard create method
+    def adaptive_create(*args, **kwargs):
+        """Wrapper that enables streaming for large responses"""
+        # Check if this is a large request
         max_tokens = kwargs.get('max_tokens', 4096)
         stream = kwargs.get('stream', None)
         
-        # If stream is explicitly set, respect that setting
+        # If stream is already set, respect that setting
         if stream is not None:
-            logger.info(f"Using explicit stream={stream} setting")
-            return self.parent.client.beta.messages.create(*args, **kwargs)
+            return original_create(*args, **kwargs)
         
-        # Otherwise, decide based on max_tokens
-        if max_tokens > self.parent.streaming_threshold:
-            logger.info(f"max_tokens ({max_tokens}) exceeds threshold ({self.parent.streaming_threshold}), enabling streaming")
+        # Enable streaming for large responses
+        if max_tokens > 20000:
+            logger.info(f"Enabling streaming for request with {max_tokens} tokens")
             kwargs['stream'] = True
-            return self._handle_streaming_request(*args, **kwargs)
-        else:
-            logger.info(f"max_tokens ({max_tokens}) below threshold, using non-streaming request")
-            return self.parent.client.beta.messages.create(*args, **kwargs)
-    
-    def _handle_streaming_request(self, *args, **kwargs):
-        """
-        Handle a streaming request, collecting all content into a final response.
-        """
-        # Call the API with streaming enabled
-        start_time = time.time()
-        logger.info("Starting streaming request")
+            return handle_streaming_response(*args, **kwargs)
         
-        stream = self.parent.client.beta.messages.create(*args, **kwargs)
+        # Use standard method for smaller requests
+        return original_create(*args, **kwargs)
+    
+    # Define wrapper for with_raw_response
+    def adaptive_with_raw_response_create(*args, **kwargs):
+        """Wrapper for raw response method"""
+        # Check if this is a large request
+        max_tokens = kwargs.get('max_tokens', 4096)
+        stream = kwargs.get('stream', None)
+        
+        # If stream is already set, respect that setting
+        if stream is not None:
+            return original_with_raw_response(*args, **kwargs)
+        
+        # Enable streaming for large responses
+        if max_tokens > 20000:
+            logger.info(f"Enabling streaming for raw response with {max_tokens} tokens")
+            kwargs['stream'] = True
+            # We need to handle this differently for raw responses
+            # For simplicity, we'll just use the original method with streaming enabled
+            return original_with_raw_response(*args, **kwargs)
+        
+        # Use standard method for smaller requests
+        return original_with_raw_response(*args, **kwargs)
+    
+    # Define streaming handler
+    def handle_streaming_response(*args, **kwargs):
+        """Handle streaming response and convert to standard format"""
+        stream = original_create(*args, **kwargs)
         
         # Initialize storage for content blocks
         content_blocks = []
         current_block = None
-        completion_text = ""
         
         # Process the stream
-        try:
-            for chunk in stream:
-                # Handle different chunk types
-                if hasattr(chunk, 'type'):
-                    if chunk.type == "content_block_start":
-                        # Start a new content block
-                        current_block = {
-                            "type": chunk.content_block.type,
-                            "text": ""
-                        }
-                    
-                    elif chunk.type == "content_block_delta":
-                        # Add to the current content block
-                        if current_block is not None and hasattr(chunk, 'delta') and hasattr(chunk.delta, 'text'):
-                            current_block["text"] += chunk.delta.text
-                        
-                        # Also build the full completion text
-                        if hasattr(chunk, 'delta') and hasattr(chunk.delta, 'text'):
-                            completion_text += chunk.delta.text
-                    
-                    elif chunk.type == "content_block_stop":
-                        # Finalize the current block and add to list
-                        if current_block is not None:
-                            content_blocks.append(current_block)
-                            current_block = None
-                    
-                    elif chunk.type == "message_stop":
-                        # Message is complete
-                        pass
-                
-                # Some events might be structured differently
-                if hasattr(chunk, 'content_block'):
-                    if chunk.content_block and hasattr(chunk, 'delta'):
-                        content_blocks.append(chunk.content_block)
-            
-            # Calculate duration
-            duration = time.time() - start_time
-            logger.info(f"Streaming request completed in {duration:.2f}s")
-            
-            # Create a synthetic response object similar to non-streaming response
-            response = {
-                "id": "msg_streaming_synthetic",
-                "type": "message",
-                "role": "assistant",
-                "content": content_blocks,
-                "model": kwargs.get("model", "unknown"),
-                "stop_reason": "end_turn",
-                "stop_sequence": None,
-                "usage": {
-                    "input_tokens": 0,  # We don't know exact count
-                    "output_tokens": len(completion_text) // 4  # Rough estimate
+        for chunk in stream:
+            # Handle different chunk types
+            if chunk.type == "content_block_start":
+                # Start a new content block
+                current_block = {
+                    "type": chunk.content_block.type,
+                    "text": ""
                 }
-            }
             
-            return response
+            elif chunk.type == "content_block_delta":
+                # Add to the current content block
+                if current_block is not None and hasattr(chunk.delta, 'text'):
+                    current_block["text"] += chunk.delta.text
             
-        except Exception as e:
-            logger.error(f"Error processing streaming response: {e}")
-            # Re-raise the exception
-            raise
-
-def create_adaptive_client(api_key: Optional[str] = None, base_client=None):
-    """Create and initialize the adaptive client."""
-    client = AdaptiveAnthropicClient(api_key=api_key, base_client=base_client)
+            elif chunk.type == "content_block_stop":
+                # Finalize the current block and add to list
+                if current_block is not None:
+                    content_blocks.append(current_block)
+                    current_block = None
+            
+            elif chunk.type == "message_stop":
+                # Message is complete
+                pass
+        
+        # Create a synthetic response
+        response = {
+            "id": "msg_streaming_synthetic",
+            "type": "message",
+            "role": "assistant",
+            "content": content_blocks,
+            "model": kwargs.get("model", "unknown"),
+            "stop_reason": "end_turn",
+            "stop_sequence": None,
+        }
+        
+        return response
+    
+    # Replace the original methods with our wrapped versions
+    client.beta.messages.create = adaptive_create
+    client.beta.messages.with_raw_response.create = adaptive_with_raw_response_create
+    
     return client

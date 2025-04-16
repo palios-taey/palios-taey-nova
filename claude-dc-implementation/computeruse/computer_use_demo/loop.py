@@ -7,6 +7,8 @@ from collections.abc import Callable
 from datetime import datetime
 from enum import StrEnum
 from typing import Any, cast
+from computer_use_demo.token_manager import token_manager
+from computer_use_demo.adaptive_client import create_adaptive_client
 
 import httpx
 from anthropic import (
@@ -35,9 +37,6 @@ from .tools import (
     ToolResult,
     ToolVersion,
 )
-from .token_manager import token_manager
-from .adaptive_client import create_adaptive_client
-from .safe_file_operations import safe_cat, safe_read_file
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
 
@@ -101,14 +100,9 @@ async def sampling_loop(
     while True:
         enable_prompt_caching = False
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
-        
-        # Add 128K output beta flag
-        betas.append("output-128k-2025-02-19")
-        
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
         image_truncation_threshold = only_n_most_recent_images or 0
-        
         if provider == APIProvider.ANTHROPIC:
             # Use adaptive client instead of regular client
             # This will automatically use streaming for large responses
@@ -141,16 +135,19 @@ async def sampling_loop(
                 "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
             }
 
+        # Add token management before calling the API
+        # Estimate token usage for this request
+        estimated_input_tokens = sum(len(str(m)) // 4 for m in messages) + len(system["text"]) // 4
+
+        # Apply token rate limiting - this will pause if we're approaching limits
+        token_manager.delay_if_needed(estimated_input_tokens)
+
         # Call the API
+        # we use raw_response to provide debug information to streamlit. Your
+        # implementation may be able call the SDK directly with:
+        # `response = client.messages.create(...)` instead.
         try:
-            # Estimate token usage for this request
-            estimated_input_tokens = sum(len(str(m)) // 4 for m in messages) + len(system["text"]) // 4
-            
-            # Apply token rate limiting - this will pause if we're approaching limits
-            token_manager.delay_if_needed(estimated_input_tokens)
-            
-            # Use adaptive client which will automatically use streaming for large outputs
-            response = client.beta.messages.create(
+            raw_response = client.beta.messages.with_raw_response.create(
                 max_tokens=max_tokens,
                 messages=messages,
                 model=model,
@@ -159,58 +156,22 @@ async def sampling_loop(
                 betas=betas,
                 extra_body=extra_body,
             )
-            
-            # If adaptive client returned a stream, process it
-            if hasattr(response, '__iter__') and callable(response.__iter__):
-                response_content = []
-                for event in response:
-                    # Pass each chunk to the output callback
-                    if hasattr(event, 'content_block'):
-                        output_callback(event.content_block)
-                        response_content.append(event.content_block)
-                
-                # Create a synthetic response object
-                response = {
-                    "content": response_content,
-                    "id": "streaming_response",
-                    "model": model,
-                    "role": "assistant",
-                    "type": "message",
-                }
-            
-            # Handle rate limits from headers
-            if hasattr(response, 'headers'):
-                token_manager.manage_request(response.headers, estimated_input_tokens)
-        
         except (APIStatusError, APIResponseValidationError) as e:
             api_response_callback(e.request, e.response, e)
-            
-            # Update token manager with rate limit info from the error response
-            if hasattr(e, 'response') and hasattr(e.response, 'headers'):
-                token_manager.manage_request(e.response.headers, estimated_input_tokens)
-            
             return messages
         except APIError as e:
             api_response_callback(e.request, e.body, e)
             return messages
+        if hasattr(raw_response, 'http_response') and hasattr(raw_response.http_response, 'headers'):
+            token_manager.manage_request(raw_response.http_response.headers, estimated_input_tokens)
 
-        # Call the provided API response callback
-        if hasattr(response, 'http_response'):
-            api_response_callback(
-                response.http_response.request, response.http_response, None
-            )
-        else:
-            # For streaming, we don't have raw HTTP response
-            api_response_callback(None, response, None)
+        api_response_callback(
+            raw_response.http_response.request, raw_response.http_response, None
+        )
 
-        # Process the response
-        if hasattr(response, 'parse'):
-            response_parsed = response.parse()
-            response_params = _response_to_params(response_parsed)
-        else:
-            # For streaming, we already have the content
-            response_params = _response_to_params(response)
-        
+        response = raw_response.parse()
+
+        response_params = _response_to_params(response)
         messages.append(
             {
                 "role": "assistant",
