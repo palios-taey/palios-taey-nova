@@ -1,195 +1,344 @@
 """
-Main event loop for Claude Computer Use with comprehensive protection systems
+Agentic sampling loop that calls the Anthropic API and local implementation of anthropic-defined computer use tools.
 """
-import os
-import sys
-import time
-import logging
-import asyncio
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Callable, Any, Union
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger("computer_use")
+import platform
+from collections.abc import Callable
+from datetime import datetime
+from enum import StrEnum
+from typing import Any, cast
 
-# Import modules (in correct order)
-# Import tool intercept FIRST to ensure it's active for all operations
-sys.path.append('/home/computeruse/computer_use_demo')
-try:
-    from tool_intercept import tool_intercept
-    logger.info("Tool interception active")
-except ImportError:
-    logger.warning("Tool interception not available - file operations may exceed rate limits")
+import httpx
+from anthropic import (
+    Anthropic,
+    AnthropicBedrock,
+    AnthropicVertex,
+    APIError,
+    APIResponseValidationError,
+    APIStatusError,
+)
+from anthropic.types.beta import (
+    BetaCacheControlEphemeralParam,
+    BetaContentBlockParam,
+    BetaImageBlockParam,
+    BetaMessage,
+    BetaMessageParam,
+    BetaTextBlock,
+    BetaTextBlockParam,
+    BetaToolResultBlockParam,
+    BetaToolUseBlockParam,
+)
 
-# Import other modules
-from tools.collection import ToolCollection
-from token_management.token_manager import token_manager
-from streaming.streaming_client import StreamingClient
+from .tools import (
+    TOOL_GROUPS_BY_VERSION,
+    ToolCollection,
+    ToolResult,
+    ToolVersion,
+)
+from .token_manager import token_manager
+from .adaptive_client import create_adaptive_client
+from .safe_file_operations import safe_cat, safe_read_file
 
-# Import tools
-from tools import TOOL_GROUPS_BY_VERSION, ToolVersion
+PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
 
-# After all imports, initialize streaming client
-streaming_client = StreamingClient(token_manager=token_manager)
 
-# Global constants
-MAX_TOKENS = 128000  # Maximum tokens for response
-THINKING_BUDGET = 32000  # Tokens for thinking
-BETAS = ["output-128k-2025-02-19"]  # Beta flags for extended output
+class APIProvider(StrEnum):
+    ANTHROPIC = "anthropic"
+    BEDROCK = "bedrock"
+    VERTEX = "vertex"
+
+
+# This system prompt is optimized for the Docker environment in this repository and
+# specific tool combinations enabled.
+# We encourage modifying this system prompt to ensure the model has context for the
+# environment it is running in, and to provide any additional information that may be
+# helpful for the task at hand.
+SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
+* You are utilising an Ubuntu virtual machine using {platform.machine()} architecture with internet access.
+* You can feel free to install Ubuntu applications with your bash tool. Use curl instead of wget.
+* To open firefox, please just click on the firefox icon.  Note, firefox-esr is what is installed on your system.
+* Using bash tool you can start GUI applications, but you need to set export DISPLAY=:1 and use a subshell. For example "(DISPLAY=:1 xterm &)". GUI apps run with bash tool will appear within your desktop environment, but they may take some time to appear. Take a screenshot to confirm it did.
+* When using your bash tool with commands that are expected to output very large quantities of text, redirect into a tmp file and use str_replace_editor or `grep -n -B <lines before> -A <lines after> <query> <filename>` to confirm output.
+* When viewing a page it can be helpful to zoom out so that you can see everything on the page.  Either that, or make sure you scroll down to see everything before deciding something isn't available.
+* When using your computer function calls, they take a while to run and send back to you.  Where possible/feasible, try to chain multiple of these calls all into one function calls request.
+* The current date is {datetime.today().strftime('%A, %B %-d, %Y')}.
+</SYSTEM_CAPABILITY>
+
+<IMPORTANT>
+* When using Firefox, if a startup wizard appears, IGNORE IT.  Do not even click "skip this step".  Instead, click on the address bar where it says "Search or enter address", and enter the appropriate search term or URL there.
+* If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
+</IMPORTANT>"""
+
 
 async def sampling_loop(
     *,
     model: str,
-    provider: str,
+    provider: APIProvider,
     system_prompt_suffix: str,
-    messages: list,
-    output_callback: Callable,
-    tool_output_callback: Callable,
-    api_response_callback: Callable,
+    messages: list[BetaMessageParam],
+    output_callback: Callable[[BetaContentBlockParam], None],
+    tool_output_callback: Callable[[ToolResult, str], None],
+    api_response_callback: Callable[
+        [httpx.Request, httpx.Response | object | None, Exception | None], None
+    ],
     api_key: str,
-    only_n_most_recent_images: int = None,
-    max_tokens: int = MAX_TOKENS,
-    tool_version: str = "20250124",
-    thinking_budget: int = THINKING_BUDGET,
+    only_n_most_recent_images: int | None = None,
+    max_tokens: int = 4096,
+    tool_version: ToolVersion,
+    thinking_budget: int | None = None,
     token_efficient_tools_beta: bool = False,
 ):
     """
-    Main sampling loop with comprehensive protection
+    Agentic sampling loop for the assistant/tool interaction of computer use.
     """
-    # Initialize tool collection
-    tool_group = TOOL_GROUPS_BY_VERSION[ToolVersion(tool_version)]
+    tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
     tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
-    
-    # System prompt
-    system = {"type": "text", "text": os.getenv("SYSTEM_PROMPT", "") + (system_prompt_suffix or "")}
-    
-    # Check token usage before proceeding
-    token_stats = token_manager.get_stats()
-    logger.info(f"Token usage before request: {token_stats}")
-    
+    system = BetaTextBlockParam(
+        type="text",
+        text=f"{SYSTEM_PROMPT}{' ' + system_prompt_suffix if system_prompt_suffix else ''}",
+    )
+
     while True:
-        # Prepare beta flags
         enable_prompt_caching = False
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
+        
+        # Add 128K output beta flag
+        betas.append("output-128k-2025-02-19")
+        
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
+        image_truncation_threshold = only_n_most_recent_images or 0
         
-        # Add extended output beta
-        if "output-128k-2025-02-19" not in betas:
-            betas.append("output-128k-2025-02-19")
+        if provider == APIProvider.ANTHROPIC:
+            # Use adaptive client instead of regular client
+            # This will automatically use streaming for large responses
+            client = create_adaptive_client(api_key=api_key)
+            enable_prompt_caching = True
+        elif provider == APIProvider.VERTEX:
+            client = AnthropicVertex()
+        elif provider == APIProvider.BEDROCK:
+            client = AnthropicBedrock()
+
+        if enable_prompt_caching:
+            betas.append(PROMPT_CACHING_BETA_FLAG)
+            _inject_prompt_caching(messages)
+            # Because cached reads are 10% of the price, we don't think it's
+            # ever sensible to break the cache by truncating images
+            only_n_most_recent_images = 0
+            # Use type ignore to bypass TypedDict check until SDK types are updated
+            system["cache_control"] = {"type": "ephemeral"}  # type: ignore
+
+        if only_n_most_recent_images:
+            _maybe_filter_to_n_most_recent_images(
+                messages,
+                only_n_most_recent_images,
+                min_removal_threshold=image_truncation_threshold,
+            )
+        extra_body = {}
+        if thinking_budget:
+            # Ensure we only send the required fields for thinking
+            extra_body = {
+                "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
+            }
+
+        # Call the API
+        try:
+            # Estimate token usage for this request
+            estimated_input_tokens = sum(len(str(m)) // 4 for m in messages) + len(system["text"]) // 4
+            
+            # Apply token rate limiting - this will pause if we're approaching limits
+            token_manager.delay_if_needed(estimated_input_tokens)
+            
+            # Use adaptive client which will automatically use streaming for large outputs
+            response = client.beta.messages.create(
+                max_tokens=max_tokens,
+                messages=messages,
+                model=model,
+                system=[system],
+                tools=tool_collection.to_params(),
+                betas=betas,
+                extra_body=extra_body,
+            )
+            
+            # If adaptive client returned a stream, process it
+            if hasattr(response, '__iter__') and callable(response.__iter__):
+                response_content = []
+                for event in response:
+                    # Pass each chunk to the output callback
+                    if hasattr(event, 'content_block'):
+                        output_callback(event.content_block)
+                        response_content.append(event.content_block)
+                
+                # Create a synthetic response object
+                response = {
+                    "content": response_content,
+                    "id": "streaming_response",
+                    "model": model,
+                    "role": "assistant",
+                    "type": "message",
+                }
+            
+            # Handle rate limits from headers
+            if hasattr(response, 'headers'):
+                token_manager.manage_request(response.headers, estimated_input_tokens)
         
-        # Use streaming for large requests
-        use_streaming = max_tokens > 4096 or len(str(messages)) > 10000
+        except (APIStatusError, APIResponseValidationError) as e:
+            api_response_callback(e.request, e.response, e)
+            
+            # Update token manager with rate limit info from the error response
+            if hasattr(e, 'response') and hasattr(e.response, 'headers'):
+                token_manager.manage_request(e.response.headers, estimated_input_tokens)
+            
+            return messages
+        except APIError as e:
+            api_response_callback(e.request, e.body, e)
+            return messages
+
+        # Call the provided API response callback
+        if hasattr(response, 'http_response'):
+            api_response_callback(
+                response.http_response.request, response.http_response, None
+            )
+        else:
+            # For streaming, we don't have raw HTTP response
+            api_response_callback(None, response, None)
+
+        # Process the response
+        if hasattr(response, 'parse'):
+            response_parsed = response.parse()
+            response_params = _response_to_params(response_parsed)
+        else:
+            # For streaming, we already have the content
+            response_params = _response_to_params(response)
         
-        if use_streaming:
-            logger.info(f"Using streaming for request with {max_tokens} max tokens")
-            try:
-                # Stream the response
-                response = await streaming_client.stream_completion(
-                    messages=messages,
-                    model=model,
-                    system=[system],
-                    max_tokens=max_tokens,
-                    tools=tool_collection.to_params(),
-                    api_key=api_key,
-                    thinking_budget=thinking_budget,
-                    betas=betas,
-                )
-                
-                # Process streaming response
-                response_params = _response_to_params(response)
-                
-            except Exception as e:
-                logger.error(f"Streaming error: {e}")
-                # Fall back to regular API call
-                use_streaming = False
-                
-        # Use regular API call for smaller requests or if streaming failed
-        if not use_streaming:
-            try:
-                # Choose client based on provider
-                if provider == "anthropic":
-                    from anthropic import Anthropic
-                    client = Anthropic(api_key=api_key, max_retries=4)
-                elif provider == "vertex":
-                    from anthropic import AnthropicVertex
-                    client = AnthropicVertex()
-                elif provider == "bedrock":
-                    from anthropic import AnthropicBedrock
-                    client = AnthropicBedrock()
-                else:
-                    raise ValueError(f"Unknown provider: {provider}")
-                
-                # Make API call
-                raw_response = client.beta.messages.with_raw_response.create(
-                    max_tokens=max_tokens,
-                    messages=messages,
-                    model=model,
-                    system=[system],
-                    tools=tool_collection.to_params(),
-                    betas=betas,
-                    extra_body={"thinking": {"type": "enabled", "budget_tokens": thinking_budget}} if thinking_budget else {},
-                )
-                
-                # Process API response
-                api_response_callback(raw_response.http_response.request, raw_response.http_response, None)
-                response = raw_response.parse()
-                response_params = _response_to_params(response)
-                
-            except Exception as e:
-                logger.error(f"API error: {e}")
-                raise
-        
-        # Append response to messages
         messages.append(
             {
                 "role": "assistant",
                 "content": response_params,
             }
         )
-        
-        tool_result_content = []
+
+        tool_result_content: list[BetaToolResultBlockParam] = []
         for content_block in response_params:
             output_callback(content_block)
             if content_block["type"] == "tool_use":
                 result = await tool_collection.run(
                     name=content_block["name"],
-                    tool_input=content_block["input"],
+                    tool_input=cast(dict[str, Any], content_block["input"]),
                 )
                 tool_result_content.append(
                     _make_api_tool_result(result, content_block["id"])
                 )
                 tool_output_callback(result, content_block["id"])
-        
+
         if not tool_result_content:
             return messages
-        
+
         messages.append({"content": tool_result_content, "role": "user"})
 
-def _response_to_params(response):
-    """Convert API response to content parameters"""
-    res = []
+
+def _maybe_filter_to_n_most_recent_images(
+    messages: list[BetaMessageParam],
+    images_to_keep: int,
+    min_removal_threshold: int,
+):
+    """
+    With the assumption that images are screenshots that are of diminishing value as
+    the conversation progresses, remove all but the final `images_to_keep` tool_result
+    images in place, with a chunk of min_removal_threshold to reduce the amount we
+    break the implicit prompt cache.
+    """
+    if images_to_keep is None:
+        return messages
+
+    tool_result_blocks = cast(
+        list[BetaToolResultBlockParam],
+        [
+            item
+            for message in messages
+            for item in (
+                message["content"] if isinstance(message["content"], list) else []
+            )
+            if isinstance(item, dict) and item.get("type") == "tool_result"
+        ],
+    )
+
+    total_images = sum(
+        1
+        for tool_result in tool_result_blocks
+        for content in tool_result.get("content", [])
+        if isinstance(content, dict) and content.get("type") == "image"
+    )
+
+    images_to_remove = total_images - images_to_keep
+    # for better cache behavior, we want to remove in chunks
+    images_to_remove -= images_to_remove % min_removal_threshold
+
+    for tool_result in tool_result_blocks:
+        if isinstance(tool_result.get("content"), list):
+            new_content = []
+            for content in tool_result.get("content", []):
+                if isinstance(content, dict) and content.get("type") == "image":
+                    if images_to_remove > 0:
+                        images_to_remove -= 1
+                        continue
+                new_content.append(content)
+            tool_result["content"] = new_content
+
+
+def _response_to_params(
+    response: BetaMessage,
+) -> list[BetaContentBlockParam]:
+    res: list[BetaContentBlockParam] = []
     for block in response.content:
-        if hasattr(block, "text") and block.text:
-            res.append({"type": "text", "text": block.text})
-        elif getattr(block, "type", None) == "thinking":
-            # Handle thinking blocks
-            thinking_block = {
-                "type": "thinking",
-                "thinking": getattr(block, "thinking", None),
-            }
-            if hasattr(block, "signature"):
-                thinking_block["signature"] = getattr(block, "signature", None)
-            res.append(thinking_block)
+        if isinstance(block, BetaTextBlock):
+            if block.text:
+                res.append(BetaTextBlockParam(type="text", text=block.text))
+            elif getattr(block, "type", None) == "thinking":
+                # Handle thinking blocks - include signature field
+                thinking_block = {
+                    "type": "thinking",
+                    "thinking": getattr(block, "thinking", None),
+                }
+                if hasattr(block, "signature"):
+                    thinking_block["signature"] = getattr(block, "signature", None)
+                res.append(cast(BetaContentBlockParam, thinking_block))
         else:
-            # Handle tool use blocks
-            res.append(block.model_dump())
+            # Handle tool use blocks normally
+            res.append(cast(BetaToolUseBlockParam, block.model_dump()))
     return res
 
-def _make_api_tool_result(result, tool_use_id):
-    """Convert tool result to API format"""
-    tool_result_content = []
+
+def _inject_prompt_caching(
+    messages: list[BetaMessageParam],
+):
+    """
+    Set cache breakpoints for the 3 most recent turns
+    one cache breakpoint is left for tools/system prompt, to be shared across sessions
+    """
+
+    breakpoints_remaining = 3
+    for message in reversed(messages):
+        if message["role"] == "user" and isinstance(
+            content := message["content"], list
+        ):
+            if breakpoints_remaining:
+                breakpoints_remaining -= 1
+                # Use type ignore to bypass TypedDict check until SDK types are updated
+                content[-1]["cache_control"] = BetaCacheControlEphemeralParam(  # type: ignore
+                    {"type": "ephemeral"}
+                )
+            else:
+                content[-1].pop("cache_control", None)
+                # we'll only every have one extra turn per loop
+                break
+
+
+def _make_api_tool_result(
+    result: ToolResult, tool_use_id: str
+) -> BetaToolResultBlockParam:
+    """Convert an agent ToolResult to an API ToolResultBlockParam."""
+    tool_result_content: list[BetaTextBlockParam | BetaImageBlockParam] | str = []
     is_error = False
     if result.error:
         is_error = True
@@ -220,8 +369,8 @@ def _make_api_tool_result(result, tool_use_id):
         "is_error": is_error,
     }
 
-def _maybe_prepend_system_tool_result(result, result_text):
-    """Add system message to tool result if needed"""
+
+def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
     if result.system:
         result_text = f"<system>{result.system}</system>\n{result_text}"
     return result_text

@@ -25,7 +25,7 @@ TOOL_GROUPS: list[ToolGroup] = [
     ),
     ToolGroup(
         version="computer_use_20250124",
-        tools=[ComputerTool20250124, EditTool20250124, BashTool20250124],
+        tools=[ComputerTool20250124, EditTool20250124, BashTool20250124, SafeCatTool20250124],
         beta_flag="computer-use-2025-01-24",
     ),
 ]
