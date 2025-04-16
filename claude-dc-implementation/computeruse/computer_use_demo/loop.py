@@ -236,6 +236,17 @@ async def sampling_loop(
 
         messages.append({"content": tool_result_content, "role": "user"})
 
+# In loop.py - add this near the top
+def create_adaptive_client(api_key=None, base_client=None):
+    """Create a client that supports streaming for large responses"""
+    try:
+        # Try to import the adaptive client
+        from computer_use_demo.adaptive_client import create_adaptive_client as actual_create_client
+        return actual_create_client(api_key, base_client)
+    except ImportError:
+        # Fall back to regular client if import fails
+        from anthropic import Anthropic
+        return Anthropic(api_key=api_key) if base_client is None else base_client
 
 def _maybe_filter_to_n_most_recent_images(
     messages: list[BetaMessageParam],
