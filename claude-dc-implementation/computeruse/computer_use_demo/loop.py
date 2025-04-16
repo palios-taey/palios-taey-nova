@@ -9,7 +9,7 @@ if not api_key:
 anthropic = Anthropic(api_key=api_key)
 
 # Claude model to use (Claude 3 models support streaming, e.g., "claude-3-opus")
-MODEL_NAME = "claude-3-opus"
+MODEL_NAME = "claude-3-7-sonnet-20250219"
 
 # Token budget limits (Tier 2: ~5M input, 10M output per day).
 # Adjust SESSION_HOURS if the application runs fewer hours to proportionally reduce the cap.
@@ -20,7 +20,7 @@ MAX_INPUT_TOKENS_SESSION = int(DAILY_INPUT_LIMIT * (SESSION_HOURS / 24))
 MAX_OUTPUT_TOKENS_SESSION = int(DAILY_OUTPUT_LIMIT * (SESSION_HOURS / 24))
 
 # Max tokens per single Claude completion response (to avoid overly long outputs in one go)
-MAX_TOKENS_TO_SAMPLE = 1000  # You can adjust this based on needed response length
+MAX_TOKENS_TO_SAMPLE = 12000  # You can adjust this based on needed response length
 
 # Initialize running token counters for the session
 total_input_tokens = 0

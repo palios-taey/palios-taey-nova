@@ -14,7 +14,7 @@ if not api_key:
     st.error("Anthropic API key not found. Please set the ANTHROPIC_API_KEY environment variable.")
     st.stop()
 anthropic = Anthropic(api_key=api_key)
-MODEL_NAME = "claude-3-opus"
+MODEL_NAME = "claude-3-7-sonnet-20250219"
 
 # Token budget configuration (similar to loop.py)
 SESSION_HOURS = 24  # adjust this if the app runs for less than a full day
@@ -22,7 +22,7 @@ DAILY_INPUT_LIMIT = 5_000_000
 DAILY_OUTPUT_LIMIT = 10_000_000
 MAX_INPUT_TOKENS_SESSION = int(DAILY_INPUT_LIMIT * (SESSION_HOURS / 24))
 MAX_OUTPUT_TOKENS_SESSION = int(DAILY_OUTPUT_LIMIT * (SESSION_HOURS / 24))
-MAX_TOKENS_TO_SAMPLE = 1000  # max tokens for Claude's reply in one go
+MAX_TOKENS_TO_SAMPLE = 12000  # max tokens for Claude's reply in one go
 
 # Initialize or retrieve session token counters
 if "total_input_tokens" not in st.session_state:
