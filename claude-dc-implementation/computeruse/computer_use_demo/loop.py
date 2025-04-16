@@ -7,8 +7,9 @@ from collections.abc import Callable
 from datetime import datetime
 from enum import StrEnum
 from typing import Any, cast
-from computer_use_demo.token_manager import token_manager
 from computer_use_demo.adaptive_client import create_adaptive_client
+import time
+from datetime import datetime, timezone
 
 import httpx
 from anthropic import (
@@ -104,9 +105,9 @@ async def sampling_loop(
             betas.append("token-efficient-tools-2025-02-19")
         image_truncation_threshold = only_n_most_recent_images or 0
         if provider == APIProvider.ANTHROPIC:
-            # Use adaptive client instead of regular client
-            # This will automatically use streaming for large responses
-            client = create_adaptive_client(api_key=api_key)
+            client = Anthropic(api_key=api_key)
+            # Enable streaming for large responses
+            client = enable_streaming_for_large_requests(client)
             enable_prompt_caching = True
         elif provider == APIProvider.VERTEX:
             client = AnthropicVertex()
@@ -135,12 +136,14 @@ async def sampling_loop(
                 "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
             }
 
-        # Add token management before calling the API
-        # Estimate token usage for this request
-        estimated_input_tokens = sum(len(str(m)) // 4 for m in messages) + len(system["text"]) // 4
+        # Add simple token management before the API call:
+        estimated_tokens = sum(len(str(m)) // 4 for m in messages) + len(system["text"]) // 4
+        current_time = time.time()
 
-        # Apply token rate limiting - this will pause if we're approaching limits
-        token_manager.delay_if_needed(estimated_input_tokens)
+        # Add a simple delay for large requests to avoid rate limits
+        if estimated_tokens > 30000:  # 75% of the 40K limit
+            print(f"Large request with {estimated_tokens} tokens, adding delay...")
+            time.sleep(60)  # Simple delay for large requests    
 
         # Call the API
         # we use raw_response to provide debug information to streamlit. Your
@@ -246,6 +249,20 @@ def _maybe_filter_to_n_most_recent_images(
                 new_content.append(content)
             tool_result["content"] = new_content
 
+# Define a simple utility function inside loop.py
+def enable_streaming_for_large_requests(client, threshold=20000):
+    """Enable streaming for requests exceeding the token threshold."""
+    original_create = client.beta.messages.create
+    
+    def adaptive_create(*args, **kwargs):
+        max_tokens = kwargs.get('max_tokens', 4096)
+        if max_tokens > threshold and 'stream' not in kwargs:
+            print(f"Enabling streaming for request with {max_tokens} tokens")
+            kwargs['stream'] = True
+        return original_create(*args, **kwargs)
+    
+    client.beta.messages.create = adaptive_create
+    return client
 
 def _response_to_params(
     response: BetaMessage,
