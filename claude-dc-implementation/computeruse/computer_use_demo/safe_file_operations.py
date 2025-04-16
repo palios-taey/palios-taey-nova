@@ -139,17 +139,16 @@ operation_queue = OperationQueue()
 class SubprocessWrapper:
     """Wrapper for subprocess to manage token usage from command outputs."""
     
-    def __init__(self, token_manager):
+    def __init__(self, token_manager, original_run_func):
         self.token_manager = token_manager
+        self.original_run = original_run_func  # Store the original function
         self.output_cache = {}
         self.CHUNK_SIZE = 10000  # Token chunk size for large outputs
     
     def run(self, cmd, *args, **kwargs):
         """Intercept subprocess.run to manage token usage."""
-        import subprocess
-        
-        original_run = subprocess.run
-        result = original_run(cmd, *args, **kwargs)
+        # Use the stored original function instead of calling subprocess.run again
+        result = self.original_run(cmd, *args, **kwargs)
         
         # If there's stdout/stderr content, estimate tokens and apply delays
         if hasattr(result, 'stdout') and result.stdout:
@@ -617,6 +616,9 @@ def monkey_patch_all():
     from pathlib import Path
     import subprocess
     
+    # Store the original subprocess.run BEFORE any patching
+    original_run = subprocess.run
+    
     # Patch builtins.open
     builtins.open = interceptor.intercept_open
     logger.info("Patched builtins.open")
@@ -639,32 +641,14 @@ def monkey_patch_all():
     Path.read_bytes = path_read_bytes_wrapper
     logger.info("Patched Path.read_bytes")
     
-    # Patch other tools as needed
-    try:
-        from computer_use_demo.tools.edit import EditTool20250124
-        
-        # Save original method
-        original_read_file = EditTool20250124.read_file
-        
-        # Define replacement method that uses our interceptor
-        def safe_read_file_for_edit(self, path):
-            return interceptor.intercept_path_read_text(Path(path))
-        
-        # Patch the method
-        EditTool20250124.interceptor = interceptor
-        EditTool20250124.read_file = safe_read_file_for_edit
-        logger.info("Patched EditTool20250124.read_file")
-    except ImportError:
-        logger.warning("Could not patch EditTool20250124.read_file - module not found")
+    # Create the subprocess wrapper with the original run function
+    subprocess_wrapper = SubprocessWrapper(token_manager, original_run)
     
-    logger.info("All file operation patches applied successfully")
-    
-    # Patch subprocess.run
-    subprocess_wrapper = SubprocessWrapper(token_manager)
-    
+    # Now define the wrapped run function
     def wrapped_run(*args, **kwargs):
         return subprocess_wrapper.run(*args, **kwargs)
     
+    # Patch subprocess.run
     subprocess.run = wrapped_run
     logger.info("Patched subprocess.run")
     
