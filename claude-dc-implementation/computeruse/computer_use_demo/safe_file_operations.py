@@ -612,6 +612,11 @@ def safe_cat(path):
 
 def monkey_patch_all():
     """Apply all monkey patches to intercept file operations."""
+    # Import modules needed for patching
+    import builtins
+    from pathlib import Path
+    import subprocess
+    
     # Patch builtins.open
     builtins.open = interceptor.intercept_open
     logger.info("Patched builtins.open")
