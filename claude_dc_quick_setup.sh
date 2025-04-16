@@ -52,18 +52,15 @@ echo "Changing repository remote from HTTPS to SSH..."
 cd /home/computeruse/github/palios-taey-nova
 git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
 
-# Clean up Python cache files
-echo "Cleaning up Python cache files..."
-pkill -9 python || true
-pkill -9 python3 || true
-pkill -9 streamlit || true
-find /home/computeruse -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
-find /home/computeruse -name "*.pyc" -exec rm {} + 2>/dev/null || true
+# Only needed when restarting an existing environment, not on fresh installs
+# echo "Cleaning up Python processes..."
+# pkill -9 python || true
+# pkill -9 python3 || true
+# pkill -9 streamlit || true
 
 # Set up computer_use_demo directory
 echo "Setting up computer_use_demo environment..."
-rsync -av --delete /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/ /home/computeruse/computer_use_demo/
-mkdir -p /home/computeruse/computer_use_demo/__pycache__/
+rsync -av --delete --exclude=".*" --exclude="__pycache__" /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/ /home/computeruse/computer_use_demo/
 
 # Set Claude options
 echo "Please set the following Claude options manually:"
