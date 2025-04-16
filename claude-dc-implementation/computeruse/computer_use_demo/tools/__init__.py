@@ -4,7 +4,6 @@ from .collection import ToolCollection
 from .computer import ComputerTool20241022, ComputerTool20250124
 from .edit import EditTool20241022, EditTool20250124
 from .groups import TOOL_GROUPS_BY_VERSION, ToolVersion
-from .safe_cat_tool import SafeCatTool20250124
 
 __ALL__ = [
     BashTool20241022,
@@ -12,7 +11,6 @@ __ALL__ = [
     CLIResult,
     ComputerTool20241022,
     ComputerTool20250124,
-    SafeCatTool20250124,
     EditTool20241022,
     EditTool20250124,
     ToolCollection,
