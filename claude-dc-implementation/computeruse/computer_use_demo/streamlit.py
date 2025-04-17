@@ -51,22 +51,21 @@ with st.sidebar:
 def _render_message(role, content):
     """Render a message block in the Streamlit app."""
     role_name = role.name.lower() if hasattr(role, "name") else str(role)
-    if isinstance(content, ToolResult):
-        # Tool results: display error or output appropriately
-        if content.error:
-            st.error(content.error)
-        elif content.output:
-            st.write(content.output)
-    elif isinstance(content, BetaToolResultBlockParam):
-        # For tool_result blocks in message content, fetch the actual ToolResult from state
-        tool_result = st.session_state.tools.get(content.tool_use_id)
-        if tool_result:
-            _render_message(Sender.TOOL, tool_result)
+    if isinstance(content, str):
+        st.markdown(content)
     elif isinstance(content, BetaTextBlockParam):
-        # Regular text content
-        st.write(content.text)
+        st.markdown(content.text)
+    elif isinstance(content, BetaToolUseBlockParam):
+        st.markdown(f"Tool Use: `{content.name}` with ID `{content.id}`")
+        st.json(content.input)
+    elif isinstance(content, BetaImageBlockParam):
+        st.image(base64.b64decode(content.base64), caption=content.alt_text)
+    elif isinstance(content, dict) and content.get("type") == "tool_result":
+        st.markdown(f"Tool Result ID: `{content.get('tool_use_id', 'unknown')}`")
+        st.json(content.get("content", {}))
+    elif isinstance(content, dict) and content.get("type") == "redacted_thinking":
+        st.markdown("(redacted thinking)")
     else:
-        # Fallback for any other content types (if present)
         st.write(content)
 
 def _render_messages():
