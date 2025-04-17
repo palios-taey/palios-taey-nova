@@ -145,13 +145,21 @@ def _reset_model_conf():
         if "3-7" in st.session_state.model
         else MODEL_TO_MODEL_CONF.get(st.session_state.model, SONNET_3_5_NEW)
     )
+    
+    # Make sure we set token values first
+    max_tokens = model_conf.max_output_tokens
+    default_tokens = model_conf.default_output_tokens
+    
+    # Only update session state after calculation
     st.session_state.tool_version = model_conf.tool_version
     st.session_state.has_thinking = model_conf.has_thinking
-    st.session_state.output_tokens = model_conf.default_output_tokens
-    st.session_state.max_output_tokens = model_conf.max_output_tokens
-    st.session_state.thinking_budget = int(model_conf.default_output_tokens / 2)
-
-
+    st.session_state.max_output_tokens = max_tokens
+    st.session_state.output_tokens = default_tokens
+    st.session_state.thinking_budget = int(default_tokens / 2)
+    
+    # Log values for debugging
+    logger.info(f"Reset model config: max_tokens={max_tokens}, output_tokens={default_tokens}")
+    
 async def main():
     """Render loop for streamlit"""
     setup_state()
@@ -233,6 +241,10 @@ async def main():
         input_limit = token_rate_limiter.input_token_limit
         output_limit = token_rate_limiter.output_token_limit
         
+        # Safe division with fallback to 0
+        input_pct = input_used / max(1, input_limit)  # Prevent division by zero
+        output_pct = output_used / max(1, output_limit)  # Prevent division by zero
+
         st.progress(input_used / input_limit, text=f"Input: {input_used}/{input_limit} tokens")
         st.progress(output_used / output_limit, text=f"Output: {output_used}/{output_limit} tokens")
         
