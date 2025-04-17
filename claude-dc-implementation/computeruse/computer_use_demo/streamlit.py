@@ -4,7 +4,7 @@ import math
 import streamlit as st
 from computer_use_demo.loop import APIProvider, sampling_loop, ToolResult
 from computer_use_demo.types import Sender
-from anthropic.types.beta import BetaTextBlockParam, BetaToolResultBlockParam
+from anthropic.types.beta import BetaTextBlockParam, BetaToolResultBlockParam, BetaContentBlockParam, BetaToolUseBlockParam, BetaImageBlockParam
 from token_manager import token_manager
 
 st.title("Claude DC – Streaming Chat Interface")
@@ -29,87 +29,162 @@ if "only_n_most_recent_images" not in st.session_state:
     st.session_state.only_n_most_recent_images = 0
 if "token_efficient_tools_beta" not in st.session_state:
     st.session_state.token_efficient_tools_beta = False
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if "responses" not in st.session_state:
+    st.session_state.responses = {}
+if "tools" not in st.session_state:
+    st.session_state.tools = {}
+if "model" not in st.session_state:
+    st.session_state.model = "claude-3-opus-20240229" # Default model
+if "provider" not in st.session_state:
+    st.session_state.provider = "anthropic" # Default provider
+if "tool_version" not in st.session_state:
+    st.session_state.tool_version = None # Default tool version
 
-# Clamp output and thinking token values within allowed ranges
-model_max_tokens = 128000 if token_manager.extended_output_beta else 8192
-if st.session_state.output_tokens < 1:
-    st.session_state.output_tokens = 1
-if st.session_state.output_tokens > model_max_tokens:
-    st.session_state.output_tokens = model_max_tokens
-if st.session_state.thinking_budget < 1:
-    st.session_state.thinking_budget = 1
-if st.session_state.thinking_budget > model_max_tokens:
-    st.session_state.thinking_budget = model_max_tokens
 
-# User-adjustable token settings
-with st.sidebar:
-    st.number_input("Max Output Tokens", min_value=1, max_value=model_max_tokens, step=1, key="output_tokens")
-    st.checkbox("Thinking Enabled", key="thinking")
-    st.number_input("Thinking Budget", min_value=1, max_value=model_max_tokens, step=1, key="thinking_budget", disabled=not st.session_state.thinking)
+def _render_message(sender: Sender, content: str | list[BetaContentBlockParam]):
+    """Render a single message to the chat window."""
+    with st.chat_message(sender.value):
+        if isinstance(content, str):
+            st.markdown(content)
+        elif isinstance(content, list):
+            for block in content:
+                if isinstance(block, BetaTextBlockParam):
+                    st.markdown(block.text)
+                elif isinstance(block, BetaToolUseBlockParam):
+                    st.markdown(f"Tool Use: `{block.name}` with ID `{block.id}`")
+                    st.json(block.input)
+                elif isinstance(block, BetaImageBlockParam):
+                    st.image(base64.b64decode(block.base64), caption=block.alt_text)
+                elif isinstance(block, dict) and block.get("type") == "tool_result":
+                    st.markdown(f"Tool Result ID: `{block.get('tool_use_id', 'unknown')}`")
+                    st.json(block.get("content", {}))
+                elif isinstance(block, dict) and block.get("type") == "redacted_thinking":
+                    st.markdown("(redacted thinking)")
+                else:
+                    st.write(block)
+        else:
+            st.write(content)
 
-# Helper for rendering messages
-def _render_message(role, content):
-    """Render a message block in the Streamlit app."""
-    role_name = role.name.lower() if hasattr(role, "name") else str(role)
-    if isinstance(content, str):
-        st.markdown(content)
-    elif isinstance(content, BetaTextBlockParam):
-        st.markdown(content.text)
-    elif isinstance(content, BetaToolUseBlockParam):
-        st.markdown(f"Tool Use: `{content.name}` with ID `{content.id}`")
-        st.json(content.input)
-    elif isinstance(content, BetaImageBlockParam):
-        st.image(base64.b64decode(content.base64), caption=content.alt_text)
-    elif isinstance(content, dict) and content.get("type") == "tool_result":
-        st.markdown(f"Tool Result ID: `{content.get('tool_use_id', 'unknown')}`")
-        st.json(content.get("content", {}))
-    elif isinstance(content, dict) and content.get("type") == "redacted_thinking":
-        st.markdown("(redacted thinking)")
-    else:
-        st.write(content)
+def _tool_output_callback(tool_result: ToolResult, tool_id: str):
+    _render_message(Sender.TOOL, tool_result)
+
+def _api_response_callback(request: httpx.Request | None, response: httpx.Response | dict | object | None, tab: DeltaGenerator, response_state: dict):
+    """Log API response."""
+    identity = str(math.floor(len(response_state)/2))
+    response_state[identity] = (request, response)
+    with tab:
+        with st.expander(f"Request/Response ({identity})"):
+            if request:
+                newline = "\n\n"
+                st.markdown(
+                    f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}"
+                )
+                try:
+                    st.json(request.read().decode())
+                except Exception as e:
+                    st.text(f"Could not display request content: {str(e)}")
+            else:
+                st.markdown("*No request data available*")
+            st.markdown("---")
+            if isinstance(response, httpx.Response):
+                try:
+                    st.markdown(
+                        f"`{response.status_code}`{newline}{newline.join(f'`{k}: {v}`' for k, v in response.headers.items())}"
+                    )
+                    if not getattr(response, '_stream', False):
+                        response_text = response.text
+                        st.text(response_text[:1000] + "..." if len(response_text) > 1000 else response_text)
+                    else:
+                        st.text("Streaming response (content not available)")
+                except Exception as e:
+                    st.text(f"Could not display response content: {str(e)}")
+            elif isinstance(response, dict):
+                st.markdown(f"`{response.get('status_code', 'N/A')}`")
+                headers = response.get('headers', {})
+                if headers:
+                    st.markdown(f"{newline.join(f'`{k}: {v}`' for k, v in headers.items())}")
+                st.text("Response content processed")
+            elif response is None:
+                st.text("No response data available")
+            else:
+                st.write(f"Response type: {type(response)}")
+                st.write(response)
 
 def _render_messages():
-    """Render all conversation messages in the Streamlit app."""
     for message in st.session_state.messages:
         _render_message(message["role"], message["content"])
 
-# Initialize conversation state
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-if "tools" not in st.session_state:
-    st.session_state.tools = {}
-if "responses" not in st.session_state:
-    st.session_state.responses = {}
-if "in_sampling_loop" not in st.session_state:
-    st.session_state.in_sampling_loop = False
+def setup_state():
+    if "auth_validated" not in st.session_state:
+        st.session_state.auth_validated = False
+    if "api_key" not in st.session_state:
+        st.session_state.api_key = ""
+    if "provider" not in st.session_state:
+        st.session_state.provider = "anthropic"
 
-# Accept user input and trigger Claude's response
-user_input = st.text_input("Your Prompt:", "")
-if user_input:
-    # Append user message to conversation history
-    st.session_state.messages.append({"role": Sender.USER, "content": user_input})
-    _render_message(Sender.USER, user_input)
-    # Run the sampling loop to get Claude's response (with streaming output)
-    try:
-        with st.spinner("Claude is responding..."):
-            # Execute Claude's agent loop asynchronously and stream result
-            st.session_state.messages = sampling_loop(
-                model="claude",  # Using default model (Anthropic Claude)
-                provider=APIProvider.ANTHROPIC,
-                system_prompt_suffix="",  # No extra system prompt suffix
-                messages=st.session_state.messages,
-                output_callback=lambda text: st.write(text, end=""),
-                tool_output_callback=lambda result, tool_id: st.session_state.tools.update({tool_id: result}) or _render_message(Sender.TOOL, result),
-                api_response_callback=lambda req, resp, err: st.session_state.responses.update({math.floor(len(st.session_state.responses)/2): (req, resp)}),
-                api_key=st.session_state.api_key,
-                only_n_most_recent_images=st.session_state.only_n_most_recent_images,
-                max_tokens=st.session_state.output_tokens,
-                tool_version=None,  # default tool version
-                thinking_budget=(st.session_state.thinking_budget if st.session_state.thinking else None),
-                token_efficient_tools_beta=st.session_state.token_efficient_tools_beta,
-            )
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
-    # Render all messages including the new assistant response
-    _render_messages()
+def validate_auth(provider: str, api_key: str) -> str | None:
+    if not api_key:
+        return "Please enter your API key."
+    return None
 
+def track_sampling_loop():
+    return st.empty()
+
+async def main():
+    setup_state()
+    st.markdown(STREAMLIT_STYLE, unsafe_allow_html=True)
+    st.title("PALIOS-AI-OS Chat")
+    st.warning(WARNING_TEXT)
+
+    if not st.session_state.auth_validated:
+        st.session_state.api_key = st.text_input("Enter Anthropic API Key", type="password")
+        if auth_error := validate_auth(st.session_state.provider, st.session_state.api_key):
+            st.warning(f"Please resolve: {auth_error}")
+            return
+        st.session_state.auth_validated = True
+
+    chat, http_logs = st.tabs(["Chat", "HTTP Exchange Logs"])
+    new_message = st.chat_input("Type a message to control the computer...")
+
+    with chat:
+        # Display existing messages
+        for message in st.session_state.messages:
+            _render_message(message["role"], message["content"])
+
+        if new_message:
+            st.session_state.messages.append({"role": Sender.USER, "content": [BetaTextBlockParam(type="text", text=new_message)]})
+            _render_message(Sender.USER, new_message)
+
+        try:
+            most_recent_message = st.session_state.messages[-1]
+        except IndexError:
+            return
+
+        if most_recent_message["role"] != Sender.USER:
+            return
+
+        with track_sampling_loop():
+            try:
+                st.session_state.messages = await sampling_loop(
+                    system_prompt_suffix="",
+                    model=st.session_state.model,
+                    provider=st.session_state.provider,
+                    messages=st.session_state.messages,
+                    output_callback=partial(_render_message, Sender.BOT),
+                    tool_output_callback=partial(_tool_output_callback, tool_state=st.session_state.tools),
+                    api_response_callback=partial(_api_response_callback, tab=http_logs, response_state=st.session_state.responses),
+                    api_key=st.session_state.api_key,
+                    only_n_most_recent_images=None,
+                    tool_version=None,
+                    max_tokens=st.session_state.output_tokens,
+                    thinking_budget=(st.session_state.thinking_budget if st.session_state.thinking else None),
+                    token_efficient_tools_beta=st.session_state.token_efficient_tools_beta,
+                    stream=True,
+                )
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    asyncio.run(main())
