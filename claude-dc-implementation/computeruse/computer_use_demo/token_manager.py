@@ -1,168 +1,131 @@
 """
 Token Management Module for Claude DC
 -------------------------------------
-Enforces API token rate limits to prevent 429 errors by throttling input tokens 
-to the model.
-Applies a strict per-minute input token limit (default 40,000 tokens/min) to 
-both user prompts and tool outputs.
-Implements a token bucket rate limiter (a proven strategy used by companies like
- Stripe&#8203;:contentReference[oaicite:0]{index=0}&#8203;:contentReference[oaic
-ite:1]{index=1}) 
-to allow bursts while maintaining the average rate. This prevents Claude from 
-exceeding input limits.
-Optionally, supports an extended output mode (128K token beta) which raises 
-allowable output token thresholds (logged for observability 
-but not enforcing output limits yet).
-  
-References:
- - Stripe recommends client-side token bucket rate 
-limiting&#8203;:contentReference[oaicite:2]{index=2}.
- - Cloudflare uses sliding window algorithms for strict rate 
-limits&#8203;:contentReference[oaicite:3]{index=3}.
+Prevents API rate limit errors by monitoring token usage and introducing delays.
+Supports 128K output beta and sliding window rate limiting for input tokens.
 """
 import time
 from datetime import datetime, timezone
 import logging
-from typing import Dict, Optional, Any, Deque, Tuple
-from collections import deque
+from typing import Dict, List, Tuple
 
-# Configure logging to both file and console for transparency
+# Configure logging for transparency (both to file and console)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[logging.FileHandler('/tmp/token_manager.log'), 
-              logging.StreamHandler()]
+    handlers=[logging.FileHandler('/tmp/token_manager.log'), logging.StreamHandler()]
 )
 logger = logging.getLogger("token_manager")
 
 class TokenManager:
-    """Manages API token usage and enforces rate limits (40k/min input, optional
-    extended output)."""
-    def __init__(self, input_rate_limit: int = 40000, extended_output: bool = False):
-        """
-        Initialize the TokenManager.
-        Args:
-            input_rate_limit: Maximum input tokens per minute (default 40000, 
-                              i.e. Claude's limit).
-            extended_output: True if 128K output beta is enabled, to adjust 
-                             output thresholds.
-        """
-        # Rate limit settings
-        self.input_rate_limit = input_rate_limit             # tokens per minute allowed
-        self._tokens_per_second = input_rate_limit / 60.0    # refill rate (tokens per second)
-        self._bucket_capacity = input_rate_limit             # max tokens bucket can hold (strict per-minute capacity)
-        self._tokens_available = input_rate_limit            # start full so initial messages can send immediately up to limit
-        self._last_refill_time = time.time()                 # last time tokens were refilled
-        # Extended output mode
-        self.extended_output = extended_output
-        # Set output token threshold for logging (do not enforce output rate limit yet)
-        self.output_token_threshold = 128000 if extended_output else 16000
-        # Usage statistics and tracking
+    """Manages API token usage and enforces rate limits (e.g., 40k/min input). Also handles extended output mode."""
+    def __init__(self):
+        # Token usage cumulative stats
         self.calls_made = 0
-        self.delays_required = 0
-        self.total_delay_time = 0.0
         self.input_tokens_used = 0
         self.output_tokens_used = 0
-        # Track recent input and output usage events for observability (sliding window of 60s)
-        self._input_history: Deque[Tuple[float,int]] = deque()    # (timestamp, tokens) for each input token batch
-        self._output_history: Deque[Tuple[float,int]] = deque()   # (timestamp, tokens) for each output batch (per API response)
-        logger.info(f"TokenManager initialized (rate={input_rate_limit}/min, extended_output={extended_output})")
+        # Sliding window tracking for per-minute rate limiting
+        self.input_token_timestamps: List[Tuple[float, int]] = []
+        self.output_token_timestamps: List[Tuple[float, int]] = []
+        self.input_tokens_per_minute = 0
+        self.output_tokens_per_minute = 0
+        # Organization default limits per minute (if applicable)
+        self.org_input_limit_per_min = None
+        self.org_output_limit_per_min = None
+        # Token bucket (client-side rate limiting) configuration
+        self.token_bucket_capacity = 40000  # maximum input tokens per minute allowed
+        self.token_bucket_refill_rate = 40000 / 60.0  # tokens per second (approx 667 tokens/sec)
+        self.tokens_available = self.token_bucket_capacity  # start full
+        self.last_refill_time = time.time()
+        # Rate limiting delay stats
+        self.delays_required = 0
+        self.total_delay_time = 0.0
 
-    def _refill_tokens(self) -> None:
+        # Determine safe default token limits based on model capacity
+        if self.extended_output_beta:
+            self.safe_max_tokens = 8192  # safe default output tokens for extended model (Claude 3.7)
+            self.safe_thinking_budget = 4096  # safe default thinking budget (half of safe output)
+        else:
+            self.safe_max_tokens = 4096  # safe default output tokens for non-extended model
+            self.safe_thinking_budget = 2048  # safe default thinking budget
+
+        # Extended output beta usage (128K context)
+        self.extended_output_beta = True
+        logger.info("Token manager initialized with sliding window rate limit and extended output beta mode")
+
+    def _refill_token_bucket(self):
         """Refill the token bucket based on time elapsed since last refill."""
-        now = time.time()
-        if now > self._last_refill_time:
-            # add tokens based on elapsed time
-            elapsed = now - self._last_refill_time
-            added_tokens = elapsed * self._tokens_per_second
-            if added_tokens > 0:
-                self._tokens_available = min(self._bucket_capacity, 
-                                             self._tokens_available + added_tokens)
-                self._last_refill_time = now
-        # Note: We don't allow tokens to accumulate beyond capacity
+        current_time = time.time()
+        if current_time > self.last_refill_time:
+            elapsed = current_time - self.last_refill_time
+            added_tokens = elapsed * self.token_bucket_refill_rate
+            # Add tokens to the bucket without exceeding capacity
+            self.tokens_available = min(self.token_bucket_capacity, self.tokens_available + added_tokens)
+            self.last_refill_time = current_time
 
     def delay_if_needed(self, input_tokens: int, output_tokens: int = 0) -> None:
         """
-        Block (sleep) if necessary to ensure adding `input_tokens` does not exceed the rate limit.
-        This should be called before injecting a user prompt or any content into Claude's context.
-        If provided, `output_tokens` are logged (no throttling applied).
+        Enforce the input token rate limit by delaying if adding `input_tokens` would exceed the limit.
+        Logs output token usage (for observability) but does not enforce an output rate limit.
         """
-        if output_tokens > 0:
-            logger.info(f"Applying rate limit: input_tokens={input_tokens}, output_tokens={output_tokens} (output not throttled)")
+        if output_tokens:
+            logger.info(f"Processing {input_tokens} input tokens, {output_tokens} output tokens (output not throttled)")
         needed = input_tokens
-        # Throttle as needed using token bucket: consume available tokens, then wait for refills if required
+        # Consume from token bucket and delay if needed
         while needed > 0:
-            # Refill tokens according to time passed
-            self._refill_tokens()
-            if self._tokens_available > 0:
-                # Use as many tokens as possible from the bucket
-                take = min(self._tokens_available, needed)
-                self._tokens_available -= take
+            self._refill_token_bucket()
+            if self.tokens_available > 0:
+                take = min(self.tokens_available, needed)
+                self.tokens_available -= take
                 needed -= take
-                # Record this consumption
+                # Record token consumption
                 self.input_tokens_used += take
-                self._input_history.append((time.time(), take))
-                # Trim old usage beyond 60 seconds for stats
-                self._trim_history(self._input_history, 60)
-            # If more tokens are still needed, bucket is now empty (or not enough tokens yet)
+                self.input_token_timestamps.append((time.time(), take))
+                # Trim history to last 60s for stats
+                self._trim_history(self.input_token_timestamps, 60)
             if needed > 0:
-                # Determine how many tokens we should wait for: either a full bucket or just the remainder needed
-                tokens_to_wait_for = min(needed, self._bucket_capacity)
-                # Calculate how long to wait to accumulate that many tokens
-                wait_seconds = (tokens_to_wait_for - self._tokens_available) / self._tokens_per_second
+                # Not enough tokens available; calculate wait time for remainder
+                tokens_to_wait_for = min(needed, self.token_bucket_capacity)
+                wait_seconds = (tokens_to_wait_for - self.tokens_available) / self.token_bucket_refill_rate
                 wait_seconds = max(wait_seconds, 0.0)
-                # Log and perform the delay
+                # Log and sleep
                 self.delays_required += 1
                 self.total_delay_time += wait_seconds
-                logger.info(f"Throttling input: sleeping {wait_seconds:.2f}s to respect token rate limit")
+                logger.info(f"Throttling input: sleeping {wait_seconds:.2f}s to respect rate limit")
                 time.sleep(wait_seconds)
-                # Loop will refill tokens after this sleep and continue consumption
-                # Note: We do not directly consume in this step; consumption happens in the next iteration after refill.
             else:
-                break  # no more tokens needed
-        # All required tokens have been accounted; it is now safe to proceed
-        return None
+                break
+        # Rate limit satisfied; safe to proceed
 
-    def record_tool_output(self, input_tokens: int) -> None:
-        """
-        Record tokens produced by a tool (to be appended to the prompt) and throttle if needed.
-        Tool outputs count towards the input token rate limit just like user input.
-        """
-        # We treat tool output as additional input to the model context.
-        logger.debug(f"Recording tool output of {input_tokens} tokens")
-        # Use the same logic as user input for rate limiting
-        self.delay_if_needed(input_tokens)
-        return None
+    def get_safe_limits(self) -> Dict[str, int]:
+        """Get safe token limits for max_tokens and thinking_budget."""
+        return {
+            "max_tokens": self.safe_max_tokens,
+            "thinking_budget": self.safe_thinking_budget
+        }
 
-    def process_response_headers(self, headers: Dict[str, Any]) -> None:
+    def process_response_headers(self, headers: Dict[str, any]) -> None:
         """
-        Process the API response headers after streaming a model response to update token usage stats.
-        This should be called once a Claude API response has completed.
+        Process API response headers to update token usage statistics after a response.
         """
         self.calls_made += 1
-        # If the API provided usage info in headers, update stats accordingly
-        # e.g., 'x-usage-prompt-tokens' or 'x-usage-completion-tokens' (if available from provider)
+        # Parse any provided header values for usage
         try:
-            # Some APIs might return header keys in different cases or as ints; handle gracefully
-            prompt_tokens = int(headers.get("x-usage-prompt-tokens") or 
-                                headers.get("prompt-tokens") or headers.get("x-prompts-consumed") or 0)
-            completion_tokens = int(headers.get("x-usage-completion-tokens") or 
-                                     headers.get("completion-tokens") or headers.get("x-tokens-generated") or 0)
+            prompt_tokens = int(headers.get("x-usage-prompt-tokens") or headers.get("prompt-tokens") or headers.get("x-prompts-consumed") or 0)
+            completion_tokens = int(headers.get("x-usage-completion-tokens") or headers.get("completion-tokens") or headers.get("x-tokens-generated") or 0)
         except Exception as e:
             prompt_tokens = 0
             completion_tokens = 0
-        if prompt_tokens > 0:
-            # Adjust input token usage if actual usage is reported
-            diff = prompt_tokens - 0  # We could subtract what we counted for this call if tracked per-call
-            # For simplicity, just ensure our total input_tokens_used reflects at least this value
-            if prompt_tokens > 0 and prompt_tokens > self.input_tokens_used:
+        if prompt_tokens:
+            # If actual prompt token count is reported and exceeds our current count, update
+            if prompt_tokens > self.input_tokens_used:
                 self.input_tokens_used = prompt_tokens
-        if completion_tokens > 0:
+        if completion_tokens:
             self.output_tokens_used += completion_tokens
-            # Track output token event for observability (per-minute rate, etc.)
-            self._output_history.append((time.time(), completion_tokens))
-            self._trim_history(self._output_history, 60)
-        # Check for any rate limit reset or retry-after headers to possibly adjust behavior
+            # Track output tokens in a sliding window for observability
+            self.output_token_timestamps.append((time.time(), completion_tokens))
+            self._trim_history(self.output_token_timestamps, 60)
+        # Handle any rate limit reset or retry-after headers
         reset_time = None
         if "x-ratelimit-reset" in headers or "anthropic-ratelimit-reset" in headers:
             reset_str = headers.get("x-ratelimit-reset") or headers.get("anthropic-ratelimit-reset")
@@ -171,59 +134,44 @@ class TokenManager:
             except Exception as e:
                 logger.debug(f"Could not parse reset time: {reset_str} ({e})")
         if reset_time:
-            # If we know when the limit window resets, we might use it in future (not strictly needed with token bucket approach).
-            pass  # (Optional: could store next reset target)
-        # If Retry-After is provided (in seconds), we can delay further calls accordingly
+            # (Optional) We could use reset_time to inform future token budgeting if needed
+            pass
         if "retry-after" in headers:
             try:
-                ra_value = headers.get("retry-after")
-                delay_sec = float(ra_value)
+                delay_sec = float(headers.get("retry-after"))
             except Exception:
                 try:
-                    delay_sec = (float(headers.get("retry-after-ms", 0)) / 1000.0)
+                    delay_sec = float(headers.get("retry-after-ms", 0)) / 1000.0
                 except Exception:
                     delay_sec = None
             if delay_sec:
-                # Log and enforce the suggested delay
                 self.delays_required += 1
                 self.total_delay_time += delay_sec
                 logger.warning(f"Rate limit hit, sleeping for Retry-After: {delay_sec:.2f}s")
                 time.sleep(delay_sec)
-        # Log output token info if it exceeds thresholds (observability for extended output)
-        if completion_tokens > 0:
-            if not self.extended_output and completion_tokens > self.output_token_threshold:
-                logger.info(f"Output tokens ({completion_tokens}) exceeded normal threshold ({self.output_token_threshold}). Consider enabling 128K output beta for long responses.")
-            elif self.extended_output and completion_tokens > self.output_token_threshold:
-                logger.info(f"Output tokens ({completion_tokens}) exceeded extended output threshold ({self.output_token_threshold}).")
-        return None
+        # Log if output tokens exceed normal thresholds
+        if completion_tokens:
+            if not self.extended_output_beta and completion_tokens > 16000:
+                logger.info(f"Output tokens ({completion_tokens}) exceeded normal threshold (16000). Consider enabling extended output beta.")
+            elif self.extended_output_beta and completion_tokens > 128000:
+                logger.info(f"Output tokens ({completion_tokens}) exceeded extended output threshold (128000).")
 
-    def _trim_history(self, history: Deque[Tuple[float,int]], interval: float) -> None:
-        """Trim old entries from a usage history deque beyond a given time interval (seconds)."""
+    def _trim_history(self, history: List[Tuple[float, int]], interval: float):
+        """Trim old token usage records beyond the given time interval (seconds)."""
         cutoff = time.time() - interval
+        # Remove entries older than cutoff
         while history and history[0][0] < cutoff:
-            history.popleft()
-        # no return needed
+            history.pop(0)
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_usage_stats(self) -> Dict[str, any]:
         """
-        Get current statistics about token usage and rate limiting.
-        Returns a dictionary with keys:
-         - calls_made: number of API calls completed
-         - delays_required: how many times a delay was performed to throttle
-         - total_delay_time: total time (seconds) spent in delays
-         - input_tokens_used: total input tokens sent so far
-         - output_tokens_used: total output tokens received so far
-         - input_tokens_last_minute: approximate input tokens used in the last 60 seconds
-         - output_tokens_last_minute: approximate output tokens in the last 60 seconds
-         - extended_output_enabled: whether extended output mode is enabled
-         - input_rate_limit: configured input token rate limit per minute
-         - output_token_threshold: current output token threshold for logging
+        Return current token usage and rate limit stats.
         """
-        # Calculate tokens in last 60 seconds from history
-        self._trim_history(self._input_history, 60)
-        self._trim_history(self._output_history, 60)
-        input_last_minute = sum(toks for (_t, toks) in self._input_history)
-        output_last_minute = sum(toks for (_t, toks) in self._output_history)
+        # Compute tokens used in last minute from history
+        self._trim_history(self.input_token_timestamps, 60)
+        self._trim_history(self.output_token_timestamps, 60)
+        input_last_minute = sum(t for (_t, t) in self.input_token_timestamps)
+        output_last_minute = sum(t for (_t, t) in self.output_token_timestamps)
         return {
             "calls_made": self.calls_made,
             "delays_required": self.delays_required,
@@ -232,11 +180,11 @@ class TokenManager:
             "output_tokens_used": self.output_tokens_used,
             "input_tokens_last_minute": input_last_minute,
             "output_tokens_last_minute": output_last_minute,
-            "extended_output_enabled": self.extended_output,
-            "input_rate_limit": self.input_rate_limit,
-            "output_token_threshold": self.output_token_threshold
+            "extended_output_enabled": self.extended_output_beta,
+            "safe_max_tokens": self.safe_max_tokens,
+            "safe_thinking_budget": self.safe_thinking_budget
         }
 
-# Create a singleton instance for convenient use across the application
+# Initialize a singleton token manager instance for the application
 token_manager = TokenManager()
 
