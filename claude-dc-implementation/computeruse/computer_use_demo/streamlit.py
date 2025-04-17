@@ -114,6 +114,15 @@ def setup_state():
         )
     if "provider_radio" not in st.session_state:
         st.session_state.provider_radio = st.session_state.provider
+        
+    # Set default values for model configuration before resetting model
+    if "max_output_tokens" not in st.session_state:
+        st.session_state.max_output_tokens = 16384
+    if "output_tokens" not in st.session_state:
+        st.session_state.output_tokens = 4096
+    if "thinking_budget" not in st.session_state:
+        st.session_state.thinking_budget = 2048
+    
     if "model" not in st.session_state:
         _reset_model()
     if "auth_validated" not in st.session_state:
@@ -134,7 +143,8 @@ def setup_state():
         st.session_state.in_sampling_loop = False
     if "token_usage_metrics" not in st.session_state:
         st.session_state.token_usage_metrics = {"input": 0, "output": 0}
-
+    if "thinking" not in st.session_state:
+        st.session_state.thinking = False
 
 def _reset_model():
     st.session_state.model = PROVIDER_TO_DEFAULT_MODEL_NAME[
@@ -227,15 +237,28 @@ async def main():
             index=versions.index(st.session_state.tool_version),
         )
 
-        st.number_input("Max Output Tokens", key="output_tokens", step=1)
+        # Default to 1024 if the value is <= 0
+        output_tokens = max(1024, st.session_state.get("output_tokens", 1024))
+        st.number_input(
+            "Max Output Tokens", 
+            key="output_tokens", 
+            min_value=1,
+            value=output_tokens,
+            step=1
+        )
 
+        # Ensure we have a positive max value for thinking budget
+        max_budget = max(1, st.session_state.get("max_output_tokens", 1024))
+        thinking_budget = min(max_budget, max(1, st.session_state.get("thinking_budget", 512)))
         st.checkbox("Thinking Enabled", key="thinking", value=False)
         st.number_input(
             "Thinking Budget",
             key="thinking_budget",
-            max_value=st.session_state.max_output_tokens,
+            min_value=1,
+            max_value=max_budget,
+            value=thinking_budget,
             step=1,
-            disabled=not st.session_state.thinking,
+            disabled=not st.session_state.get("thinking", False),
         )
         
         # Add token usage metrics
