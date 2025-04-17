@@ -24,7 +24,9 @@ git config --global user.email "jesselarose@gmail.com"
 git config --global user.name "palios-taey"
 
 # Now edit the secrets file to remove the random text from API keys
-echo "IMPORTANT: Now edit the secrets file to remove the random text from the secrets:"
+# Remove 'testkey-' from all files in secrets directory
+echo "Removing 'testkey-' prefixes from secret files..."
+find /home/computeruse/secrets -type f -exec sed -i 's/testkey-//g' {} \;
 echo "nano /home/computeruse/secrets/palios-taey-secrets.json"
 echo "nano /home/computeruse/secrets/id_ed25519"
 
