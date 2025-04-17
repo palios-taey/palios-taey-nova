@@ -1,4 +1,3 @@
-# computer_use_demo/loop.py
 """
 Agentic sampling loop that calls the Anthropic API and local implementation of anthropic-defined computer use tools.
 """
@@ -30,17 +29,11 @@ from anthropic.types.beta import (
     BetaToolUseBlockParam,
 )
 
-from computer_use_demo.tools import (
+from .tools import (
     TOOL_GROUPS_BY_VERSION,
     ToolCollection,
     ToolResult,
     ToolVersion,
-)
-from computer_use_demo.token_manager import (
-    token_rate_limiter,
-    with_token_limiting,
-    estimate_message_tokens,
-    StreamManager
 )
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
@@ -73,105 +66,61 @@ SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
 * If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
 </IMPORTANT>"""
 
+# New function to add to loop.py for effective streaming
 
-async def estimate_api_response_tokens(response: BetaMessage) -> int:
-    """Estimate tokens in API response"""
-    total_chars = 0
-    
-    for block in response.content:
-        if hasattr(block, "text"):
-            total_chars += len(getattr(block, "text", ""))
-        elif hasattr(block, "thinking"):
-            total_chars += len(getattr(block, "thinking", ""))
-        # Add estimates for tool use blocks if needed
-    
-    return int(total_chars / 4)  # Rough estimation
-
-
-@with_token_limiting(
-    input_token_estimator=lambda messages, **kwargs: estimate_message_tokens(messages),
-    output_token_estimator=estimate_api_response_tokens
-)
-async def call_anthropic_api(
-    client: Any,
+async def stream_anthropic_response(
+    client,
     max_tokens: int,
-    messages: list[BetaMessageParam],
+    messages: list,
     model: str,
-    system: list[BetaTextBlockParam],
+    system: list,
     tools: list,
-    betas: list[str],
-    extra_body: dict,
-    stream: bool = True
-) -> tuple[Any, Any]:
+    betas: list,
+    extra_body: dict
+):
     """
-    Call the Anthropic API with token rate limiting and streaming support.
-    Wrapped with the token_limiting decorator to handle rate limits.
+    Stream a response from the Anthropic API to handle large outputs efficiently.
+    
+    This function uses the streaming API to get responses in chunks,
+    which is essential for outputs exceeding ~21K tokens.
     
     Returns:
-        Tuple of (raw_response, parsed_response)
+        Tuple of (http_response, full_content)
     """
-    # Use streaming for large outputs
-    if max_tokens > 21333 or "output-128k-2025-02-19" in betas:
-        stream = True
-    
-    if stream:
-        # Use streaming API
-        try:
-            stream_manager = StreamManager(token_rate_limiter)
+    try:
+        # Create a stream that we'll process in chunks
+        stream = client.beta.messages.with_raw_response.stream(
+            max_tokens=max_tokens,
+            messages=messages,
+            model=model,
+            system=system,
+            tools=tools,
+            betas=betas,
+            extra_body=extra_body,
+        )
+        
+        # Process the stream
+        chunks = []
+        async for chunk in stream:
+            chunks.append(chunk)
             
-            # Create the stream
-            raw_stream = client.beta.messages.with_raw_response.stream(
-                max_tokens=max_tokens,
-                messages=messages,
-                model=model,
-                system=system,
-                tools=tools,
-                betas=betas,
-                extra_body=extra_body,
-            )
+        # Extract information from chunks
+        if chunks:
+            # For HTTP response info, use the first chunk
+            http_response = chunks[0].http_response
             
-            # Process the stream using stream manager
-            chunks = []
-            async for chunk in raw_stream:
-                chunks.append(chunk)
-                # We don't need to do any token tracking here as the decorator handles it
+            # Get the full content from the last chunk
+            # The last chunk contains the complete response
+            full_content = chunks[-1].parse()
             
-            # Combine all chunks to create the final response
-            if chunks:
-                # For the httpx request info, we can use the first chunk
-                http_response = chunks[0].http_response if chunks else None
-                
-                # For the parsed content, we need to combine all chunks
-                full_content = chunks[-1].parse()  # The last chunk has the full content
-                
-                return http_response, full_content
-            else:
-                raise APIError("No content received from streaming API")
-                
-        except (APIStatusError, APIResponseValidationError) as e:
-            return e.request, e.response
-        except APIError as e:
-            return e.request, e.body
-    
-    else:
-        # Use non-streaming API
-        try:
-            raw_response = client.beta.messages.with_raw_response.create(
-                max_tokens=max_tokens,
-                messages=messages,
-                model=model,
-                system=system,
-                tools=tools,
-                betas=betas,
-                extra_body=extra_body,
-            )
-            return raw_response.http_response, raw_response.parse()
+            return http_response, full_content
+        else:
+            raise Exception("No content received from streaming API")
             
-        except (APIStatusError, APIResponseValidationError) as e:
-            return e.request, e.response
-        except APIError as e:
-            return e.request, e.body
-
+    except Exception as e:
+        # Handle and log any errors
+        print(f"Error in streaming: {str(e)}")
+        raise e
 
 async def sampling_loop(
     *,
@@ -193,7 +142,6 @@ async def sampling_loop(
 ):
     """
     Agentic sampling loop for the assistant/tool interaction of computer use.
-    Enhanced with token management and streaming support.
     """
     tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
     tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
@@ -207,7 +155,7 @@ async def sampling_loop(
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
-        
+            
         # Enable 128K output tokens for Claude 3.7 Sonnet
         if "3-7" in model and max_tokens > 64000:
             betas.append("output-128k-2025-02-19")
@@ -243,25 +191,45 @@ async def sampling_loop(
                 "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
             }
 
-        # Call the API with token management and streaming
-        http_response, response = await call_anthropic_api(
-            client=client,
-            max_tokens=max_tokens,
-            messages=messages,
-            model=model,
-            system=[system],
-            tools=tool_collection.to_params(),
-            betas=betas,
-            extra_body=extra_body,
-            stream=(max_tokens > 21333)  # Use streaming for large outputs
-        )
+        # Determine if we should use streaming based on output size
+        should_stream = max_tokens > 21333 or "output-128k-2025-02-19" in betas
+        
+        try:
+            # Use our streaming function for large outputs
+            if should_stream:
+                http_response, response = await stream_anthropic_response(
+                    client=client,
+                    max_tokens=max_tokens,
+                    messages=messages,
+                    model=model,
+                    system=[system],
+                    tools=tool_collection.to_params(),
+                    betas=betas,
+                    extra_body=extra_body
+                )
+            else:
+                # Use the non-streaming API for smaller outputs
+                raw_response = client.beta.messages.with_raw_response.create(
+                    max_tokens=max_tokens,
+                    messages=messages,
+                    model=model,
+                    system=[system],
+                    tools=tool_collection.to_params(),
+                    betas=betas,
+                    extra_body=extra_body,
+                )
+                http_response = raw_response.http_response
+                response = raw_response.parse()
+                
+        except (APIStatusError, APIResponseValidationError) as e:
+            api_response_callback(e.request, e.response, e)
+            return messages
+        except APIError as e:
+            api_response_callback(e.request, e.body, e)
+            return messages
 
-        # Handle the API response callback with proper error handling
-        error = None if isinstance(response, BetaMessage) else Exception("API Error")
         api_response_callback(
-            http_response.request if http_response else None, 
-            http_response, 
-            error
+            http_response.request, http_response, None
         )
 
         if not isinstance(response, BetaMessage):
@@ -293,7 +261,6 @@ async def sampling_loop(
             return messages
 
         messages.append({"content": tool_result_content, "role": "user"})
-
 
 def _maybe_filter_to_n_most_recent_images(
     messages: list[BetaMessageParam],

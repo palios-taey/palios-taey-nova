@@ -1,7 +1,7 @@
 """
 Entrypoint for streamlit, see https://docs.streamlit.io/
 """
-import logging
+
 import asyncio
 import base64
 import os
@@ -30,11 +30,6 @@ from computer_use_demo.loop import (
     sampling_loop,
 )
 from computer_use_demo.tools import ToolResult, ToolVersion
-from computer_use_demo.token_manager import token_rate_limiter
-
-# Initialize logger
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("streamlit")
 
 PROVIDER_TO_DEFAULT_MODEL_NAME: dict[APIProvider, str] = {
     APIProvider.ANTHROPIC: "claude-3-7-sonnet-20250219",
@@ -91,7 +86,6 @@ STREAMLIT_STYLE = """
 WARNING_TEXT = "⚠️ Security Alert: Never provide access to sensitive accounts or data, as malicious web content can hijack Claude's behavior"
 INTERRUPT_TEXT = "(user stopped or interrupted and wrote the following)"
 INTERRUPT_TOOL_ERROR = "human stopped or interrupted tool execution"
-TOKEN_USAGE_WARNING = "⚠️ High token usage detected. You may experience rate limiting soon. Consider reducing input or waiting a moment before continuing."
 
 
 class Sender(StrEnum):
@@ -114,15 +108,6 @@ def setup_state():
         )
     if "provider_radio" not in st.session_state:
         st.session_state.provider_radio = st.session_state.provider
-        
-    # Set default values for model configuration before resetting model
-    if "max_output_tokens" not in st.session_state:
-        st.session_state.max_output_tokens = 16384
-    if "output_tokens" not in st.session_state:
-        st.session_state.output_tokens = 4096
-    if "thinking_budget" not in st.session_state:
-        st.session_state.thinking_budget = 2048
-    
     if "model" not in st.session_state:
         _reset_model()
     if "auth_validated" not in st.session_state:
@@ -141,10 +126,7 @@ def setup_state():
         st.session_state.token_efficient_tools_beta = False
     if "in_sampling_loop" not in st.session_state:
         st.session_state.in_sampling_loop = False
-    if "token_usage_metrics" not in st.session_state:
-        st.session_state.token_usage_metrics = {"input": 0, "output": 0}
-    if "thinking" not in st.session_state:
-        st.session_state.thinking = False
+
 
 def _reset_model():
     st.session_state.model = PROVIDER_TO_DEFAULT_MODEL_NAME[
@@ -159,20 +141,13 @@ def _reset_model_conf():
         if "3-7" in st.session_state.model
         else MODEL_TO_MODEL_CONF.get(st.session_state.model, SONNET_3_5_NEW)
     )
-    
-    # Make sure values are valid
-    max_tokens = max(1, model_conf.max_output_tokens)
-    default_tokens = max(1, model_conf.default_output_tokens)
-    
-    # Update session state
     st.session_state.tool_version = model_conf.tool_version
     st.session_state.has_thinking = model_conf.has_thinking
-    st.session_state.max_output_tokens = max_tokens
-    st.session_state.output_tokens = default_tokens
-    st.session_state.thinking_budget = max(1, int(default_tokens / 2))
-    
-    logger.info(f"Reset model config: max_tokens={max_tokens}, output_tokens={default_tokens}")
-    
+    st.session_state.output_tokens = model_conf.default_output_tokens
+    st.session_state.max_output_tokens = model_conf.max_output_tokens
+    st.session_state.thinking_budget = int(model_conf.default_output_tokens / 2)
+
+
 async def main():
     """Render loop for streamlit"""
     setup_state()
@@ -237,49 +212,16 @@ async def main():
             index=versions.index(st.session_state.tool_version),
         )
 
-        # For output tokens, get the value from session state, ensure it's valid
-        current_output = max(1, st.session_state.output_tokens)
-        st.number_input(
-            "Max Output Tokens", 
-            min_value=1,
-            value=current_output,  # Use the value from session state
-            key="output_tokens_input",  # Use a different key for the widget
-            on_change=lambda: setattr(st.session_state, "output_tokens", 
-                                      st.session_state.output_tokens_input)
-        )
+        st.number_input("Max Output Tokens", key="output_tokens", step=1)
 
-        # Ensure we have a positive max value for thinking budget
-        current_max = max(1, st.session_state.max_output_tokens)
-        current_budget = min(current_max, max(1, st.session_state.thinking_budget))
-        
         st.checkbox("Thinking Enabled", key="thinking", value=False)
         st.number_input(
             "Thinking Budget",
-            min_value=1,
-            max_value=current_max,
-            value=current_budget,
-            key="thinking_budget_input",  # Different key for widget
-            on_change=lambda: setattr(st.session_state, "thinking_budget", 
-                                     st.session_state.thinking_budget_input),
+            key="thinking_budget",
+            max_value=st.session_state.max_output_tokens,
+            step=1,
             disabled=not st.session_state.thinking,
         )
-        
-        # Add token usage metrics
-        st.subheader("Token Usage")
-        input_used, output_used = token_rate_limiter.get_current_usage()
-        input_limit = max(1, token_rate_limiter.input_token_limit)  # Ensure never zero
-        output_limit = max(1, token_rate_limiter.output_token_limit)  # Ensure never zero
-
-        # Safe division with fallback to 0
-        input_pct = min(1.0, input_used / input_limit)  # Prevent division by zero or values > 1
-        output_pct = min(1.0, output_used / output_limit)  # Prevent division by zero or values > 1
-
-        st.progress(input_pct, text=f"Input: {input_used}/{input_limit} tokens")
-        st.progress(output_pct, text=f"Output: {output_used}/{output_limit} tokens")
-        
-        # Display warning if usage is high
-        if input_used > input_limit * 0.8 or output_used > output_limit * 0.8:
-            st.warning(TOKEN_USAGE_WARNING)
 
         if st.button("Reset", type="primary"):
             with st.spinner("Resetting..."):
