@@ -10,6 +10,11 @@ mkdir -p /home/computeruse/references
 # Copy the modified secrets file from GitHub to the secrets directory
 # IMPORTANT: You'll need to modify the API keys manually after copying to remove the random text
 
+# Only needed when restarting an existing environment, not on fresh installs
+echo "Cleaning up Python processes..."
+pkill -9 python || true
+pkill -9 python3 || true
+pkill -9 streamlit || true
 
 # Copy /home/computeruse/ directories
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
