@@ -1,93 +1,282 @@
-import sys; sys.path.insert(0, "/home/computeruse")
+import asyncio
+import base64
 import os
-import math
+import subprocess
+import traceback
+from contextlib import contextmanager
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from functools import partial
+from pathlib import PosixPath
+from typing import cast, get_args
+
+import httpx
 import streamlit as st
-from loop import APIProvider, sampling_loop, Sender, ToolResult
-from anthropic.types.beta import BetaTextBlockParam, BetaToolResultBlockParam
-from token_manager import token_manager
+from anthropic import RateLimitError
+from anthropic.types.beta import (
+    BetaContentBlockParam,
+    BetaTextBlockParam,
+    BetaToolResultBlockParam,
+)
+from streamlit.delta_generator import DeltaGenerator
 
-st.title("Claude DC – Streaming Chat Interface")
-st.markdown("Enter a prompt for Claude and receive a streamed response. Token usage is tracked to avoid exceeding rate limits.")
+from computer_use_demo.loop import sampling_loop
+from computer_use_demo.tools import ToolVersion
+from computer_use_demo.types import APIProvider, Sender, ToolResult
 
-# Ensure Anthropic API key is set
-api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-if not api_key:
-    st.error("Anthropic API key not found. Please set the ANTHROPIC_API_KEY environment variable.")
-    st.stop()
-if "api_key" not in st.session_state:
-    st.session_state.api_key = api_key
+PROVIDER_TO_DEFAULT_MODEL_NAME: dict[APIProvider, str] = {
+    APIProvider.ANTHROPIC: "claude-3-7-sonnet-20250219",
+    APIProvider.BEDROCK: "anthropic.claude-3-5-sonnet-20241022-v2:0",
+    APIProvider.VERTEX: "claude-3-5-sonnet-v2@20241022",
+}
 
-# Initialize session state variables
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-if "tools" not in st.session_state:
-    st.session_state.tools = {}
-if "responses" not in st.session_state:
-    st.session_state.responses = {}
-if "in_sampling_loop" not in st.session_state:
-    st.session_state.in_sampling_loop = False
-if "provider" not in st.session_state:
-    st.session_state.provider = APIProvider.ANTHROPIC
-if "model" not in st.session_state:
-    st.session_state.model = "claude-3-7-sonnet-20250219"
-if "tool_version" not in st.session_state:
-    st.session_state.tool_version = "computer_use_20250124"
-if "output_tokens" not in st.session_state:
-    st.session_state.output_tokens = token_manager.get_safe_limits()["max_tokens"]
-if "thinking" not in st.session_state:
-    st.session_state.thinking = False
-if "thinking_budget" not in st.session_state:
-    st.session_state.thinking_budget = None
-if "only_n_most_recent_images" not in st.session_state:
-    st.session_state.only_n_most_recent_images = 0
-if "token_efficient_tools_beta" not in st.session_state:
-    st.session_state.token_efficient_tools_beta = False
+@dataclass(kw_only=True, frozen=True)
+class ModelConfig:
+    tool_version: ToolVersion
+    max_output_tokens: int
+    default_output_tokens: int
+    has_thinking: bool = False
 
-# Helper for rendering messages
-def _render_message(role, content):
-    """Render a message block in the Streamlit app."""
-    role_name = role if isinstance(role, str) else role.value if hasattr(role, "value") else str(role)
-    if role_name.lower() in ["user", "sender.user"]:
-        st.markdown(f"**User:** {content}")
-    elif role_name.lower() in ["assistant", "sender.bot"]:
-        # Assistant content could be partial text or final text
-        if isinstance(content, str):
-            st.markdown(f"**Claude:** {content}")
-        elif isinstance(content, dict) and content.get("type") == "text":
-            st.markdown(f"**Claude:** {content.get('text', '')}")
-        elif isinstance(content, ToolResult):
-            # Assistant role receiving a ToolResult (should not happen directly)
-            if content.error:
-                st.error(content.error)
-            elif content.output:
-                st.code(content.output)
-    elif role_name.lower() in ["tool", "sender.tool"]:
-        # content is a ToolResult from st.session_state.tools
-        if isinstance(content, ToolResult):
-            if content.error:
-                st.error(content.error)
-            elif content.output:
-                st.code(content.output)
+SONNET_3_5_NEW = ModelConfig(
+    tool_version="computer_use_20241022",
+    max_output_tokens=1024 * 8,
+    default_output_tokens=1024 * 4,
+)
+
+SONNET_3_7 = ModelConfig(
+    tool_version="computer_use_20250124",
+    max_output_tokens=128_000,
+    default_output_tokens=1024 * 16,
+    has_thinking=True,
+)
+
+MODEL_TO_MODEL_CONF: dict[str, ModelConfig] = {
+    "claude-3-7-sonnet-20250219": SONNET_3_7,
+}
+
+CONFIG_DIR = PosixPath("~/.anthropic").expanduser()
+API_KEY_FILE = CONFIG_DIR / "api_key"
+STREAMLIT_STYLE = """
+<style>
+    /* Highlight the stop button in red */
+    button[kind=header] {
+        background-color: rgb(255, 75, 75);
+        border: 1px solid rgb(255, 75, 75);
+        color: rgb(255, 255, 255);
+    }
+    button[kind=header]:hover {
+        background-color: rgb(255, 51, 51);
+    }
+     /* Hide the streamlit deploy button */
+    .stAppDeployButton {
+        visibility: hidden;
+    }
+</style>
+"""
+
+WARNING_TEXT = "⚠️ Security Alert: Never provide access to sensitive accounts or data, as malicious web content can hijack Claude's behavior"
+INTERRUPT_TEXT = "(user stopped or interrupted and wrote the following)"
+INTERRUPT_TOOL_ERROR = "human stopped or interrupted tool execution"
+
+def setup_state():
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    if "api_key" not in st.session_state:
+        # Try to load API key from file first, then environment
+        st.session_state.api_key = (CONFIG_DIR / "api_key").read_text().strip() if (CONFIG_DIR / "api_key").exists() else os.getenv("ANTHROPIC_API_KEY", "")
+    if "provider" not in st.session_state:
+        prov = os.getenv("API_PROVIDER")
+        st.session_state.provider = APIProvider(prov) if prov else APIProvider.ANTHROPIC
+    if "provider_radio" not in st.session_state:
+        st.session_state.provider_radio = st.session_state.provider.value if isinstance(st.session_state.provider, APIProvider) else str(st.session_state.provider)
+    if "model" not in st.session_state:
+        _reset_model()
+    if "auth_validated" not in st.session_state:
+        st.session_state.auth_validated = False
+    if "responses" not in st.session_state:
+        st.session_state.responses = {}
+    if "tools" not in st.session_state:
+        st.session_state.tools = {}
+    if "only_n_most_recent_images" not in st.session_state:
+        st.session_state.only_n_most_recent_images = 3
+    if "custom_system_prompt" not in st.session_state:
+        st.session_state.custom_system_prompt = load_from_storage("system_prompt") or ""
+    if "hide_images" not in st.session_state:
+        st.session_state.hide_images = False
+    if "token_efficient_tools_beta" not in st.session_state:
+        st.session_state.token_efficient_tools_beta = False
+    if "in_sampling_loop" not in st.session_state:
+        st.session_state.in_sampling_loop = False
+
+def _reset_model():
+    # Reset model and related configuration whenever provider or model changes
+    st.session_state.model = PROVIDER_TO_DEFAULT_MODEL_NAME[st.session_state.provider]
+    _reset_model_conf()
+
+def _reset_model_conf():
+    model_conf = (
+        SONNET_3_7
+        if "3-7" in st.session_state.model
+        else MODEL_TO_MODEL_CONF.get(st.session_state.model, SONNET_3_5_NEW)
+    )
+    st.session_state.tool_version = model_conf.tool_version
+    st.session_state.has_thinking = model_conf.has_thinking
+    st.session_state.output_tokens = model_conf.default_output_tokens
+    st.session_state.max_output_tokens = model_conf.max_output_tokens
+    st.session_state.thinking_budget = int(model_conf.default_output_tokens / 2)
+
+async def main():
+    """Render loop for Streamlit UI."""
+    setup_state()
+    st.markdown(STREAMLIT_STYLE, unsafe_allow_html=True)
+    st.title("Claude Computer Use Demo")
+    if not os.getenv("HIDE_WARNING"):
+        st.warning(WARNING_TEXT)
+
+    with st.sidebar:
+        def _reset_api_provider():
+            if st.session_state.provider_radio != st.session_state.provider:
+                _reset_model()
+                try:
+                    st.session_state.provider = APIProvider(st.session_state.provider_radio)
+                except Exception:
+                    st.session_state.provider = APIProvider.ANTHROPIC
+                st.session_state.auth_validated = False
+
+        provider_options = [option.value for option in APIProvider]
+        st.radio(
+            "API Provider",
+            options=provider_options,
+            key="provider_radio",
+            format_func=lambda x: str(x).title(),
+            on_change=_reset_api_provider,
+        )
+        st.text_input("Model", key="model", on_change=_reset_model_conf)
+        if st.session_state.provider == APIProvider.ANTHROPIC:
+            st.text_input(
+                "Anthropic API Key",
+                type="password",
+                key="api_key",
+                on_change=lambda: save_to_storage("api_key", st.session_state.api_key),
+            )
+        st.number_input(
+            "Only send N most recent images",
+            min_value=0,
+            key="only_n_most_recent_images",
+            help="Remove older screenshots from the conversation to reduce token usage",
+        )
+        st.text_area(
+            "Custom System Prompt Suffix",
+            key="custom_system_prompt",
+            help="Additional instructions to append to the base system prompt.",
+            on_change=lambda: save_to_storage("system_prompt", st.session_state.custom_system_prompt),
+        )
+        st.checkbox("Hide screenshots", key="hide_images")
+        st.checkbox("Enable token-efficient tools beta", key="token_efficient_tools_beta")
+        versions = get_args(ToolVersion)
+        st.radio(
+            "Tool Versions",
+            key="tool_versions",
+            options=versions,
+            index=versions.index(st.session_state.tool_version),
+        )
+        st.number_input("Max Output Tokens", key="output_tokens", step=1)
+        st.checkbox("Thinking Enabled", key="thinking", value=False)
+        st.number_input(
+            "Thinking Budget",
+            key="thinking_budget",
+            max_value=st.session_state.max_output_tokens,
+            step=1,
+            disabled=not st.session_state.thinking,
+        )
+        if st.button("Reset", type="primary"):
+            with st.spinner("Resetting..."):
+                st.session_state.clear()
+                setup_state()
+                subprocess.run("pkill Xvfb; pkill tint2", shell=True)
+                await asyncio.sleep(1)
+                subprocess.run("./start_all.sh", shell=True)
+
+    # Validate API credentials as needed
+    if not st.session_state.auth_validated:
+        if auth_error := validate_auth(st.session_state.provider, st.session_state.api_key):
+            st.warning(f"Please resolve the following auth issue:\n\n{auth_error}")
+            return
         else:
-            st.write(content)
+            st.session_state.auth_validated = True
 
-INTERRUPT_TOOL_ERROR = "Tool execution interrupted by new prompt"
-INTERRUPT_TEXT = "*[The previous action was interrupted]*"
+    chat_tab, http_logs_tab = st.tabs(["Chat", "HTTP Exchange Logs"])
+    new_message = st.chat_input("Type a message to send to Claude to control the computer...")
+
+    with chat_tab:
+        # Render past conversation
+        for message in st.session_state.messages:
+            if isinstance(message["content"], str):
+                _render_message(message["role"], message["content"])
+            elif isinstance(message["content"], list):
+                for block in message["content"]:
+                    if isinstance(block, dict) and block.get("type") == "tool_result":
+                        # For tool_result blocks, retrieve actual ToolResult from state to display
+                        _render_message(Sender.TOOL, st.session_state.tools.get(block["tool_use_id"]))
+                    else:
+                        _render_message(message["role"], cast(BetaContentBlockParam | ToolResult, block))
+        # Render past HTTP exchanges
+        for identity, (request, response) in st.session_state.responses.items():
+            _render_api_response(request, response, identity, http_logs_tab)
+
+        if new_message:
+            # Append the new user message to conversation (with any interruption markers)
+            st.session_state.messages.append({
+                "role": Sender.USER,
+                "content": [
+                    *maybe_add_interruption_blocks(),
+                    BetaTextBlockParam(type="text", text=new_message),
+                ],
+            })
+            _render_message(Sender.USER, new_message)
+
+        try:
+            most_recent_message = st.session_state.messages[-1]
+        except IndexError:
+            return
+        if most_recent_message["role"] is not Sender.USER:
+            # No new user message to respond to
+            return
+
+        # Invoke Claude's agent with streaming output
+        with track_sampling_loop():
+            st.session_state.messages = await sampling_loop(
+                system_prompt_suffix=st.session_state.custom_system_prompt,
+                model=st.session_state.model,
+                provider=st.session_state.provider,
+                messages=st.session_state.messages,
+                output_callback=partial(_render_message, Sender.BOT),
+                tool_output_callback=partial(_tool_output_callback, tool_state=st.session_state.tools),
+                api_response_callback=partial(_api_response_callback, tab=http_logs_tab, response_state=st.session_state.responses),
+                api_key=st.session_state.api_key,
+                only_n_most_recent_images=st.session_state.only_n_most_recent_images,
+                tool_version=st.session_state.tool_version,
+                max_tokens=st.session_state.output_tokens,
+                thinking_budget=(st.session_state.thinking_budget if st.session_state.thinking else None),
+                token_efficient_tools_beta=st.session_state.token_efficient_tools_beta,
+            )
 
 def maybe_add_interruption_blocks():
     if not st.session_state.in_sampling_loop:
         return []
-    blocks = []
-    last_msg = st.session_state.messages[-1] if st.session_state.messages else None
-    if last_msg and isinstance(last_msg["content"], list):
-        prev_tool_ids = [block["id"] for block in last_msg["content"] if isinstance(block, dict) and block.get("type") == "tool_use"]
-        for tool_use_id in prev_tool_ids:
-            st.session_state.tools[tool_use_id] = ToolResult(error=INTERRUPT_TOOL_ERROR)
-            blocks.append(BetaToolResultBlockParam(tool_use_id=tool_use_id, type="tool_result", content=INTERRUPT_TOOL_ERROR, is_error=True))  # type: ignore
-    blocks.append(BetaTextBlockParam(type="text", text=INTERRUPT_TEXT))
-    return blocks
+    # If the sampling loop was interrupted mid-action, mark previous tool uses as interrupted
+    result = []
+    last_message = st.session_state.messages[-1]
+    previous_tool_use_ids = [
+        block["id"] for block in last_message["content"] if isinstance(block, dict) and block.get("type") == "tool_use"
+    ]
+    for tool_use_id in previous_tool_use_ids:
+        # Mark tool result as interrupted in state and conversation
+        st.session_state.tools[tool_use_id] = ToolResult(error=INTERRUPT_TOOL_ERROR)
+        result.append(BetaToolResultBlockParam(tool_use_id=tool_use_id, type="tool_result", content=INTERRUPT_TOOL_ERROR, is_error=True))
+    result.append(BetaTextBlockParam(type="text", text=INTERRUPT_TEXT))
+    return result
 
-from contextlib import contextmanager
 @contextmanager
 def track_sampling_loop():
     st.session_state.in_sampling_loop = True
@@ -96,39 +285,152 @@ def track_sampling_loop():
     finally:
         st.session_state.in_sampling_loop = False
 
-# Input field for user prompt
-user_input = st.text_area("Your Prompt:", value="", placeholder="Type your question or request here...")
-
-# Submit button
-if st.button("Submit"):
-    if not user_input.strip():
-        st.warning("Please enter a prompt before submitting.")
-    else:
-        # Append user message (with any interruption context) to conversation
-        st.session_state.messages.append({
-            "role": "user",
-            "content": [*maybe_add_interruption_blocks(), BetaTextBlockParam(type="text", text=user_input)]  # type: ignore
-        })
-        _render_message(Sender.USER, user_input)
-        # Call Claude's agent with streaming output
+def validate_auth(provider: APIProvider, api_key: str | None):
+    if provider == APIProvider.ANTHROPIC:
+        if not api_key:
+            return "Enter your Anthropic API key in the sidebar to continue."
+    if provider == APIProvider.BEDROCK:
+        import boto3
+        if not boto3.Session().get_credentials():
+            return "You must have AWS credentials set up to use the Bedrock API."
+    if provider == APIProvider.VERTEX:
+        import google.auth
+        from google.auth.exceptions import DefaultCredentialsError
+        if not os.environ.get("CLOUD_ML_REGION"):
+            return "Set the CLOUD_ML_REGION environment variable to use the Vertex API."
         try:
-            with track_sampling_loop():
-                # Run sampling_loop synchronously (will stream output via callbacks)
-                st.session_state.messages = asyncio.run(sampling_loop(
-                    system_prompt_suffix=st.session_state.get("custom_system_prompt", ""),
-                    model=st.session_state.model,
-                    provider=st.session_state.provider,
-                    messages=st.session_state.messages,
-                    output_callback=lambda text: _render_message(Sender.BOT, text),
-                    tool_output_callback=lambda tid, result: _render_message(Sender.TOOL, result),
-                    api_response_callback=lambda req, resp, err=None: None,
-                    api_key=st.session_state.api_key,
-                    only_n_most_recent_images=st.session_state.only_n_most_recent_images,
-                    tool_version=st.session_state.tool_version,
-                    max_tokens=st.session_state.output_tokens,
-                    thinking_budget=st.session_state.thinking_budget if st.session_state.thinking else None,
-                    token_efficient_tools_beta=st.session_state.token_efficient_tools_beta
-                ))
-        except Exception as e:
-            st.error(f"Error during generation: {e}")
+            google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+        except DefaultCredentialsError:
+            return "Your Google Cloud credentials are not set up correctly."
+
+def load_from_storage(filename: str) -> str | None:
+    """Load data from a file in the storage directory."""
+    try:
+        file_path = CONFIG_DIR / filename
+        if file_path.exists():
+            data = file_path.read_text().strip()
+            if data:
+                return data
+    except Exception as e:
+        st.write(f"Debug: Error loading {filename}: {e}")
+    return None
+
+def save_to_storage(filename: str, data: str) -> None:
+    """Save data to a file in the storage directory."""
+    try:
+        CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+        file_path = CONFIG_DIR / filename
+        file_path.write_text(data)
+        file_path.chmod(0o600)
+    except Exception as e:
+        st.write(f"Debug: Error saving {filename}: {e}")
+
+def _api_response_callback(
+    request: httpx.Request,
+    response: httpx.Response | object | None,
+    error: Exception | None,
+    tab: DeltaGenerator,
+    response_state: dict[str, tuple[httpx.Request, httpx.Response | object | None]],
+):
+    """
+    Handle an API response by storing it to state and rendering it.
+    """
+    response_id = datetime.now().isoformat()
+    response_state[response_id] = (request, response)
+    if error:
+        _render_error(error)
+    _render_api_response(request, response, response_id, tab)
+
+def _tool_output_callback(
+    tool_output: ToolResult, tool_id: str, tool_state: dict[str, ToolResult]
+):
+    """Handle a tool output by storing it to state and rendering it."""
+    tool_state[tool_id] = tool_output
+    _render_message(Sender.TOOL, tool_output)
+
+def _render_api_response(
+    request: httpx.Request,
+    response: httpx.Response | object | None,
+    response_id: str,
+    tab: DeltaGenerator,
+):
+    """Render an HTTP request/response in the logs tab."""
+    with tab:
+        with st.expander(f"Request/Response ({response_id})"):
+            newline = "\n\n"
+            st.markdown(
+                f"`{request.method} {request.url}`"
+                + newline
+                + newline.join(f"`{k}: {v}`" for k, v in request.headers.items())
+            )
+            try:
+                st.json(request.read().decode())
+            except Exception:
+                st.write("(Request body unavailable)")
+            st.markdown("---")
+            if isinstance(response, httpx.Response):
+                st.markdown(
+                    f"`{response.status_code}`"
+                    + newline
+                    + newline.join(f"`{k}: {v}`" for k, v in response.headers.items())
+                )
+                try:
+                    st.json(response.text)
+                except Exception:
+                    st.write("(Response body not JSON)")
+            else:
+                st.write(response)
+
+def _render_error(error: Exception):
+    if isinstance(error, RateLimitError):
+        body = "You have been rate limited."
+        if retry_after := error.response.headers.get("retry-after"):  # type: ignore
+            body += f" **Retry after {str(timedelta(seconds=int(retry_after)))} (HH:MM:SS).** See the API documentation for rate limit details."
+        body += f"\n\n{error.message}"
+    else:
+        body = str(error)
+        body += "\n\n**Traceback:**"
+        lines = "\n".join(traceback.format_exception(error))
+        body += f"\n\n```{lines}```"
+    save_to_storage(f"error_{datetime.now().timestamp()}.md", body)
+    st.error(f"**{error.__class__.__name__}**\n\n{body}", icon=":material/error:")
+
+def _render_message(sender: Sender, message: str | BetaContentBlockParam | ToolResult):
+    """Render a single message or content block in the chat."""
+    # Streamlit's hot-reloading can break direct isinstance checks, so use class names for ToolResult
+    is_tool_result = not isinstance(message, (str, dict))
+    if not message or (
+        is_tool_result
+        and st.session_state.hide_images
+        and not hasattr(message, "error")
+        and not hasattr(message, "output")
+    ):
+        return  # skip empty messages or image content when images are hidden
+    with st.chat_message(sender):
+        if is_tool_result:
+            message = cast(ToolResult, message)
+            if message.output:
+                if message.__class__.__name__ == "CLIResult":
+                    st.code(message.output)
+                else:
+                    st.markdown(message.output)
+            if message.error:
+                st.error(message.error)
+            if message.base64_image and not st.session_state.hide_images:
+                st.image(base64.b64decode(message.base64_image))
+        elif isinstance(message, dict):
+            if message.get("type") == "text":
+                st.write(message.get("text", ""))
+            elif message.get("type") == "thinking":
+                thinking_content = message.get("thinking", "")
+                st.markdown(f"[Thinking]\n\n{thinking_content}")
+            elif message.get("type") == "tool_use":
+                st.code(f'Tool Use: {message.get("name")}\nInput: {message.get("input")}')
+            else:
+                raise Exception(f'Unexpected content block type: {message.get("type")}')
+        else:
+            st.markdown(message)
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
