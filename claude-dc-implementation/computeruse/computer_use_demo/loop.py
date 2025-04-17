@@ -1,7 +1,8 @@
+```python
 # Updated loop (copy).txt
 import platform
 import httpx
-from typing import Any, cast, Optional, List, Dict
+from typing import Any, cast, Optional, List, Dict, Callable
 from anthropic import Anthropic, AnthropicBedrock, AnthropicVertex, APIError, APIResponseValidationError, APIStatusError
 from anthropic.types.beta import (
     BetaCacheControlEphemeralParam,
@@ -19,7 +20,11 @@ from .tools import TOOL_GROUPS_BY_VERSION, ToolCollection, ToolVersion
 from computer_use_demo.types import APIProvider, ToolResult
 
 # System prompt for Claude's agent
-SYSTEM_PROMPT = f\"\"\"<SYSTEM_CAPABILITY>\n* You are using an Ubuntu virtual machine with {platform.machine()} architecture.\n* You can install applications with the bash tool. Use curl instead of wget.\n* The current date is {platform.system()}.\n</SYSTEM_CAPABILITY>\"\"\"
+SYSTEM_PROMPT = f\"\"\"<SYSTEM_CAPABILITY>\n* You are using an \
+Ubuntu virtual machine with {platform.machine()} architecture.\n* You \
+can install applications with the bash tool. Use curl instead of \
+wget.\n* The current date is \
+{platform.system()}.\n</SYSTEM_CAPABILITY>\"\"\"
 
 def _inject_prompt_caching(messages: List[BetaMessageParam]):
     \"\"\"\
@@ -190,3 +195,4 @@ async def sampling_loop(
         api_response_callback(None, None, e)
         return messages
     return messages
+```
