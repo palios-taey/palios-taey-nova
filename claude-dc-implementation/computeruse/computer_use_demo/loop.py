@@ -1,5 +1,3 @@
-```python
-# Updated loop (copy).txt
 import platform
 import httpx
 from typing import Any, cast, Optional, List, Dict, Callable
@@ -195,4 +193,3 @@ async def sampling_loop(
         api_response_callback(None, None, e)
         return messages
     return messages
-```
