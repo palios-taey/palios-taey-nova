@@ -8,7 +8,28 @@ from anthropic.types.beta import BetaTextBlockParam, BetaToolResultBlockParam, B
 from token_manager import token_manager
 import httpx
 from streamlit.delta_generator import DeltaGenerator
-import asyncio # Import the asyncio library
+import asyncio
+
+# Constants
+CONFIG_DIR = PosixPath("~/.anthropic").expanduser()
+API_KEY_FILE = CONFIG_DIR / "api_key"
+STREAMLIT_STYLE = """
+<style>
+    button[kind=header] { background-color: rgb(255, 75, 75); border: 1px solid rgb(255, 75, 75); color: rgb(255, 255, 255); }
+    button[kind=header]:hover { background-color: rgb(255, 51, 51); }
+    .stAppDeployButton { visibility: hidden; }
+</style>
+"""
+WARNING_TEXT = "⚠️ Security Alert: Never provide access to sensitive accounts or data."
+INTERRUPT_TEXT = "(user stopped or interrupted)"
+INTERRUPT_TOOL_ERROR = "human stopped or interrupted tool execution"
+
+# Model Configuration
+class ModelConfig:
+    def __init__(self, tool_version: ToolVersion, max_output_tokens: int, default_output_tokens: int):
+        self.tool_version = tool_version
+        self.max_output_tokens = max_output_tokens
+        self.default_output_tokens = default_output_tokens
 
 st.title("Claude DC – Streaming Chat Interface")
 st.markdown("Enter a prompt for Claude and receive a streamed response. Token usage is tracked to avoid exceeding rate limits.")
