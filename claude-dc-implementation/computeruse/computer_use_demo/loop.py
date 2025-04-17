@@ -29,15 +29,15 @@ from anthropic.types.beta import (
     BetaToolUseBlockParam,
 )
 
-from computer_use_demo.tools import (
+from .tools import (
     TOOL_GROUPS_BY_VERSION,
     ToolCollection,
     ToolResult,
     ToolVersion,
 )
-from computer_use_demo.streaming import stream_response, should_use_streaming
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
+OUTPUT_128K_BETA_FLAG = "output-128k-2025-02-19"
 
 
 class APIProvider(StrEnum):
@@ -88,7 +88,6 @@ async def sampling_loop(
 ):
     """
     Agentic sampling loop for the assistant/tool interaction of computer use.
-    Enhanced with streaming capabilities for large outputs.
     """
     tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
     tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
@@ -100,13 +99,11 @@ async def sampling_loop(
     while True:
         enable_prompt_caching = False
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
+        # Add the 128K output beta flag
+        betas.append(OUTPUT_128K_BETA_FLAG)
+        
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
-            
-        # Enable 128K output tokens for Claude 3.7 Sonnet
-        if "3-7" in model and max_tokens > 64000:
-            betas.append("output-128k-2025-02-19")
-            
         image_truncation_threshold = only_n_most_recent_images or 0
         if provider == APIProvider.ANTHROPIC:
             client = Anthropic(api_key=api_key, max_retries=4)
@@ -138,84 +135,119 @@ async def sampling_loop(
                 "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
             }
 
-        # Determine whether to use streaming based on output size
-        use_streaming = should_use_streaming(max_tokens, model)
-        
+        # Call the API with streaming enabled
         try:
-            # Use streaming for large outputs
-            if use_streaming:
-                http_response, response = await stream_response(
-                    client=client,
-                    model=model,
-                    messages=messages,
-                    system=[system],
-                    max_tokens=max_tokens,
-                    tools=tool_collection.to_params(),
-                    betas=betas,
-                    extra_body=extra_body
-                )
-            else:
-                # Use regular API for smaller outputs
-                try:
-                    raw_response = client.beta.messages.with_raw_response.create(
-                        model=model,
-                        max_tokens=max_tokens,
-                        messages=messages,
-                        system=[system],
-                        tools=tool_collection.to_params(),
-                        betas=betas,
-                        **extra_body
-                    )
-                    http_response = raw_response.http_response
-                    response = raw_response.parse()
-                except (APIStatusError, APIResponseValidationError) as e:
-                    api_response_callback(e.request, e.response, e)
-                    return messages
-                except APIError as e:
-                    api_response_callback(e.request, e.body, e)
-                    return messages
-
-            # Handle API callback
+            # Enable streaming for better handling of long responses
+            stream = client.beta.messages.create(
+                max_tokens=max_tokens,
+                messages=messages,
+                model=model,
+                system=[system],
+                tools=tool_collection.to_params(),
+                betas=betas,
+                extra_body=extra_body,
+                stream=True,  # Enable streaming for long responses
+            )
+            
+            # Process the stream
+            tool_use_blocks = []
+            content_blocks = []
+            
+            # Stream and process results
+            for event in stream:
+                # Handle different event types
+                if hasattr(event, "type"):
+                    if event.type == "content_block_start":
+                        # New content block started
+                        current_block = event.content_block
+                        if current_block.type == "tool_use":
+                            tool_use_blocks.append(current_block)
+                        content_blocks.append(current_block)
+                        # Send block to the output callback
+                        output_callback(current_block)
+                    
+                    elif event.type == "content_block_delta":
+                        # Content block delta received
+                        if event.delta and hasattr(event.delta, "text") and event.delta.text:
+                            # For text blocks, send delta to output callback
+                            if hasattr(event, "index") and event.index < len(content_blocks):
+                                # Update the content block with the delta
+                                if content_blocks[event.index].type == "text":
+                                    content_blocks[event.index].text += event.delta.text
+                                    # Create a delta block to send to output callback
+                                    delta_block = {
+                                        "type": "text",
+                                        "text": event.delta.text,
+                                        "is_delta": True,  # Mark as delta for the UI
+                                    }
+                                    output_callback(delta_block)
+                    
+                    elif event.type == "content_block_stop":
+                        # Content block completed, nothing special to do
+                        pass
+                    
+                    elif event.type == "message_stop":
+                        # Message generation complete
+                        break
+            
+            # Create a response structure similar to what raw_response.parse() would return
+            response = BetaMessage(
+                id="",  # ID not needed for our purposes
+                role="assistant",
+                model=model,
+                content=content_blocks,
+                stop_reason="end_turn",
+                type="message",
+                usage={"input_tokens": 0, "output_tokens": 0},  # We don't know the actual usage
+            )
+            
+            # Call API response callback with the final response
             api_response_callback(
-                http_response.request if http_response else None, 
-                http_response, 
+                httpx.Request("POST", "https://api.anthropic.com/v1/messages"), 
+                None, 
                 None
             )
             
-            if not isinstance(response, BetaMessage):
-                # If we got an error response, return without trying to parse it
-                return messages
-
-            response_params = _response_to_params(response)
-            messages.append(
-                {
-                    "role": "assistant",
-                    "content": response_params,
-                }
-            )
-
-            tool_result_content: list[BetaToolResultBlockParam] = []
-            for content_block in response_params:
-                output_callback(content_block)
-                if content_block["type"] == "tool_use":
-                    result = await tool_collection.run(
-                        name=content_block["name"],
-                        tool_input=cast(dict[str, Any], content_block["input"]),
-                    )
-                    tool_result_content.append(
-                        _make_api_tool_result(result, content_block["id"])
-                    )
-                    tool_output_callback(result, content_block["id"])
-
-            if not tool_result_content:
-                return messages
-
-            messages.append({"content": tool_result_content, "role": "user"})
-        
-        except Exception as e:
-            # Log the error and return current messages
-            print(f"Error in sampling loop: {str(e)}")
+        except (APIStatusError, APIResponseValidationError) as e:
+            api_response_callback(e.request, e.response, e)
             return messages
+        except APIError as e:
+            api_response_callback(e.request, e.body, e)
+            return messages
+        except Exception as e:
+            # Handle any other exceptions that might occur during streaming
+            api_response_callback(
+                httpx.Request("POST", "https://api.anthropic.com/v1/messages"),
+                None,
+                e
+            )
+            return messages
+
+        response_params = _response_to_params(response)
+        messages.append(
+            {
+                "role": "assistant",
+                "content": response_params,
+            }
+        )
+
+        tool_result_content: list[BetaToolResultBlockParam] = []
+        for content_block in response_params:
+            # Skip sending to output callback again since we already did it during streaming
+            if content_block["type"] == "tool_use":
+                result = await tool_collection.run(
+                    name=content_block["name"],
+                    tool_input=cast(dict[str, Any], content_block["input"]),
+                )
+                tool_result_content.append(
+                    _make_api_tool_result(result, content_block["id"])
+                )
+                tool_output_callback(result, content_block["id"])
+
+        if not tool_result_content:
+            return messages
+
+        messages.append({"content": tool_result_content, "role": "user"})
 
 
 def _maybe_filter_to_n_most_recent_images(
@@ -353,5 +385,5 @@ def _make_api_tool_result(
 
 def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
     if result.system:
-        result_text = f"<system>{result.system}</system>\n{result_text}"
+        result_text = f"<s>{result.system}</s>\n{result_text}"
     return result_text
