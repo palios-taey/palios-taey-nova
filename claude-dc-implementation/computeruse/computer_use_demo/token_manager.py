@@ -1,294 +1,154 @@
-# computer_use_demo/token_manager.py
-"""
-Token Manager module for Claude Computer Use.
-
-This module implements token usage tracking, rate limiting, and stream management
-to ensure Claude can operate continuously without hitting API rate limits.
-"""
-
+# token_manager.py
 import time
-import threading
+import math
 import logging
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Callable, Any
-from functools import wraps
-import asyncio
+from typing import Dict, List, Tuple, Any
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("/tmp/token_manager.log"), logging.StreamHandler()]
 )
 logger = logging.getLogger("token_manager")
 
-# Constants for rate limiting
-DEFAULT_INPUT_TOKEN_LIMIT = 40000  # per minute
-DEFAULT_OUTPUT_TOKEN_LIMIT = 8000  # per minute
-DEFAULT_SLIDING_WINDOW = 60  # seconds
-MAX_RETRY_ATTEMPTS = 5
-MAX_TOKENS_PER_REQUEST = 128000  # for Claude 3.7 Sonnet
-RATE_LIMIT_SAFETY_BUFFER = 0.95  # Use only 95% of the limit to be safe
+class TokenManager:
+    """Manage token usage and enforce rate limits (e.g. 40K input tokens/minute)."""
+    def __init__(self):
+        # Cumulative usage
+        self.calls_made = 0
+        self.input_tokens_used = 0
+        self.output_tokens_used = 0
+        # Sliding window (last 60s) usage tracking
+        self.input_token_timestamps: List[Tuple[float, int]] = []
+        self.output_token_timestamps: List[Tuple[float, int]] = []
+        # Rate limits per minute
+        self.input_tokens_per_minute = 40000
+        self.output_tokens_per_minute = 100000  # hypothetical output limit
+        # Organization limits (from API headers, if provided)
+        self.org_input_limit_per_min = None
+        self.org_output_limit_per_min = None
+        self.org_req_limit_per_min = None
+        # Extended output mode flag
+        self.extended_output_beta = True
+        # Safe token limits for outputs and chain-of-thought
+        self.safe_max_tokens = 8000
+        self.safe_thinking_budget = 2000
+        # Token bucket for input rate limiting
+        self.capacity = self.input_tokens_per_minute
+        self.tokens = self.capacity
+        self.refill_rate = self.input_tokens_per_minute / 60.0
+        self.last_refill_time = time.time()
+        # Delay stats
+        self.delays_required = 0
+        self.total_delay_time = 0.0
+        # Storage for leftover output chunks (for large file outputs)
+        self.leftover_chunks: Dict[str, str] = {}
 
-# File size estimation
-CHARS_PER_TOKEN_APPROX = 4  # Average characters per token
-MAX_FILE_SIZE_CHARS = DEFAULT_INPUT_TOKEN_LIMIT * CHARS_PER_TOKEN_APPROX / 2  # Per operation
+    def estimate_tokens_from_bytes(self, num_bytes: int) -> int:
+        """Estimate token count for a given byte length of text (approx 4 chars per token)."""
+        return num_bytes // 4
 
-@dataclass
-class TokenUsage:
-    """Tracks token usage with timestamps for sliding window calculation"""
-    input_tokens: int = 0
-    output_tokens: int = 0
-    timestamp: float = field(default_factory=time.time)
+    def _refill_tokens(self, current_time: float):
+        # Refill token bucket based on elapsed time since last check
+        elapsed = current_time - self.last_refill_time
+        if elapsed > 0:
+            tokens_to_add = elapsed * self.refill_rate
+            self.tokens = min(self.capacity, self.tokens + tokens_to_add)
+            self.last_refill_time = current_time
 
+    def consume_tokens(self, num_input_tokens: int, num_output_tokens: int = 0) -> bool:
+        """Consume tokens for a request (input and output), delaying if input rate limit exceeded."""
+        now = time.time()
+        self._refill_tokens(now)
+        if num_input_tokens > self.tokens:
+            # Need to delay to respect input rate limit
+            deficit = num_input_tokens - self.tokens
+            delay_seconds = math.ceil(deficit / self.refill_rate)
+            logger.warning(f"Input token rate exceeded, sleeping for {delay_seconds}s")
+            time.sleep(delay_seconds)
+            self.delays_required += 1
+            self.total_delay_time += delay_seconds
+            # Reset bucket after delay
+            now = time.time()
+            self.last_refill_time = now
+            self.tokens = self.capacity - num_input_tokens if num_input_tokens < self.capacity else 0
+        else:
+            self.tokens -= num_input_tokens
+        # Record usage
+        self.calls_made += 1
+        self.input_tokens_used += num_input_tokens
+        self.output_tokens_used += num_output_tokens
+        self.input_token_timestamps.append((now, num_input_tokens))
+        self.output_token_timestamps.append((now, num_output_tokens))
+        return True
 
-class TokenBucketRateLimiter:
-    """
-    Implements token bucket algorithm for rate limiting API requests.
-    Uses a sliding window to track token usage over time.
-    """
-    def __init__(
-        self,
-        input_token_limit: int = DEFAULT_INPUT_TOKEN_LIMIT,
-        output_token_limit: int = DEFAULT_OUTPUT_TOKEN_LIMIT,
-        window_size: int = DEFAULT_SLIDING_WINDOW
-    ):
-        self.input_token_limit = input_token_limit
-        self.output_token_limit = output_token_limit
-        self.window_size = window_size  # in seconds
-        self.usage_history: List[TokenUsage] = []
-        self.lock = threading.RLock()
-        self.last_warning_time = 0
-        logger.info(f"Initialized TokenBucketRateLimiter with input limit: {input_token_limit}, "
-                   f"output limit: {output_token_limit}, window: {window_size}s")
+    def can_send(self, num_tokens: int) -> bool:
+        """Check if the given number of input tokens can be sent now without delay."""
+        self._refill_tokens(time.time())
+        return self.tokens >= num_tokens
 
-    def _prune_history(self) -> None:
-        """Remove token usage records older than the sliding window"""
-        with self.lock:
-            current_time = time.time()
-            cutoff_time = current_time - self.window_size
-            self.usage_history = [
-                usage for usage in self.usage_history 
-                if usage.timestamp >= cutoff_time
-            ]
+    def manage_request(self, headers: Dict[str, Any]) -> None:
+        """Update internal counters based on API response headers (Anthropic rate-limit info)."""
+        try:
+            if 'anthropic-ratelimit-input-tokens-limit' in headers:
+                self.org_input_limit_per_min = int(headers['anthropic-ratelimit-input-tokens-limit'])
+            if 'anthropic-ratelimit-input-tokens-remaining' in headers and self.org_input_limit_per_min is not None:
+                remaining = int(headers['anthropic-ratelimit-input-tokens-remaining'])
+                used_total = self.org_input_limit_per_min - remaining
+                # Calculate tokens used in this request (difference from previous total)
+                used_now = used_total - (self.input_tokens_used if used_total >= self.input_tokens_used else 0)
+                self.input_tokens_used = used_total
+                if used_now > 0:
+                    self.input_token_timestamps.append((time.time(), used_now))
+            if 'anthropic-ratelimit-output-tokens-limit' in headers:
+                self.org_output_limit_per_min = int(headers['anthropic-ratelimit-output-tokens-limit'])
+            if 'anthropic-ratelimit-output-tokens-remaining' in headers and self.org_output_limit_per_min is not None:
+                remaining_out = int(headers['anthropic-ratelimit-output-tokens-remaining'])
+                used_total_out = self.org_output_limit_per_min - remaining_out
+                used_now_out = used_total_out - (self.output_tokens_used if used_total_out >= self.output_tokens_used else 0)
+                self.output_tokens_used = used_total_out
+                if used_now_out > 0:
+                    self.output_token_timestamps.append((time.time(), used_now_out))
+            if 'anthropic-ratelimit-requests-limit' in headers:
+                self.org_req_limit_per_min = int(headers['anthropic-ratelimit-requests-limit'])
+        except Exception as e:
+            logger.warning(f"Error parsing rate-limit headers: {e}")
+        return
 
-    def get_current_usage(self) -> Tuple[int, int]:
-        """
-        Calculate the current token usage within the sliding window.
-        Returns (input_tokens, output_tokens) tuple.
-        """
-        self._prune_history()
-        with self.lock:
-            input_sum = sum(usage.input_tokens for usage in self.usage_history)
-            output_sum = sum(usage.output_tokens for usage in self.usage_history)
-            return input_sum, output_sum
+    def get_safe_limits(self) -> Dict[str, int]:
+        """Return safe maximum tokens for outputs and thinking."""
+        return {"max_tokens": self.safe_max_tokens, "thinking_budget": self.safe_thinking_budget}
 
-    def get_available_tokens(self) -> Tuple[int, int]:
-        """Calculate how many tokens are available before hitting rate limits"""
-        input_used, output_used = self.get_current_usage()
-        safe_input_limit = int(self.input_token_limit * RATE_LIMIT_SAFETY_BUFFER)
-        safe_output_limit = int(self.output_token_limit * RATE_LIMIT_SAFETY_BUFFER)
-        
-        available_input = max(0, safe_input_limit - input_used)
-        available_output = max(0, safe_output_limit - output_used)
-        
-        return available_input, available_output
+    def get_usage_stats(self) -> Dict[str, Any]:
+        """Get current usage and rate-limit status."""
+        # Trim entries older than 60 seconds
+        cutoff = time.time() - 60
+        while self.input_token_timestamps and self.input_token_timestamps[0][0] < cutoff:
+            self.input_token_timestamps.pop(0)
+        while self.output_token_timestamps and self.output_token_timestamps[0][0] < cutoff:
+            self.output_token_timestamps.pop(0)
+        input_last_min = sum(t for (_ts, t) in self.input_token_timestamps)
+        output_last_min = sum(t for (_ts, t) in self.output_token_timestamps)
+        return {
+            "calls_made": self.calls_made,
+            "delays_required": self.delays_required,
+            "total_delay_time": round(self.total_delay_time, 2),
+            "input_tokens_used_total": self.input_tokens_used,
+            "output_tokens_used_total": self.output_tokens_used,
+            "input_tokens_last_minute": input_last_min,
+            "output_tokens_last_minute": output_last_min,
+            "extended_output_beta": self.extended_output_beta,
+            "safe_max_tokens": self.safe_max_tokens,
+            "safe_thinking_budget": self.safe_thinking_budget,
+            "rate_limits": {
+                "input_tokens_per_minute": self.input_tokens_per_minute,
+                "output_tokens_per_minute": self.output_tokens_per_minute,
+                "org_input_limit_per_min": self.org_input_limit_per_min,
+                "org_output_limit_per_min": self.org_output_limit_per_min,
+                "org_request_limit_per_min": self.org_req_limit_per_min,
+            }
+        }
 
-    def can_process(self, input_tokens: int, output_tokens: int = 0) -> bool:
-        """Check if there's enough capacity to process the specified tokens"""
-        available_input, available_output = self.get_available_tokens()
-        return input_tokens <= available_input and output_tokens <= available_output
+# Create a singleton TokenManager for use across the app
+token_manager = TokenManager()
 
-    def record_usage(self, input_tokens: int, output_tokens: int) -> None:
-        """Record token usage with current timestamp"""
-        with self.lock:
-            self.usage_history.append(
-                TokenUsage(
-                    input_tokens=input_tokens,
-                    output_tokens=output_tokens,
-                    timestamp=time.time()
-                )
-            )
-            input_used, output_used = self.get_current_usage()
-            input_pct = input_used / self.input_token_limit * 100
-            output_pct = output_used / self.output_token_limit * 100
-            
-            # Log if usage is getting high (only log once per 5 seconds to avoid spam)
-            current_time = time.time()
-            if (input_pct > 80 or output_pct > 80) and current_time - self.last_warning_time > 5:
-                logger.warning(f"High token usage: {input_pct:.1f}% of input limit, "
-                              f"{output_pct:.1f}% of output limit")
-                self.last_warning_time = current_time
-
-    async def wait_for_capacity(self, input_tokens: int, output_tokens: int = 0) -> None:
-        """
-        Wait until there's enough capacity to process the specified tokens.
-        Uses exponential backoff with jitter for retries.
-        """
-        base_delay = 1.0
-        max_delay = 60.0  # Maximum wait time in seconds
-        attempt = 0
-        
-        while not self.can_process(input_tokens, output_tokens):
-            attempt += 1
-            if attempt > MAX_RETRY_ATTEMPTS:
-                raise Exception(f"Failed to get token capacity after {MAX_RETRY_ATTEMPTS} attempts")
-            
-            # Calculate delay with exponential backoff and jitter
-            delay = min(max_delay, base_delay * (2 ** (attempt - 1)))
-            jitter = delay * 0.1  # 10% jitter
-            actual_delay = delay + (jitter * (2 * (0.5 - (time.time() % 1))))
-            
-            input_used, output_used = self.get_current_usage()
-            logger.info(f"Waiting {actual_delay:.2f}s for token capacity. "
-                        f"Using {input_used}/{self.input_token_limit} input, "
-                        f"{output_used}/{self.output_token_limit} output tokens")
-            
-            await asyncio.sleep(actual_delay)
-            self._prune_history()
-
-
-class FileTokenEstimator:
-    """Estimates token usage for file operations based on size and content"""
-    
-    @staticmethod
-    def estimate_tokens_from_size(size_bytes: int) -> int:
-        """Estimate tokens based on file size"""
-        # Approximate using chars per token ratio
-        return int(size_bytes / CHARS_PER_TOKEN_APPROX)
-    
-    @staticmethod
-    def estimate_tokens_from_text(text: str) -> int:
-        """Estimate tokens from text content"""
-        # Basic estimation, should be replaced with actual tokenizer if available
-        return int(len(text) / CHARS_PER_TOKEN_APPROX)
-    
-    @staticmethod
-    def chunk_text(text: str, max_tokens: int) -> List[str]:
-        """Split text into chunks that respect token limits"""
-        if not text:
-            return []
-            
-        # Approximate token count based on character count
-        estimated_chars = max_tokens * CHARS_PER_TOKEN_APPROX
-        
-        # If text is already small enough, return it as is
-        if len(text) <= estimated_chars:
-            return [text]
-            
-        # Otherwise, chunk it
-        chunks = []
-        for i in range(0, len(text), estimated_chars):
-            chunks.append(text[i:i + estimated_chars])
-            
-        return chunks
-
-
-# Global instance for application-wide use
-token_rate_limiter = TokenBucketRateLimiter()
-
-
-def with_token_limiting(
-    input_token_estimator: Callable[[Any], int],
-    output_token_estimator: Optional[Callable[[Any], int]] = None
-):
-    """
-    Decorator for functions that need token rate limiting.
-    Waits for token capacity before executing the function.
-    
-    Args:
-        input_token_estimator: Function that estimates input tokens from function args
-        output_token_estimator: Function that estimates output tokens from function result
-    """
-    def decorator(func):
-        @wraps(func)
-        async def wrapper(*args, **kwargs):
-            # Estimate input tokens
-            input_tokens = input_token_estimator(*args, **kwargs)
-            
-            # Wait for token capacity
-            await token_rate_limiter.wait_for_capacity(input_tokens)
-            
-            # Execute the function
-            result = await func(*args, **kwargs)
-            
-            # Estimate and record output tokens if output_token_estimator is provided
-            output_tokens = 0
-            if output_token_estimator:
-                output_tokens = output_token_estimator(result)
-            
-            # Record token usage
-            token_rate_limiter.record_usage(input_tokens, output_tokens)
-            
-            return result
-        return wrapper
-    return decorator
-
-
-class StreamManager:
-    """
-    Manages streaming responses for large outputs.
-    Handles buffering and backpressure to maintain rate limits.
-    """
-    def __init__(self, token_limiter: TokenBucketRateLimiter = token_rate_limiter):
-        self.token_limiter = token_limiter
-        
-    async def process_stream(
-        self, 
-        stream_generator: Any, 
-        token_estimator: Callable[[Any], int],
-        processor: Callable[[Any], Any]
-    ) -> Any:
-        """
-        Process a stream of data with token rate limiting.
-        
-        Args:
-            stream_generator: Async generator producing stream chunks
-            token_estimator: Function to estimate tokens from a chunk
-            processor: Function to process each chunk
-            
-        Returns:
-            The combined result from all processed chunks
-        """
-        results = []
-        
-        async for chunk in stream_generator:
-            # Estimate tokens in this chunk
-            tokens = token_estimator(chunk)
-            
-            # Wait for capacity if needed
-            await self.token_limiter.wait_for_capacity(0, tokens)
-            
-            # Process the chunk
-            processed = processor(chunk)
-            results.append(processed)
-            
-            # Record token usage (0 input, only output)
-            self.token_limiter.record_usage(0, tokens)
-            
-        return results
-
-
-# Utility functions for common operations
-
-def estimate_message_tokens(messages: List[Dict]) -> int:
-    """Estimate tokens in a message object for Claude API"""
-    # Very rough estimation - ideally use an actual tokenizer
-    total_chars = 0
-    
-    for message in messages:
-        role = message.get("role", "")
-        total_chars += len(role)
-        
-        content = message.get("content", "")
-        if isinstance(content, str):
-            total_chars += len(content)
-        elif isinstance(content, list):
-            for item in content:
-                if isinstance(item, dict):
-                    item_type = item.get("type", "")
-                    total_chars += len(item_type)
-                    
-                    if item_type == "text":
-                        total_chars += len(item.get("text", ""))
-    
-    return int(total_chars / CHARS_PER_TOKEN_APPROX)

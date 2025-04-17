@@ -1,20 +1,22 @@
-from .base import CLIResult, ToolResult
-from .bash import BashTool20241022, BashTool20250124
-from .collection import ToolCollection
-from .computer import ComputerTool20241022, ComputerTool20250124
-from .edit import EditTool20241022, EditTool20250124
-from .groups import TOOL_GROUPS_BY_VERSION, ToolVersion
-
-__ALL__ = [
-    BashTool20241022,
-    BashTool20250124,
-    CLIResult,
-    ComputerTool20241022,
-    ComputerTool20250124,
-    EditTool20241022,
-    EditTool20250124,
+# Expose tool classes and results at package level for convenience
+from computer_use_demo.types import ToolResult, CLIResult, ToolFailure, ToolError
+from computer_use_demo.tools.bash import BashTool20250124 as BashTool
+from computer_use_demo.tools.computer import ComputerTool20250124 as ComputerTool
+from computer_use_demo.tools.groups import (
     ToolCollection,
-    ToolResult,
-    ToolVersion,
-    TOOL_GROUPS_BY_VERSION,
-]
+    TOOLS_20250124,
+    TOOLS_20241022,
+    DEFAULT_TOOLS
+)
+
+# Provide tool version alias and grouping for easy reference in external code
+from typing import Literal
+ToolVersion = Literal["20241022", "20250124"]
+TOOL_GROUPS_BY_VERSION = {
+    "20241022": TOOLS_20241022,
+    "20250124": TOOLS_20250124,
+}
+
+# This allows external code to import e.g. ComputerTool or BashTool without specifying version.
+# It also makes ToolResult (and related classes) and tool version mappings directly accessible via computer_use_demo.tools.
+
