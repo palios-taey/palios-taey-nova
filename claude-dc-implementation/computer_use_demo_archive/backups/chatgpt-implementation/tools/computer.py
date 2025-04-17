@@ -1,103 +1,158 @@
-from typing import Any, Literal
-import os, base64, subprocess
+"""Tool for controlling the computer (mouse, keyboard, screenshots)."""
+import os
+import asyncio
+import base64
+import io
+from typing import Literal
+from PIL import ImageGrab
 from computer_use_demo.tools.base import BaseAnthropicTool
-from computer_use_demo.types import ToolResult, CLIResult, ToolError
+from computer_use_demo.types import ToolResult, CLIResult, ToolFailure, ToolError
 
-class ComputerTool20250124(BaseAnthropicTool):
-    """A tool to simulate computer screen, mouse, and keyboard actions."""
-    api_type: Literal["computer_20250124"] = "computer_20250124"
-    name:    Literal["computer"] = "computer"
+# Define valid actions for the computer tool
+Action = Literal[
+    "mouse_move",
+    "left_click",
+    "left_click_drag",
+    "key",
+    "type",
+    "screenshot",
+    "cursor_position"
+]
+
+class ComputerTool20241022(BaseAnthropicTool):
+    """Tool implementation for controlling the computer (2024-10-22 version)."""
+
+    name = "computer"
+    api_type = "computer_20241022"
 
     def __init__(self):
-        # Load screen dimensions from environment for coordinate scaling
+        # Prepare display environment and xdotool command prefix
+        display_num = os.getenv("DISPLAY_NUM")
+        if display_num is not None:
+            self.display_num = int(display_num)
+            self._display_prefix = f"DISPLAY=:{self.display_num} "
+        else:
+            self.display_num = None
+            self._display_prefix = ""
+        # Screen resolution must be provided via environment
         self.width = int(os.getenv("WIDTH") or 0)
         self.height = int(os.getenv("HEIGHT") or 0)
-        self.display = os.getenv("DISPLAY") or ":0"
-        super().__init__()
+        assert self.width and self.height, "Environment variables WIDTH and HEIGHT must be set"
+        # Base xdotool command (with display prefix if any)
+        self.xdotool = f"{self._display_prefix}xdotool"
 
-    def to_params(self) -> Any:
-        return {"type": self.api_type, "name": self.name}
+    def to_params(self) -> dict:
+        return {
+            "name": "computer",
+            "type": "computer_20241022",
+            "description": "Control the computer's GUI (mouse, keyboard, screenshots).",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "action": {
+                        "type": "string",
+                        "description": "The computer control action to perform.",
+                        "enum": [
+                            "mouse_move", "left_click", "left_click_drag",
+                            "key", "type", "screenshot", "cursor_position"
+                        ]
+                    },
+                    "coordinate": {
+                        "type": "array",
+                        "items": {"type": "integer"},
+                        "description": "Coordinates [x,y] for mouse actions (required for 'mouse_move' and 'left_click_drag')."
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Text input for keyboard actions (required for 'key' or 'type')."
+                    }
+                },
+                "required": ["action"]
+            }
+        }
 
-    async def __call__(self, action: str, **kwargs) -> Any:
-        # Dispatch to the appropriate helper method based on the action.
-        # Supported actions might include: "mouse_move", "left_click", "right_click", "type", "key", "screenshot", etc.
-        try:
+    async def __call__(
+        self, *, action: Action, coordinate: tuple[int, int] = None, text: str = None, **kwargs
+    ) -> ToolResult:
+        # Execute the requested action
+        if action in ("mouse_move", "left_click_drag"):
+            if coordinate is None or not isinstance(coordinate, (list, tuple)) or len(coordinate) != 2:
+                raise ToolError(f"coordinate is required for action '{action}'")
+            x, y = int(coordinate[0]), int(coordinate[1])
+            if x < 0 or y < 0:
+                raise ToolError("Coordinates must be non-negative")
             if action == "mouse_move":
-                x = kwargs.get("x"); y = kwargs.get("y")
-                if x is None or y is None:
-                    raise ToolError("x and y coordinates are required for mouse_move")
-                # Use a system tool like xdotool or cliclick to move mouse
-                return await self.shell(f"xdotool mousemove --sync {x} {y}")
-            elif action == "left_click":
-                return await self.shell("xdotool click 1")
-            elif action == "right_click":
-                return await self.shell("xdotool click 3")
-            elif action == "key":
-                key_name = kwargs.get("key")
-                if not key_name:
-                    raise ToolError("key name is required for key action")
-                return await self.shell(f"xdotool key {key_name}")
-            elif action == "type":
-                text = kwargs.get("text")
-                if text is None:
-                    raise ToolError("text is required for type action")
-                # Simulate typing by chunking the text into keystrokes to avoid flooding
-                typed = []
-                for chunk in self._chunk_text(str(text), chunk_size=10):
-                    await self.shell(f"xdotool type --delay 1 '{chunk}'", take_screenshot=False)
-                    typed.append(chunk)
-                # After typing, optionally take a screenshot of the result
-                # (We won't combine partial outputs here, as typing typically has no direct output)
-                return ToolResult(system=f'typed: {"".join(typed)}')
-            elif action == "screenshot":
-                # Take a screenshot and return as base64 image
-                image_data = self._capture_screenshot()
-                return ToolResult(base64_image=image_data)
-            else:
-                raise ToolError(f"Unknown action: {action}")
-        except ToolError as e:
-            # Propagate ToolError to be handled by the framework (it will be turned into a ToolResult with error)
-            raise
+                cmd = f"{self.xdotool} mousemove --sync {x} {y}"
+            else:  # left_click_drag
+                cmd = f"{self.xdotool} mousedown 1 mousemove --sync {x} {y} mouseup 1"
+            return await self._run_shell_command(cmd)
 
-    async def shell(self, command: str, take_screenshot: bool = True) -> ToolResult:
-        """Execute a shell command for computer control (non-interactive, one-off command)."""
-        # Run command and capture output
-        proc = await asyncio.create_subprocess_shell(
-            command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            env={"DISPLAY": self.display, **os.environ}  # ensure DISPLAY is set for GUI commands
-        )
-        out, err = await proc.communicate()
-        output_text = out.decode(errors="ignore").strip()
-        error_text = err.decode(errors="ignore").strip()
-        # Optionally capture a screenshot after the command (to give visual feedback to Claude)
-        img_data = None
-        if take_screenshot:
-            img_data = self._capture_screenshot()
-        # Return a ToolResult with any text output, error, and image if captured
-        return ToolResult(output=output_text if output_text else None,
-                          error=error_text if error_text else None,
-                          base64_image=img_data)
+        elif action == "left_click":
+            cmd = f"{self.xdotool} click 1"
+            return await self._run_shell_command(cmd)
 
-    def _capture_screenshot(self) -> str:
-        """Capture a screenshot of the current screen and return as base64 string."""
-        # Use `import -window root` (ImageMagick) or `xwd` and convert to capture the screen
-        # Here we'll use a simple xwd + convert pipeline for demonstration:
+        elif action == "key":
+            if not text:
+                raise ToolError("text is required for 'key' action")
+            cmd = f"{self.xdotool} key -- {text}"
+            return await self._run_shell_command(cmd)
+
+        elif action == "type":
+            if not text:
+                raise ToolError("text is required for 'type' action")
+            # Type the text in smaller chunks to avoid overflow
+            result = ToolResult()
+            chunk_size = 50
+            for i in range(0, len(text), chunk_size):
+                chunk = text[i:i+chunk_size]
+                # Quote the chunk for shell safety (simple approach; may need refinement for special chars)
+                cmd = f'{self.xdotool} type -- "{chunk}"'
+                part = await self._run_shell_command(cmd, take_screenshot=False)
+                result = result + part if result else part
+            return result
+
+        elif action == "screenshot":
+            return await self._take_screenshot()
+
+        elif action == "cursor_position":
+            cmd = f"{self.xdotool} querymouse"
+            return await self._run_shell_command(cmd, take_screenshot=False)
+
+        else:
+            return ToolFailure(error=f"Unknown action: {action}")
+
+    async def _run_shell_command(self, command: str, take_screenshot: bool = True) -> ToolResult:
+        """Run a shell command and return its output (and optionally a screenshot) as a ToolResult."""
         try:
-            subprocess.run(["xwd", "-root", "-out", "/tmp/screenshot.xwd"], check=True)
-            subprocess.run(["convert", "/tmp/screenshot.xwd", "-resize", f"{self.width}x{self.height}", "/tmp/screenshot.png"], check=True)
-            with open("/tmp/screenshot.png", "rb") as f:
-                image_bytes = f.read()
-            return base64.b64encode(image_bytes).decode('utf-8')
+            proc = await asyncio.create_subprocess_shell(
+                command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            )
+            stdout, stderr = await proc.communicate()
         except Exception as e:
-            # If screenshot fails, return an error message in the output
-            raise ToolError(f"Screenshot failed: {e}")
+            return ToolFailure(error=f"Failed to run command: {e}")
 
-    def _chunk_text(self, text: str, chunk_size: int) -> list[str]:
-        """Utility to split text into smaller chunks for typing simulation."""
-        return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+        output_text = stdout.decode('utf-8', errors='ignore') if stdout else ""
+        error_text = stderr.decode('utf-8', errors='ignore') if stderr else ""
 
-# (If there was an older version of ComputerTool, it would similarly subclass this new class, 
-# e.g., ComputerTool20241022 inheriting ComputerTool20250124 and just overriding api_type.)
+        result = ToolResult()
+        if output_text:
+            result = result + CLIResult(output=output_text)
+        if error_text:
+            result = result + ToolFailure(error=error_text)
+        if take_screenshot:
+            screenshot_result = await self._take_screenshot()
+            result = result + screenshot_result if screenshot_result else result
+        return result
+
+    async def _take_screenshot(self) -> ToolResult:
+        """Capture the current screen and return a ToolResult containing the image."""
+        try:
+            image = await asyncio.to_thread(ImageGrab.grab)
+            buf = io.BytesIO()
+            image.save(buf, format='PNG')
+            img_bytes = buf.getvalue()
+            img_base64 = base64.b64encode(img_bytes).decode('utf-8')
+            return ToolResult(base64_image=img_base64)
+        except Exception as e:
+            return ToolFailure(error=f"Screenshot failed: {e}")
 
