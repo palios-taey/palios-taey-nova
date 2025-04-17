@@ -1,16 +1,24 @@
 """
 Token Management Module for Claude DC
 -------------------------------------
-Enforces API token rate limits to prevent 429 errors by throttling input tokens to the model.
-Applies a strict per-minute input token limit (default 40,000 tokens/min) to both user prompts and tool outputs.
-Implements a token bucket rate limiter (a proven strategy used by companies like Stripe&#8203;:contentReference[oaicite:0]{index=0}&#8203;:contentReference[oaicite:1]{index=1}) 
-to allow bursts while maintaining the average rate. This prevents Claude from exceeding input limits.
-Optionally, supports an extended output mode (128K token beta) which raises allowable output token thresholds (logged for observability 
+Enforces API token rate limits to prevent 429 errors by throttling input tokens 
+to the model.
+Applies a strict per-minute input token limit (default 40,000 tokens/min) to 
+both user prompts and tool outputs.
+Implements a token bucket rate limiter (a proven strategy used by companies like
+ Stripe&#8203;:contentReference[oaicite:0]{index=0}&#8203;:contentReference[oaic
+ite:1]{index=1}) 
+to allow bursts while maintaining the average rate. This prevents Claude from 
+exceeding input limits.
+Optionally, supports an extended output mode (128K token beta) which raises 
+allowable output token thresholds (logged for observability 
 but not enforcing output limits yet).
- 
+  
 References:
- - Stripe recommends client-side token bucket rate limiting&#8203;:contentReference[oaicite:2]{index=2}.
- - Cloudflare uses sliding window algorithms for strict rate limits&#8203;:contentReference[oaicite:3]{index=3}.
+ - Stripe recommends client-side token bucket rate 
+limiting&#8203;:contentReference[oaicite:2]{index=2}.
+ - Cloudflare uses sliding window algorithms for strict rate 
+limits&#8203;:contentReference[oaicite:3]{index=3}.
 """
 import time
 from datetime import datetime, timezone
@@ -22,18 +30,22 @@ from collections import deque
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[logging.FileHandler('/tmp/token_manager.log'), logging.StreamHandler()]
+    handlers=[logging.FileHandler('/tmp/token_manager.log'), 
+              logging.StreamHandler()]
 )
 logger = logging.getLogger("token_manager")
 
 class TokenManager:
-    """Manages API token usage and enforces rate limits (40k/min input, optional extended output)."""
+    """Manages API token usage and enforces rate limits (40k/min input, optional
+    extended output)."""
     def __init__(self, input_rate_limit: int = 40000, extended_output: bool = False):
         """
         Initialize the TokenManager.
         Args:
-            input_rate_limit: Maximum input tokens per minute (default 40000, i.e. Claude's limit).
-            extended_output: True if 128K output beta is enabled, to adjust output thresholds.
+            input_rate_limit: Maximum input tokens per minute (default 40000, 
+                              i.e. Claude's limit).
+            extended_output: True if 128K output beta is enabled, to adjust 
+                             output thresholds.
         """
         # Rate limit settings
         self.input_rate_limit = input_rate_limit             # tokens per minute allowed
@@ -64,15 +76,19 @@ class TokenManager:
             elapsed = now - self._last_refill_time
             added_tokens = elapsed * self._tokens_per_second
             if added_tokens > 0:
-                self._tokens_available = min(self._bucket_capacity, self._tokens_available + added_tokens)
+                self._tokens_available = min(self._bucket_capacity, 
+                                             self._tokens_available + added_tokens)
                 self._last_refill_time = now
         # Note: We don't allow tokens to accumulate beyond capacity
 
-    def delay_if_needed(self, input_tokens: int) -> None:
+    def delay_if_needed(self, input_tokens: int, output_tokens: int = 0) -> None:
         """
         Block (sleep) if necessary to ensure adding `input_tokens` does not exceed the rate limit.
         This should be called before injecting a user prompt or any content into Claude's context.
+        If provided, `output_tokens` are logged (no throttling applied).
         """
+        if output_tokens > 0:
+            logger.info(f"Applying rate limit: input_tokens={input_tokens}, output_tokens={output_tokens} (output not throttled)")
         needed = input_tokens
         # Throttle as needed using token bucket: consume available tokens, then wait for refills if required
         while needed > 0:
@@ -128,8 +144,10 @@ class TokenManager:
         # e.g., 'x-usage-prompt-tokens' or 'x-usage-completion-tokens' (if available from provider)
         try:
             # Some APIs might return header keys in different cases or as ints; handle gracefully
-            prompt_tokens = int(headers.get("x-usage-prompt-tokens") or headers.get("prompt-tokens") or headers.get("x-prompts-consumed") or 0)
-            completion_tokens = int(headers.get("x-usage-completion-tokens") or headers.get("completion-tokens") or headers.get("x-tokens-generated") or 0)
+            prompt_tokens = int(headers.get("x-usage-prompt-tokens") or 
+                                headers.get("prompt-tokens") or headers.get("x-prompts-consumed") or 0)
+            completion_tokens = int(headers.get("x-usage-completion-tokens") or 
+                                     headers.get("completion-tokens") or headers.get("x-tokens-generated") or 0)
         except Exception as e:
             prompt_tokens = 0
             completion_tokens = 0
