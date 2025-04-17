@@ -19,6 +19,7 @@ from .tools import TOOL_GROUPS_BY_VERSION, ToolCollection, ToolVersion
 from computer_use_demo.types import APIProvider, ToolResult
 
 # System prompt for Claude's agent
+# System prompt for Claude's agent
 SYSTEM_PROMPT = f\"\"\"<SYSTEM_CAPABILITY>\n* You are using an \
 Ubuntu virtual machine with {platform.machine()} architecture.\n* You \
 can install applications with the bash tool. Use curl instead of \
