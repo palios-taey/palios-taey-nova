@@ -1,146 +1,148 @@
-# Updated bash (copy).txt
-import asyncio
-import os
 from typing import Any, Literal
+import asyncio
+from .base import BaseAnthropicTool
+from .types import ToolResult, CLIResult, ToolError
+from computer_use_demo.token_manager import token_manager  # token manager provides token counting & chunking
 
-from .base import BaseAnthropicTool, CLIResult, ToolError, ToolResult
-from computer_use_demo.token_manager import token_manager
-
+# Internal helper class to manage an interactive Bash session
 class _BashSession:
-    """A session of a bash shell."""
-
-    _started: bool
-    _process: asyncio.subprocess.Process
-
-    command: str = "/bin/bash"
-    _output_delay: float = 0.2  # seconds
-    _timeout: float = 120.0  # seconds
-    _sentinel: str = "<<exit>>"
-
     def __init__(self):
-        self._started = False
-        self._timed_out = False
+        self._process = None
 
     async def start(self):
-        if self._started:
-            return
-
-        self._process = await asyncio.create_subprocess_shell(
-            self.command,
-            preexec_fn=os.setsid,
-            shell=True,
-            bufsize=0,
+        """Start a persistent bash subprocess for the session."""
+        # Launch an interactive bash shell
+        self._process = await asyncio.create_subprocess_exec(
+            "/bin/bash", "-i",
             stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
         )
+        # Small delay to allow shell to initialize
+        await asyncio.sleep(0.1)
+        # Clear any initial output
+        if self._process.stdout:
+            try:
+                await asyncio.wait_for(self._process.stdout.read(100), timeout=0.1)
+            except asyncio.TimeoutError:
+                pass
 
-        self._started = True
+    async def run(self, command: str, timeout: float = 5.0) -> ToolResult:
+        """Run a single bash command in the session and return its output as a ToolResult."""
+        if not self._process:
+            raise ToolError("Bash session is not started.")
+        # Write the command to the shell
+        cmd = command.strip() + "\n"
+        assert self._process.stdin is not None
+        self._process.stdin.write(cmd.encode())
+        await self._process.stdin.drain()
+
+        # Collect output until newline (for simplicity, we read line by line with a timeout)
+        output_lines: list[str] = []
+        error_lines: list[str] = []
+        try:
+            # Wait for command completion or timeout
+            # We will continuously read until there's no new output for a short period
+            while True:
+                # Use asyncio.wait_for to enforce the timeout for each read
+                stdout_task = asyncio.create_task(self._process.stdout.readline())
+                stderr_task = asyncio.create_task(self._process.stderr.readline())
+                done, _ = await asyncio.wait({stdout_task, stderr_task}, timeout=timeout, return_when=asyncio.FIRST_COMPLETED)
+                if not done:
+                    # Command timed out (no output within timeout interval)
+                    stdout_task.cancel()
+                    stderr_task.cancel()
+                    raise ToolError(f"Command timed out after {timeout} seconds.")
+                # Check which task completed
+                if stdout_task in done:
+                    line = (await stdout_task).decode(errors="ignore")
+                    if line == "":  # EOF or no more output
+                        break
+                    output_lines.append(line)
+                if stderr_task in done:
+                    err_line = (await stderr_task).decode(errors="ignore")
+                    if err_line:
+                        error_lines.append(err_line)
+                # Continue loop to gather more output until shell indicates command finished
+                # (In an interactive shell, end of output might be signaled by a new prompt, but for simplicity 
+                # we'll break when both stdout and stderr yields are empty.)
+                if stdout_task in done and stderr_task in done:
+                    if not line and not err_line:
+                        break
+        except Exception as e:
+            # If any exception (like ToolError for timeout), stop reading further
+            pass
+
+        # Combine lines
+        output_text = "".join(output_lines).strip()
+        error_text = "".join(error_lines).strip()
+
+        # If output is extremely large, it will be chunked by the caller (BashTool)
+        # Here we just return a ToolResult for the whole output; chunking logic is handled above.
+        return CLIResult(output=output_text if output_text else None,
+                         error=error_text if error_text else None)
 
     def stop(self):
-        """Terminate the bash shell."""
-        if not self._started:
-            raise ToolError("Session has not started.")
-        if self._process.returncode is not None:
-            return
-        self._process.terminate()
-
-    async def run(self, command: str):
-        """Execute a command in the bash shell."""
-        if not self._started:
-            raise ToolError("Session has not started.")
-        if self._process.returncode is not None:
-            return ToolResult(
-                system="tool must be restarted",
-                error=f"bash has exited with code {self._process.returncode}",
-            )
-
-        if any(view_command in command.lower() for view_command in ["cat ", "less ", "head ", "tail "]):
-            parts = command.split()
-            if len(parts) > 1:
-                filepath = parts[1]
-                try:
-                    file_size = os.path.getsize(filepath)
-                    estimated_tokens = token_manager.estimate_tokens_from_bytes(file_size)
-                    safe_chunk_tokens = 32000  # Example chunk size in tokens
-                    bytes_per_token = file_size / estimated_tokens if estimated_tokens > 0 else 1
-                    safe_chunk_bytes = int(safe_chunk_tokens * bytes_per_token) if bytes_per_token > 0 else 40000
-
-                    if estimated_tokens > token_manager.get_safe_limits()["max_tokens"] * 0.8: # Use a fraction of the limit
-                        output = ""
-                        error = ""
-                        start = 0
-                        while start < file_size:
-                            end = min(start + safe_chunk_bytes, file_size)
-                            chunk_command = f"head -c {end} {filepath} | tail -c {end - start}"
-                            self._process.stdin.write(f"{chunk_command}\n".encode())
-                            await self._process.stdin.drain()
-                            await asyncio.sleep(self._output_delay)
-                            stdout_chunk = await self._process.stdout.readline()
-                            stderr_chunk = await self._process.stderr.readline()
-                            output += stdout_chunk.decode()
-                            error += stderr_chunk.decode()
-                            start = end
-                            await asyncio.sleep(5) # Delay between chunks
-                        return CLIResult(output=output, error=error)
-                except FileNotFoundError:
-                    pass
-                except Exception as e:
-                    return CLIResult(output="", error=f"Error accessing file: {e}")
-
-        self._process.stdin.write(f"{command}\n".encode())
-        await self._process.stdin.drain()
-        await asyncio.sleep(self._output_delay)
-        output = (await asyncio.wait_for(self._process.stdout.readuntil(b"<<exit>>"), timeout=self._timeout)).decode()
-        error = (await asyncio.wait_for(self._process.stderr.readuntil(b"<<exit>>"), timeout=self._timeout)).decode()
-
-        self._process.stdout._buffer.clear()  # pyright: ignore[reportAttributeAccessIssue]
-        self._process.stderr._buffer.clear()  # pyright: ignore[reportAttributeAccessIssue]
-
-        return CLIResult(output=output, error=error)
-
+        """Terminate the bash subprocess."""
+        if self._process:
+            self._process.kill()
+            self._process = None
 
 class BashTool20250124(BaseAnthropicTool):
-    """
-    A tool that allows the agent to run bash commands.
-    The tool parameters are defined by Anthropic and are not editable.
-    """
-
-    _session: _BashSession | None
+    """A tool that allows the agent to run bash commands and get output."""
+    _session: _BashSession | None = None
 
     api_type: Literal["bash_20250124"] = "bash_20250124"
-    name: Literal["bash"] = "bash"
+    name:    Literal["bash"] = "bash"
 
     def __init__(self):
         self._session = None
         super().__init__()
 
     def to_params(self) -> Any:
-        return {
-            "type": self.api_type,
-            "name": self.name,
-        }
+        # Define this tool for the Anthropic API (type and name)
+        return {"type": self.api_type, "name": self.name}
 
-    async def __call__(
-        self, command: str | None = None, restart: bool = False, **kwargs
-    ):
+    async def __call__(self, command: str | None = None, restart: bool = False, **kwargs) -> Any:
+        # Handle optional "restart" parameter to reset the shell session
         if restart:
             if self._session:
                 self._session.stop()
             self._session = _BashSession()
             await self._session.start()
-
             return ToolResult(system="tool has been restarted.")
 
+        # Ensure session is started
         if self._session is None:
             self._session = _BashSession()
             await self._session.start()
 
-        if command is not None:
-            return await self._session.run(command)
+        # If no command provided, that's an error
+        if command is None:
+            raise ToolError("no command provided.")
 
-        raise ToolError("no command provided.")
+        # Run the command in the bash session
+        result: ToolResult = await self._session.run(command)
+        # If the output is too large, split it into chunks using the token manager
+        if isinstance(result, ToolResult) and result.output:
+            # Estimate token count of output text
+            output_tokens = token_manager.count_tokens(result.output)
+            max_tokens = token_manager.max_output_tokens  # maximum tokens allowed in one output block
+            if output_tokens > max_tokens:
+                # Split the output text into chunks within the token limit
+                chunks = token_manager.chunk_content(result.output, max_tokens=max_tokens)
+                # Create a list of CLIResult objects for each chunk
+                chunk_results: list[ToolResult] = []
+                for i, chunk_text in enumerate(chunks):
+                    # For each chunk, create a CLIResult. Only attach error on the last chunk.
+                    if i == len(chunks) - 1:
+                        chunk_results.append(CLIResult(output=chunk_text, error=result.error))
+                    else:
+                        chunk_results.append(CLIResult(output=chunk_text))
+                return chunk_results  # return list of ToolResult chunks for streaming
+        return result  # return single ToolResult if no chunking was needed
 
-
+# Legacy tool class for older version (20241022), reusing the new implementation
 class BashTool20241022(BashTool20250124):
     api_type: Literal["bash_20241022"] = "bash_20241022"
+
