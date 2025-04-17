@@ -5,7 +5,7 @@ import streamlit as st
 from computer_use_demo.loop import APIProvider, sampling_loop, ToolResult
 from computer_use_demo.types import Sender
 from anthropic.types.beta import BetaTextBlockParam, BetaToolResultBlockParam, BetaContentBlockParam, BetaToolUseBlockParam, BetaImageBlockParam
-from token_manager import token_manager
+from computer_use_demo.token_manager import token_manager
 import httpx
 from streamlit.delta_generator import DeltaGenerator
 import asyncio
