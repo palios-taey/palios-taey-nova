@@ -29,12 +29,13 @@ from anthropic.types.beta import (
     BetaToolUseBlockParam,
 )
 
-from .tools import (
+from computer_use_demo.tools import (
     TOOL_GROUPS_BY_VERSION,
     ToolCollection,
     ToolResult,
     ToolVersion,
 )
+from computer_use_demo.streaming import stream_response, should_use_streaming
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
 
@@ -66,61 +67,6 @@ SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
 * If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
 </IMPORTANT>"""
 
-# New function to add to loop.py for effective streaming
-
-async def stream_anthropic_response(
-    client,
-    max_tokens: int,
-    messages: list,
-    model: str,
-    system: list,
-    tools: list,
-    betas: list,
-    extra_body: dict
-):
-    """
-    Stream a response from the Anthropic API to handle large outputs efficiently.
-    
-    This function uses the streaming API to get responses in chunks,
-    which is essential for outputs exceeding ~21K tokens.
-    
-    Returns:
-        Tuple of (http_response, full_content)
-    """
-    try:
-        # Create a stream that we'll process in chunks
-        stream = client.beta.messages.with_raw_response.stream(
-            max_tokens=max_tokens,
-            messages=messages,
-            model=model,
-            system=system,
-            tools=tools,
-            betas=betas,
-            extra_body=extra_body,
-        )
-        
-        # Process the stream
-        chunks = []
-        async for chunk in stream:
-            chunks.append(chunk)
-            
-        # Extract information from chunks
-        if chunks:
-            # For HTTP response info, use the first chunk
-            http_response = chunks[0].http_response
-            
-            # Get the full content from the last chunk
-            # The last chunk contains the complete response
-            full_content = chunks[-1].parse()
-            
-            return http_response, full_content
-        else:
-            raise Exception("No content received from streaming API")
-            
-    except Exception as e:
-        # Handle and log any errors
-        print(f"Error in streaming: {str(e)}")
-        raise e
 
 async def sampling_loop(
     *,
@@ -142,6 +88,7 @@ async def sampling_loop(
 ):
     """
     Agentic sampling loop for the assistant/tool interaction of computer use.
+    Enhanced with streaming capabilities for large outputs.
     """
     tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
     tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
@@ -191,76 +138,85 @@ async def sampling_loop(
                 "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
             }
 
-        # Determine if we should use streaming based on output size
-        should_stream = max_tokens > 21333 or "output-128k-2025-02-19" in betas
+        # Determine whether to use streaming based on output size
+        use_streaming = should_use_streaming(max_tokens, model)
         
         try:
-            # Use our streaming function for large outputs
-            if should_stream:
-                http_response, response = await stream_anthropic_response(
+            # Use streaming for large outputs
+            if use_streaming:
+                http_response, response = await stream_response(
                     client=client,
-                    max_tokens=max_tokens,
-                    messages=messages,
                     model=model,
+                    messages=messages,
                     system=[system],
+                    max_tokens=max_tokens,
                     tools=tool_collection.to_params(),
                     betas=betas,
                     extra_body=extra_body
                 )
             else:
-                # Use the non-streaming API for smaller outputs
-                raw_response = client.beta.messages.with_raw_response.create(
-                    max_tokens=max_tokens,
-                    messages=messages,
-                    model=model,
-                    system=[system],
-                    tools=tool_collection.to_params(),
-                    betas=betas,
-                    extra_body=extra_body,
-                )
-                http_response = raw_response.http_response
-                response = raw_response.parse()
-                
-        except (APIStatusError, APIResponseValidationError) as e:
-            api_response_callback(e.request, e.response, e)
+                # Use regular API for smaller outputs
+                try:
+                    raw_response = client.beta.messages.with_raw_response.create(
+                        model=model,
+                        max_tokens=max_tokens,
+                        messages=messages,
+                        system=[system],
+                        tools=tool_collection.to_params(),
+                        betas=betas,
+                        **extra_body
+                    )
+                    http_response = raw_response.http_response
+                    response = raw_response.parse()
+                except (APIStatusError, APIResponseValidationError) as e:
+                    api_response_callback(e.request, e.response, e)
+                    return messages
+                except APIError as e:
+                    api_response_callback(e.request, e.body, e)
+                    return messages
+
+            # Handle API callback
+            api_response_callback(
+                http_response.request if http_response else None, 
+                http_response, 
+                None
+            )
+            
+            if not isinstance(response, BetaMessage):
+                # If we got an error response, return without trying to parse it
+                return messages
+
+            response_params = _response_to_params(response)
+            messages.append(
+                {
+                    "role": "assistant",
+                    "content": response_params,
+                }
+            )
+
+            tool_result_content: list[BetaToolResultBlockParam] = []
+            for content_block in response_params:
+                output_callback(content_block)
+                if content_block["type"] == "tool_use":
+                    result = await tool_collection.run(
+                        name=content_block["name"],
+                        tool_input=cast(dict[str, Any], content_block["input"]),
+                    )
+                    tool_result_content.append(
+                        _make_api_tool_result(result, content_block["id"])
+                    )
+                    tool_output_callback(result, content_block["id"])
+
+            if not tool_result_content:
+                return messages
+
+            messages.append({"content": tool_result_content, "role": "user"})
+        
+        except Exception as e:
+            # Log the error and return current messages
+            print(f"Error in sampling loop: {str(e)}")
             return messages
-        except APIError as e:
-            api_response_callback(e.request, e.body, e)
-            return messages
 
-        api_response_callback(
-            http_response.request, http_response, None
-        )
-
-        if not isinstance(response, BetaMessage):
-            # If we got an error response, return without trying to parse it
-            return messages
-
-        response_params = _response_to_params(response)
-        messages.append(
-            {
-                "role": "assistant",
-                "content": response_params,
-            }
-        )
-
-        tool_result_content: list[BetaToolResultBlockParam] = []
-        for content_block in response_params:
-            output_callback(content_block)
-            if content_block["type"] == "tool_use":
-                result = await tool_collection.run(
-                    name=content_block["name"],
-                    tool_input=cast(dict[str, Any], content_block["input"]),
-                )
-                tool_result_content.append(
-                    _make_api_tool_result(result, content_block["id"])
-                )
-                tool_output_callback(result, content_block["id"])
-
-        if not tool_result_content:
-            return messages
-
-        messages.append({"content": tool_result_content, "role": "user"})
 
 def _maybe_filter_to_n_most_recent_images(
     messages: list[BetaMessageParam],
