@@ -6,6 +6,7 @@ from computer_use_demo.loop import APIProvider, sampling_loop, ToolResult
 from computer_use_demo.types import Sender
 from anthropic.types.beta import BetaTextBlockParam, BetaToolResultBlockParam, BetaContentBlockParam, BetaToolUseBlockParam, BetaImageBlockParam
 from token_manager import token_manager
+import httpx # Import the httpx library
 
 st.title("Claude DC – Streaming Chat Interface")
 st.markdown("Enter a prompt for Claude and receive a streamed response. Token usage is tracked to avoid exceeding rate limits.")
