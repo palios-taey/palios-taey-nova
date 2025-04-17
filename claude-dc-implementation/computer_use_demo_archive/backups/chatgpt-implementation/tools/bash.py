@@ -1,7 +1,7 @@
 from typing import Any, Literal
 import asyncio
-from .base import BaseAnthropicTool
-from .types import ToolResult, CLIResult, ToolError
+from computer_use_demo.tools.base import BaseAnthropicTool
+from computer_use_demo.types import ToolResult, CLIResult, ToolError
 from computer_use_demo.token_manager import token_manager  # token manager provides token counting & chunking
 
 # Internal helper class to manage an interactive Bash session

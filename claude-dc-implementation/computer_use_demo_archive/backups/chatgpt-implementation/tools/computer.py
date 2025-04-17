@@ -1,7 +1,7 @@
 from typing import Any, Literal
 import os, base64, subprocess
-from .base import BaseAnthropicTool
-from .types import ToolResult, CLIResult, ToolError
+from computer_use_demo.tools.base import BaseAnthropicTool
+from computer_use_demo.types import ToolResult, CLIResult, ToolError
 
 class ComputerTool20250124(BaseAnthropicTool):
     """A tool to simulate computer screen, mouse, and keyboard actions."""

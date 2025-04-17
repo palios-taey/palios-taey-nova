@@ -10,19 +10,12 @@ mkdir -p /home/computeruse/references
 # Copy the modified secrets file from GitHub to the secrets directory
 # IMPORTANT: You'll need to modify the API keys manually after copying to remove the random text
 
-# Only needed when restarting an existing environment, not on fresh installs
-echo "Cleaning up Python processes..."
-pkill -9 python || true
-pkill -9 python3 || true
-pkill -9 streamlit || true
-
 # Copy /home/computeruse/ directories
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/secrets/* /home/computeruse/secrets/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/utils/* /home/computeruse/utils/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/* /home/computeruse/references/
-
 
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
@@ -35,4 +28,4 @@ find /home/computeruse/secrets -type f -exec sed -i 's/testkey-//g' {} \;
 echo "nano /home/computeruse/secrets/palios-taey-secrets.json"
 echo "nano /home/computeruse/secrets/id_ed25519"
 
-echo "Setup completed!"
+echo "Setup completed! Refresh browser"
