@@ -1,3 +1,4 @@
+# computer_use_demo/tools/computer.py
 import asyncio
 import base64
 import os
@@ -13,7 +14,7 @@ from anthropic.types.beta import BetaToolComputerUse20241022Param, BetaToolUnion
 
 from .base import BaseAnthropicTool, ToolError, ToolResult
 from .run import run
-from .token_manager import (
+from computer_use_demo.token_manager import (
     with_token_limiting, 
     token_rate_limiter
 )

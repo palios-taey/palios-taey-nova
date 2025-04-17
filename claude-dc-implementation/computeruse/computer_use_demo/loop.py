@@ -1,3 +1,4 @@
+# computer_use_demo/loop.py
 """
 Agentic sampling loop that calls the Anthropic API and local implementation of anthropic-defined computer use tools.
 """
