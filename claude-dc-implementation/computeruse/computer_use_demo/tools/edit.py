@@ -1,3 +1,4 @@
+# computer_use_demo/tools/edit.py
 from collections import defaultdict
 from pathlib import Path
 import os
@@ -6,7 +7,7 @@ import logging
 
 from .base import BaseAnthropicTool, CLIResult, ToolError, ToolResult
 from .run import maybe_truncate, run
-from .token_manager import (
+from computer_use_demo.token_manager import (
     with_token_limiting, 
     FileTokenEstimator,
     token_rate_limiter
@@ -56,6 +57,7 @@ def estimate_edit_input_tokens(
     # View range and insert line don't add significant tokens
     
     return max(20, total_tokens)  # Minimum token cost
+
 
 def estimate_edit_output_tokens(result: ToolResult) -> int:
     """Estimate token usage for edit tool output"""

@@ -1,3 +1,4 @@
+# computer_use_demo/token_manager.py
 """
 Token Manager module for Claude Computer Use.
 

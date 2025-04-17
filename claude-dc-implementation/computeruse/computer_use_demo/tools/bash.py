@@ -1,3 +1,4 @@
+# computer_use_demo/tools/bash.py
 import asyncio
 import os
 import shlex
@@ -5,11 +6,12 @@ from typing import Any, Literal
 import logging
 
 from .base import BaseAnthropicTool, CLIResult, ToolError, ToolResult
-from .token_manager import (
+from computer_use_demo.token_manager import (
     with_token_limiting, 
     FileTokenEstimator,
     token_rate_limiter
 )
+from .run import run
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
