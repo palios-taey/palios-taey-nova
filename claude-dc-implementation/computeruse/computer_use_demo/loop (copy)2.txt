@@ -13,9 +13,9 @@ from anthropic.types.beta import (
     BetaToolResultBlockParam,
     BetaToolUseBlockParam,
 )
-from .token_manager import token_manager
+from computer_use_demo.token_manager import token_manager
 from .tools import TOOL_GROUPS_BY_VERSION, ToolCollection, ToolVersion
-from .types import APIProvider, ToolResult
+from computer_use_demo.types import APIProvider, ToolResult
 
 # System prompt for Claude's agent
 SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>

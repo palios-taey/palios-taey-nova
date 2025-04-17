@@ -32,6 +32,7 @@ class TokenManager:
         # Organization default limits per minute (if applicable)
         self.org_input_limit_per_min = None
         self.org_output_limit_per_min = None
+        self.extended_output_beta = True  # Or True, depending on your default setting
         # Token bucket (client-side rate limiting) configuration
         self.token_bucket_capacity = 40000  # maximum input tokens per minute allowed
         self.token_bucket_refill_rate = 40000 / 60.0  # tokens per second (approx 667 tokens/sec)

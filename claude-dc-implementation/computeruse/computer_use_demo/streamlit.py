@@ -2,7 +2,8 @@ import sys; sys.path.insert(0, "/home/computeruse")
 import os
 import math
 import streamlit as st
-from computer_use_demo.loop import APIProvider, sampling_loop, Sender, ToolResult
+from computer_use_demo.loop import APIProvider, sampling_loop, ToolResult
+from computer_use_demo.types import Sender
 from anthropic.types.beta import BetaTextBlockParam, BetaToolResultBlockParam
 from token_manager import token_manager
 
