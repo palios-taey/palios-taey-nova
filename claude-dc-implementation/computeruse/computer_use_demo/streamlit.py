@@ -1,7 +1,7 @@
 """
 Entrypoint for streamlit, see https://docs.streamlit.io/
 """
-
+import logging
 import asyncio
 import base64
 import os
@@ -31,6 +31,10 @@ from computer_use_demo.loop import (
 )
 from computer_use_demo.tools import ToolResult, ToolVersion
 from computer_use_demo.token_manager import token_rate_limiter
+
+# Initialize logger
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("streamlit")
 
 PROVIDER_TO_DEFAULT_MODEL_NAME: dict[APIProvider, str] = {
     APIProvider.ANTHROPIC: "claude-3-7-sonnet-20250219",
@@ -146,18 +150,17 @@ def _reset_model_conf():
         else MODEL_TO_MODEL_CONF.get(st.session_state.model, SONNET_3_5_NEW)
     )
     
-    # Make sure we set token values first
-    max_tokens = model_conf.max_output_tokens
-    default_tokens = model_conf.default_output_tokens
+    # Make sure values are valid
+    max_tokens = max(1, model_conf.max_output_tokens)
+    default_tokens = max(1, model_conf.default_output_tokens)
     
-    # Only update session state after calculation
+    # Update session state
     st.session_state.tool_version = model_conf.tool_version
     st.session_state.has_thinking = model_conf.has_thinking
     st.session_state.max_output_tokens = max_tokens
     st.session_state.output_tokens = default_tokens
-    st.session_state.thinking_budget = int(default_tokens / 2)
+    st.session_state.thinking_budget = max(1, int(default_tokens / 2))
     
-    # Log values for debugging
     logger.info(f"Reset model config: max_tokens={max_tokens}, output_tokens={default_tokens}")
     
 async def main():
@@ -238,15 +241,15 @@ async def main():
         # Add token usage metrics
         st.subheader("Token Usage")
         input_used, output_used = token_rate_limiter.get_current_usage()
-        input_limit = token_rate_limiter.input_token_limit
-        output_limit = token_rate_limiter.output_token_limit
-        
-        # Safe division with fallback to 0
-        input_pct = input_used / max(1, input_limit)  # Prevent division by zero
-        output_pct = output_used / max(1, output_limit)  # Prevent division by zero
+        input_limit = max(1, token_rate_limiter.input_token_limit)  # Ensure never zero
+        output_limit = max(1, token_rate_limiter.output_token_limit)  # Ensure never zero
 
-        st.progress(input_used / input_limit, text=f"Input: {input_used}/{input_limit} tokens")
-        st.progress(output_used / output_limit, text=f"Output: {output_used}/{output_limit} tokens")
+        # Safe division with fallback to 0
+        input_pct = min(1.0, input_used / input_limit)  # Prevent division by zero or values > 1
+        output_pct = min(1.0, output_used / output_limit)  # Prevent division by zero or values > 1
+
+        st.progress(input_pct, text=f"Input: {input_used}/{input_limit} tokens")
+        st.progress(output_pct, text=f"Output: {output_used}/{output_limit} tokens")
         
         # Display warning if usage is high
         if input_used > input_limit * 0.8 or output_used > output_limit * 0.8:
