@@ -237,28 +237,31 @@ async def main():
             index=versions.index(st.session_state.tool_version),
         )
 
-        # Default to 1024 if the value is <= 0
-        output_tokens = max(1024, st.session_state.get("output_tokens", 1024))
+        # For output tokens, get the value from session state, ensure it's valid
+        current_output = max(1, st.session_state.output_tokens)
         st.number_input(
             "Max Output Tokens", 
-            key="output_tokens", 
             min_value=1,
-            value=output_tokens,
-            step=1
+            value=current_output,  # Use the value from session state
+            key="output_tokens_input",  # Use a different key for the widget
+            on_change=lambda: setattr(st.session_state, "output_tokens", 
+                                      st.session_state.output_tokens_input)
         )
 
         # Ensure we have a positive max value for thinking budget
-        max_budget = max(1, st.session_state.get("max_output_tokens", 1024))
-        thinking_budget = min(max_budget, max(1, st.session_state.get("thinking_budget", 512)))
+        current_max = max(1, st.session_state.max_output_tokens)
+        current_budget = min(current_max, max(1, st.session_state.thinking_budget))
+        
         st.checkbox("Thinking Enabled", key="thinking", value=False)
         st.number_input(
             "Thinking Budget",
-            key="thinking_budget",
             min_value=1,
-            max_value=max_budget,
-            value=thinking_budget,
-            step=1,
-            disabled=not st.session_state.get("thinking", False),
+            max_value=current_max,
+            value=current_budget,
+            key="thinking_budget_input",  # Different key for widget
+            on_change=lambda: setattr(st.session_state, "thinking_budget", 
+                                     st.session_state.thinking_budget_input),
+            disabled=not st.session_state.thinking,
         )
         
         # Add token usage metrics
