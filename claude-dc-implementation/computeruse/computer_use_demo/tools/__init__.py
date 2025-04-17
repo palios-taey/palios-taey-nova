@@ -1,9 +1,20 @@
-# Expose tool classes and results at package level for convenience
-from .types import ToolResult, CLIResult, ToolFailure, ToolError
-from .bash import BashTool20250124 as BashTool
-from .computer import ComputerTool20250124 as ComputerTool
-from .groups import ToolCollection, TOOLS_20250124, TOOLS_20241022, DEFAULT_TOOLS
+from .base import CLIResult, ToolResult
+from .bash import BashTool20241022, BashTool20250124
+from .collection import ToolCollection
+from .computer import ComputerTool20241022, ComputerTool20250124
+from .edit import EditTool20241022, EditTool20250124
+from .groups import TOOL_GROUPS_BY_VERSION, ToolVersion
 
-# This allows external code to import e.g. ComputerTool or BashTool without specifying version.
-# It also makes ToolResult and related classes directly accessible via computer_use_demo.tools.
-
+__ALL__ = [
+    BashTool20241022,
+    BashTool20250124,
+    CLIResult,
+    ComputerTool20241022,
+    ComputerTool20250124,
+    EditTool20241022,
+    EditTool20250124,
+    ToolCollection,
+    ToolResult,
+    ToolVersion,
+    TOOL_GROUPS_BY_VERSION,
+]

@@ -1,230 +1,433 @@
-# loop.py
+"""
+Agentic sampling loop that calls the Anthropic API and local implementation of anthropic-defined computer use tools.
+"""
+
 import platform
-import logging
-from typing import Any, cast, Optional, List, Dict, Callable
-from anthropic import Anthropic, AnthropicBedrock, AnthropicVertex, APIError, APIResponseValidationError, APIStatusError
+from collections.abc import Callable
+from datetime import datetime
+from enum import StrEnum
+from typing import Any, cast
+
+import httpx
+from anthropic import (
+    Anthropic,
+    AnthropicBedrock,
+    AnthropicVertex,
+    APIError,
+    APIResponseValidationError,
+    APIStatusError,
+)
 from anthropic.types.beta import (
     BetaCacheControlEphemeralParam,
     BetaContentBlockParam,
     BetaImageBlockParam,
+    BetaMessage,
     BetaMessageParam,
+    BetaTextBlock,
     BetaTextBlockParam,
     BetaToolResultBlockParam,
     BetaToolUseBlockParam,
 )
-from computer_use_demo import token_manager
-from computer_use_demo.tools import TOOL_GROUPS_BY_VERSION, ToolCollection, ToolVersion
-from computer_use_demo.types import APIProvider, ToolResult
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from computer_use_demo.tools import (
+    TOOL_GROUPS_BY_VERSION,
+    ToolCollection,
+    ToolResult,
+    ToolVersion,
+)
+from computer_use_demo.token_manager import (
+    token_rate_limiter,
+    with_token_limiting,
+    estimate_message_tokens,
+    StreamManager
+)
 
-# Base system prompt with dynamic info
+PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
+
+
+class APIProvider(StrEnum):
+    ANTHROPIC = "anthropic"
+    BEDROCK = "bedrock"
+    VERTEX = "vertex"
+
+
+# This system prompt is optimized for the Docker environment in this repository and
+# specific tool combinations enabled.
+# We encourage modifying this system prompt to ensure the model has context for the
+# environment it is running in, and to provide any additional information that may be
+# helpful for the task at hand.
 SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
-* You are using an Ubuntu virtual machine with {platform.machine()} architecture.
-* You can install applications with the bash tool. Use curl instead of wget.
-* The current date is {platform.system()}.
-</SYSTEM_CAPABILITY>"""
+* You are utilising an Ubuntu virtual machine using {platform.machine()} architecture with internet access.
+* You can feel free to install Ubuntu applications with your bash tool. Use curl instead of wget.
+* To open firefox, please just click on the firefox icon.  Note, firefox-esr is what is installed on your system.
+* Using bash tool you can start GUI applications, but you need to set export DISPLAY=:1 and use a subshell. For example "(DISPLAY=:1 xterm &)". GUI apps run with bash tool will appear within your desktop environment, but they may take some time to appear. Take a screenshot to confirm it did.
+* When using your bash tool with commands that are expected to output very large quantities of text, redirect into a tmp file and use str_replace_editor or `grep -n -B <lines before> -A <lines after> <query> <filename>` to confirm output.
+* When viewing a page it can be helpful to zoom out so that you can see everything on the page.  Either that, or make sure you scroll down to see everything before deciding something isn't available.
+* When using your computer function calls, they take a while to run and send back to you.  Where possible/feasible, try to chain multiple of these calls all into one function calls request.
+* The current date is {datetime.today().strftime('%A, %B %-d, %Y')}.
+</SYSTEM_CAPABILITY>
 
-def _inject_prompt_caching(messages: List[BetaMessageParam]):
-    """Add ephemeral cache-control to recent user messages to improve response caching."""
-    breakpoints_remaining = 3
-    for message in reversed(messages):
-        if message["role"] == "user" and isinstance(message["content"], list):
-            if breakpoints_remaining:
-                breakpoints_remaining -= 1
-                message["content"][-1]["cache_control"] = BetaCacheControlEphemeralParam({"type": "ephemeral"})  # type: ignore
+<IMPORTANT>
+* When using Firefox, if a startup wizard appears, IGNORE IT.  Do not even click "skip this step".  Instead, click on the address bar where it says "Search or enter address", and enter the appropriate search term or URL there.
+* If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
+</IMPORTANT>"""
+
+
+async def estimate_api_response_tokens(response: BetaMessage) -> int:
+    """Estimate tokens in API response"""
+    total_chars = 0
+    
+    for block in response.content:
+        if hasattr(block, "text"):
+            total_chars += len(getattr(block, "text", ""))
+        elif hasattr(block, "thinking"):
+            total_chars += len(getattr(block, "thinking", ""))
+        # Add estimates for tool use blocks if needed
+    
+    return int(total_chars / 4)  # Rough estimation
+
+
+@with_token_limiting(
+    input_token_estimator=lambda messages, **kwargs: estimate_message_tokens(messages),
+    output_token_estimator=estimate_api_response_tokens
+)
+async def call_anthropic_api(
+    client: Any,
+    max_tokens: int,
+    messages: list[BetaMessageParam],
+    model: str,
+    system: list[BetaTextBlockParam],
+    tools: list,
+    betas: list[str],
+    extra_body: dict,
+    stream: bool = True
+) -> tuple[Any, Any]:
+    """
+    Call the Anthropic API with token rate limiting and streaming support.
+    Wrapped with the token_limiting decorator to handle rate limits.
+    
+    Returns:
+        Tuple of (raw_response, parsed_response)
+    """
+    # Use streaming for large outputs
+    if max_tokens > 21333 or "output-128k-2025-02-19" in betas:
+        stream = True
+    
+    if stream:
+        # Use streaming API
+        try:
+            stream_manager = StreamManager(token_rate_limiter)
+            
+            # Create the stream
+            raw_stream = client.beta.messages.with_raw_response.stream(
+                max_tokens=max_tokens,
+                messages=messages,
+                model=model,
+                system=system,
+                tools=tools,
+                betas=betas,
+                extra_body=extra_body,
+            )
+            
+            # Process the stream using stream manager
+            chunks = []
+            async for chunk in raw_stream:
+                chunks.append(chunk)
+                # We don't need to do any token tracking here as the decorator handles it
+            
+            # Combine all chunks to create the final response
+            if chunks:
+                # For the httpx request info, we can use the first chunk
+                http_response = chunks[0].http_response if chunks else None
+                
+                # For the parsed content, we need to combine all chunks
+                full_content = chunks[-1].parse()  # The last chunk has the full content
+                
+                return http_response, full_content
             else:
-                message["content"][-1].pop("cache_control", None)
+                raise APIError("No content received from streaming API")
+                
+        except (APIStatusError, APIResponseValidationError) as e:
+            return e.request, e.response
+        except APIError as e:
+            return e.request, e.body
+    
+    else:
+        # Use non-streaming API
+        try:
+            raw_response = client.beta.messages.with_raw_response.create(
+                max_tokens=max_tokens,
+                messages=messages,
+                model=model,
+                system=system,
+                tools=tools,
+                betas=betas,
+                extra_body=extra_body,
+            )
+            return raw_response.http_response, raw_response.parse()
+            
+        except (APIStatusError, APIResponseValidationError) as e:
+            return e.request, e.response
+        except APIError as e:
+            return e.request, e.body
 
-def _remove_oldest_tool_result_images(
-    messages: List[BetaMessageParam],
-    images_to_keep: Optional[int],
-    min_removal_threshold: int = 1
-) -> List[BetaMessageParam]:
-    """Keep only the latest `images_to_keep` tool_result images in conversation history to manage token load."""
-    if images_to_keep is None or images_to_keep <= 0:
-        return messages
-    tool_result_blocks = cast(List[BetaToolResultBlockParam], [
-        item
-        for msg in messages
-        for item in (msg["content"] if isinstance(msg["content"], list) else [])
-        if isinstance(item, dict) and item.get("type") == "tool_result"
-    ])
-    # Count total images in all tool_result blocks
-    total_images = sum(
-        1 for tr in tool_result_blocks for content in tr.get("content", [])
-        if isinstance(content, dict) and content.get("type") == "image"
-    )
-    images_to_remove = total_images - images_to_keep
-    images_to_remove -= images_to_remove % (min_removal_threshold or 1)
-    # Remove from oldest tool_result blocks first
-    for tr in tool_result_blocks:
-        if images_to_remove <= 0:
-            break
-        contents = tr.get("content")
-        if isinstance(contents, list):
-            new_content = []
-            for block in contents:
-                if isinstance(block, dict) and block.get("type") == "image" and images_to_remove > 0:
-                    images_to_remove -= 1
-                    continue  # drop this image
-                new_content.append(block)
-            tr["content"] = new_content
-    return messages
 
 async def sampling_loop(
     *,
     model: str,
     provider: APIProvider,
     system_prompt_suffix: str,
-    messages: List[BetaMessageParam],
-    output_callback: Callable[[BetaContentBlockParam | Dict], None],
+    messages: list[BetaMessageParam],
+    output_callback: Callable[[BetaContentBlockParam], None],
     tool_output_callback: Callable[[ToolResult, str], None],
-    api_response_callback: Callable[[Any, Any, Optional[Exception]], None],
+    api_response_callback: Callable[
+        [httpx.Request, httpx.Response | object | None, Exception | None], None
+    ],
     api_key: str,
-    only_n_most_recent_images: Optional[int] = None,
+    only_n_most_recent_images: int | None = None,
     max_tokens: int = 4096,
-    tool_version: Optional[ToolVersion] = None,
-    thinking_budget: Optional[int] = None,
+    tool_version: ToolVersion,
+    thinking_budget: int | None = None,
     token_efficient_tools_beta: bool = False,
-    stream: bool = True
-) -> List[BetaMessageParam]:
-    """Run one conversation turn with Claude. Streams the assistant's reply if `stream=True`."""
-    # Apply caching hints and prune old images
-    _inject_prompt_caching(messages)
-    messages = _remove_oldest_tool_result_images(messages, only_n_most_recent_images, min_removal_threshold=3)
-    # Initialize API client
-    if provider == APIProvider.ANTHROPIC:
-        client = Anthropic(api_key=api_key)
-    elif provider == APIProvider.VERTEX:
-        client = AnthropicVertex(api_key=api_key)
-    elif provider == APIProvider.BEDROCK:
-        client = AnthropicBedrock(api_key=api_key)
-    else:
-        raise ValueError(f"Unsupported provider: {provider}")
-    # Prepare tool collection
-    tc = ToolCollection(tool_version=tool_version) if tool_version else ToolCollection()
-    # Construct full message list with system prompt at the start
-    anthropic_messages = cast(List[BetaMessageParam], messages.copy())
-    if system_prompt_suffix:
-        anthropic_messages.insert(0, {"role": "system", "content": SYSTEM_PROMPT + system_prompt_suffix})
-    else:
-        anthropic_messages.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
-    # Enforce input token rate limit (40k/min) by token bucket
-    estimated_input_tokens = len(str(anthropic_messages)) // 4  # rough estimate
-    token_manager.consume_tokens(estimated_input_tokens)
-    try:
-        if stream:
-            # Streaming mode: iterate over event stream
-            raw_response = await client.messages.create(
-                model=model,
-                messages=anthropic_messages,
-                max_tokens=max_tokens,
-                stream=True,
-                tool_choice="auto",
-                tools=(tc.to_anthropic_tools() if hasattr(tc, "to_anthropic_tools") else None),
+):
+    """
+    Agentic sampling loop for the assistant/tool interaction of computer use.
+    Enhanced with token management and streaming support.
+    """
+    tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
+    tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
+    system = BetaTextBlockParam(
+        type="text",
+        text=f"{SYSTEM_PROMPT}{' ' + system_prompt_suffix if system_prompt_suffix else ''}",
+    )
+
+    while True:
+        enable_prompt_caching = False
+        betas = [tool_group.beta_flag] if tool_group.beta_flag else []
+        if token_efficient_tools_beta:
+            betas.append("token-efficient-tools-2025-02-19")
+        
+        # Enable 128K output tokens for Claude 3.7 Sonnet
+        if "3-7" in model and max_tokens > 64000:
+            betas.append("output-128k-2025-02-19")
+            
+        image_truncation_threshold = only_n_most_recent_images or 0
+        if provider == APIProvider.ANTHROPIC:
+            client = Anthropic(api_key=api_key, max_retries=4)
+            enable_prompt_caching = True
+        elif provider == APIProvider.VERTEX:
+            client = AnthropicVertex()
+        elif provider == APIProvider.BEDROCK:
+            client = AnthropicBedrock()
+
+        if enable_prompt_caching:
+            betas.append(PROMPT_CACHING_BETA_FLAG)
+            _inject_prompt_caching(messages)
+            # Because cached reads are 10% of the price, we don't think it's
+            # ever sensible to break the cache by truncating images
+            only_n_most_recent_images = 0
+            # Use type ignore to bypass TypedDict check until SDK types are updated
+            system["cache_control"] = {"type": "ephemeral"}  # type: ignore
+
+        if only_n_most_recent_images:
+            _maybe_filter_to_n_most_recent_images(
+                messages,
+                only_n_most_recent_images,
+                min_removal_threshold=image_truncation_threshold,
             )
-            headers = dict(raw_response.headers)
-            response_blocks: List[Dict] = []
-            async for event in raw_response:
-                if event.type == "message_start":
-                    continue  # start of assistant response
-                elif event.type == "content_block_start":
-                    # Begin a new content block (text or other type)
-                    response_blocks.append({"type": event.content_block.type, "data": ""})
-                elif event.type == "content_block_delta":
-                    # Append streaming text delta to current text block
-                    if response_blocks and response_blocks[-1].get("type") == "text":
-                        response_blocks[-1]["data"] += event.delta.text
-                        output_callback(response_blocks[-1])
-                elif event.type == "tool_use":
-                    # Assistant invoked a tool
-                    response_blocks.append({
-                        "type": "tool_use",
-                        "id": event.tool_use.id,
-                        "name": event.tool_use.name,
-                        "input": event.tool_use.input
-                    })
-                    output_callback(response_blocks[-1])
-                elif event.type == "tool_result":
-                    # Assistant expects a tool result (Anthropic might emit placeholder event)
-                    response_blocks.append({
-                        "type": "tool_result",
-                        "tool_use_id": event.tool_result.tool_use_id,
-                        "content": event.tool_result.content
-                    })
-                    # Immediately show a placeholder or partial tool result (if any)
-                    tool_output_callback(ToolResult(output=str(event.tool_result.content)), event.tool_result.tool_use_id)
-                elif event.type == "message_end":
-                    continue  # end of assistant message
-                elif event.type == "ping":
-                    continue  # keep-alive ping
-                else:
-                    logger.warning(f"Unknown event type: {event.type}")
-            # Log token usage from headers
-            token_manager.manage_request(headers)
-            api_response_callback(None, {"status_code": 200, "headers": headers}, None)
-        else:
-            # Non-streaming mode
-            response = await client.messages.create(
-                model=model,
-                messages=anthropic_messages,
-                max_tokens=max_tokens,
-                tool_choice="auto",
-                tools=(tc.to_anthropic_tools() if hasattr(tc, "to_anthropic_tools") else None),
-            )
-            # Update rate limit usage
-            token_manager.manage_request(dict(response.http_response.headers))
-            api_response_callback(response.http_response.request, response.http_response, None)
-            response_blocks = response.content  # list of BetaContentBlockParam
-        # Add assistant response to conversation history
-        messages.append({"role": "assistant", "content": response_blocks})
-        tool_result_blocks: List[Dict] = []
-        # Process any tool requests from the assistant
-        for block in response_blocks:
-            if block.get("type") == "tool_use":
-                tool_name = block["name"]
-                tool_input = cast(Dict[str, Any], block["input"])
-                # Run the requested tool and get result
-                result: ToolResult = await tc.run(name=tool_name, tool_input=tool_input)
-                output_text = result.output if result.output is not None else ""
-                # If output is too large, truncate and queue remainder
-                max_tokens_allowed = token_manager.safe_max_tokens
-                max_chars = max_tokens_allowed * 4
-                leftover = None
-                if isinstance(output_text, str) and len(output_text) > max_chars:
-                    leftover = output_text[max_chars:]
-                    output_text = output_text[:max_chars] + f"\n[... Output truncated, {len(leftover)} characters remaining]"
-                # Account for tokens from this tool output (enforce rate limit before injecting to prompt)
-                token_manager.consume_tokens(len(output_text) // 4 if isinstance(output_text, str) else 0)
-                # Store leftover chunk for possible future retrieval (especially for file reading tools)
-                if leftover:
-                    if tool_name in ["read_file", "open_file", "cat", "view_file"]:
-                        file_path = None
-                        if isinstance(tool_input, dict):
-                            file_path = tool_input.get("path") or tool_input.get("file_path") or tool_input.get("filename")
-                        key = f"{tool_name}:{file_path or block.get('id')}"
-                        token_manager.leftover_chunks[key] = leftover
-                # Prepare tool_result block for conversation
-                tool_result_blocks.append({
-                    "type": "tool_result",
-                    "tool_use_id": block["id"],
-                    "content": output_text
-                })
-                # Immediately display the tool result output in the UI
-                tool_output_callback(result, block["id"])
-        # If any tool results were produced, append them as a user message so Claude can continue the conversation
-        if tool_result_blocks:
-            messages.append({"role": "user", "content": tool_result_blocks})
-        return messages
-    except (APIStatusError, APIResponseValidationError, APIError) as e:
-        # Log API errors
-        api_response_callback(getattr(e, "request", None), getattr(e, "response", None) or getattr(e, "body", None), e)
-        return messages
-    except Exception as e:
-        # Log any other errors
-        api_response_callback(None, None, e)
+        extra_body = {}
+        if thinking_budget:
+            # Ensure we only send the required fields for thinking
+            extra_body = {
+                "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
+            }
+
+        # Call the API with token management and streaming
+        http_response, response = await call_anthropic_api(
+            client=client,
+            max_tokens=max_tokens,
+            messages=messages,
+            model=model,
+            system=[system],
+            tools=tool_collection.to_params(),
+            betas=betas,
+            extra_body=extra_body,
+            stream=(max_tokens > 21333)  # Use streaming for large outputs
+        )
+
+        # Handle the API response callback with proper error handling
+        error = None if isinstance(response, BetaMessage) else Exception("API Error")
+        api_response_callback(
+            http_response.request if http_response else None, 
+            http_response, 
+            error
+        )
+
+        if not isinstance(response, BetaMessage):
+            # If we got an error response, return without trying to parse it
+            return messages
+
+        response_params = _response_to_params(response)
+        messages.append(
+            {
+                "role": "assistant",
+                "content": response_params,
+            }
+        )
+
+        tool_result_content: list[BetaToolResultBlockParam] = []
+        for content_block in response_params:
+            output_callback(content_block)
+            if content_block["type"] == "tool_use":
+                result = await tool_collection.run(
+                    name=content_block["name"],
+                    tool_input=cast(dict[str, Any], content_block["input"]),
+                )
+                tool_result_content.append(
+                    _make_api_tool_result(result, content_block["id"])
+                )
+                tool_output_callback(result, content_block["id"])
+
+        if not tool_result_content:
+            return messages
+
+        messages.append({"content": tool_result_content, "role": "user"})
+
+
+def _maybe_filter_to_n_most_recent_images(
+    messages: list[BetaMessageParam],
+    images_to_keep: int,
+    min_removal_threshold: int,
+):
+    """
+    With the assumption that images are screenshots that are of diminishing value as
+    the conversation progresses, remove all but the final `images_to_keep` tool_result
+    images in place, with a chunk of min_removal_threshold to reduce the amount we
+    break the implicit prompt cache.
+    """
+    if images_to_keep is None:
         return messages
 
+    tool_result_blocks = cast(
+        list[BetaToolResultBlockParam],
+        [
+            item
+            for message in messages
+            for item in (
+                message["content"] if isinstance(message["content"], list) else []
+            )
+            if isinstance(item, dict) and item.get("type") == "tool_result"
+        ],
+    )
+
+    total_images = sum(
+        1
+        for tool_result in tool_result_blocks
+        for content in tool_result.get("content", [])
+        if isinstance(content, dict) and content.get("type") == "image"
+    )
+
+    images_to_remove = total_images - images_to_keep
+    # for better cache behavior, we want to remove in chunks
+    images_to_remove -= images_to_remove % min_removal_threshold
+
+    for tool_result in tool_result_blocks:
+        if isinstance(tool_result.get("content"), list):
+            new_content = []
+            for content in tool_result.get("content", []):
+                if isinstance(content, dict) and content.get("type") == "image":
+                    if images_to_remove > 0:
+                        images_to_remove -= 1
+                        continue
+                new_content.append(content)
+            tool_result["content"] = new_content
+
+
+def _response_to_params(
+    response: BetaMessage,
+) -> list[BetaContentBlockParam]:
+    res: list[BetaContentBlockParam] = []
+    for block in response.content:
+        if isinstance(block, BetaTextBlock):
+            if block.text:
+                res.append(BetaTextBlockParam(type="text", text=block.text))
+            elif getattr(block, "type", None) == "thinking":
+                # Handle thinking blocks - include signature field
+                thinking_block = {
+                    "type": "thinking",
+                    "thinking": getattr(block, "thinking", None),
+                }
+                if hasattr(block, "signature"):
+                    thinking_block["signature"] = getattr(block, "signature", None)
+                res.append(cast(BetaContentBlockParam, thinking_block))
+        else:
+            # Handle tool use blocks normally
+            res.append(cast(BetaToolUseBlockParam, block.model_dump()))
+    return res
+
+
+def _inject_prompt_caching(
+    messages: list[BetaMessageParam],
+):
+    """
+    Set cache breakpoints for the 3 most recent turns
+    one cache breakpoint is left for tools/system prompt, to be shared across sessions
+    """
+
+    breakpoints_remaining = 3
+    for message in reversed(messages):
+        if message["role"] == "user" and isinstance(
+            content := message["content"], list
+        ):
+            if breakpoints_remaining:
+                breakpoints_remaining -= 1
+                # Use type ignore to bypass TypedDict check until SDK types are updated
+                content[-1]["cache_control"] = BetaCacheControlEphemeralParam(  # type: ignore
+                    {"type": "ephemeral"}
+                )
+            else:
+                content[-1].pop("cache_control", None)
+                # we'll only every have one extra turn per loop
+                break
+
+
+def _make_api_tool_result(
+    result: ToolResult, tool_use_id: str
+) -> BetaToolResultBlockParam:
+    """Convert an agent ToolResult to an API ToolResultBlockParam."""
+    tool_result_content: list[BetaTextBlockParam | BetaImageBlockParam] | str = []
+    is_error = False
+    if result.error:
+        is_error = True
+        tool_result_content = _maybe_prepend_system_tool_result(result, result.error)
+    else:
+        if result.output:
+            tool_result_content.append(
+                {
+                    "type": "text",
+                    "text": _maybe_prepend_system_tool_result(result, result.output),
+                }
+            )
+        if result.base64_image:
+            tool_result_content.append(
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": "image/png",
+                        "data": result.base64_image,
+                    },
+                }
+            )
+    return {
+        "type": "tool_result",
+        "content": tool_result_content,
+        "tool_use_id": tool_use_id,
+        "is_error": is_error,
+    }
+
+
+def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
+    if result.system:
+        result_text = f"<system>{result.system}</system>\n{result_text}"
+    return result_text

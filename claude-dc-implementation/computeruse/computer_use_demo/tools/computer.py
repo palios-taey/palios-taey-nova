@@ -1,103 +1,500 @@
-from typing import Any, Literal
-import os, base64, subprocess
-from .base import BaseAnthropicTool
-from .types import ToolResult, CLIResult, ToolError
+import asyncio
+import base64
+import os
+import shlex
+import shutil
+from enum import StrEnum
+from pathlib import Path
+from typing import Literal, TypedDict, cast, get_args
+from uuid import uuid4
+import logging
 
-class ComputerTool20250124(BaseAnthropicTool):
-    """A tool to simulate computer screen, mouse, and keyboard actions."""
-    api_type: Literal["computer_20250124"] = "computer_20250124"
-    name:    Literal["computer"] = "computer"
+from anthropic.types.beta import BetaToolComputerUse20241022Param, BetaToolUnionParam
+
+from .base import BaseAnthropicTool, ToolError, ToolResult
+from .run import run
+from .token_manager import (
+    with_token_limiting, 
+    token_rate_limiter
+)
+
+OUTPUT_DIR = "/tmp/outputs"
+
+TYPING_DELAY_MS = 12
+TYPING_GROUP_SIZE = 50
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("computer_tool")
+
+Action_20241022 = Literal[
+    "key",
+    "type",
+    "mouse_move",
+    "left_click",
+    "left_click_drag",
+    "right_click",
+    "middle_click",
+    "double_click",
+    "screenshot",
+    "cursor_position",
+]
+
+Action_20250124 = (
+    Action_20241022
+    | Literal[
+        "left_mouse_down",
+        "left_mouse_up",
+        "scroll",
+        "hold_key",
+        "wait",
+        "triple_click",
+    ]
+)
+
+ScrollDirection = Literal["up", "down", "left", "right"]
+
+
+class Resolution(TypedDict):
+    width: int
+    height: int
+
+
+# sizes above XGA/WXGA are not recommended (see README.md)
+# scale down to one of these targets if ComputerTool._scaling_enabled is set
+MAX_SCALING_TARGETS: dict[str, Resolution] = {
+    "XGA": Resolution(width=1024, height=768),  # 4:3
+    "WXGA": Resolution(width=1280, height=800),  # 16:10
+    "FWXGA": Resolution(width=1366, height=768),  # ~16:9
+}
+
+CLICK_BUTTONS = {
+    "left_click": 1,
+    "right_click": 3,
+    "middle_click": 2,
+    "double_click": "--repeat 2 --delay 10 1",
+    "triple_click": "--repeat 3 --delay 10 1",
+}
+
+
+class ScalingSource(StrEnum):
+    COMPUTER = "computer"
+    API = "api"
+
+
+class ComputerToolOptions(TypedDict):
+    display_height_px: int
+    display_width_px: int
+    display_number: int | None
+
+
+def chunks(s: str, chunk_size: int) -> list[str]:
+    return [s[i:i + chunk_size] for i in range(0, len(s), chunk_size)]
+
+
+def estimate_computer_input_tokens(
+    action: Action_20241022 | Action_20250124 = None, 
+    text: str = None, 
+    coordinate: tuple[int, int] = None, 
+    scroll_direction: ScrollDirection = None,
+    scroll_amount: int = None,
+    duration: int | float = None,
+    key: str = None,
+    **kwargs
+) -> int:
+    """Estimate token usage for computer actions"""
+    total_tokens = 10  # Base cost
+    
+    if action:
+        total_tokens += len(str(action)) // 4
+    if text:
+        total_tokens += len(text) // 4
+    # Other parameters are small and don't significantly affect token count
+        
+    return max(20, total_tokens)  # Minimum token cost
+
+
+def estimate_computer_output_tokens(result: ToolResult) -> int:
+    """Estimate token usage for computer tool output"""
+    total_length = 0
+    if result.output:
+        total_length += len(result.output)
+    if result.error:
+        total_length += len(result.error)
+    if result.system:
+        total_length += len(result.system)
+        
+    # Base64 images are the most token-intensive part
+    if result.base64_image:
+        # Base64 encoding increases size by approximately 4/3
+        image_bytes = len(result.base64_image) * 3 / 4
+        # Rough estimation for token count: approximately 0.25 tokens per byte
+        image_tokens = int(image_bytes * 0.25)
+        total_length += image_tokens * 4  # Convert back to length for consistent calculation
+    
+    return total_length // 4  # Rough estimation
+
+
+class BaseComputerTool:
+    """
+    A tool that allows the agent to interact with the screen, keyboard, and mouse of the current computer.
+    The tool parameters are defined by Anthropic and are not editable.
+    """
+
+    name: Literal["computer"] = "computer"
+    width: int
+    height: int
+    display_num: int | None
+
+    _screenshot_delay = 2.0
+    _scaling_enabled = True
+    # Add throttling for screenshot frequency to avoid token overuse
+    _last_screenshot_time = 0
+    _min_screenshot_interval = 3.0  # seconds
+
+    @property
+    def options(self) -> ComputerToolOptions:
+        width, height = self.scale_coordinates(
+            ScalingSource.COMPUTER, self.width, self.height
+        )
+        return {
+            "display_width_px": width,
+            "display_height_px": height,
+            "display_number": self.display_num,
+        }
 
     def __init__(self):
-        # Load screen dimensions from environment for coordinate scaling
-        self.width = int(os.getenv("WIDTH") or 0)
-        self.height = int(os.getenv("HEIGHT") or 0)
-        self.display = os.getenv("DISPLAY") or ":0"
         super().__init__()
 
-    def to_params(self) -> Any:
-        return {"type": self.api_type, "name": self.name}
+        self.width = int(os.getenv("WIDTH") or 0)
+        self.height = int(os.getenv("HEIGHT") or 0)
+        assert self.width and self.height, "WIDTH, HEIGHT must be set"
+        if (display_num := os.getenv("DISPLAY_NUM")) is not None:
+            self.display_num = int(display_num)
+            self._display_prefix = f"DISPLAY=:{self.display_num} "
+        else:
+            self.display_num = None
+            self._display_prefix = ""
 
-    async def __call__(self, action: str, **kwargs) -> Any:
-        # Dispatch to the appropriate helper method based on the action.
-        # Supported actions might include: "mouse_move", "left_click", "right_click", "type", "key", "screenshot", etc.
-        try:
+        self.xdotool = f"{self._display_prefix}xdotool"
+
+    @with_token_limiting(
+        input_token_estimator=estimate_computer_input_tokens,
+        output_token_estimator=estimate_computer_output_tokens
+    )
+    async def __call__(
+        self,
+        *,
+        action: Action_20241022,
+        text: str | None = None,
+        coordinate: tuple[int, int] | None = None,
+        **kwargs,
+    ):
+        if action in ("mouse_move", "left_click_drag"):
+            if coordinate is None:
+                raise ToolError(f"coordinate is required for {action}")
+            if text is not None:
+                raise ToolError(f"text is not accepted for {action}")
+
+            x, y = self.validate_and_get_coordinates(coordinate)
+
             if action == "mouse_move":
-                x = kwargs.get("x"); y = kwargs.get("y")
-                if x is None or y is None:
-                    raise ToolError("x and y coordinates are required for mouse_move")
-                # Use a system tool like xdotool or cliclick to move mouse
-                return await self.shell(f"xdotool mousemove --sync {x} {y}")
-            elif action == "left_click":
-                return await self.shell("xdotool click 1")
-            elif action == "right_click":
-                return await self.shell("xdotool click 3")
-            elif action == "key":
-                key_name = kwargs.get("key")
-                if not key_name:
-                    raise ToolError("key name is required for key action")
-                return await self.shell(f"xdotool key {key_name}")
+                command_parts = [self.xdotool, f"mousemove --sync {x} {y}"]
+                return await self.shell(" ".join(command_parts))
+            elif action == "left_click_drag":
+                command_parts = [
+                    self.xdotool,
+                    f"mousedown 1 mousemove --sync {x} {y} mouseup 1",
+                ]
+                return await self.shell(" ".join(command_parts))
+
+        if action in ("key", "type"):
+            if text is None:
+                raise ToolError(f"text is required for {action}")
+            if coordinate is not None:
+                raise ToolError(f"coordinate is not accepted for {action}")
+            if not isinstance(text, str):
+                raise ToolError(output=f"{text} must be a string")
+
+            if action == "key":
+                command_parts = [self.xdotool, f"key -- {text}"]
+                return await self.shell(" ".join(command_parts))
             elif action == "type":
-                text = kwargs.get("text")
-                if text is None:
-                    raise ToolError("text is required for type action")
-                # Simulate typing by chunking the text into keystrokes to avoid flooding
-                typed = []
-                for chunk in self._chunk_text(str(text), chunk_size=10):
-                    await self.shell(f"xdotool type --delay 1 '{chunk}'", take_screenshot=False)
-                    typed.append(chunk)
-                # After typing, optionally take a screenshot of the result
-                # (We won't combine partial outputs here, as typing typically has no direct output)
-                return ToolResult(system=f'typed: {"".join(typed)}')
-            elif action == "screenshot":
-                # Take a screenshot and return as base64 image
-                image_data = self._capture_screenshot()
-                return ToolResult(base64_image=image_data)
+                results: list[ToolResult] = []
+                for chunk in chunks(text, TYPING_GROUP_SIZE):
+                    command_parts = [
+                        self.xdotool,
+                        f"type --delay {TYPING_DELAY_MS} -- {shlex.quote(chunk)}",
+                    ]
+                    results.append(
+                        await self.shell(" ".join(command_parts), take_screenshot=False)
+                    )
+                    
+                # Only take screenshot after all typing is done to save tokens
+                screenshot_base64 = (await self.screenshot()).base64_image
+                
+                # Track consolidated token usage for all typing chunks
+                total_output = "".join(result.output or "" for result in results)
+                total_error = "".join(result.error or "" for result in results)
+                
+                return ToolResult(
+                    output=total_output,
+                    error=total_error,
+                    base64_image=screenshot_base64,
+                )
+
+        if action in (
+            "left_click",
+            "right_click",
+            "double_click",
+            "middle_click",
+            "screenshot",
+            "cursor_position",
+        ):
+            if text is not None:
+                raise ToolError(f"text is not accepted for {action}")
+            if coordinate is not None:
+                raise ToolError(f"coordinate is not accepted for {action}")
+
+            if action == "screenshot":
+                # Apply throttling for screenshots to avoid token overuse
+                current_time = asyncio.get_event_loop().time()
+                time_since_last = current_time - self._last_screenshot_time
+                
+                if time_since_last < self._min_screenshot_interval:
+                    logger.warning(f"Screenshot requested too soon (interval: {time_since_last:.2f}s). Enforcing minimum interval.")
+                    await asyncio.sleep(self._min_screenshot_interval - time_since_last)
+                
+                self._last_screenshot_time = asyncio.get_event_loop().time()
+                return await self.screenshot()
+            elif action == "cursor_position":
+                command_parts = [self.xdotool, "getmouselocation --shell"]
+                result = await self.shell(
+                    " ".join(command_parts),
+                    take_screenshot=False,
+                )
+                output = result.output or ""
+                x, y = self.scale_coordinates(
+                    ScalingSource.COMPUTER,
+                    int(output.split("X=")[1].split("\n")[0]),
+                    int(output.split("Y=")[1].split("\n")[0]),
+                )
+                return result.replace(output=f"X={x},Y={y}")
             else:
-                raise ToolError(f"Unknown action: {action}")
-        except ToolError as e:
-            # Propagate ToolError to be handled by the framework (it will be turned into a ToolResult with error)
-            raise
+                command_parts = [self.xdotool, f"click {CLICK_BUTTONS[action]}"]
+                return await self.shell(" ".join(command_parts))
 
-    async def shell(self, command: str, take_screenshot: bool = True) -> ToolResult:
-        """Execute a shell command for computer control (non-interactive, one-off command)."""
-        # Run command and capture output
-        proc = await asyncio.create_subprocess_shell(
-            command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            env={"DISPLAY": self.display, **os.environ}  # ensure DISPLAY is set for GUI commands
-        )
-        out, err = await proc.communicate()
-        output_text = out.decode(errors="ignore").strip()
-        error_text = err.decode(errors="ignore").strip()
-        # Optionally capture a screenshot after the command (to give visual feedback to Claude)
-        img_data = None
+        raise ToolError(f"Invalid action: {action}")
+
+    def validate_and_get_coordinates(self, coordinate: tuple[int, int] | None = None):
+        if not isinstance(coordinate, list) or len(coordinate) != 2:
+            raise ToolError(f"{coordinate} must be a tuple of length 2")
+        if not all(isinstance(i, int) and i >= 0 for i in coordinate):
+            raise ToolError(f"{coordinate} must be a tuple of non-negative ints")
+
+        return self.scale_coordinates(ScalingSource.API, coordinate[0], coordinate[1])
+
+    async def screenshot(self):
+        """Take a screenshot of the current screen and return the base64 encoded image."""
+        output_dir = Path(OUTPUT_DIR)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        path = output_dir / f"screenshot_{uuid4().hex}.png"
+
+        # Try gnome-screenshot first
+        if shutil.which("gnome-screenshot"):
+            screenshot_cmd = f"{self._display_prefix}gnome-screenshot -f {path} -p"
+        else:
+            # Fall back to scrot if gnome-screenshot isn't available
+            screenshot_cmd = f"{self._display_prefix}scrot -p {path}"
+
+        result = await self.shell(screenshot_cmd, take_screenshot=False)
+        if self._scaling_enabled:
+            x, y = self.scale_coordinates(
+                ScalingSource.COMPUTER, self.width, self.height
+            )
+            await self.shell(
+                f"convert {path} -resize {x}x{y}! {path}", take_screenshot=False
+            )
+
+        if path.exists():
+            # Read image and estimate token usage
+            image_bytes = path.read_bytes()
+            base64_encoded = base64.b64encode(image_bytes).decode()
+            
+            # Update last screenshot time for throttling
+            self._last_screenshot_time = asyncio.get_event_loop().time()
+            
+            # Track token usage specifically for the image
+            image_tokens = len(base64_encoded) // 4
+            token_rate_limiter.record_usage(0, image_tokens)
+            
+            return result.replace(base64_image=base64_encoded)
+        raise ToolError(f"Failed to take screenshot: {result.error}")
+
+    async def shell(self, command: str, take_screenshot=True) -> ToolResult:
+        """Run a shell command and return the output, error, and optionally a screenshot."""
+        _, stdout, stderr = await run(command)
+        base64_image = None
+
         if take_screenshot:
-            img_data = self._capture_screenshot()
-        # Return a ToolResult with any text output, error, and image if captured
-        return ToolResult(output=output_text if output_text else None,
-                          error=error_text if error_text else None,
-                          base64_image=img_data)
+            # delay to let things settle before taking a screenshot
+            await asyncio.sleep(self._screenshot_delay)
+            screenshot_result = await self.screenshot()
+            base64_image = screenshot_result.base64_image
 
-    def _capture_screenshot(self) -> str:
-        """Capture a screenshot of the current screen and return as base64 string."""
-        # Use `import -window root` (ImageMagick) or `xwd` and convert to capture the screen
-        # Here we'll use a simple xwd + convert pipeline for demonstration:
-        try:
-            subprocess.run(["xwd", "-root", "-out", "/tmp/screenshot.xwd"], check=True)
-            subprocess.run(["convert", "/tmp/screenshot.xwd", "-resize", f"{self.width}x{self.height}", "/tmp/screenshot.png"], check=True)
-            with open("/tmp/screenshot.png", "rb") as f:
-                image_bytes = f.read()
-            return base64.b64encode(image_bytes).decode('utf-8')
-        except Exception as e:
-            # If screenshot fails, return an error message in the output
-            raise ToolError(f"Screenshot failed: {e}")
+        return ToolResult(output=stdout, error=stderr, base64_image=base64_image)
 
-    def _chunk_text(self, text: str, chunk_size: int) -> list[str]:
-        """Utility to split text into smaller chunks for typing simulation."""
-        return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+    def scale_coordinates(self, source: ScalingSource, x: int, y: int):
+        """Scale coordinates to a target maximum resolution."""
+        if not self._scaling_enabled:
+            return x, y
+        ratio = self.width / self.height
+        target_dimension = None
+        for dimension in MAX_SCALING_TARGETS.values():
+            # allow some error in the aspect ratio - not ratios are exactly 16:9
+            if abs(dimension["width"] / dimension["height"] - ratio) < 0.02:
+                if dimension["width"] < self.width:
+                    target_dimension = dimension
+                break
+        if target_dimension is None:
+            return x, y
+        # should be less than 1
+        x_scaling_factor = target_dimension["width"] / self.width
+        y_scaling_factor = target_dimension["height"] / self.height
+        if source == ScalingSource.API:
+            if x > self.width or y > self.height:
+                raise ToolError(f"Coordinates {x}, {y} are out of bounds")
+            # scale up
+            return round(x / x_scaling_factor), round(y / y_scaling_factor)
+        # scale down
+        return round(x * x_scaling_factor), round(y * y_scaling_factor)
 
-# (If there was an older version of ComputerTool, it would similarly subclass this new class, 
-# e.g., ComputerTool20241022 inheriting ComputerTool20250124 and just overriding api_type.)
 
+class ComputerTool20241022(BaseComputerTool, BaseAnthropicTool):
+    api_type: Literal["computer_20241022"] = "computer_20241022"
+
+    def to_params(self) -> BetaToolComputerUse20241022Param:
+        return {"name": self.name, "type": self.api_type, **self.options}
+
+
+class ComputerTool20250124(BaseComputerTool, BaseAnthropicTool):
+    api_type: Literal["computer_20250124"] = "computer_20250124"
+
+    def to_params(self):
+        return cast(
+            BetaToolUnionParam,
+            {"name": self.name, "type": self.api_type, **self.options},
+        )
+
+    @with_token_limiting(
+        input_token_estimator=estimate_computer_input_tokens,
+        output_token_estimator=estimate_computer_output_tokens
+    )
+    async def __call__(
+        self,
+        *,
+        action: Action_20250124,
+        text: str | None = None,
+        coordinate: tuple[int, int] | None = None,
+        scroll_direction: ScrollDirection | None = None,
+        scroll_amount: int | None = None,
+        duration: int | float | None = None,
+        key: str | None = None,
+        **kwargs,
+    ):
+        if action in ("left_mouse_down", "left_mouse_up"):
+            if coordinate is not None:
+                raise ToolError(f"coordinate is not accepted for {action=}.")
+            command_parts = [
+                self.xdotool,
+                f"{'mousedown' if action == 'left_mouse_down' else 'mouseup'} 1",
+            ]
+            return await self.shell(" ".join(command_parts))
+        if action == "scroll":
+            if scroll_direction is None or scroll_direction not in get_args(
+                ScrollDirection
+            ):
+                raise ToolError(
+                    f"{scroll_direction=} must be 'up', 'down', 'left', or 'right'"
+                )
+            if not isinstance(scroll_amount, int) or scroll_amount < 0:
+                raise ToolError(f"{scroll_amount=} must be a non-negative int")
+            mouse_move_part = ""
+            if coordinate is not None:
+                x, y = self.validate_and_get_coordinates(coordinate)
+                mouse_move_part = f"mousemove --sync {x} {y}"
+            scroll_button = {
+                "up": 4,
+                "down": 5,
+                "left": 6,
+                "right": 7,
+            }[scroll_direction]
+
+            command_parts = [self.xdotool, mouse_move_part]
+            if text:
+                command_parts.append(f"keydown {text}")
+            command_parts.append(f"click --repeat {scroll_amount} {scroll_button}")
+            if text:
+                command_parts.append(f"keyup {text}")
+
+            return await self.shell(" ".join(command_parts))
+
+        if action in ("hold_key", "wait"):
+            if duration is None or not isinstance(duration, (int, float)):
+                raise ToolError(f"{duration=} must be a number")
+            if duration < 0:
+                raise ToolError(f"{duration=} must be non-negative")
+            if duration > 100:
+                raise ToolError(f"{duration=} is too long.")
+
+            if action == "hold_key":
+                if text is None:
+                    raise ToolError(f"text is required for {action}")
+                escaped_keys = shlex.quote(text)
+                command_parts = [
+                    self.xdotool,
+                    f"keydown {escaped_keys}",
+                    f"sleep {duration}",
+                    f"keyup {escaped_keys}",
+                ]
+                return await self.shell(" ".join(command_parts))
+
+            if action == "wait":
+                await asyncio.sleep(duration)
+                # Take a screenshot after waiting, but respect throttling
+                current_time = asyncio.get_event_loop().time()
+                time_since_last = current_time - self._last_screenshot_time
+                
+                if time_since_last < self._min_screenshot_interval:
+                    logger.warning(f"Wait ended but screenshot scheduled too soon. Adding delay.")
+                    await asyncio.sleep(self._min_screenshot_interval - time_since_last)
+                
+                return await self.screenshot()
+
+        if action in (
+            "left_click",
+            "right_click",
+            "double_click",
+            "triple_click",
+            "middle_click",
+        ):
+            if text is not None:
+                raise ToolError(f"text is not accepted for {action}")
+            mouse_move_part = ""
+            if coordinate is not None:
+                x, y = self.validate_and_get_coordinates(coordinate)
+                mouse_move_part = f"mousemove --sync {x} {y}"
+
+            command_parts = [self.xdotool, mouse_move_part]
+            if key:
+                command_parts.append(f"keydown {key}")
+            command_parts.append(f"click {CLICK_BUTTONS[action]}")
+            if key:
+                command_parts.append(f"keyup {key}")
+
+            return await self.shell(" ".join(command_parts))
+
+        # Fall back to parent implementation for standard actions
+        return await super().__call__(
+            action=action, text=text, coordinate=coordinate, key=key, **kwargs
+        )
