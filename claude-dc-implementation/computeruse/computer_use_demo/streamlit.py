@@ -444,32 +444,57 @@ def _streaming_output_callback(
                 st.session_state.current_message_placeholder.markdown(st.session_state.current_message_text + "▌")
         return
     
-    # Handle complete content blocks
-    if isinstance(content_block, dict):
-        if content_block["type"] == "text":
-            # Start a new text block
-            st.session_state.current_message_text = content_block["text"]
-            if st.session_state.current_message_placeholder is not None:
-                st.session_state.current_message_placeholder.markdown(st.session_state.current_message_text + "▌")
-        elif content_block["type"] == "thinking":
-            # Handle thinking blocks
-            with st.chat_message(Sender.BOT):
-                thinking_content = content_block.get("thinking", "")
-                st.markdown(f"[Thinking]\n\n{thinking_content}")
-        elif content_block["type"] == "tool_use":
-            # Handle tool use - show a new message for tool use
-            with st.chat_message(Sender.BOT):
-                st.code(f'Tool Use: {content_block["name"]}\nInput: {content_block["input"]}')
+    # Handle different block types directly here instead of passing to _render_message
+    # This bypasses the attribute checks in _render_message that cause errors
+    with st.chat_message(Sender.BOT):
+        if hasattr(content_block, "type"):
+            block_type = content_block.type
+        elif isinstance(content_block, dict) and "type" in content_block:
+            block_type = content_block["type"]
         else:
-            # For other types, use the safer _render_message_content approach
-            with st.chat_message(Sender.BOT):
-                _render_message_content(content_block)
-    else:
-        # For non-dict content blocks, use the safer approach
-        with st.chat_message(Sender.BOT):
-            _render_message_content(content_block)
-
-
+            # Can't determine type, render as string
+            st.markdown(str(content_block))
+            return
+            
+        # Handle different message types
+        if block_type == "text":
+            if hasattr(content_block, "text"):
+                text = content_block.text
+                st.session_state.current_message_text = text
+                if st.session_state.current_message_placeholder is not None:
+                    st.session_state.current_message_placeholder.markdown(text + "▌")
+                else:
+                    st.markdown(text)
+            elif isinstance(content_block, dict) and "text" in content_block:
+                text = content_block["text"]
+                st.session_state.current_message_text = text
+                if st.session_state.current_message_placeholder is not None:
+                    st.session_state.current_message_placeholder.markdown(text + "▌")
+                else:
+                    st.markdown(text)
+            else:
+                st.markdown(str(content_block))
+        elif block_type == "thinking":
+            thinking_text = ""
+            if hasattr(content_block, "thinking"):
+                thinking_text = content_block.thinking or ""
+            elif isinstance(content_block, dict) and "thinking" in content_block:
+                thinking_text = content_block["thinking"] or ""
+            st.markdown(f"[Thinking]\n\n{thinking_text}")
+        elif block_type == "tool_use":
+            tool_name = ""
+            tool_input = ""
+            if hasattr(content_block, "name") and hasattr(content_block, "input"):
+                tool_name = content_block.name
+                tool_input = content_block.input
+            elif isinstance(content_block, dict) and "name" in content_block and "input" in content_block:
+                tool_name = content_block["name"]
+                tool_input = content_block["input"]
+            st.code(f'Tool Use: {tool_name}\nInput: {tool_input}')
+        else:
+            # Unknown type, just render as string
+            st.markdown(str(content_block))
+            
 def _render_api_response(
     request: httpx.Request,
     response: httpx.Response | object | None,
@@ -581,8 +606,17 @@ def _render_message(
             if hasattr(message, "base64_image") and message.base64_image and not st.session_state.hide_images:
                 st.image(base64.b64decode(message.base64_image))
         elif isinstance(message, dict):
-            # Handle dict-type message using the helper function
-            _render_message_content(message)
+            # Handle dict-type message
+            if message.get("type") == "text":
+                st.markdown(message.get("text", ""))
+            elif message.get("type") == "thinking":
+                thinking_content = message.get("thinking", "")
+                st.markdown(f"[Thinking]\n\n{thinking_content}")
+            elif message.get("type") == "tool_use":
+                st.code(f'Tool Use: {message.get("name", "")}\nInput: {message.get("input", "")}')
+            else:
+                # Unknown type
+                st.markdown(str(message))
         else:
             # Handle string or other type
             st.markdown(str(message))
