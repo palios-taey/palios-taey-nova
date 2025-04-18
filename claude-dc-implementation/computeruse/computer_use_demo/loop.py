@@ -150,9 +150,9 @@ async def sampling_loop(
         # Clean message history to ensure valid thinking blocks
         messages = _clean_thinking_blocks(messages)
 
-        # Call the API
+        # Call the API with streaming enabled
         try:
-            # Use streaming for better handling of long responses
+            # Enable streaming for better handling of long responses
             stream = client.beta.messages.create(
                 max_tokens=max_tokens,
                 messages=messages,
@@ -161,7 +161,7 @@ async def sampling_loop(
                 tools=tool_collection.to_params(),
                 betas=betas,
                 extra_body=extra_body,
-                stream=True,
+                stream=True,  # Enable streaming for long responses
             )
             
             # Process the stream
@@ -173,34 +173,14 @@ async def sampling_loop(
                     if event.type == "content_block_start":
                         # New content block started
                         current_block = event.content_block
-                        
-                        # Fix thinking blocks
-                        if current_block.type == "thinking" and not hasattr(current_block, "thinking"):
-                            current_block.thinking = ""
-                            
                         content_blocks.append(current_block)
                         output_callback(current_block)
                     
                     elif event.type == "content_block_delta":
                         # Content block delta received
                         if event.delta:
-                            # Handle thinking delta
-                            if hasattr(event.delta, "thinking") and event.delta.thinking:
-                                if hasattr(event, "index") and event.index < len(content_blocks):
-                                    if not hasattr(content_blocks[event.index], "thinking"):
-                                        content_blocks[event.index].thinking = ""
-                                    content_blocks[event.index].thinking += event.delta.thinking
-                                    
-                                    # Create a delta block to send to output callback
-                                    delta_block = {
-                                        "type": "thinking",
-                                        "thinking": event.delta.thinking,
-                                        "is_delta": True,
-                                    }
-                                    output_callback(delta_block)
-                            
                             # Handle text delta
-                            elif hasattr(event.delta, "text") and event.delta.text:
+                            if hasattr(event.delta, "text") and event.delta.text:
                                 if hasattr(event, "index") and event.index < len(content_blocks):
                                     if content_blocks[event.index].type == "text":
                                         content_blocks[event.index].text += event.delta.text
@@ -210,6 +190,21 @@ async def sampling_loop(
                                             "is_delta": True,
                                         }
                                         output_callback(delta_block)
+                            
+                            # Handle thinking delta
+                            elif hasattr(event.delta, "thinking") and event.delta.thinking:
+                                if hasattr(event, "index") and event.index < len(content_blocks):
+                                    if hasattr(content_blocks[event.index], "thinking"):
+                                        content_blocks[event.index].thinking += event.delta.thinking
+                                    else:
+                                        content_blocks[event.index].thinking = event.delta.thinking
+                                    
+                                    delta_block = {
+                                        "type": "thinking",
+                                        "thinking": event.delta.thinking,
+                                        "is_delta": True,
+                                    }
+                                    output_callback(delta_block)
                     
                     elif event.type == "message_stop":
                         # Message generation complete

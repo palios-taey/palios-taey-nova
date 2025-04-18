@@ -1,7 +1,6 @@
 """
 Entrypoint for streamlit, see https://docs.streamlit.io/
 """
-
 import asyncio
 import base64
 import os
@@ -54,8 +53,8 @@ SONNET_3_5_NEW = ModelConfig(
 
 SONNET_3_7 = ModelConfig(
     tool_version="computer_use_20250124",
-    max_output_tokens=128_000,
-    default_output_tokens=1024 * 16,
+    max_output_tokens=64_000,  # Set to 64K to respect Claude 3.7 Sonnet's limit
+    default_output_tokens=32_000,  # Sensible default for Tier 4
     has_thinking=True,
 )
 
@@ -444,67 +443,28 @@ def _streaming_output_callback(content_block):
                 )
         return
     
-    # Safely determine the block type
-    block_type = None
-    if hasattr(content_block, "type"):
-        block_type = content_block.type
-    elif isinstance(content_block, dict) and "type" in content_block:
-        block_type = content_block["type"]
-    
-    if not block_type:
-        # If we can't determine the type, just display as string
-        with st.chat_message(Sender.BOT):
-            st.markdown(str(content_block))
-        return
-    
     # Handle different block types
-    with st.chat_message(Sender.BOT):
-        if block_type == "text":
-            # Get text content safely
-            text = ""
-            if hasattr(content_block, "text"):
-                text = content_block.text
-            elif isinstance(content_block, dict) and "text" in content_block:
-                text = content_block["text"]
-            
-            # Update the UI
-            st.session_state.current_message_text = text
+    if content_block.type == "text":
+        with st.chat_message(Sender.BOT):
+            # For text blocks, update the placeholder
+            st.session_state.current_message_text = content_block.text
             if st.session_state.current_message_placeholder is not None:
-                st.session_state.current_message_placeholder.markdown(text + "▌")
+                st.session_state.current_message_placeholder.markdown(
+                    content_block.text + "▌"
+                )
             else:
-                st.markdown(text)
-        
-        elif block_type == "thinking":
-            # Get thinking content safely
-            thinking_text = ""
-            if hasattr(content_block, "thinking"):
-                thinking_text = content_block.thinking or ""
-            elif isinstance(content_block, dict) and "thinking" in content_block:
-                thinking_text = content_block["thinking"] or ""
-            
-            # Display thinking block
-            st.markdown(f"[Thinking]\n\n{thinking_text}")
-        
-        elif block_type == "tool_use":
-            # Get tool details safely
-            tool_name = ""
-            tool_input = ""
-            
-            if hasattr(content_block, "name"):
-                tool_name = content_block.name
-            elif isinstance(content_block, dict) and "name" in content_block:
-                tool_name = content_block["name"]
-                
-            if hasattr(content_block, "input"):
-                tool_input = content_block.input
-            elif isinstance(content_block, dict) and "input" in content_block:
-                tool_input = content_block["input"]
-            
-            # Display tool use
-            st.code(f'Tool Use: {tool_name}\nInput: {tool_input}')
-        
-        else:
-            # Unknown type, just display as string
+                st.markdown(content_block.text)
+    elif content_block.type == "thinking":
+        # For thinking blocks, render separately
+        with st.chat_message(Sender.BOT):
+            st.markdown(f"[Thinking]\n\n{content_block.thinking}")
+    elif content_block.type == "tool_use":
+        # For tool use blocks, render separately
+        with st.chat_message(Sender.BOT):
+            st.code(f'Tool Use: {content_block.name}\nInput: {content_block.input}')
+    else:
+        # For any other block type, render as-is
+        with st.chat_message(Sender.BOT):
             st.markdown(str(content_block))
 
 
@@ -552,11 +512,11 @@ def _render_message(
     message: str | BetaContentBlockParam | ToolResult,
 ):
     """Convert input from the user or output from the agent to a streamlit message."""
-    # Skip empty messages
+    # Check if message is empty
     if not message:
         return
     
-    # Handle ToolResult objects
+    # Check if message is a ToolResult
     is_tool_result = not isinstance(message, (str, dict))
     if is_tool_result and st.session_state.hide_images and not (
         hasattr(message, "error") or hasattr(message, "output")
@@ -565,7 +525,7 @@ def _render_message(
         
     with st.chat_message(sender):
         if is_tool_result:
-            # For ToolResult objects, safely access attributes
+            # Handle ToolResult
             message = cast(ToolResult, message)
             if hasattr(message, "output") and message.output:
                 if hasattr(message, "__class__") and message.__class__.__name__ == "CLIResult":
