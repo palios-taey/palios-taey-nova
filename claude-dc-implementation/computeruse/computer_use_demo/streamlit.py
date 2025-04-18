@@ -162,72 +162,50 @@ def _streaming_output_callback(content_block):
             return
         elif content_block["type"] == "thinking":
             # Append delta thinking text to current thinking message
+            if "current_thinking_text" not in st.session_state:
+                st.session_state.current_thinking_text = ""
+                st.session_state.current_thinking_placeholder = None
+                
             st.session_state.current_thinking_text += content_block["thinking"]
             if st.session_state.current_thinking_placeholder is not None:
                 st.session_state.current_thinking_placeholder.markdown(f"[Thinking]\n\n{st.session_state.current_thinking_text}▌")
+            else:
+                with st.chat_message(Sender.BOT):
+                    st.session_state.current_thinking_placeholder = st.empty()
+                    st.session_state.current_thinking_placeholder.markdown(f"[Thinking]\n\n{st.session_state.current_thinking_text}▌")
             return
 
-    # Handle full content blocks (no longer delta)
+    # Handle complete content blocks
     if hasattr(content_block, "type"):
-        # If starting a new text or tool_use block, finalize any existing thinking placeholder
-        if content_block.type in ["text", "tool_use"] and st.session_state.get("current_thinking_placeholder"):
-            st.session_state.current_thinking_placeholder.markdown(f"[Thinking]\n\n{st.session_state.current_thinking_text}")
-            st.session_state.current_thinking_placeholder = None
-
         if content_block.type == "text":
-            # Begin a new assistant text message (or output a complete text block)
+            # Begin a new assistant text message or replace current placeholder
             with st.chat_message(Sender.BOT):
                 if hasattr(content_block, "text"):
                     st.session_state.current_message_text = content_block.text or ""
                     if st.session_state.current_message_placeholder is not None:
-                        st.session_state.current_message_placeholder.markdown(st.session_state.current_message_text + "▌")
+                        st.session_state.current_message_placeholder.markdown(st.session_state.current_message_text)
                     else:
-                        st.markdown(st.session_state.current_message_text + ("▌" if st.session_state.current_message_text else ""))
+                        st.session_state.current_message_placeholder = st.empty()
+                        st.session_state.current_message_placeholder.markdown(st.session_state.current_message_text)
 
         elif content_block.type == "thinking":
             # Begin a new thinking block in its own assistant message
             with st.chat_message(Sender.BOT):
-                st.session_state.current_thinking_placeholder = st.empty()
                 st.session_state.current_thinking_text = content_block.thinking or ""
-                st.session_state.current_thinking_placeholder.markdown(f"[Thinking]\n\n{st.session_state.current_thinking_text}▌")
+                if st.session_state.current_thinking_placeholder is None:
+                    st.session_state.current_thinking_placeholder = st.empty()
+                st.session_state.current_thinking_placeholder.markdown(f"[Thinking]\n\n{st.session_state.current_thinking_text}")
 
         elif content_block.type == "tool_use":
-            # Render a tool invocation block in its own assistant message
+            # Render a tool invocation block
             with st.chat_message(Sender.BOT):
                 tool_name = getattr(content_block, "name", "")
                 tool_input = getattr(content_block, "input", {}) or {}
-                warning_message = ""
-                if tool_name == "bash" and (not tool_input or "command" not in tool_input):
-                    warning_message = "\n\n**⚠️ Warning: Bash tool requires a command parameter. This call will fail!**"
-                st.code(f"Tool Use: {tool_name}\nInput: {tool_input}{warning_message}")
-
+                st.code(f'Tool Use: {tool_name}\nInput: {tool_input}')
         else:
-            # Fallback: render any other content block types directly
+            # Fallback for other block types
             with st.chat_message(Sender.BOT):
                 st.write(content_block)
-
-def _render_api_response(request: httpx.Request, response: httpx.Response | object | None, response_id: str, tab: DeltaGenerator):
-    """Render an API request/response pair in the HTTP Exchange Logs tab."""
-    with tab:
-        with st.expander(f"Request/Response ({response_id})"):
-            newline = "\n\n"
-            st.markdown(f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}")
-            try:
-                st.json(request.read().decode())
-            except:
-                st.write("Could not decode request body")
-            if isinstance(response, httpx.Response):
-                # Display response metadata and content if available
-                status = response.status_code
-                st.markdown(f"`Status: {status}`")
-                try:
-                    st.json(response.json())
-                except:
-                    resp_text = response.text[:1000] + ("..." if len(response.text) > 1000 else "")
-                    st.markdown(f"Response text: `{resp_text}`")
-            elif response is not None:
-                # If response is a parsed object or custom data
-                st.write(response)
 
 def _render_message(sender: Sender, message: str | BetaContentBlockParam | ToolResult):
     """Render a single chat message in the Chat tab."""
