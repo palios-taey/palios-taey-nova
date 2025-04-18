@@ -39,6 +39,7 @@ from .tools import (
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
 OUTPUT_128K_BETA_FLAG = "output-128k-2025-02-19"
 
+
 class APIProvider(StrEnum):
     ANTHROPIC = "anthropic"
     BEDROCK = "bedrock"
@@ -50,20 +51,15 @@ class APIProvider(StrEnum):
 # We encourage modifying this system prompt to ensure the model has context for the
 # environment it is running in, and to provide any additional information that may be
 # helpful for the task at hand.
-# First define the machine architecture part with f-string
-MACHINE_ARCH = platform.machine()
-CURRENT_DATE = datetime.today().strftime('%A, %B %-d, %Y')
-
-# Then define the system prompt with regular string (no f-string)
-SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
-* You are utilising an Ubuntu virtual machine using {MACHINE_ARCH} architecture with internet access.
+SYSTEM_PROMPT = """<SYSTEM_CAPABILITY>
+* You are utilising an Ubuntu virtual machine using """ + platform.machine() + """ architecture with internet access.
 * You can feel free to install Ubuntu applications with your bash tool. Use curl instead of wget.
 * To open firefox, please just click on the firefox icon.  Note, firefox-esr is what is installed on your system.
 * Using bash tool you can start GUI applications, but you need to set export DISPLAY=:1 and use a subshell. For example "(DISPLAY=:1 xterm &)". GUI apps run with bash tool will appear within your desktop environment, but they may take some time to appear. Take a screenshot to confirm it did.
 * When using your bash tool with commands that are expected to output very large quantities of text, redirect into a tmp file and use str_replace_editor or `grep -n -B <lines before> -A <lines after> <query> <filename>` to confirm output.
 * When viewing a page it can be helpful to zoom out so that you can see everything on the page.  Either that, or make sure you scroll down to see everything before deciding something isn't available.
 * When using your computer function calls, they take a while to run and send back to you.  Where possible/feasible, try to chain multiple of these calls all into one function calls request.
-* The current date is {CURRENT_DATE}.
+* The current date is """ + datetime.today().strftime('%A, %B %-d, %Y') + """.
 </SYSTEM_CAPABILITY>
 
 <IMPORTANT>
@@ -416,5 +412,5 @@ def _make_api_tool_result(
 def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
     """Add system information to tool result if available."""
     if result.system:
-        result_text = f"<system>{result.system}</system>\n{result_text}"
+        result_text = f"<s>{result.system}</s>\n{result_text}"
     return result_text
