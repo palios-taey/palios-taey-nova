@@ -1,4 +1,4 @@
-from .base import CLIResult, ToolResult
+from .base import CLIResult, ToolResult, ToolFailure, ToolError
 from .bash import BashTool20241022, BashTool20250124
 from .collection import ToolCollection
 from .computer import ComputerTool20241022, ComputerTool20250124
@@ -17,4 +17,6 @@ __ALL__ = [
     ToolResult,
     ToolVersion,
     TOOL_GROUPS_BY_VERSION,
+    ToolFailure,
+    ToolError,
 ]
