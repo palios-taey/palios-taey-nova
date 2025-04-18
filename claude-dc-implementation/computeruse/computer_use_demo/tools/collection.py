@@ -29,19 +29,31 @@ class ToolCollection:
         tool = self.tool_map.get(name)
         if not tool:
             return ToolFailure(error=f"Tool {name} is invalid")
+        
         try:
-            # Handle bash tool specially - extract 'command' from the input dict
-            if name == "bash" and isinstance(tool_input, dict):
-                # Extract command from input dict if it exists
+            # Special handling for bash tool
+            if name == "bash":
+                # If empty input or missing command parameter, return a meaningful error
+                if not tool_input or "command" not in tool_input:
+                    return ToolFailure(error="Bash tool requires a 'command' parameter. Example: {\"command\": \"ls -la\"}")
+                
+                # Extract command parameter and call the tool
                 command = tool_input.get("command")
-                if command is not None:
-                    return await tool(command=command)
-                # Handle restart flag
-                restart = tool_input.get("restart")
-                if restart is not None and restart:
+                restart = tool_input.get("restart", False)
+                
+                # If restart flag is True, call with restart=True
+                if restart:
                     return await tool(restart=True)
-                return ToolFailure(error="Bash tool requires a 'command' parameter. Example: {\"command\": \"ls -la\"}")
+                # Otherwise call with the command
+                elif command:
+                    return await tool(command=command)
+                else:
+                    return ToolFailure(error=f"Invalid input for bash tool: {tool_input}")
+            
             # For other tools, pass the input dict as-is
             return await tool(**tool_input)
         except ToolError as e:
             return ToolFailure(error=e.message)
+        except Exception as e:
+            # Better error handling for any other exceptions
+            return ToolFailure(error=f"Error running tool {name}: {str(e)}")

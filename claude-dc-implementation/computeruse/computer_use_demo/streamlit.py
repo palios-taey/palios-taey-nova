@@ -464,16 +464,23 @@ def _streaming_output_callback(content_block):
                 thinking_text = content_block.thinking or ""
             st.markdown(f"[Thinking]\n\n{thinking_text}")
             
-    # For tool use blocks, render in separate message
+    # For tool use blocks, render in separate message with validation
     elif hasattr(content_block, "type") and content_block.type == "tool_use":
         with st.chat_message(Sender.BOT):
             tool_name = ""
-            tool_input = ""
+            tool_input = {}
+            
             if hasattr(content_block, "name"):
                 tool_name = content_block.name
             if hasattr(content_block, "input"):
                 tool_input = content_block.input
-            st.code(f'Tool Use: {tool_name}\nInput: {tool_input}')
+                
+            # Add special validation message for bash tool
+            warning_message = ""
+            if tool_name == "bash" and (not tool_input or not tool_input.get("command")):
+                warning_message = "\n\n**⚠️ Warning: Bash tool requires a command parameter. This call will fail!**"
+                
+            st.code(f'Tool Use: {tool_name}\nInput: {tool_input}{warning_message}')
             
     # For other block types or objects, just render as text
     else:

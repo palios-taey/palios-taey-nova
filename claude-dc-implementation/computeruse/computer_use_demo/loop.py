@@ -65,7 +65,7 @@ SYSTEM_PROMPT = """<SYSTEM_CAPABILITY>
 <IMPORTANT>
 * When using Firefox, if a startup wizard appears, IGNORE IT.  Do not even click "skip this step".  Instead, click on the address bar where it says "Search or enter address", and enter the appropriate search term or URL there.
 * If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
-* When using the bash tool, you MUST always provide a command parameter in the input. For example: {"command": "ls -la"} - never use empty inputs like {}.
+* BASH TOOL USAGE: When using the bash tool, you MUST ALWAYS provide a command parameter in JSON format. For example: {"command": "ls -la"}. NEVER use empty inputs like {}. NEVER call the bash tool without a command parameter. If you want to run a command in the Linux terminal, always format it as {"command": "your_command_here"}. The bash tool will NOT work with empty inputs.
 </IMPORTANT>"""
 
 
@@ -258,10 +258,18 @@ async def sampling_loop(
         for content_block in response_params:
             # Skip sending to output callback again since we already did it during streaming
             if content_block["type"] == "tool_use":
-                result = await tool_collection.run(
-                    name=content_block["name"],
-                    tool_input=cast(dict[str, Any], content_block["input"]),
-                )
+                # Extra validation for bash tool - ensure command is present
+                if (content_block["name"] == "bash" and 
+                    (not content_block["input"] or "command" not in content_block["input"])):
+                    # Create a specific error for empty bash tool inputs
+                    result = ToolFailure(error="Bash tool requires a 'command' parameter. Example: {\"command\": \"ls -la\"}")
+                else:
+                    # Process normal tool execution
+                    result = await tool_collection.run(
+                        name=content_block["name"],
+                        tool_input=cast(dict[str, Any], content_block["input"]),
+                    )
+                    
                 tool_result_content.append(
                     _make_api_tool_result(result, content_block["id"])
                 )
