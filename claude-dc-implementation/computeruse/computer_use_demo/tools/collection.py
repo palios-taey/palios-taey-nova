@@ -49,14 +49,6 @@ class ToolCollection:
                     return await tool(command=command)
                 else:
                     return ToolFailure(error=f"Invalid input for bash tool: {tool_input}")
-        
-        # For other tools, pass the input dict as-is
-        return await tool(**tool_input)
-    except ToolError as e:
-        return ToolFailure(error=e.message)
-    except Exception as e:
-        # Better error handling for any other exceptions
-        return ToolFailure(error=f"Error running tool {name}: {str(e)}")
             
             # For other tools, pass the input dict as-is
             return await tool(**tool_input)
