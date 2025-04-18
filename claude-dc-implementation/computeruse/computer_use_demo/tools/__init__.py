@@ -1,4 +1,5 @@
-from .base import CLIResult, ToolResult
+# computer_use_demo/tools/__init__.py
+from .base import CLIResult, ToolResult, ToolFailure  # Added ToolFailure
 from .bash import BashTool20241022, BashTool20250124
 from .collection import ToolCollection
 from .computer import ComputerTool20241022, ComputerTool20250124
@@ -15,6 +16,7 @@ __ALL__ = [
     EditTool20250124,
     ToolCollection,
     ToolResult,
+    ToolFailure,  # Added ToolFailure
     ToolVersion,
     TOOL_GROUPS_BY_VERSION,
 ]
