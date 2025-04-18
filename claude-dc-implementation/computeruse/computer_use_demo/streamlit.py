@@ -307,7 +307,7 @@ async def main():
                 model=st.session_state.model,
                 provider=st.session_state.provider,
                 messages=st.session_state.messages,
-                output_callback=_streaming_output_callback,  # Use streaming output callback
+                output_callback=_streaming_output_callback,
                 tool_output_callback=partial(
                     _tool_output_callback, tool_state=st.session_state.tools
                 ),
@@ -431,75 +431,82 @@ def _tool_output_callback(
     _render_message(Sender.TOOL, tool_output)
 
 
-def _streaming_output_callback(
-    content_block: BetaContentBlockParam,
-):
+def _streaming_output_callback(content_block):
     """Handle streaming output by updating the current message placeholder."""
-    # Handle streaming deltas
+    # Handle streaming deltas (incremental updates)
     if isinstance(content_block, dict) and content_block.get("is_delta", False):
-        # This is a text delta, update the current message
         if content_block["type"] == "text":
+            # Update text in the placeholder
             st.session_state.current_message_text += content_block["text"]
             if st.session_state.current_message_placeholder is not None:
-                st.session_state.current_message_placeholder.markdown(st.session_state.current_message_text + "▌")
-        # This is a thinking delta
-        elif content_block["type"] == "thinking":
-            # Thinking deltas are handled separately in their own message
-            with st.chat_message(Sender.BOT):
-                st.markdown(f"[Thinking]\n\n{content_block.get('thinking', '')}")
+                st.session_state.current_message_placeholder.markdown(
+                    st.session_state.current_message_text + "▌"
+                )
         return
     
-    # Handle different block types directly here instead of passing to _render_message
-    # This bypasses the attribute checks in _render_message that cause errors
-    with st.chat_message(Sender.BOT):
-        if hasattr(content_block, "type"):
-            block_type = content_block.type
-        elif isinstance(content_block, dict) and "type" in content_block:
-            block_type = content_block["type"]
-        else:
-            # Can't determine type, render as string
+    # Safely determine the block type
+    block_type = None
+    if hasattr(content_block, "type"):
+        block_type = content_block.type
+    elif isinstance(content_block, dict) and "type" in content_block:
+        block_type = content_block["type"]
+    
+    if not block_type:
+        # If we can't determine the type, just display as string
+        with st.chat_message(Sender.BOT):
             st.markdown(str(content_block))
-            return
-            
-        # Handle different message types
+        return
+    
+    # Handle different block types
+    with st.chat_message(Sender.BOT):
         if block_type == "text":
+            # Get text content safely
+            text = ""
             if hasattr(content_block, "text"):
                 text = content_block.text
-                st.session_state.current_message_text = text
-                if st.session_state.current_message_placeholder is not None:
-                    st.session_state.current_message_placeholder.markdown(text + "▌")
-                else:
-                    st.markdown(text)
             elif isinstance(content_block, dict) and "text" in content_block:
                 text = content_block["text"]
-                st.session_state.current_message_text = text
-                if st.session_state.current_message_placeholder is not None:
-                    st.session_state.current_message_placeholder.markdown(text + "▌")
-                else:
-                    st.markdown(text)
+            
+            # Update the UI
+            st.session_state.current_message_text = text
+            if st.session_state.current_message_placeholder is not None:
+                st.session_state.current_message_placeholder.markdown(text + "▌")
             else:
-                st.markdown(str(content_block))
+                st.markdown(text)
+        
         elif block_type == "thinking":
+            # Get thinking content safely
             thinking_text = ""
             if hasattr(content_block, "thinking"):
                 thinking_text = content_block.thinking or ""
             elif isinstance(content_block, dict) and "thinking" in content_block:
                 thinking_text = content_block["thinking"] or ""
+            
+            # Display thinking block
             st.markdown(f"[Thinking]\n\n{thinking_text}")
+        
         elif block_type == "tool_use":
+            # Get tool details safely
             tool_name = ""
             tool_input = ""
-            if hasattr(content_block, "name") and hasattr(content_block, "input"):
-                tool_name = content_block.name
-                tool_input = content_block.input
-            elif isinstance(content_block, dict) and "name" in content_block and "input" in content_block:
-                tool_name = content_block["name"]
-                tool_input = content_block["input"]
-            st.code(f'Tool Use: {tool_name}\nInput: {tool_input}')
-        else:
-            # Unknown type, just render as string
-            st.markdown(str(content_block))
             
+            if hasattr(content_block, "name"):
+                tool_name = content_block.name
+            elif isinstance(content_block, dict) and "name" in content_block:
+                tool_name = content_block["name"]
+                
+            if hasattr(content_block, "input"):
+                tool_input = content_block.input
+            elif isinstance(content_block, dict) and "input" in content_block:
+                tool_input = content_block["input"]
+            
+            # Display tool use
+            st.code(f'Tool Use: {tool_name}\nInput: {tool_input}')
+        
+        else:
+            # Unknown type, just display as string
+            st.markdown(str(content_block))
+
 
 def _render_api_response(
     request: httpx.Request,
@@ -540,58 +547,16 @@ def _render_error(error: Exception):
         st.error(f"Error: {type(error).__name__}: {error}\n\n```\n{traceback.format_exc()}\n```")
 
 
-def _render_message_content(message: any):
-    """Helper function to render message content based on its type"""
-    # Determine message type
-    if hasattr(message, "type"):
-        msg_type = message.type
-    elif isinstance(message, dict) and "type" in message:
-        msg_type = message["type"]
-    else:
-        # Can't determine type, just render as string
-        st.markdown(str(message))
-        return
-
-    # Handle different message types
-    if msg_type == "text":
-        if hasattr(message, "text"):
-            st.markdown(message.text)
-        elif isinstance(message, dict) and "text" in message:
-            st.markdown(message["text"])
-        else:
-            st.markdown(str(message))
-    elif msg_type == "thinking":
-        thinking_text = ""
-        if hasattr(message, "thinking"):
-            thinking_text = message.thinking or ""
-        elif isinstance(message, dict) and "thinking" in message:
-            thinking_text = message["thinking"] or ""
-        st.markdown(f"[Thinking]\n\n{thinking_text}")
-    elif msg_type == "tool_use":
-        tool_name = ""
-        tool_input = ""
-        if hasattr(message, "name") and hasattr(message, "input"):
-            tool_name = message.name
-            tool_input = message.input
-        elif isinstance(message, dict) and "name" in message and "input" in message:
-            tool_name = message["name"]
-            tool_input = message["input"]
-        st.code(f'Tool Use: {tool_name}\nInput: {tool_input}')
-    else:
-        # Unknown type, just render as string
-        st.markdown(str(message))
-
-
 def _render_message(
     sender: Sender,
     message: str | BetaContentBlockParam | ToolResult,
 ):
     """Convert input from the user or output from the agent to a streamlit message."""
-    # Check if message is empty
+    # Skip empty messages
     if not message:
         return
     
-    # Check if message is a ToolResult
+    # Handle ToolResult objects
     is_tool_result = not isinstance(message, (str, dict))
     if is_tool_result and st.session_state.hide_images and not (
         hasattr(message, "error") or hasattr(message, "output")
@@ -600,7 +565,7 @@ def _render_message(
         
     with st.chat_message(sender):
         if is_tool_result:
-            # Handle ToolResult
+            # For ToolResult objects, safely access attributes
             message = cast(ToolResult, message)
             if hasattr(message, "output") and message.output:
                 if hasattr(message, "__class__") and message.__class__.__name__ == "CLIResult":
@@ -612,10 +577,19 @@ def _render_message(
             if hasattr(message, "base64_image") and message.base64_image and not st.session_state.hide_images:
                 st.image(base64.b64decode(message.base64_image))
         elif isinstance(message, dict):
-            # Handle dict-type message using the helper function
-            _render_message_content(message)
+            # For dictionary messages, check type and render appropriately
+            if message.get("type") == "text":
+                st.markdown(message.get("text", ""))
+            elif message.get("type") == "thinking":
+                thinking_content = message.get("thinking", "")
+                st.markdown(f"[Thinking]\n\n{thinking_content}")
+            elif message.get("type") == "tool_use":
+                st.code(f'Tool Use: {message.get("name", "")}\nInput: {message.get("input", "")}')
+            else:
+                # For other types, just convert to string
+                st.markdown(str(message))
         else:
-            # Handle string or other type
+            # Handle string messages
             st.markdown(str(message))
 
 
