@@ -122,8 +122,9 @@ class BashTool20250124(BaseAnthropicTool):
             "name": self.name,
         }
 
-    # In bash.py, modify the __call__ method to handle empty inputs gracefully
-    async def __call__(self, command: str | None = None, restart: bool = False, **kwargs):
+    async def __call__(
+        self, command: str | None = None, restart: bool = False, **kwargs
+    ):
         if restart:
             if self._session:
                 self._session.stop()
@@ -136,18 +137,10 @@ class BashTool20250124(BaseAnthropicTool):
             self._session = _BashSession()
             await self._session.start()
 
-        # First try to extract command from kwargs if it's not provided directly
-        if command is None and isinstance(kwargs, dict) and "command" in kwargs:
-            command = kwargs.get("command")
-            
         if command is not None:
             return await self._session.run(command)
 
-        # If no command is provided, return a helpful error
-        return ToolResult(
-            error="Bash tool requires a 'command' parameter. Example: {\"command\": \"ls -la\"}",
-            system="Please provide a command to execute."
-        )
+        raise ToolError("no command provided.")
 
 
 class BashTool20241022(BashTool20250124):

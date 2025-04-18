@@ -1,4 +1,3 @@
-# computer_use_demo/tools/computer.py
 import asyncio
 import base64
 import os
@@ -8,25 +7,16 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Literal, TypedDict, cast, get_args
 from uuid import uuid4
-import logging
 
 from anthropic.types.beta import BetaToolComputerUse20241022Param, BetaToolUnionParam
 
 from .base import BaseAnthropicTool, ToolError, ToolResult
 from .run import run
-from computer_use_demo.token_manager import (
-    with_token_limiting, 
-    token_rate_limiter
-)
 
 OUTPUT_DIR = "/tmp/outputs"
 
 TYPING_DELAY_MS = 12
 TYPING_GROUP_SIZE = 50
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("computer_tool")
 
 Action_20241022 = Literal[
     "key",
@@ -90,50 +80,7 @@ class ComputerToolOptions(TypedDict):
 
 
 def chunks(s: str, chunk_size: int) -> list[str]:
-    return [s[i:i + chunk_size] for i in range(0, len(s), chunk_size)]
-
-
-def estimate_computer_input_tokens(
-    action: Action_20241022 | Action_20250124 = None, 
-    text: str = None, 
-    coordinate: tuple[int, int] = None, 
-    scroll_direction: ScrollDirection = None,
-    scroll_amount: int = None,
-    duration: int | float = None,
-    key: str = None,
-    **kwargs
-) -> int:
-    """Estimate token usage for computer actions"""
-    total_tokens = 10  # Base cost
-    
-    if action:
-        total_tokens += len(str(action)) // 4
-    if text:
-        total_tokens += len(text) // 4
-    # Other parameters are small and don't significantly affect token count
-        
-    return max(20, total_tokens)  # Minimum token cost
-
-
-def estimate_computer_output_tokens(result: ToolResult) -> int:
-    """Estimate token usage for computer tool output"""
-    total_length = 0
-    if result.output:
-        total_length += len(result.output)
-    if result.error:
-        total_length += len(result.error)
-    if result.system:
-        total_length += len(result.system)
-        
-    # Base64 images are the most token-intensive part
-    if result.base64_image:
-        # Base64 encoding increases size by approximately 4/3
-        image_bytes = len(result.base64_image) * 3 / 4
-        # Rough estimation for token count: approximately 0.25 tokens per byte
-        image_tokens = int(image_bytes * 0.25)
-        total_length += image_tokens * 4  # Convert back to length for consistent calculation
-    
-    return total_length // 4  # Rough estimation
+    return [s[i : i + chunk_size] for i in range(0, len(s), chunk_size)]
 
 
 class BaseComputerTool:
@@ -149,9 +96,6 @@ class BaseComputerTool:
 
     _screenshot_delay = 2.0
     _scaling_enabled = True
-    # Add throttling for screenshot frequency to avoid token overuse
-    _last_screenshot_time = 0
-    _min_screenshot_interval = 3.0  # seconds
 
     @property
     def options(self) -> ComputerToolOptions:
@@ -179,10 +123,6 @@ class BaseComputerTool:
 
         self.xdotool = f"{self._display_prefix}xdotool"
 
-    @with_token_limiting(
-        input_token_estimator=estimate_computer_input_tokens,
-        output_token_estimator=estimate_computer_output_tokens
-    )
     async def __call__(
         self,
         *,
@@ -230,17 +170,10 @@ class BaseComputerTool:
                     results.append(
                         await self.shell(" ".join(command_parts), take_screenshot=False)
                     )
-                    
-                # Only take screenshot after all typing is done to save tokens
                 screenshot_base64 = (await self.screenshot()).base64_image
-                
-                # Track consolidated token usage for all typing chunks
-                total_output = "".join(result.output or "" for result in results)
-                total_error = "".join(result.error or "" for result in results)
-                
                 return ToolResult(
-                    output=total_output,
-                    error=total_error,
+                    output="".join(result.output or "" for result in results),
+                    error="".join(result.error or "" for result in results),
                     base64_image=screenshot_base64,
                 )
 
@@ -258,15 +191,6 @@ class BaseComputerTool:
                 raise ToolError(f"coordinate is not accepted for {action}")
 
             if action == "screenshot":
-                # Apply throttling for screenshots to avoid token overuse
-                current_time = asyncio.get_event_loop().time()
-                time_since_last = current_time - self._last_screenshot_time
-                
-                if time_since_last < self._min_screenshot_interval:
-                    logger.warning(f"Screenshot requested too soon (interval: {time_since_last:.2f}s). Enforcing minimum interval.")
-                    await asyncio.sleep(self._min_screenshot_interval - time_since_last)
-                
-                self._last_screenshot_time = asyncio.get_event_loop().time()
                 return await self.screenshot()
             elif action == "cursor_position":
                 command_parts = [self.xdotool, "getmouselocation --shell"]
@@ -318,18 +242,9 @@ class BaseComputerTool:
             )
 
         if path.exists():
-            # Read image and estimate token usage
-            image_bytes = path.read_bytes()
-            base64_encoded = base64.b64encode(image_bytes).decode()
-            
-            # Update last screenshot time for throttling
-            self._last_screenshot_time = asyncio.get_event_loop().time()
-            
-            # Track token usage specifically for the image
-            image_tokens = len(base64_encoded) // 4
-            token_rate_limiter.record_usage(0, image_tokens)
-            
-            return result.replace(base64_image=base64_encoded)
+            return result.replace(
+                base64_image=base64.b64encode(path.read_bytes()).decode()
+            )
         raise ToolError(f"Failed to take screenshot: {result.error}")
 
     async def shell(self, command: str, take_screenshot=True) -> ToolResult:
@@ -340,8 +255,7 @@ class BaseComputerTool:
         if take_screenshot:
             # delay to let things settle before taking a screenshot
             await asyncio.sleep(self._screenshot_delay)
-            screenshot_result = await self.screenshot()
-            base64_image = screenshot_result.base64_image
+            base64_image = (await self.screenshot()).base64_image
 
         return ToolResult(output=stdout, error=stderr, base64_image=base64_image)
 
@@ -387,10 +301,6 @@ class ComputerTool20250124(BaseComputerTool, BaseAnthropicTool):
             {"name": self.name, "type": self.api_type, **self.options},
         )
 
-    @with_token_limiting(
-        input_token_estimator=estimate_computer_input_tokens,
-        output_token_estimator=estimate_computer_output_tokens
-    )
     async def __call__(
         self,
         *,
@@ -462,14 +372,6 @@ class ComputerTool20250124(BaseComputerTool, BaseAnthropicTool):
 
             if action == "wait":
                 await asyncio.sleep(duration)
-                # Take a screenshot after waiting, but respect throttling
-                current_time = asyncio.get_event_loop().time()
-                time_since_last = current_time - self._last_screenshot_time
-                
-                if time_since_last < self._min_screenshot_interval:
-                    logger.warning(f"Wait ended but screenshot scheduled too soon. Adding delay.")
-                    await asyncio.sleep(self._min_screenshot_interval - time_since_last)
-                
                 return await self.screenshot()
 
         if action in (
@@ -495,7 +397,6 @@ class ComputerTool20250124(BaseComputerTool, BaseAnthropicTool):
 
             return await self.shell(" ".join(command_parts))
 
-        # Fall back to parent implementation for standard actions
         return await super().__call__(
             action=action, text=text, coordinate=coordinate, key=key, **kwargs
         )

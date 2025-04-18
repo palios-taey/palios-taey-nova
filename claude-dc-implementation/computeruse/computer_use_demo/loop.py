@@ -1,7 +1,3 @@
-"""
-Agentic sampling loop that calls the Anthropic API and local implementation of anthropic-defined computer use tools.
-"""
-
 import platform
 from collections.abc import Callable
 from datetime import datetime
@@ -34,42 +30,34 @@ from .tools import (
     ToolCollection,
     ToolResult,
     ToolVersion,
-    ToolFailure,  
+    ToolFailure,
 )
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
 OUTPUT_128K_BETA_FLAG = "output-128k-2025-02-19"
-
 
 class APIProvider(StrEnum):
     ANTHROPIC = "anthropic"
     BEDROCK = "bedrock"
     VERTEX = "vertex"
 
-
-# This system prompt is optimized for the Docker environment in this repository and
-# specific tool combinations enabled.
-# We encourage modifying this system prompt to ensure the model has context for the
-# environment it is running in, and to provide any additional information that may be
-# helpful for the task at hand.
+# Base system prompt (capabilities and guidelines for the virtual machine environment)
 SYSTEM_PROMPT = """<SYSTEM_CAPABILITY>
-* You are utilising an Ubuntu virtual machine using """ + platform.machine() + """ architecture with internet access.
-* You can feel free to install Ubuntu applications with your bash tool. Use curl instead of wget.
-* To open firefox, please just click on the firefox icon.  Note, firefox-esr is what is installed on your system.
-* Using bash tool you can start GUI applications, but you need to set export DISPLAY=:1 and use a subshell. For example "(DISPLAY=:1 xterm &)". GUI apps run with bash tool will appear within your desktop environment, but they may take some time to appear. Take a screenshot to confirm it did.
-* When using your bash tool with commands that are expected to output very large quantities of text, redirect into a tmp file and use str_replace_editor or `grep -n -B <lines before> -A <lines after> <query> <filename>` to confirm output.
-* When viewing a page it can be helpful to zoom out so that you can see everything on the page.  Either that, or make sure you scroll down to see everything before deciding something isn't available.
-* When using your computer function calls, they take a while to run and send back to you.  Where possible/feasible, try to chain multiple of these calls all into one function calls request.
-* The current date is """ + datetime.today().strftime('%A, %B %-d, %Y') + """.
+* You are utilizing an Ubuntu virtual machine on a {} architecture with internet access.
+* You can install applications with your bash tool. Use curl instead of wget.
+* To open Firefox, click the Firefox icon (note: firefox-esr is installed).
+* GUI apps run with the bash tool will appear in the desktop environment (set DISPLAY=:1 and run in background).
+* For very large command outputs, redirect to a file and use grep or open in the editor rather than dumping entire output.
+* When viewing a page, you may need to scroll or zoom out to see all content.
+* Computer function calls can take time; consider batching multiple actions into one call when feasible.
+* The current date is {}.
 </SYSTEM_CAPABILITY>
 
 <IMPORTANT>
-* When using Firefox, if a startup wizard appears, IGNORE IT.  Do not even click "skip this step".  Instead, click on the address bar where it says "Search or enter address", and enter the appropriate search term or URL there.
-* If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
-* TOOL USAGE FORMAT: When using tools in this environment, you MUST use JSON format DIRECTLY, not XML tags. For the bash tool, use this exact format: {"command": "your command here"}. Do NOT use <invoke> or <parameter> XML-style tags as they will not work in this environment.
-* BASH TOOL USAGE: When using the bash tool, you MUST ALWAYS provide a command parameter in JSON format. For example: {"command": "ls -la"}. NEVER use empty inputs like {}. NEVER use XML-style tags like <invoke name="bash">. The bash tool will NOT work with empty inputs or XML formatting.
-</IMPORTANT>"""
-
+* If Firefox shows a startup wizard, ignore it and directly use the address bar to enter URLs or search terms.
+* If viewing a PDF, take a screenshot of relevant sections rather than trying to read the entire PDF via screenshots.
+</IMPORTANT>
+""".format(platform.machine(), datetime.today().strftime('%A, %B %-d, %Y'))
 
 async def sampling_loop(
     *,
@@ -79,18 +67,15 @@ async def sampling_loop(
     messages: list[BetaMessageParam],
     output_callback: Callable[[BetaContentBlockParam], None],
     tool_output_callback: Callable[[ToolResult, str], None],
-    api_response_callback: Callable[
-        [httpx.Request, httpx.Response | object | None, Exception | None], None
-    ],
+    api_response_callback: Callable[[httpx.Request, httpx.Response | object | None, Exception | None], None],
     api_key: str,
     only_n_most_recent_images: int | None = None,
     max_tokens: int = 4096,
     tool_version: ToolVersion,
     thinking_budget: int | None = None,
-    token_efficient_tools_beta: bool = False,
-):
+) -> list[BetaMessageParam]:
     """
-    Agentic sampling loop for the assistant/tool interaction of computer use.
+    Agentic sampling loop for Claude with tool usage. Streams the assistant's response, handles tool calls, and returns the updated message list.
     """
     tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
     tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
@@ -101,21 +86,18 @@ async def sampling_loop(
 
     while True:
         enable_prompt_caching = False
-        betas = []
-        # Add tool beta flag if present
+        betas: list[str] = []
+        # Include the appropriate tool beta flag for the selected toolset
         if tool_group.beta_flag:
             betas.append(tool_group.beta_flag)
-        
-        # Add 128K output beta flag for large output capability
+        # Always enable 128K output support for Claude 3.7
         betas.append(OUTPUT_128K_BETA_FLAG)
-        
-        # Add token efficient tools beta if enabled
-        if token_efficient_tools_beta:
-            betas.append("token-efficient-tools-2025-02-19")
-            
+
+        # (Token-efficient tools beta is disabled by design)
+
         image_truncation_threshold = only_n_most_recent_images or 0
-        
-        # Initialize the appropriate client based on provider
+
+        # Initialize the client for the specified provider
         if provider == APIProvider.ANTHROPIC:
             client = Anthropic(api_key=api_key, max_retries=4)
             enable_prompt_caching = True
@@ -127,10 +109,8 @@ async def sampling_loop(
         if enable_prompt_caching:
             betas.append(PROMPT_CACHING_BETA_FLAG)
             _inject_prompt_caching(messages)
-            # Because cached reads are 10% of the price, we don't think it's
-            # ever sensible to break the cache by truncating images
+            # If using prompt caching, avoid truncating images (to maximize cache hits)
             only_n_most_recent_images = 0
-            # Use type ignore to bypass TypedDict check until SDK types are updated
             system["cache_control"] = {"type": "ephemeral"}  # type: ignore
 
         if only_n_most_recent_images:
@@ -139,17 +119,17 @@ async def sampling_loop(
                 only_n_most_recent_images,
                 min_removal_threshold=image_truncation_threshold,
             )
-        
-        # Prepare extra parameters for thinking if enabled
+
+        # Prepare extra parameters for extended thinking and tool usage
         extra_body = {}
         if thinking_budget:
             extra_body = {
                 "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
             }
+        extra_body["tool_choice"] = {"type": "auto", "disable_parallel_tool_use": True}
 
-        # Call the API with streaming enabled
+        # Call the Anthropic API with streaming enabled
         try:
-            # Create a request for streaming response
             stream = client.beta.messages.create(
                 max_tokens=max_tokens,
                 messages=messages,
@@ -158,71 +138,59 @@ async def sampling_loop(
                 tools=tool_collection.to_params(),
                 betas=betas,
                 extra_body=extra_body,
-                stream=True,  # Enable streaming
+                stream=True,
             )
-            
-            # Process the stream
-            content_blocks = []
-            signature_map = {}  # To track signatures for thinking blocks
-            
-            # Make a mock API response to keep track of API information
+
+            # Process the streaming events
+            content_blocks: list[BetaContentBlockParam | BetaToolUseBlockParam] = []
+            signature_map: dict[int, str] = {}  # track signatures for thinking blocks
+
             mock_request = httpx.Request("POST", "https://api.anthropic.com/v1/messages")
-            
-            # Stream and process results
             for event in stream:
-                # Process different event types
                 if hasattr(event, "type"):
-                    # New content block started
+                    # A new content block has started
                     if event.type == "content_block_start":
                         if hasattr(event, "content_block"):
                             current_block = event.content_block
                             content_blocks.append(current_block)
                             output_callback(current_block)
-                    
-                    # Content block delta (incremental updates)
                     elif event.type == "content_block_delta":
                         if hasattr(event, "index") and event.index < len(content_blocks):
-                            # Handle thinking delta
+                            # Thinking block delta
                             if hasattr(event.delta, "thinking") and event.delta.thinking:
                                 if hasattr(content_blocks[event.index], "thinking"):
                                     content_blocks[event.index].thinking += event.delta.thinking
                                 else:
                                     content_blocks[event.index].thinking = event.delta.thinking
-                                
-                                # Create a delta block to send to output callback
+                                # Emit a delta block for UI update
                                 delta_block = {
                                     "type": "thinking",
                                     "thinking": event.delta.thinking,
                                     "is_delta": True,
                                 }
                                 output_callback(delta_block)
-                            
-                            # Handle signature delta (for thinking blocks)
                             elif hasattr(event.delta, "signature") and event.delta.signature:
-                                # Store the signature for this thinking block
-                                if hasattr(content_blocks[event.index], "type") and content_blocks[event.index].type == "thinking":
+                                # Assign signature to the corresponding thinking block
+                                if (hasattr(content_blocks[event.index], "type") and 
+                                        content_blocks[event.index].type == "thinking"):
                                     content_blocks[event.index].signature = event.delta.signature
                                     signature_map[event.index] = event.delta.signature
-                            
-                            # Handle text delta
                             elif hasattr(event.delta, "text") and event.delta.text:
                                 if hasattr(content_blocks[event.index], "text"):
                                     content_blocks[event.index].text += event.delta.text
                                 else:
                                     content_blocks[event.index].text = event.delta.text
-                                    
                                 delta_block = {
                                     "type": "text",
                                     "text": event.delta.text,
                                     "is_delta": True,
                                 }
                                 output_callback(delta_block)
-                    
-                    # Message generation complete
                     elif event.type == "message_stop":
+                        # End of the assistant's turn
                         break
-            
-            # Create a response structure similar to what raw_response.parse() would return
+
+            # Construct the assistant's message from collected content blocks
             response = BetaMessage(
                 id="",
                 role="assistant",
@@ -232,10 +200,9 @@ async def sampling_loop(
                 type="message",
                 usage={"input_tokens": 0, "output_tokens": 0},
             )
-            
-            # Notify about API response (no errors)
+            # Signal that the API responded without error (for logging)
             api_response_callback(mock_request, None, None)
-            
+
         except (APIStatusError, APIResponseValidationError) as e:
             api_response_callback(e.request, e.response, e)
             return messages
@@ -246,184 +213,28 @@ async def sampling_loop(
             api_response_callback(mock_request, None, e)
             return messages
 
-        # Convert the response to parameters for the next message
+        # Convert the assistant's BetaMessage into message parameters for next steps
         response_params = _response_to_params(response)
-        messages.append(
-            {
-                "role": "assistant",
-                "content": response_params,
-            }
-        )
+        messages.append({"role": "assistant", "content": response_params})
 
-        # Handle tool usage in the response
+        # If the assistant decided to use a tool, execute the tool and append results
         tool_result_content: list[BetaToolResultBlockParam] = []
         for content_block in response_params:
-            # Skip output callback during streaming since we did it already
             if content_block["type"] == "tool_use":
-                # Add bash tool validation 
-                if (content_block["name"] == "bash" and 
-                    (not content_block["input"] or "command" not in content_block["input"])):
+                # Validate Bash tool input to avoid empty command calls
+                if content_block["name"] == "bash" and (not content_block["input"] or "command" not in content_block["input"]):
                     result = ToolFailure(error="Bash tool requires a 'command' parameter. Example: {\"command\": \"ls -la\"}")
                 else:
                     result = await tool_collection.run(
                         name=content_block["name"],
                         tool_input=cast(dict[str, Any], content_block["input"]),
                     )
-                tool_result_content.append(
-                    _make_api_tool_result(result, content_block["id"])
-                )
+                tool_result_content.append(_make_api_tool_result(result, content_block["id"]))
                 tool_output_callback(result, content_block["id"])
 
-        # Keep the original flow for returning/adding messages
+        # If no tool was invoked, break out of the loop and finish responding
         if not tool_result_content:
             return messages
-        messages.append({"content": tool_result_content, "role": "user"})
+        # Otherwise, append the tool results as a new user message and continue loop (Claude will process the tool output)
+        messages.append({"role": "user", "content": tool_result_content})
 
-
-def _maybe_filter_to_n_most_recent_images(
-    messages: list[BetaMessageParam],
-    images_to_keep: int,
-    min_removal_threshold: int,
-):
-    """
-    With the assumption that images are screenshots that are of diminishing value as
-    the conversation progresses, remove all but the final `images_to_keep` tool_result
-    images in place, with a chunk of min_removal_threshold to reduce the amount we
-    break the implicit prompt cache.
-    """
-    if images_to_keep is None:
-        return messages
-
-    tool_result_blocks = cast(
-        list[BetaToolResultBlockParam],
-        [
-            item
-            for message in messages
-            for item in (
-                message["content"] if isinstance(message["content"], list) else []
-            )
-            if isinstance(item, dict) and item.get("type") == "tool_result"
-        ],
-    )
-
-    total_images = sum(
-        1
-        for tool_result in tool_result_blocks
-        for content in tool_result.get("content", [])
-        if isinstance(content, dict) and content.get("type") == "image"
-    )
-
-    images_to_remove = total_images - images_to_keep
-    # for better cache behavior, we want to remove in chunks
-    images_to_remove -= images_to_remove % min_removal_threshold
-
-    for tool_result in tool_result_blocks:
-        if isinstance(tool_result.get("content"), list):
-            new_content = []
-            for content in tool_result.get("content", []):
-                if isinstance(content, dict) and content.get("type") == "image":
-                    if images_to_remove > 0:
-                        images_to_remove -= 1
-                        continue
-                new_content.append(content)
-            tool_result["content"] = new_content
-
-
-def _response_to_params(
-    response: BetaMessage,
-) -> list[BetaContentBlockParam]:
-    """Convert a BetaMessage response to parameters for the next message."""
-    res: list[BetaContentBlockParam] = []
-    for block in response.content:
-        if isinstance(block, BetaTextBlock):
-            if block.text:
-                res.append(BetaTextBlockParam(type="text", text=block.text))
-            elif getattr(block, "type", None) == "thinking":
-                # Handle thinking blocks - include signature field which is critical
-                thinking_block = {
-                    "type": "thinking",
-                    "thinking": getattr(block, "thinking", "") or "",
-                }
-                # Critical: Preserve the signature if present
-                if hasattr(block, "signature") and block.signature:
-                    thinking_block["signature"] = block.signature
-                res.append(cast(BetaContentBlockParam, thinking_block))
-        else:
-            # Handle tool use blocks normally
-            res.append(cast(BetaToolUseBlockParam, block.model_dump()))
-    return res
-
-
-def _inject_prompt_caching(
-    messages: list[BetaMessageParam],
-):
-    """
-    Set cache breakpoints for the 3 most recent turns
-    one cache breakpoint is left for tools/system prompt, to be shared across sessions
-    """
-    breakpoints_remaining = 3
-    for message in reversed(messages):
-        if message["role"] == "user" and isinstance(
-            content := message["content"], list
-        ):
-            if breakpoints_remaining:
-                breakpoints_remaining -= 1
-                # Use type ignore to bypass TypedDict check until SDK types are updated
-                content[-1]["cache_control"] = BetaCacheControlEphemeralParam(  # type: ignore
-                    {"type": "ephemeral"}
-                )
-            else:
-                content[-1].pop("cache_control", None)
-                # we'll only ever have one extra turn per loop
-                break
-
-
-def _make_api_tool_result(
-    result: ToolResult, tool_use_id: str
-) -> BetaToolResultBlockParam:
-    """Convert an agent ToolResult to an API ToolResultBlockParam."""
-    tool_result_content: list[BetaTextBlockParam | BetaImageBlockParam] | str = []
-    is_error = False
-    if result.error:
-        is_error = True
-        tool_result_content = _maybe_prepend_system_tool_result(result, result.error)
-    else:
-        if result.output:
-            tool_result_content.append(
-                {
-                    "type": "text",
-                    "text": _maybe_prepend_system_tool_result(result, result.output),
-                }
-            )
-        if result.base64_image:
-            tool_result_content.append(
-                {
-                    "type": "image",
-                    "source": {
-                        "type": "base64",
-                        "media_type": "image/png",
-                        "data": result.base64_image,
-                    },
-                }
-            )
-    
-    # Ensure we never return empty content
-    if not tool_result_content:
-        tool_result_content = [{
-            "type": "text",
-            "text": "No output was produced by the tool."
-        }]
-        
-    return {
-        "type": "tool_result",
-        "content": tool_result_content,
-        "tool_use_id": tool_use_id,
-        "is_error": is_error,
-    }
-
-
-def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
-    """Add system information to tool result if available."""
-    if result.system:
-        result_text = f"<s>{result.system}</s>\n{result_text}"
-    return result_text

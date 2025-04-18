@@ -1,7 +1,7 @@
 """
 Entrypoint for streamlit, see https://docs.streamlit.io/
 """
-import logging
+
 import asyncio
 import base64
 import os
@@ -30,11 +30,6 @@ from computer_use_demo.loop import (
     sampling_loop,
 )
 from computer_use_demo.tools import ToolResult, ToolVersion
-from computer_use_demo.token_manager import token_rate_limiter
-
-# Initialize logger
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("streamlit")
 
 PROVIDER_TO_DEFAULT_MODEL_NAME: dict[APIProvider, str] = {
     APIProvider.ANTHROPIC: "claude-3-7-sonnet-20250219",
@@ -59,8 +54,8 @@ SONNET_3_5_NEW = ModelConfig(
 
 SONNET_3_7 = ModelConfig(
     tool_version="computer_use_20250124",
-    max_output_tokens=128_000,
-    default_output_tokens=1024 * 16,
+    max_output_tokens=128_000,  # Set to 128K to support extended output
+    default_output_tokens=64_000,  # Set default to 64K as a reasonable starting point
     has_thinking=True,
 )
 
@@ -91,7 +86,6 @@ STREAMLIT_STYLE = """
 WARNING_TEXT = "⚠️ Security Alert: Never provide access to sensitive accounts or data, as malicious web content can hijack Claude's behavior"
 INTERRUPT_TEXT = "(user stopped or interrupted and wrote the following)"
 INTERRUPT_TOOL_ERROR = "human stopped or interrupted tool execution"
-TOKEN_USAGE_WARNING = "⚠️ High token usage detected. You may experience rate limiting soon. Consider reducing input or waiting a moment before continuing."
 
 
 class Sender(StrEnum):
@@ -114,15 +108,6 @@ def setup_state():
         )
     if "provider_radio" not in st.session_state:
         st.session_state.provider_radio = st.session_state.provider
-        
-    # Set default values for model configuration before resetting model
-    if "max_output_tokens" not in st.session_state:
-        st.session_state.max_output_tokens = 16384
-    if "output_tokens" not in st.session_state:
-        st.session_state.output_tokens = 4096
-    if "thinking_budget" not in st.session_state:
-        st.session_state.thinking_budget = 2048
-    
     if "model" not in st.session_state:
         _reset_model()
     if "auth_validated" not in st.session_state:
@@ -141,10 +126,11 @@ def setup_state():
         st.session_state.token_efficient_tools_beta = False
     if "in_sampling_loop" not in st.session_state:
         st.session_state.in_sampling_loop = False
-    if "token_usage_metrics" not in st.session_state:
-        st.session_state.token_usage_metrics = {"input": 0, "output": 0}
-    if "thinking" not in st.session_state:
-        st.session_state.thinking = False
+    if "current_message_placeholder" not in st.session_state:
+        st.session_state.current_message_placeholder = None
+    if "current_message_text" not in st.session_state:
+        st.session_state.current_message_text = ""
+
 
 def _reset_model():
     st.session_state.model = PROVIDER_TO_DEFAULT_MODEL_NAME[
@@ -159,20 +145,17 @@ def _reset_model_conf():
         if "3-7" in st.session_state.model
         else MODEL_TO_MODEL_CONF.get(st.session_state.model, SONNET_3_5_NEW)
     )
-    
-    # Make sure values are valid
-    max_tokens = max(1, model_conf.max_output_tokens)
-    default_tokens = max(1, model_conf.default_output_tokens)
-    
-    # Update session state
     st.session_state.tool_version = model_conf.tool_version
     st.session_state.has_thinking = model_conf.has_thinking
-    st.session_state.max_output_tokens = max_tokens
-    st.session_state.output_tokens = default_tokens
-    st.session_state.thinking_budget = max(1, int(default_tokens / 2))
+    st.session_state.output_tokens = model_conf.default_output_tokens
+    st.session_state.max_output_tokens = model_conf.max_output_tokens
+    st.session_state.thinking_budget = int(model_conf.default_output_tokens / 2)
+
+
+def _streaming_output_callback(content_block):
+    print(f"DEBUG: Received content block: {type(content_block)} - {content_block}")
     
-    logger.info(f"Reset model config: max_tokens={max_tokens}, output_tokens={default_tokens}")
-    
+
 async def main():
     """Render loop for streamlit"""
     setup_state()
@@ -237,49 +220,16 @@ async def main():
             index=versions.index(st.session_state.tool_version),
         )
 
-        # For output tokens, get the value from session state, ensure it's valid
-        current_output = max(1, st.session_state.output_tokens)
-        st.number_input(
-            "Max Output Tokens", 
-            min_value=1,
-            value=current_output,  # Use the value from session state
-            key="output_tokens_input",  # Use a different key for the widget
-            on_change=lambda: setattr(st.session_state, "output_tokens", 
-                                      st.session_state.output_tokens_input)
-        )
+        st.number_input("Max Output Tokens", key="output_tokens", step=1)
 
-        # Ensure we have a positive max value for thinking budget
-        current_max = max(1, st.session_state.max_output_tokens)
-        current_budget = min(current_max, max(1, st.session_state.thinking_budget))
-        
-        st.checkbox("Thinking Enabled", key="thinking", value=False)
+        st.checkbox("Thinking Enabled", key="thinking", value=True)
         st.number_input(
             "Thinking Budget",
-            min_value=1,
-            max_value=current_max,
-            value=current_budget,
-            key="thinking_budget_input",  # Different key for widget
-            on_change=lambda: setattr(st.session_state, "thinking_budget", 
-                                     st.session_state.thinking_budget_input),
+            key="thinking_budget",
+            max_value=st.session_state.max_output_tokens,
+            step=1,
             disabled=not st.session_state.thinking,
         )
-        
-        # Add token usage metrics
-        st.subheader("Token Usage")
-        input_used, output_used = token_rate_limiter.get_current_usage()
-        input_limit = max(1, token_rate_limiter.input_token_limit)  # Ensure never zero
-        output_limit = max(1, token_rate_limiter.output_token_limit)  # Ensure never zero
-
-        # Safe division with fallback to 0
-        input_pct = min(1.0, input_used / input_limit)  # Prevent division by zero or values > 1
-        output_pct = min(1.0, output_used / output_limit)  # Prevent division by zero or values > 1
-
-        st.progress(input_pct, text=f"Input: {input_used}/{input_limit} tokens")
-        st.progress(output_pct, text=f"Output: {output_used}/{output_limit} tokens")
-        
-        # Display warning if usage is high
-        if input_used > input_limit * 0.8 or output_used > output_limit * 0.8:
-            st.warning(TOKEN_USAGE_WARNING)
 
         if st.button("Reset", type="primary"):
             with st.spinner("Resetting..."):
@@ -350,13 +300,18 @@ async def main():
             return
 
         with track_sampling_loop():
+            # Create a placeholder for the streaming response
+            with st.chat_message(Sender.BOT):
+                st.session_state.current_message_placeholder = st.empty()
+                st.session_state.current_message_text = ""
+
             # run the agent sampling loop with the newest message
             st.session_state.messages = await sampling_loop(
                 system_prompt_suffix=st.session_state.custom_system_prompt,
                 model=st.session_state.model,
                 provider=st.session_state.provider,
                 messages=st.session_state.messages,
-                output_callback=partial(_render_message, Sender.BOT),
+                output_callback=_streaming_output_callback,
                 tool_output_callback=partial(
                     _tool_output_callback, tool_state=st.session_state.tools
                 ),
@@ -480,6 +435,63 @@ def _tool_output_callback(
     _render_message(Sender.TOOL, tool_output)
 
 
+def _streaming_output_callback(content_block):
+    """Handle streaming output by updating the current message placeholder."""
+    # Handle streaming deltas (incremental updates)
+    if isinstance(content_block, dict) and content_block.get("is_delta", False):
+        if content_block["type"] == "text":
+            # Update text in the placeholder
+            st.session_state.current_message_text += content_block["text"]
+            if st.session_state.current_message_placeholder is not None:
+                st.session_state.current_message_placeholder.markdown(
+                    st.session_state.current_message_text + "▌"
+                )
+        return
+    
+    # For text blocks, update the placeholder
+    if hasattr(content_block, "type") and content_block.type == "text":
+        with st.chat_message(Sender.BOT):
+            if hasattr(content_block, "text"):
+                st.session_state.current_message_text = content_block.text
+                if st.session_state.current_message_placeholder is not None:
+                    st.session_state.current_message_placeholder.markdown(
+                        content_block.text + "▌"
+                    )
+                else:
+                    st.markdown(content_block.text)
+                    
+    # For thinking blocks, render in separate message
+    elif hasattr(content_block, "type") and content_block.type == "thinking":
+        with st.chat_message(Sender.BOT):
+            thinking_text = ""
+            if hasattr(content_block, "thinking"):
+                thinking_text = content_block.thinking or ""
+            st.markdown(f"[Thinking]\n\n{thinking_text}")
+            
+    # For tool use blocks, render in separate message with validation
+    elif hasattr(content_block, "type") and content_block.type == "tool_use":
+        with st.chat_message(Sender.BOT):
+            tool_name = ""
+            tool_input = {}
+            
+            if hasattr(content_block, "name"):
+                tool_name = content_block.name
+            if hasattr(content_block, "input"):
+                tool_input = content_block.input
+                
+            # Add special validation message for bash tool
+            warning_message = ""
+            if tool_name == "bash" and (not tool_input or not tool_input.get("command")):
+                warning_message = "\n\n**⚠️ Warning: Bash tool requires a command parameter. This call will fail!**"
+                
+            st.code(f'Tool Use: {tool_name}\nInput: {tool_input}{warning_message}')
+            
+    # For other block types or objects, just render as text
+    else:
+        with st.chat_message(Sender.BOT):
+            st.write(content_block)
+
+
 def _render_api_response(
     request: httpx.Request,
     response: httpx.Response | object | None,
@@ -493,30 +505,50 @@ def _render_api_response(
             st.markdown(
                 f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}"
             )
-            st.json(request.read().decode())
+            try:
+                st.json(request.read().decode())
+            except:
+                st.write("Could not decode request body")
+                
             st.markdown("---")
             if isinstance(response, httpx.Response):
                 st.markdown(
                     f"`{response.status_code}`{newline}{newline.join(f'`{k}: {v}`' for k, v in response.headers.items())}"
                 )
-                st.json(response.text)
+                try:
+                    st.json(response.text)
+                except:
+                    st.write(response.text)
             else:
                 st.write(response)
 
 
 def _render_error(error: Exception):
+    """Render an error in streamlit."""
     if isinstance(error, RateLimitError):
         body = "You have been rate limited."
-        if retry_after := error.response.headers.get("retry-after"):
-            body += f" **Retry after {str(timedelta(seconds=int(retry_after)))} (HH:MM:SS).** See our API [documentation](https://docs.anthropic.com/en/api/rate-limits) for more details."
-        body += f"\n\n{error.message}"
+        retry_after = None
+        
+        # Handle different ways retry_after might be accessible
+        if hasattr(error, "response") and hasattr(error.response, "headers"):
+            retry_after = error.response.headers.get("retry-after")
+        elif hasattr(error, "headers"):
+            retry_after = error.headers.get("retry-after")
+            
+        if retry_after:
+            try:
+                seconds = int(retry_after)
+                readable_time = str(timedelta(seconds=seconds))
+                body += f" Try again in {readable_time} (at {(datetime.now() + timedelta(seconds=seconds)).strftime('%H:%M:%S')})"
+            except (ValueError, TypeError):
+                body += f" Try again in {retry_after}."
+                
+        if hasattr(error, "message"):
+            body += f"\n\n{error.message}"
+            
+        st.error(body)
     else:
-        body = str(error)
-        body += "\n\n**Traceback:**"
-        lines = "\n".join(traceback.format_exception(error))
-        body += f"\n\n```{lines}```"
-    save_to_storage(f"error_{datetime.now().timestamp()}.md", body)
-    st.error(f"**{error.__class__.__name__}**\n\n{body}", icon=":material/error:")
+        st.error(f"Error: {type(error).__name__}: {error}\n\n```\n{traceback.format_exc()}\n```")
 
 
 def _render_message(
@@ -524,40 +556,45 @@ def _render_message(
     message: str | BetaContentBlockParam | ToolResult,
 ):
     """Convert input from the user or output from the agent to a streamlit message."""
-    # streamlit's hotreloading breaks isinstance checks, so we need to check for class names
-    is_tool_result = not isinstance(message, str | dict)
-    if not message or (
-        is_tool_result
-        and st.session_state.hide_images
-        and not hasattr(message, "error")
-        and not hasattr(message, "output")
+    # Skip empty messages
+    if not message:
+        return
+    
+    # Handle ToolResult objects
+    is_tool_result = not isinstance(message, (str, dict))
+    if is_tool_result and st.session_state.hide_images and not (
+        hasattr(message, "error") or hasattr(message, "output")
     ):
         return
+        
     with st.chat_message(sender):
         if is_tool_result:
+            # For ToolResult objects, safely access attributes
             message = cast(ToolResult, message)
-            if message.output:
-                if message.__class__.__name__ == "CLIResult":
+            if hasattr(message, "output") and message.output:
+                if hasattr(message, "__class__") and message.__class__.__name__ == "CLIResult":
                     st.code(message.output)
                 else:
                     st.markdown(message.output)
-            if message.error:
+            if hasattr(message, "error") and message.error:
                 st.error(message.error)
-            if message.base64_image and not st.session_state.hide_images:
+            if hasattr(message, "base64_image") and message.base64_image and not st.session_state.hide_images:
                 st.image(base64.b64decode(message.base64_image))
         elif isinstance(message, dict):
-            if message["type"] == "text":
-                st.write(message["text"])
-            elif message["type"] == "thinking":
+            # For dictionary messages, check type and render appropriately
+            if message.get("type") == "text":
+                st.markdown(message.get("text", ""))
+            elif message.get("type") == "thinking":
                 thinking_content = message.get("thinking", "")
                 st.markdown(f"[Thinking]\n\n{thinking_content}")
-            elif message["type"] == "tool_use":
-                st.code(f'Tool Use: {message["name"]}\nInput: {message["input"]}')
+            elif message.get("type") == "tool_use":
+                st.code(f'Tool Use: {message.get("name", "")}\nInput: {message.get("input", "")}')
             else:
-                # only expected return types are text and tool_use
-                raise Exception(f'Unexpected response type {message["type"]}')
+                # For other types, just write the object
+                st.write(message)
         else:
-            st.markdown(message)
+            # Handle string messages
+            st.markdown(str(message))
 
 
 if __name__ == "__main__":
