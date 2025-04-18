@@ -54,8 +54,8 @@ SONNET_3_5_NEW = ModelConfig(
 
 SONNET_3_7 = ModelConfig(
     tool_version="computer_use_20250124",
-    max_output_tokens=64_000,  # Set to 64K to respect Claude 3.7 Sonnet's limit
-    default_output_tokens=32_000,  # Sensible default for Tier 4
+    max_output_tokens=128_000,  # Set to 128K to support extended output
+    default_output_tokens=64_000,  # Set default to 64K as a reasonable starting point
     has_thinking=True,
 )
 
@@ -218,7 +218,7 @@ async def main():
 
         st.number_input("Max Output Tokens", key="output_tokens", step=1)
 
-        st.checkbox("Thinking Enabled", key="thinking", value=False)
+        st.checkbox("Thinking Enabled", key="thinking", value=True)
         st.number_input(
             "Thinking Budget",
             key="thinking_budget",
@@ -494,27 +494,47 @@ def _render_api_response(
             st.markdown(
                 f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}"
             )
-            st.json(request.read().decode())
+            try:
+                st.json(request.read().decode())
+            except:
+                st.write("Could not decode request body")
+                
             st.markdown("---")
             if isinstance(response, httpx.Response):
                 st.markdown(
                     f"`{response.status_code}`{newline}{newline.join(f'`{k}: {v}`' for k, v in response.headers.items())}"
                 )
-                st.json(response.text)
+                try:
+                    st.json(response.text)
+                except:
+                    st.write(response.text)
             else:
                 st.write(response)
 
 
 def _render_error(error: Exception):
+    """Render an error in streamlit."""
     if isinstance(error, RateLimitError):
         body = "You have been rate limited."
-        if retry_after := getattr(error, "headers", {}).get("retry-after"):
+        retry_after = None
+        
+        # Handle different ways retry_after might be accessible
+        if hasattr(error, "response") and hasattr(error.response, "headers"):
+            retry_after = error.response.headers.get("retry-after")
+        elif hasattr(error, "headers"):
+            retry_after = error.headers.get("retry-after")
+            
+        if retry_after:
             try:
                 seconds = int(retry_after)
                 readable_time = str(timedelta(seconds=seconds))
                 body += f" Try again in {readable_time} (at {(datetime.now() + timedelta(seconds=seconds)).strftime('%H:%M:%S')})"
             except (ValueError, TypeError):
                 body += f" Try again in {retry_after}."
+                
+        if hasattr(error, "message"):
+            body += f"\n\n{error.message}"
+            
         st.error(body)
     else:
         st.error(f"Error: {type(error).__name__}: {error}\n\n```\n{traceback.format_exc()}\n```")
