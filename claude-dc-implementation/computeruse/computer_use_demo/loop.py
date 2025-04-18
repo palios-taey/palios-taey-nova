@@ -64,6 +64,7 @@ SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
 <IMPORTANT>
 * When using Firefox, if a startup wizard appears, IGNORE IT.  Do not even click "skip this step".  Instead, click on the address bar where it says "Search or enter address", and enter the appropriate search term or URL there.
 * If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
+* When using the bash tool, you MUST always provide a "command" parameter in the input. For example: {"command": "ls -la"} instead of just {}.
 </IMPORTANT>"""
 
 
@@ -165,6 +166,8 @@ async def sampling_loop(
                             if hasattr(event.delta, "thinking") and event.delta.thinking:
                                 if hasattr(content_blocks[event.index], "thinking"):
                                     content_blocks[event.index].thinking += event.delta.thinking
+                                else:
+                                    content_blocks[event.index].thinking = event.delta.thinking
                                 
                                 # Create a delta block to send to output callback
                                 delta_block = {
@@ -177,13 +180,13 @@ async def sampling_loop(
                             # Handle signature delta (important for thinking blocks)
                             elif hasattr(event.delta, "signature") and event.delta.signature:
                                 # Store the signature for this thinking block
-                                if content_blocks[event.index].type == "thinking":
+                                if hasattr(content_blocks[event.index], "type") and content_blocks[event.index].type == "thinking":
                                     content_blocks[event.index].signature = event.delta.signature
                                     signature_map[event.index] = event.delta.signature
                             
                             # Handle text delta
                             elif hasattr(event.delta, "text") and event.delta.text:
-                                if content_blocks[event.index].type == "text":
+                                if hasattr(content_blocks[event.index], "type") and content_blocks[event.index].type == "text":
                                     content_blocks[event.index].text += event.delta.text
                                     delta_block = {
                                         "type": "text",
