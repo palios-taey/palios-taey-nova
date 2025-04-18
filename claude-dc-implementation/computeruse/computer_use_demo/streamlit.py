@@ -1,6 +1,7 @@
 """
 Entrypoint for streamlit, see https://docs.streamlit.io/
 """
+
 import asyncio
 import base64
 import os
@@ -443,29 +444,41 @@ def _streaming_output_callback(content_block):
                 )
         return
     
-    # Handle different block types
-    if content_block.type == "text":
+    # For text blocks, update the placeholder
+    if hasattr(content_block, "type") and content_block.type == "text":
         with st.chat_message(Sender.BOT):
-            # For text blocks, update the placeholder
-            st.session_state.current_message_text = content_block.text
-            if st.session_state.current_message_placeholder is not None:
-                st.session_state.current_message_placeholder.markdown(
-                    content_block.text + "▌"
-                )
-            else:
-                st.markdown(content_block.text)
-    elif content_block.type == "thinking":
-        # For thinking blocks, render separately
+            if hasattr(content_block, "text"):
+                st.session_state.current_message_text = content_block.text
+                if st.session_state.current_message_placeholder is not None:
+                    st.session_state.current_message_placeholder.markdown(
+                        content_block.text + "▌"
+                    )
+                else:
+                    st.markdown(content_block.text)
+                    
+    # For thinking blocks, render in separate message
+    elif hasattr(content_block, "type") and content_block.type == "thinking":
         with st.chat_message(Sender.BOT):
-            st.markdown(f"[Thinking]\n\n{content_block.thinking}")
-    elif content_block.type == "tool_use":
-        # For tool use blocks, render separately
+            thinking_text = ""
+            if hasattr(content_block, "thinking"):
+                thinking_text = content_block.thinking or ""
+            st.markdown(f"[Thinking]\n\n{thinking_text}")
+            
+    # For tool use blocks, render in separate message
+    elif hasattr(content_block, "type") and content_block.type == "tool_use":
         with st.chat_message(Sender.BOT):
-            st.code(f'Tool Use: {content_block.name}\nInput: {content_block.input}')
+            tool_name = ""
+            tool_input = ""
+            if hasattr(content_block, "name"):
+                tool_name = content_block.name
+            if hasattr(content_block, "input"):
+                tool_input = content_block.input
+            st.code(f'Tool Use: {tool_name}\nInput: {tool_input}')
+            
+    # For other block types or objects, just render as text
     else:
-        # For any other block type, render as-is
         with st.chat_message(Sender.BOT):
-            st.markdown(str(content_block))
+            st.write(content_block)
 
 
 def _render_api_response(
@@ -512,11 +525,11 @@ def _render_message(
     message: str | BetaContentBlockParam | ToolResult,
 ):
     """Convert input from the user or output from the agent to a streamlit message."""
-    # Check if message is empty
+    # Skip empty messages
     if not message:
         return
     
-    # Check if message is a ToolResult
+    # Handle ToolResult objects
     is_tool_result = not isinstance(message, (str, dict))
     if is_tool_result and st.session_state.hide_images and not (
         hasattr(message, "error") or hasattr(message, "output")
@@ -525,7 +538,7 @@ def _render_message(
         
     with st.chat_message(sender):
         if is_tool_result:
-            # Handle ToolResult
+            # For ToolResult objects, safely access attributes
             message = cast(ToolResult, message)
             if hasattr(message, "output") and message.output:
                 if hasattr(message, "__class__") and message.__class__.__name__ == "CLIResult":
@@ -546,8 +559,8 @@ def _render_message(
             elif message.get("type") == "tool_use":
                 st.code(f'Tool Use: {message.get("name", "")}\nInput: {message.get("input", "")}')
             else:
-                # For other types, just convert to string
-                st.markdown(str(message))
+                # For other types, just write the object
+                st.write(message)
         else:
             # Handle string messages
             st.markdown(str(message))

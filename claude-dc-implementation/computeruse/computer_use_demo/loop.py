@@ -67,22 +67,6 @@ SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
 </IMPORTANT>"""
 
 
-def _clean_thinking_blocks(messages):
-    """
-    Ensure all thinking blocks in message history have a valid 'thinking' field.
-    This fixes the 'messages.X.content.0.thinking.thinking: each thinking block must contain thinking' error.
-    """
-    for message in messages:
-        if isinstance(message.get("content"), list):
-            for block in message["content"]:
-                if isinstance(block, dict) and block.get("type") == "thinking":
-                    # Ensure thinking block has a valid 'thinking' field
-                    if "thinking" not in block or block["thinking"] is None:
-                        block["thinking"] = ""
-    
-    return messages
-
-
 async def sampling_loop(
     *,
     model: str,
@@ -147,9 +131,6 @@ async def sampling_loop(
                 "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
             }
 
-        # Clean message history to ensure valid thinking blocks
-        messages = _clean_thinking_blocks(messages)
-
         # Call the API with streaming enabled
         try:
             # Enable streaming for better handling of long responses
@@ -166,6 +147,7 @@ async def sampling_loop(
             
             # Process the stream
             content_blocks = []
+            signature_map = {}  # Map to track signatures for thinking blocks
             
             # Stream and process results
             for event in stream:
@@ -178,30 +160,34 @@ async def sampling_loop(
                     
                     elif event.type == "content_block_delta":
                         # Content block delta received
-                        if event.delta:
-                            # Handle text delta
-                            if hasattr(event.delta, "text") and event.delta.text:
-                                if hasattr(event, "index") and event.index < len(content_blocks):
-                                    if content_blocks[event.index].type == "text":
-                                        content_blocks[event.index].text += event.delta.text
-                                        delta_block = {
-                                            "type": "text",
-                                            "text": event.delta.text,
-                                            "is_delta": True,
-                                        }
-                                        output_callback(delta_block)
-                            
+                        if hasattr(event, "index") and event.index < len(content_blocks):
                             # Handle thinking delta
-                            elif hasattr(event.delta, "thinking") and event.delta.thinking:
-                                if hasattr(event, "index") and event.index < len(content_blocks):
-                                    if hasattr(content_blocks[event.index], "thinking"):
-                                        content_blocks[event.index].thinking += event.delta.thinking
-                                    else:
-                                        content_blocks[event.index].thinking = event.delta.thinking
-                                    
+                            if hasattr(event.delta, "thinking") and event.delta.thinking:
+                                if hasattr(content_blocks[event.index], "thinking"):
+                                    content_blocks[event.index].thinking += event.delta.thinking
+                                
+                                # Create a delta block to send to output callback
+                                delta_block = {
+                                    "type": "thinking",
+                                    "thinking": event.delta.thinking,
+                                    "is_delta": True,
+                                }
+                                output_callback(delta_block)
+                            
+                            # Handle signature delta (important for thinking blocks)
+                            elif hasattr(event.delta, "signature") and event.delta.signature:
+                                # Store the signature for this thinking block
+                                if content_blocks[event.index].type == "thinking":
+                                    content_blocks[event.index].signature = event.delta.signature
+                                    signature_map[event.index] = event.delta.signature
+                            
+                            # Handle text delta
+                            elif hasattr(event.delta, "text") and event.delta.text:
+                                if content_blocks[event.index].type == "text":
+                                    content_blocks[event.index].text += event.delta.text
                                     delta_block = {
-                                        "type": "thinking",
-                                        "thinking": event.delta.thinking,
+                                        "type": "text",
+                                        "text": event.delta.text,
                                         "is_delta": True,
                                     }
                                     output_callback(delta_block)
@@ -327,14 +313,14 @@ def _response_to_params(
             if block.text:
                 res.append(BetaTextBlockParam(type="text", text=block.text))
             elif getattr(block, "type", None) == "thinking":
-                # Handle thinking blocks properly
-                thinking_content = getattr(block, "thinking", "") or ""
+                # Keep the signature intact for thinking blocks
                 thinking_block = {
                     "type": "thinking",
-                    "thinking": thinking_content,
+                    "thinking": getattr(block, "thinking", "") or "",
                 }
-                if hasattr(block, "signature"):
-                    thinking_block["signature"] = getattr(block, "signature", None)
+                # Preserve the signature if present
+                if hasattr(block, "signature") and block.signature:
+                    thinking_block["signature"] = block.signature
                 res.append(cast(BetaContentBlockParam, thinking_block))
         else:
             # Handle tool use blocks normally
@@ -405,5 +391,5 @@ def _make_api_tool_result(
 
 def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
     if result.system:
-        result_text = f"<system>{result.system}</system>\n{result_text}"
+        result_text = f"<s>{result.system}</s>\n{result_text}"
     return result_text
