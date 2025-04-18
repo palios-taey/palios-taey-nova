@@ -128,6 +128,7 @@ async def sampling_loop(
                 only_n_most_recent_images,
                 min_removal_threshold=image_truncation_threshold,
             )
+        
         extra_body = {}
         if thinking_budget:
             # Ensure we only send the required fields for thinking
@@ -307,11 +308,15 @@ def _response_to_params(
         if isinstance(block, BetaTextBlock):
             if block.text:
                 res.append(BetaTextBlockParam(type="text", text=block.text))
+            # Handle thinking blocks properly by checking type first
             elif getattr(block, "type", None) == "thinking":
-                # Handle thinking blocks - include signature field
+                thinking_content = getattr(block, "thinking", "")
+                # Ensure thinking_content is not None, using empty string as fallback
+                thinking_content = thinking_content or ""
+                # Create a properly structured thinking block
                 thinking_block = {
                     "type": "thinking",
-                    "thinking": getattr(block, "thinking", None),
+                    "thinking": thinking_content,
                 }
                 if hasattr(block, "signature"):
                     thinking_block["signature"] = getattr(block, "signature", None)
