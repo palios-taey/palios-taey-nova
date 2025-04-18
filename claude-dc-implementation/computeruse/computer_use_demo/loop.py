@@ -257,30 +257,25 @@ async def sampling_loop(
         # Handle tool usage in the response
         tool_result_content: list[BetaToolResultBlockParam] = []
         for content_block in response_params:
-            # Skip sending to output callback again since we already did it during streaming
+            # Skip output callback during streaming since we did it already
             if content_block["type"] == "tool_use":
-                # Extra validation for bash tool - ensure command is present
+                # Add bash tool validation 
                 if (content_block["name"] == "bash" and 
                     (not content_block["input"] or "command" not in content_block["input"])):
-                    # Create a specific error for empty bash tool inputs
                     result = ToolFailure(error="Bash tool requires a 'command' parameter. Example: {\"command\": \"ls -la\"}")
                 else:
-                    # Process normal tool execution
                     result = await tool_collection.run(
                         name=content_block["name"],
                         tool_input=cast(dict[str, Any], content_block["input"]),
                     )
-                    
                 tool_result_content.append(
                     _make_api_tool_result(result, content_block["id"])
                 )
                 tool_output_callback(result, content_block["id"])
 
-        # If no tools were used, we're done with this turn
+        # Keep the original flow for returning/adding messages
         if not tool_result_content:
             return messages
-
-        # Add tool results to the message history
         messages.append({"content": tool_result_content, "role": "user"})
 
 
@@ -410,6 +405,14 @@ def _make_api_tool_result(
                     },
                 }
             )
+    
+    # Ensure we never return empty content
+    if not tool_result_content:
+        tool_result_content = [{
+            "type": "text",
+            "text": "No output was produced by the tool."
+        }]
+        
     return {
         "type": "tool_result",
         "content": tool_result_content,

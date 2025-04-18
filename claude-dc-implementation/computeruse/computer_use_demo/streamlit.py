@@ -152,6 +152,10 @@ def _reset_model_conf():
     st.session_state.thinking_budget = int(model_conf.default_output_tokens / 2)
 
 
+def _streaming_output_callback(content_block):
+    print(f"DEBUG: Received content block: {type(content_block)} - {content_block}")
+    
+
 async def main():
     """Render loop for streamlit"""
     setup_state()
