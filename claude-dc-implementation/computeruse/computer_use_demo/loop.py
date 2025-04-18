@@ -66,7 +66,8 @@ SYSTEM_PROMPT = """<SYSTEM_CAPABILITY>
 <IMPORTANT>
 * When using Firefox, if a startup wizard appears, IGNORE IT.  Do not even click "skip this step".  Instead, click on the address bar where it says "Search or enter address", and enter the appropriate search term or URL there.
 * If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
-* BASH TOOL USAGE: When using the bash tool, you MUST ALWAYS provide a command parameter in JSON format. For example: {"command": "ls -la"}. NEVER use empty inputs like {}. NEVER call the bash tool without a command parameter. If you want to run a command in the Linux terminal, always format it as {"command": "your_command_here"}. The bash tool will NOT work with empty inputs.
+* TOOL USAGE FORMAT: When using tools in this environment, you MUST use JSON format DIRECTLY, not XML tags. For the bash tool, use this exact format: {"command": "your command here"}. Do NOT use <invoke> or <parameter> XML-style tags as they will not work in this environment.
+* BASH TOOL USAGE: When using the bash tool, you MUST ALWAYS provide a command parameter in JSON format. For example: {"command": "ls -la"}. NEVER use empty inputs like {}. NEVER use XML-style tags like <invoke name="bash">. The bash tool will NOT work with empty inputs or XML formatting.
 </IMPORTANT>"""
 
 
