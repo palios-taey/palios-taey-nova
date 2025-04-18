@@ -442,6 +442,11 @@ def _streaming_output_callback(
             st.session_state.current_message_text += content_block["text"]
             if st.session_state.current_message_placeholder is not None:
                 st.session_state.current_message_placeholder.markdown(st.session_state.current_message_text + "▌")
+        # This is a thinking delta
+        elif content_block["type"] == "thinking":
+            # Thinking deltas are handled separately in their own message
+            with st.chat_message(Sender.BOT):
+                st.markdown(f"[Thinking]\n\n{content_block.get('thinking', '')}")
         return
     
     # Handle different block types directly here instead of passing to _render_message
@@ -495,6 +500,7 @@ def _streaming_output_callback(
             # Unknown type, just render as string
             st.markdown(str(content_block))
             
+
 def _render_api_response(
     request: httpx.Request,
     response: httpx.Response | object | None,
@@ -606,17 +612,8 @@ def _render_message(
             if hasattr(message, "base64_image") and message.base64_image and not st.session_state.hide_images:
                 st.image(base64.b64decode(message.base64_image))
         elif isinstance(message, dict):
-            # Handle dict-type message
-            if message.get("type") == "text":
-                st.markdown(message.get("text", ""))
-            elif message.get("type") == "thinking":
-                thinking_content = message.get("thinking", "")
-                st.markdown(f"[Thinking]\n\n{thinking_content}")
-            elif message.get("type") == "tool_use":
-                st.code(f'Tool Use: {message.get("name", "")}\nInput: {message.get("input", "")}')
-            else:
-                # Unknown type
-                st.markdown(str(message))
+            # Handle dict-type message using the helper function
+            _render_message_content(message)
         else:
             # Handle string or other type
             st.markdown(str(message))

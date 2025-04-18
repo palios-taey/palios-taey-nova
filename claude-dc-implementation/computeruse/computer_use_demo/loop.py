@@ -96,6 +96,9 @@ async def sampling_loop(
         text=f"{SYSTEM_PROMPT}{' ' + system_prompt_suffix if system_prompt_suffix else ''}",
     )
 
+    # Pre-process messages to ensure thinking blocks are valid
+    processed_messages = _process_messages_thinking_blocks(messages)
+
     while True:
         enable_prompt_caching = False
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
@@ -115,7 +118,7 @@ async def sampling_loop(
 
         if enable_prompt_caching:
             betas.append(PROMPT_CACHING_BETA_FLAG)
-            _inject_prompt_caching(messages)
+            _inject_prompt_caching(processed_messages)
             # Because cached reads are 10% of the price, we don't think it's
             # ever sensible to break the cache by truncating images
             only_n_most_recent_images = 0
@@ -124,7 +127,7 @@ async def sampling_loop(
 
         if only_n_most_recent_images:
             _maybe_filter_to_n_most_recent_images(
-                messages,
+                processed_messages,
                 only_n_most_recent_images,
                 min_removal_threshold=image_truncation_threshold,
             )
@@ -141,7 +144,7 @@ async def sampling_loop(
             # Enable streaming for better handling of long responses
             stream = client.beta.messages.create(
                 max_tokens=max_tokens,
-                messages=messages,
+                messages=processed_messages,
                 model=model,
                 system=[system],
                 tools=tool_collection.to_params(),
@@ -163,25 +166,47 @@ async def sampling_loop(
                         current_block = event.content_block
                         if current_block.type == "tool_use":
                             tool_use_blocks.append(current_block)
+                        
+                        # Add mandatory thinking field if it's a thinking block without one
+                        if current_block.type == "thinking" and not hasattr(current_block, "thinking"):
+                            current_block.thinking = ""
+                        
                         content_blocks.append(current_block)
                         # Send block to the output callback
                         output_callback(current_block)
                     
                     elif event.type == "content_block_delta":
                         # Content block delta received
-                        if event.delta and hasattr(event.delta, "text") and event.delta.text:
-                            # For text blocks, send delta to output callback
-                            if hasattr(event, "index") and event.index < len(content_blocks):
-                                # Update the content block with the delta
-                                if content_blocks[event.index].type == "text":
-                                    content_blocks[event.index].text += event.delta.text
+                        if event.delta:
+                            # Handle thinking delta
+                            if hasattr(event.delta, "thinking") and event.delta.thinking:
+                                if hasattr(event, "index") and event.index < len(content_blocks):
+                                    if not hasattr(content_blocks[event.index], "thinking"):
+                                        content_blocks[event.index].thinking = ""
+                                    content_blocks[event.index].thinking += event.delta.thinking
+                                    
                                     # Create a delta block to send to output callback
                                     delta_block = {
-                                        "type": "text",
-                                        "text": event.delta.text,
+                                        "type": "thinking",
+                                        "thinking": event.delta.thinking,
                                         "is_delta": True,  # Mark as delta for the UI
                                     }
                                     output_callback(delta_block)
+                            
+                            # Handle text delta
+                            elif hasattr(event.delta, "text") and event.delta.text:
+                                # For text blocks, send delta to output callback
+                                if hasattr(event, "index") and event.index < len(content_blocks):
+                                    # Update the content block with the delta
+                                    if content_blocks[event.index].type == "text":
+                                        content_blocks[event.index].text += event.delta.text
+                                        # Create a delta block to send to output callback
+                                        delta_block = {
+                                            "type": "text",
+                                            "text": event.delta.text,
+                                            "is_delta": True,  # Mark as delta for the UI
+                                        }
+                                        output_callback(delta_block)
                     
                     elif event.type == "content_block_stop":
                         # Content block completed, nothing special to do
@@ -211,10 +236,10 @@ async def sampling_loop(
             
         except (APIStatusError, APIResponseValidationError) as e:
             api_response_callback(e.request, e.response, e)
-            return messages
+            return processed_messages
         except APIError as e:
             api_response_callback(e.request, e.body, e)
-            return messages
+            return processed_messages
         except Exception as e:
             # Handle any other exceptions that might occur during streaming
             api_response_callback(
@@ -222,10 +247,10 @@ async def sampling_loop(
                 None,
                 e
             )
-            return messages
+            return processed_messages
 
         response_params = _response_to_params(response)
-        messages.append(
+        processed_messages.append(
             {
                 "role": "assistant",
                 "content": response_params,
@@ -246,9 +271,51 @@ async def sampling_loop(
                 tool_output_callback(result, content_block["id"])
 
         if not tool_result_content:
-            return messages
+            return processed_messages
 
-        messages.append({"content": tool_result_content, "role": "user"})
+        processed_messages.append({"content": tool_result_content, "role": "user"})
+
+
+def _process_messages_thinking_blocks(messages: list[BetaMessageParam]) -> list[BetaMessageParam]:
+    """
+    Process messages to ensure all thinking blocks have a valid 'thinking' field.
+    This fixes the 'messages.X.content.0.thinking.thinking: each thinking block must contain thinking' error.
+    """
+    processed_messages = []
+    
+    for message in messages:
+        processed_message = {"role": message["role"]}
+        
+        if isinstance(message["content"], str):
+            # String content stays the same
+            processed_message["content"] = message["content"]
+        elif isinstance(message["content"], list):
+            # Process list of content blocks
+            processed_content = []
+            
+            for block in message["content"]:
+                if isinstance(block, dict):
+                    if block.get("type") == "thinking":
+                        # Fix thinking blocks by ensuring they have a valid 'thinking' field
+                        fixed_block = block.copy()
+                        if "thinking" not in fixed_block or fixed_block["thinking"] is None:
+                            fixed_block["thinking"] = ""  # Provide empty string as default
+                        processed_content.append(fixed_block)
+                    else:
+                        # Keep other blocks unchanged
+                        processed_content.append(block)
+                else:
+                    # Keep non-dict blocks unchanged
+                    processed_content.append(block)
+            
+            processed_message["content"] = processed_content
+        else:
+            # Keep other content types unchanged (shouldn't happen in practice)
+            processed_message["content"] = message["content"]
+        
+        processed_messages.append(processed_message)
+    
+    return processed_messages
 
 
 def _maybe_filter_to_n_most_recent_images(
