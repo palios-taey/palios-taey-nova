@@ -17,7 +17,7 @@ cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computerus
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/secrets/* /home/computeruse/secrets/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/utils/* /home/computeruse/utils/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/* /home/computeruse/references/
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/run_claude_dc.py /home/computeruse/
+# cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/run_claude_dc.py /home/computeruse/
 
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
@@ -69,10 +69,10 @@ git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
 # echo "Setting up computer_use_demo environment..."
 # cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
 # Make sure the launcher script is executable
-chmod +x /home/computeruse/run_claude_dc.py
+#chmod +x /home/computeruse/run_claude_dc.py
 
 # Run the launcher script as the final step
-/home/computeruse/run_claude_dc.py
+#/home/computeruse/run_claude_dc.py
 
 # Set Claude options
 echo "Please set the following Claude options manually:"
