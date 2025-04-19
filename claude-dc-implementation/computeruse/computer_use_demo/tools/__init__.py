@@ -1,4 +1,6 @@
-"""Tools for Claude Computer Use Demo."""
+"""
+Tools for Claude Computer Use Demo.
+"""
 
 from .base import CLIResult, ToolResult, ToolFailure
 from .bash import BashTool20241022, BashTool20250124

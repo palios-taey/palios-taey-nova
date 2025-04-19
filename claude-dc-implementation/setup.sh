@@ -14,12 +14,15 @@ mkdir -p /home/computeruse/references
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/secrets/* /home/computeruse/secrets/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/utils/* /home/computeruse/utils/
-cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/* /home/computeruse/references/
 
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
 git config --global user.name "palios-taey"
+
+# Set up computer_use_demo directory
+echo "Setting up computer_use_demo environment..."
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
 
 # Now edit the secrets file to remove the random text from API keys
 # Remove 'testkey-' from all files in secrets directory
@@ -27,5 +30,4 @@ echo "Removing 'testkey-' prefixes from secret files..."
 find /home/computeruse/secrets -type f -exec sed -i 's/testkey-//g' {} \;
 echo "nano /home/computeruse/secrets/palios-taey-secrets.json"
 echo "nano /home/computeruse/secrets/id_ed25519"
-
 echo "Setup completed! Refresh browser"

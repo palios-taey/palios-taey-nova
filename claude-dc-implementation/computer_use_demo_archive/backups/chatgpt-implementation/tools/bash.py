@@ -1,74 +1,147 @@
-"""Tool for executing shell (bash) commands."""
-import subprocess
-from computer_use_demo.tools.base import BaseAnthropicTool
-from computer_use_demo.types import ToolResult, CLIResult, ToolFailure, ToolError
-from computer_use_demo.token_manager import token_manager
+import asyncio
+import os
+from typing import Any, Literal
 
-class BashTool20241022(BaseAnthropicTool):
-    """Tool implementation for running shell commands (2024-10-22 version)."""
+from .base import BaseAnthropicTool, CLIResult, ToolError, ToolResult
 
-    def to_params(self) -> dict:
-        # Define the tool parameters as expected by the Anthropic API
+
+class _BashSession:
+    """A session of a bash shell."""
+
+    _started: bool
+    _process: asyncio.subprocess.Process
+
+    command: str = "/bin/bash"
+    _output_delay: float = 0.2  # seconds
+    _timeout: float = 120.0  # seconds
+    _sentinel: str = "<<exit>>"
+
+    def __init__(self):
+        self._started = False
+        self._timed_out = False
+
+    async def start(self):
+        if self._started:
+            return
+
+        self._process = await asyncio.create_subprocess_shell(
+            self.command,
+            preexec_fn=os.setsid,
+            shell=True,
+            bufsize=0,
+            stdin=asyncio.subprocess.PIPE,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+
+        self._started = True
+
+    def stop(self):
+        """Terminate the bash shell."""
+        if not self._started:
+            raise ToolError("Session has not started.")
+        if self._process.returncode is not None:
+            return
+        self._process.terminate()
+
+    async def run(self, command: str):
+        """Execute a command in the bash shell."""
+        if not self._started:
+            raise ToolError("Session has not started.")
+        if self._process.returncode is not None:
+            return ToolResult(
+                system="tool must be restarted",
+                error=f"bash has exited with returncode {self._process.returncode}",
+            )
+        if self._timed_out:
+            raise ToolError(
+                f"timed out: bash has not returned in {self._timeout} seconds and must be restarted",
+            )
+
+        # we know these are not None because we created the process with PIPEs
+        assert self._process.stdin
+        assert self._process.stdout
+        assert self._process.stderr
+
+        # send command to the process
+        self._process.stdin.write(
+            command.encode() + f"; echo '{self._sentinel}'\n".encode()
+        )
+        await self._process.stdin.drain()
+
+        # read output from the process, until the sentinel is found
+        try:
+            async with asyncio.timeout(self._timeout):
+                while True:
+                    await asyncio.sleep(self._output_delay)
+                    # if we read directly from stdout/stderr, it will wait forever for
+                    # EOF. use the StreamReader buffer directly instead.
+                    output = self._process.stdout._buffer.decode()  # pyright: ignore[reportAttributeAccessIssue]
+                    if self._sentinel in output:
+                        # strip the sentinel and break
+                        output = output[: output.index(self._sentinel)]
+                        break
+        except asyncio.TimeoutError:
+            self._timed_out = True
+            raise ToolError(
+                f"timed out: bash has not returned in {self._timeout} seconds and must be restarted",
+            ) from None
+
+        if output.endswith("\n"):
+            output = output[:-1]
+
+        error = self._process.stderr._buffer.decode()  # pyright: ignore[reportAttributeAccessIssue]
+        if error.endswith("\n"):
+            error = error[:-1]
+
+        # clear the buffers so that the next output can be read correctly
+        self._process.stdout._buffer.clear()  # pyright: ignore[reportAttributeAccessIssue]
+        self._process.stderr._buffer.clear()  # pyright: ignore[reportAttributeAccessIssue]
+
+        return CLIResult(output=output, error=error)
+
+
+class BashTool20250124(BaseAnthropicTool):
+    """
+    A tool that allows the agent to run bash commands.
+    The tool parameters are defined by Anthropic and are not editable.
+    """
+
+    _session: _BashSession | None
+
+    api_type: Literal["bash_20250124"] = "bash_20250124"
+    name: Literal["bash"] = "bash"
+
+    def __init__(self):
+        self._session = None
+        super().__init__()
+
+    def to_params(self) -> Any:
         return {
-            "name": "bash",
-            "type": "bash_20241022",
-            "description": "Execute a command in the system shell.",
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "command": {
-                        "type": "string",
-                        "description": "The shell command to execute."
-                    },
-                    "restart": {
-                        "type": "boolean",
-                        "description": "Whether to reset the shell session.",
-                        "default": False
-                    }
-                }
-            }
+            "type": self.api_type,
+            "name": self.name,
         }
 
-    async def __call__(self, *, command: str = None, restart: bool = False) -> ToolResult:
-        # If a restart is requested, end any persistent session (not implemented; stateless for now).
+    async def __call__(
+        self, command: str | None = None, restart: bool = False, **kwargs
+    ):
         if restart:
-            return ToolResult(system="bash tool session restarted")
+            if self._session:
+                self._session.stop()
+            self._session = _BashSession()
+            await self._session.start()
 
-        if not command or command.strip() == "":
-            return ToolResult(system="no command provided")
+            return ToolResult(system="tool has been restarted.")
 
-        try:
-            result = subprocess.run(command, shell=True, capture_output=True, text=True)
-        except Exception as e:
-            # Unexpected failure executing the command
-            return ToolFailure(error=str(e))
+        if self._session is None:
+            self._session = _BashSession()
+            await self._session.start()
 
-        output = result.stdout
-        error = result.stderr
+        if command is not None:
+            return await self._session.run(command)
 
-        # Use token manager to chunk output if it exceeds safe token limits
-        safe_max = 0
-        try:
-            safe_max = token_manager.get_safe_limits()["max_tokens"]
-        except Exception:
-            safe_max = 0  # default to 0 if token manager is not configured
-        num_tokens = token_manager.estimate_tokens_from_bytes(len(output.encode('utf-8'))) if output else 0
+        raise ToolError("no command provided.")
 
-        if safe_max and num_tokens > safe_max:
-            # Split the output into smaller chunks (by character length) to avoid token limit overflow
-            chunk_size = max(1, safe_max // 2)
-            chunks = [output[i:i+chunk_size] for i in range(0, len(output), chunk_size)]
-            combined = ToolResult()
-            for chunk in chunks:
-                combined = combined + CLIResult(output=chunk)
-            if error:
-                combined = combined + ToolFailure(error=error)
-            return combined
 
-        # If output is within safe size, return normally
-        if error:
-            # Include any output along with the error
-            return CLIResult(output=output, error=error) if output else ToolFailure(error=error)
-        else:
-            return CLIResult(output=output)
-
+class BashTool20241022(BashTool20250124):
+    api_type: Literal["bash_20241022"] = "bash_20241022"  # pyright: ignore[reportIncompatibleVariableOverride]

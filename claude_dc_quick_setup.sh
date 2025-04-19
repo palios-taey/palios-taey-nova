@@ -7,8 +7,20 @@ echo "Running main setup script..."
 
 # Run the Claude DC implementation setup
 echo "Running Claude DC implementation setup..."
-cd claude-dc-implementation
-./setup.sh
+mkdir -p /home/computeruse/cache
+mkdir -p /home/computeruse/secrets
+mkdir -p /home/computeruse/utils/config 
+mkdir -p /home/computeruse/references
+
+# Copy /home/computeruse/ directories
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/secrets/* /home/computeruse/secrets/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/utils/* /home/computeruse/utils/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/* /home/computeruse/references/
+
+# Setup git config
+git config --global user.email "jesselarose@gmail.com"
+git config --global user.name "palios-taey"
 
 # Remove 'testkey-' from all files in secrets directory
 echo "Removing 'testkey-' prefixes from secret files..."
@@ -54,7 +66,7 @@ git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
 
 # Set up computer_use_demo directory
 echo "Setting up computer_use_demo environment..."
-rsync -av --delete --exclude=".*" --exclude="__pycache__" /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/ /home/computeruse/computer_use_demo/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
 
 # Set Claude options
 echo "Please set the following Claude options manually:"
