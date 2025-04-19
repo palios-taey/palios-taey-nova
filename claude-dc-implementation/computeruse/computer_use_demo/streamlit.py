@@ -8,6 +8,7 @@ import base64
 import os
 import subprocess
 import traceback
+import logging
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -26,7 +27,22 @@ from anthropic.types.beta import (
 )
 from streamlit.delta_generator import DeltaGenerator
 from computer_use_demo.tools import ToolResult, ToolVersion
-from computer_use_demo.loop import APIProvider, sampling_loop
+from computer_use_demo.loop import (
+    APIProvider, 
+    sampling_loop,
+    PROMPT_CACHING_BETA_FLAG,
+    OUTPUT_128K_BETA_FLAG,
+    TOKEN_EFFICIENT_TOOLS_BETA_FLAG,
+    DEFAULT_MAX_TOKENS,
+    DEFAULT_THINKING_BUDGET
+)
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger('claude_dc.streamlit')
 
 PROVIDER_TO_DEFAULT_MODEL_NAME: dict[APIProvider, str] = {
     APIProvider.ANTHROPIC: "claude-3-7-sonnet-20250219",
@@ -114,6 +130,8 @@ def setup_state():
         st.session_state.responses = {}
     if "tools" not in st.session_state:
         st.session_state.tools = {}
+    if "tool_placeholders" not in st.session_state:
+        st.session_state.tool_placeholders = {}
     if "only_n_most_recent_images" not in st.session_state:
         st.session_state.only_n_most_recent_images = 3
     if "custom_system_prompt" not in st.session_state:
@@ -179,7 +197,17 @@ async def main():
         st.warning(WARNING_TEXT)
 
     with st.sidebar:
-
+        st.markdown("### Claude DC - Tier 4 Features")
+        
+        # Show status of Phase 2 enhancements
+        st.info("📡 Streaming Responses: **Enabled**")
+        st.info("🔄 Tool Integration in Stream: **Enabled**")
+        st.info("💾 Prompt Caching: **Enabled**")
+        st.info("📊 128K Extended Output: **Enabled**")
+        st.info("🛠️ Real-Time Tool Output: **Enabled**")
+        
+        st.markdown("---")
+        
         def _reset_api_provider():
             if st.session_state.provider_radio != st.session_state.provider:
                 _reset_model()
@@ -445,12 +473,57 @@ def maybe_add_interruption_blocks():
 
 
 def _tool_output_callback(tool_output: ToolResult, tool_id: str, tool_state: dict):
-    """Handle tool execution results."""
-    # Store tool result for future reference
-    tool_state[tool_id] = tool_output
+    """Handle tool execution results including streaming chunks."""
+    # Check if this is a streaming chunk or final result
+    is_streaming = (
+        hasattr(tool_output, 'output') and 
+        tool_output.output and 
+        not hasattr(tool_output, 'base64_image') and
+        not hasattr(tool_output, 'error')
+    )
     
-    # Render the tool result in the UI
-    _render_message(Sender.TOOL, tool_output)
+    # For streaming output, update existing tool output if possible
+    if is_streaming:
+        # Get or create placeholder for streaming content
+        if tool_id not in st.session_state.tools:
+            # First chunk for this tool - create placeholder
+            with st.chat_message(Sender.TOOL.value):
+                placeholder = st.empty()
+                st.session_state.tools[tool_id] = tool_output
+                # Also store the placeholder in a separate dict
+                if 'tool_placeholders' not in st.session_state:
+                    st.session_state.tool_placeholders = {}
+                st.session_state.tool_placeholders[tool_id] = placeholder
+                placeholder.code(tool_output.output, language="bash")
+        else:
+            # Append to existing tool output
+            existing = st.session_state.tools[tool_id]
+            if hasattr(existing, 'output'):
+                existing.output += tool_output.output
+                # Update placeholder with latest content
+                if 'tool_placeholders' in st.session_state and tool_id in st.session_state.tool_placeholders:
+                    st.session_state.tool_placeholders[tool_id].code(existing.output, language="bash")
+    else:
+        # This is a final result or non-streaming tool output
+        # Store tool result for future reference
+        tool_state[tool_id] = tool_output
+        
+        # Update existing placeholder if there is one, otherwise render new message
+        if 'tool_placeholders' in st.session_state and tool_id in st.session_state.tool_placeholders:
+            # We already have a placeholder - update it
+            if hasattr(tool_output, 'error') and tool_output.error:
+                # Display error
+                st.error(tool_output.error)
+            elif hasattr(tool_output, 'base64_image') and tool_output.base64_image:
+                # Handle image result
+                _render_message(Sender.TOOL, tool_output)
+            else:
+                # Just update placeholder if this is just text output
+                placeholder = st.session_state.tool_placeholders[tool_id]
+                placeholder.code(tool_output.output, language="bash")
+        else:
+            # No placeholder exists yet - render as new message
+            _render_message(Sender.TOOL, tool_output)
 
 
 def _api_response_callback(

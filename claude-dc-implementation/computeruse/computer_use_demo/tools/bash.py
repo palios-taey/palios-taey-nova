@@ -1,8 +1,12 @@
 import asyncio
 import os
-from typing import Any, Literal
+import logging
+from typing import Any, Callable, Literal, Optional
 
 from .base import BaseAnthropicTool, CLIResult, ToolError, ToolResult
+from .streaming_tool import StreamingToolMixin, stream_command_output
+
+logger = logging.getLogger('claude_dc.bash')
 
 
 class _BashSession:
@@ -101,13 +105,16 @@ class _BashSession:
         return CLIResult(output=output, error=error)
 
 
-class BashTool20250124(BaseAnthropicTool):
+class BashTool20250124(BaseAnthropicTool, StreamingToolMixin):
     """
     A tool that allows the agent to run bash commands.
     The tool parameters are defined by Anthropic and are not editable.
+    Enhanced with real-time streaming of command output.
     """
 
     _session: _BashSession | None
+    _tool_id: str = ""  # Current tool_id for streaming
+    _stream_callback: Optional[Callable[[str, str], None]] = None
 
     api_type: Literal["bash_20250124"] = "bash_20250124"
     name: Literal["bash"] = "bash"
@@ -131,6 +138,10 @@ class BashTool20250124(BaseAnthropicTool):
                     "restart": {
                         "type": "boolean",
                         "description": "Whether to restart the bash session"
+                    },
+                    "stream": {
+                        "type": "boolean",
+                        "description": "Whether to stream output in real-time (default: true)"
                     }
                 },
                 "required": ["command"]
@@ -139,22 +150,38 @@ class BashTool20250124(BaseAnthropicTool):
         }
 
     async def __call__(
-        self, command: str | None = None, restart: bool = False, **kwargs
+        self, command: str | None = None, restart: bool = False, stream: bool = True, tool_id: str = "", **kwargs
     ):
+        # Store tool_id for streaming
+        self._tool_id = tool_id
+        
         if restart:
             if self._session:
                 self._session.stop()
             self._session = _BashSession()
             await self._session.start()
-
+            logger.info("Bash session restarted")
             return ToolResult(system="tool has been restarted.")
 
         if self._session is None:
             self._session = _BashSession()
             await self._session.start()
+            logger.info("New bash session started")
 
         if command is not None:
-            return await self._session.run(command)
+            logger.info(f"Running bash command: {command}")
+            
+            # Use streaming if enabled and callback is set
+            if stream and hasattr(self, '_stream_callback') and self._stream_callback:
+                logger.info("Using streaming mode for bash command")
+                return await stream_command_output(
+                    command=command, 
+                    callback=self._stream_output,
+                    tool_id=self._tool_id
+                )
+            else:
+                # Use traditional approach
+                return await self._session.run(command)
 
         raise ToolError("no command provided.")
 

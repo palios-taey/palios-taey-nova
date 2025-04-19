@@ -2,6 +2,9 @@
 Agentic sampling loop that calls the Anthropic API and local implementation of anthropic-defined computer use tools.
 """
 
+import argparse
+import logging
+import os
 import platform
 from collections.abc import Callable
 from datetime import datetime
@@ -36,7 +39,44 @@ from .tools import (
     ToolVersion,
 )
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger('claude_dc')
+
+# Environment configuration
+parser = argparse.ArgumentParser()
+parser.add_argument('--mode', choices=['dev', 'live'], default=os.getenv('CLAUDE_ENV', 'live'))
+args, unknown = parser.parse_known_args()
+MODE = args.mode
+
+# Beta feature flags
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
+OUTPUT_128K_BETA_FLAG = "output-128k-2025-02-19"
+TOKEN_EFFICIENT_TOOLS_BETA_FLAG = "token-efficient-tools-2025-02-19"
+
+# Default token settings for output
+DEFAULT_MAX_TOKENS = 65536  # ~64k max output
+DEFAULT_THINKING_BUDGET = 32768  # ~32k thinking budget
+
+# Environment-specific paths
+if MODE == "dev":
+    BACKUP_DIR = "/home/computeruse/dev_backups/"
+    LOG_DIR = "/home/computeruse/dev_logs/"
+else:
+    BACKUP_DIR = "/home/computeruse/my_stable_backup_complete/"
+    LOG_DIR = "/home/computeruse/logs/"
+
+# Create directories if they don't exist
+for directory in [BACKUP_DIR, LOG_DIR]:
+    try:
+        os.makedirs(directory, exist_ok=True)
+    except Exception as e:
+        logger.warning(f"Failed to create directory {directory}: {e}")
+
+logger.info(f"Claude DC initialized in {MODE} mode")
 
 
 class APIProvider(StrEnum):
@@ -87,9 +127,9 @@ async def sampling_loop(
     ],
     api_key: str,
     only_n_most_recent_images: int | None = None,
-    max_tokens: int = 4096,
+    max_tokens: int = DEFAULT_MAX_TOKENS,  # Default to 64k tokens for output
     tool_version: ToolVersion,
-    thinking_budget: int | None = None,
+    thinking_budget: int | None = DEFAULT_THINKING_BUDGET,  # Default to 32k tokens for thinking
     token_efficient_tools_beta: bool = False,
 ):
     """
@@ -104,15 +144,27 @@ async def sampling_loop(
 
     while True:
         enable_prompt_caching = False
-        # Update this section
+        # Setup beta flags for enhanced capabilities
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
+        
         # Add required beta flag for computer use if not already included
         if tool_version == "computer_use_20250124" and "computer-use-2025-01-24" not in betas:
             betas.append("computer-use-2025-01-24")
-        # Keep the existing token efficient tools beta option
+            
+        # Always enable 128K extended output for Claude 3.7 Sonnet
+        if "claude-3-7" in model:
+            logger.info("Enabling 128K extended output capability")
+            betas.append(OUTPUT_128K_BETA_FLAG)
+            
+        # Only enable token-efficient tools beta if explicitly requested (default: off for stability)
         if token_efficient_tools_beta:
-            betas.append("token-efficient-tools-2025-02-19")
+            logger.info("Enabling token-efficient tools beta")
+            betas.append(TOKEN_EFFICIENT_TOOLS_BETA_FLAG)
+            
+        # Set image truncation threshold
         image_truncation_threshold = only_n_most_recent_images or 0
+        
+        # Initialize appropriate client based on provider
         if provider == APIProvider.ANTHROPIC:
             client = Anthropic(api_key=api_key, max_retries=4)
             enable_prompt_caching = True
@@ -120,6 +172,10 @@ async def sampling_loop(
             client = AnthropicVertex()
         elif provider == APIProvider.BEDROCK:
             client = AnthropicBedrock()
+            
+        # Log all enabled beta features
+        if betas:
+            logger.info(f"Enabled beta features: {', '.join(betas)}")
 
         if enable_prompt_caching:
             betas.append(PROMPT_CACHING_BETA_FLAG)
@@ -144,9 +200,10 @@ async def sampling_loop(
             extra_params["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
         
         # Add beta flags if needed
-        if betas and enable_prompt_caching:
+        if betas:
             # For Anthropic client, we need to include beta in the headers
             extra_params["beta"] = betas
+            logger.info(f"Using beta flags: {betas}")
         
         # Call the API with streaming enabled
         try:
@@ -267,18 +324,39 @@ async def sampling_loop(
             }
         )
 
+        # Configure tool collection to stream outputs
+        tool_collection.set_stream_callback(
+            lambda chunk, tool_id: tool_output_callback(
+                ToolResult(output=chunk, error=None), 
+                tool_id
+            )
+        )
+        
         tool_result_content: list[BetaToolResultBlockParam] = []
         for content_block in response_params:
             # Skip sending to output callback again since we already did it during streaming
             if content_block["type"] == "tool_use":
+                # Log the tool use
+                tool_name = content_block["name"]
+                tool_id = content_block["id"]
+                tool_input = cast(dict[str, Any], content_block["input"])
+                
+                logger.info(f"Running tool: {tool_name} with ID: {tool_id}")
+                
+                # Run the tool with streaming enabled
                 result = await tool_collection.run(
-                    name=content_block["name"],
-                    tool_input=cast(dict[str, Any], content_block["input"]),
+                    name=tool_name,
+                    tool_input=tool_input,
+                    streaming=True,  # Enable streaming
                 )
-                tool_result_content.append(
-                    _make_api_tool_result(result, content_block["id"])
-                )
-                tool_output_callback(result, content_block["id"])
+                
+                # Create tool result and notify callback
+                tool_result = _make_api_tool_result(result, tool_id)
+                tool_result_content.append(tool_result)
+                
+                # Only send final result if not already streaming
+                if not any(hasattr(t, 'set_stream_callback') for t in tool_collection.tools):
+                    tool_output_callback(result, tool_id)
 
         if not tool_result_content:
             return messages
