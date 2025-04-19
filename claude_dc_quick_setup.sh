@@ -67,6 +67,11 @@ git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
 # Set up computer_use_demo directory
 echo "Setting up computer_use_demo environment..."
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
+# Make sure the launcher script is executable
+chmod +x /home/computeruse/run_claude_dc.py
+
+# Run the launcher script as the final step
+/home/computeruse/run_claude_dc.py
 
 # Set Claude options
 echo "Please set the following Claude options manually:"
@@ -80,3 +85,5 @@ echo "   - Click Reset button"
 echo ""
 echo "Setup complete!"
 echo "You may need to refresh the browser to see the changes."
+# Run the launcher script as the final step
+/home/computeruse/run_claude_dc.py

@@ -25,8 +25,8 @@ from anthropic.types.beta import (
     BetaToolResultBlockParam,
 )
 from streamlit.delta_generator import DeltaGenerator
-from tools import ToolResult, ToolVersion
-from loop import APIProvider, sampling_loop
+from computer_use_demo.tools import ToolResult, ToolVersion
+from computer_use_demo.loop import APIProvider, sampling_loop
 
 PROVIDER_TO_DEFAULT_MODEL_NAME: dict[APIProvider, str] = {
     APIProvider.ANTHROPIC: "claude-3-7-sonnet-20250219",
