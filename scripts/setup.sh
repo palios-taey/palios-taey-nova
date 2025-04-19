@@ -22,10 +22,39 @@ sudo apt install -y \
     ufw \
     xkit
 
-# Verify Docker installation (if Docker is needed)
+# Install and setup Docker properly
+echo "Setting up Docker..."
+if ! command -v docker &> /dev/null; then
+    echo "Docker not found. Installing Docker..."
+    # Add Docker's official GPG key
+    sudo apt-get update
+    sudo apt-get install -y ca-certificates curl gnupg
+    sudo install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    sudo chmod a+r /etc/apt/keyrings/docker.gpg
+    
+    # Add the repository to Apt sources
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      
+    # Install Docker packages
+    sudo apt-get update
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+fi
+
+# Start and enable Docker service
 sudo systemctl start docker
 sudo systemctl enable docker
+
+# Add current user to docker group to run without sudo
 sudo usermod -aG docker $USER
+echo "Docker setup complete. You may need to log out and back in for group changes to take effect."
+
+# Test Docker installation
+echo "Testing Docker installation..."
+sudo docker run --rm hello-world || echo "Docker test failed. Please check Docker installation manually."
 
 sudo apt-get install -y rsync
 
