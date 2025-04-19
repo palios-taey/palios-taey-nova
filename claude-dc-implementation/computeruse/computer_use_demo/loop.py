@@ -104,7 +104,12 @@ async def sampling_loop(
 
     while True:
         enable_prompt_caching = False
+        # Update this section
         betas = [tool_group.beta_flag] if tool_group.beta_flag else []
+        # Add required beta flag for computer use if not already included
+        if tool_version == "computer_use_20250124" and "computer-use-2025-01-24" not in betas:
+            betas.append("computer-use-2025-01-24")
+        # Keep the existing token efficient tools beta option
         if token_efficient_tools_beta:
             betas.append("token-efficient-tools-2025-02-19")
         image_truncation_threshold = only_n_most_recent_images or 0

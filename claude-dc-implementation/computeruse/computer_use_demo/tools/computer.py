@@ -293,110 +293,58 @@ class ComputerTool20241022(BaseComputerTool, BaseAnthropicTool):
 
 
 class ComputerTool20250124(BaseComputerTool, BaseAnthropicTool):
+    """
+    Updated computer tool implementation based on latest Anthropic API.
+    """
+    # Change this line
     api_type: Literal["computer_20250124"] = "computer_20250124"
-
+    
+    # To this
+    api_type: Literal["custom"] = "custom"
+    
     def to_params(self):
-        return cast(
-            BetaToolUnionParam,
-            {"name": self.name, "type": self.api_type, **self.options},
-        )
-
-    async def __call__(
-        self,
-        *,
-        action: Action_20250124,
-        text: str | None = None,
-        coordinate: tuple[int, int] | None = None,
-        scroll_direction: ScrollDirection | None = None,
-        scroll_amount: int | None = None,
-        duration: int | float | None = None,
-        key: str | None = None,
-        **kwargs,
-    ):
-        if action in ("left_mouse_down", "left_mouse_up"):
-            if coordinate is not None:
-                raise ToolError(f"coordinate is not accepted for {action=}.")
-            command_parts = [
-                self.xdotool,
-                f"{'mousedown' if action == 'left_mouse_down' else 'mouseup'} 1",
-            ]
-            return await self.shell(" ".join(command_parts))
-        if action == "scroll":
-            if scroll_direction is None or scroll_direction not in get_args(
-                ScrollDirection
-            ):
-                raise ToolError(
-                    f"{scroll_direction=} must be 'up', 'down', 'left', or 'right'"
-                )
-            if not isinstance(scroll_amount, int) or scroll_amount < 0:
-                raise ToolError(f"{scroll_amount=} must be a non-negative int")
-            mouse_move_part = ""
-            if coordinate is not None:
-                x, y = self.validate_and_get_coordinates(coordinate)
-                mouse_move_part = f"mousemove --sync {x} {y}"
-            scroll_button = {
-                "up": 4,
-                "down": 5,
-                "left": 6,
-                "right": 7,
-            }[scroll_direction]
-
-            command_parts = [self.xdotool, mouse_move_part]
-            if text:
-                command_parts.append(f"keydown {text}")
-            command_parts.append(f"click --repeat {scroll_amount} {scroll_button}")
-            if text:
-                command_parts.append(f"keyup {text}")
-
-            return await self.shell(" ".join(command_parts))
-
-        if action in ("hold_key", "wait"):
-            if duration is None or not isinstance(duration, (int, float)):
-                raise ToolError(f"{duration=} must be a number")
-            if duration < 0:
-                raise ToolError(f"{duration=} must be non-negative")
-            if duration > 100:
-                raise ToolError(f"{duration=} is too long.")
-
-            if action == "hold_key":
-                if text is None:
-                    raise ToolError(f"text is required for {action}")
-                escaped_keys = shlex.quote(text)
-                command_parts = [
-                    self.xdotool,
-                    f"keydown {escaped_keys}",
-                    f"sleep {duration}",
-                    f"keyup {escaped_keys}",
-                ]
-                return await self.shell(" ".join(command_parts))
-
-            if action == "wait":
-                await asyncio.sleep(duration)
-                return await self.screenshot()
-
-        if action in (
-            "left_click",
-            "right_click",
-            "double_click",
-            "triple_click",
-            "middle_click",
-        ):
-            if text is not None:
-                raise ToolError(f"text is not accepted for {action}")
-            mouse_move_part = ""
-            if coordinate is not None:
-                x, y = self.validate_and_get_coordinates(coordinate)
-                mouse_move_part = f"mousemove --sync {x} {y}"
-
-            command_parts = [self.xdotool, mouse_move_part]
-            if key:
-                command_parts.append(f"keydown {key}")
-            command_parts.append(f"click {CLICK_BUTTONS[action]}")
-            if key:
-                command_parts.append(f"keyup {key}")
-
-            return await self.shell(" ".join(command_parts))
-
-        return await super().__call__(
-            action=action, text=text, coordinate=coordinate, key=key, **kwargs
-        )
+        """Return parameters for the tool in the format expected by the API."""
+        # Create a custom tool definition that matches the API expectations
+        return {
+            "name": self.name,
+            "type": "custom",  # Use "custom" for tool type
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "action": {
+                        "type": "string",
+                        "enum": list(get_args(Action_20250124)),
+                        "description": "The action to perform on the computer"
+                    },
+                    "text": {
+                        "type": "string", 
+                        "description": "Text to input via keyboard (for key and type actions)"
+                    },
+                    "coordinate": {
+                        "type": "array",
+                        "items": {"type": "integer"},
+                        "description": "X,Y coordinates for mouse actions"
+                    },
+                    "scroll_direction": {
+                        "type": "string",
+                        "enum": list(get_args(ScrollDirection)),
+                        "description": "Direction to scroll (for scroll action)"
+                    },
+                    "scroll_amount": {
+                        "type": "integer",
+                        "description": "Amount to scroll (for scroll action)"
+                    },
+                    "duration": {
+                        "type": "number",
+                        "description": "Duration for hold_key and wait actions"
+                    },
+                    "key": {
+                        "type": "string",
+                        "description": "Specific key to use with actions like hold_key"
+                    }
+                },
+                "required": ["action"]
+            },
+            "description": "Interact with the computer using mouse and keyboard actions",
+            **self.options
+        }

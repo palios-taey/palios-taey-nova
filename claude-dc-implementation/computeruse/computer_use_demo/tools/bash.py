@@ -118,7 +118,7 @@ class BashTool20250124(BaseAnthropicTool):
 
     def to_params(self) -> Any:
         return {
-            "type": self.api_type,
+            "type": "custom",
             "name": self.name,
         }
 

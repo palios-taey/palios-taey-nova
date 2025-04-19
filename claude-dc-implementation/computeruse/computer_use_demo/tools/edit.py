@@ -33,7 +33,7 @@ class EditTool20250124(BaseAnthropicTool):
     def to_params(self) -> Any:
         return {
             "name": self.name,
-            "type": self.api_type,
+            "type": "custom",
         }
 
     async def __call__(
