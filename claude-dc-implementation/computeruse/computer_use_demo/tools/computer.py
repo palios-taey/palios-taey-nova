@@ -297,7 +297,7 @@ class ComputerTool20250124(BaseComputerTool, BaseAnthropicTool):
     Updated computer tool implementation based on latest Anthropic API.
     """
     # Change this line
-    api_type: Literal["computer_20250124"] = "computer_20250124"
+    api_type: Literal["custom"] = "custom"
     
     # To this
     api_type: Literal["custom"] = "custom"
