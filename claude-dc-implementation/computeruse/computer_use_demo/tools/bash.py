@@ -117,9 +117,25 @@ class BashTool20250124(BaseAnthropicTool):
         super().__init__()
 
     def to_params(self) -> Any:
+        """Return parameters for the bash tool in the format expected by the API."""
         return {
-            "type": "custom",
             "name": self.name,
+            "type": "custom",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "command": {
+                        "type": "string",
+                        "description": "Bash command to execute"
+                    },
+                    "restart": {
+                        "type": "boolean",
+                        "description": "Whether to restart the bash session"
+                    }
+                },
+                "required": ["command"]
+            },
+            "description": "Execute bash commands in the system shell"
         }
 
     async def __call__(
