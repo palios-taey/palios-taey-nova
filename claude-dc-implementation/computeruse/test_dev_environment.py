@@ -29,12 +29,29 @@ def check_environment_variables():
 def check_container_status():
     """Check if the dev container is running."""
     try:
+        # First try without sudo
+        cmd = ["docker", "ps", "--filter", "name=claude_dc_dev", "--format", "{{.Status}}"]
         result = subprocess.run(
-            ["docker", "ps", "--filter", "name=claude_dc_dev", "--format", "{{.Status}}"],
+            cmd,
             capture_output=True,
-            text=True,
-            check=True
+            text=True
         )
+        
+        # If that fails with permission error, try with sudo
+        if result.returncode != 0 and "permission denied" in result.stderr:
+            logger.warning("Permission denied, trying with sudo...")
+            cmd = ["sudo", "docker", "ps", "--filter", "name=claude_dc_dev", "--format", "{{.Status}}"]
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True
+            )
+        elif result.returncode != 0:
+            # Some other error occurred
+            logger.error(f"Error checking container status: {result.stderr}")
+            return False
+            
         if "Up " in result.stdout:
             logger.info("Claude DC dev container is running")
             return True
