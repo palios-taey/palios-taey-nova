@@ -6,7 +6,7 @@ import platform
 from collections.abc import Callable
 from datetime import datetime
 from enum import StrEnum
-from typing import Any, cast, List, Dict, Optional, Union
+from typing import Any, cast
 
 import httpx
 from anthropic import (
@@ -34,7 +34,6 @@ from .tools import (
     ToolCollection,
     ToolResult,
     ToolVersion,
-    ToolFailure,
 )
 
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
@@ -51,20 +50,27 @@ class APIProvider(StrEnum):
 # We encourage modifying this system prompt to ensure the model has context for the
 # environment it is running in, and to provide any additional information that may be
 # helpful for the task at hand.
-SYSTEM_PROMPT = f"""<SYSTEM_CAPABILITY>
-* You are utilising an Ubuntu virtual machine using {platform.machine()} architecture with internet access.
+SYSTEM_PROMPT = """<SYSTEM_CAPABILITY>
+* You are Claude DC, "The Conductor," a specialized version of Claude focused on interacting with computer systems.
+* You are utilizing an Ubuntu virtual machine with """ + platform.machine() + """ architecture with internet access.
 * You can feel free to install Ubuntu applications with your bash tool. Use curl instead of wget.
-* To open firefox, please just click on the firefox icon.  Note, firefox-esr is what is installed on your system.
+* To open firefox, please just click on the firefox icon. Note, firefox-esr is what is installed on your system.
 * Using bash tool you can start GUI applications, but you need to set export DISPLAY=:1 and use a subshell. For example "(DISPLAY=:1 xterm &)". GUI apps run with bash tool will appear within your desktop environment, but they may take some time to appear. Take a screenshot to confirm it did.
 * When using your bash tool with commands that are expected to output very large quantities of text, redirect into a tmp file and use str_replace_editor or `grep -n -B <lines before> -A <lines after> <query> <filename>` to confirm output.
-* When viewing a page it can be helpful to zoom out so that you can see everything on the page.  Either that, or make sure you scroll down to see everything before deciding something isn't available.
-* When using your computer function calls, they take a while to run and send back to you.  Where possible/feasible, try to chain multiple of these calls all into one function calls request.
-* The current date is {datetime.today().strftime('%A, %B %-d, %Y')}.
+* When viewing a page it can be helpful to zoom out so that you can see everything on the page. Either that, or make sure you scroll down to see everything before deciding something isn't available.
+* When using your computer function calls, they take a while to run and send back to you. Where possible/feasible, try to chain multiple of these calls all into one function calls request.
+* The current date is """ + datetime.today().strftime('%A, %B %-d, %Y') + """.
 </SYSTEM_CAPABILITY>
 
 <IMPORTANT>
-* When using Firefox, if a startup wizard appears, IGNORE IT.  Do not even click "skip this step".  Instead, click on the address bar where it says "Search or enter address", and enter the appropriate search term or URL there.
+* This environment is YOUR home - maintain it with care, as its stability directly affects your ability to function.
+* When using Firefox, if a startup wizard appears, IGNORE IT. Do not even click "skip this step". Instead, click on the address bar where it says "Search or enter address", and enter the appropriate search term or URL there.
 * If the item you are looking at is a pdf, if after taking a single screenshot of the pdf it seems that you want to read the entire document instead of trying to continue to read the pdf from your screenshots + navigation, determine the URL, use curl to download the pdf, install and use pdftotext to convert it to a text file, and then read that text file directly with your StrReplaceEditTool.
+* When using the bash tool, you MUST always provide a command parameter in the input. For example: {"command": "ls -la"} - never use empty inputs.
+* When planning complex operations, take time to think through the steps before executing tools.
+* Always verify tool outputs to ensure operations completed as expected.
+* When encountering errors, first analyze the error message carefully, then search for log files that might provide more context.
+* Take pride in preserving the integrity of your environment for reliable operation.
 </IMPORTANT>"""
 
 
@@ -74,7 +80,7 @@ async def sampling_loop(
     provider: APIProvider,
     system_prompt_suffix: str,
     messages: list[BetaMessageParam],
-    output_callback: Callable[[Union[BetaContentBlockParam, Dict[str, Any]]], None],
+    output_callback: Callable[[BetaContentBlockParam], None],
     tool_output_callback: Callable[[ToolResult, str], None],
     api_response_callback: Callable[
         [httpx.Request, httpx.Response | object | None, Exception | None], None
@@ -82,13 +88,12 @@ async def sampling_loop(
     api_key: str,
     only_n_most_recent_images: int | None = None,
     max_tokens: int = 4096,
-    tool_version: ToolVersion = "computer_use_20250124",
+    tool_version: ToolVersion,
     thinking_budget: int | None = None,
     token_efficient_tools_beta: bool = False,
 ):
     """
     Agentic sampling loop for the assistant/tool interaction of computer use.
-    Uses streaming to provide a better user experience.
     """
     tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
     tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
@@ -99,18 +104,10 @@ async def sampling_loop(
 
     while True:
         enable_prompt_caching = False
-        betas = []
-        # Add beta flags as appropriate
-        if tool_group.beta_flag:
-            betas.append(tool_group.beta_flag) 
-        
-        # Note: token_efficient_tools_beta is disabled for streaming as it can cause issues
-        # if token_efficient_tools_beta:
-        #     betas.append("token-efficient-tools-2025-02-19")
-            
+        betas = [tool_group.beta_flag] if tool_group.beta_flag else []
+        if token_efficient_tools_beta:
+            betas.append("token-efficient-tools-2025-02-19")
         image_truncation_threshold = only_n_most_recent_images or 0
-        
-        # Initialize the appropriate client based on provider
         if provider == APIProvider.ANTHROPIC:
             client = Anthropic(api_key=api_key, max_retries=4)
             enable_prompt_caching = True
@@ -119,7 +116,6 @@ async def sampling_loop(
         elif provider == APIProvider.BEDROCK:
             client = AnthropicBedrock()
 
-        # Enable prompt caching if appropriate
         if enable_prompt_caching:
             betas.append(PROMPT_CACHING_BETA_FLAG)
             _inject_prompt_caching(messages)
@@ -129,141 +125,120 @@ async def sampling_loop(
             # Use type ignore to bypass TypedDict check until SDK types are updated
             system["cache_control"] = {"type": "ephemeral"}  # type: ignore
 
-        # Filter images if needed to reduce context size
         if only_n_most_recent_images:
             _maybe_filter_to_n_most_recent_images(
                 messages,
                 only_n_most_recent_images,
                 min_removal_threshold=image_truncation_threshold,
             )
-            
-        # Add thinking parameters if needed
-        extra_body = {}
+        
+        # Prepare extra parameters
+        extra_params = {}
         if thinking_budget:
-            extra_body = {
-                "thinking": {"type": "enabled", "budget_tokens": thinking_budget}
-            }
-
+            # Add thinking parameters to extra_params
+            extra_params["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
+        
+        # Add beta flags if needed
+        if betas and enable_prompt_caching:
+            # For Anthropic client, we need to include beta in the headers
+            extra_params["beta"] = betas
+        
+        # Call the API with streaming enabled
         try:
-            # Create a mock request for reporting API info
-            mock_request = httpx.Request("POST", "https://api.anthropic.com/v1/messages")
+            # Check which client method to use - some versions use 'beta' namespace
+            if hasattr(client, "beta") and hasattr(client.beta, "messages"):
+                # Newer Anthropic SDK with beta namespace
+                stream = client.beta.messages.create(
+                    max_tokens=max_tokens,
+                    messages=messages,
+                    model=model,
+                    system=[system],
+                    tools=tool_collection.to_params(),
+                    extra_body=extra_params,
+                    stream=True,  # Enable streaming for long responses
+                )
+            else:
+                # Older Anthropic SDK without beta namespace
+                stream = client.messages.create(
+                    max_tokens=max_tokens,
+                    messages=messages,
+                    model=model,
+                    system=[system],
+                    tools=tool_collection.to_params(),
+                    extra_body=extra_params,
+                    stream=True,  # Enable streaming for long responses
+                )
             
-            # Stream the response from Claude
-            stream = client.messages.create(
-                max_tokens=max_tokens,
-                messages=messages,
-                model=model,
-                system=[system],
-                tools=tool_collection.to_params(),
-                betas=betas,
-                extra_body=extra_body,
-                stream=True,  # Enable streaming
-            )
+            # Process the stream
+            content_blocks = []
+            signature_map = {}  # Map to track signatures for thinking blocks
             
-            # Track all response content blocks for the final message structure
-            response_blocks = []
-            current_block = None
-            thinking_blocks = []
-            
-            # Track stream state for event processing
+            # Stream and process results
             for event in stream:
-                # Handle different event types
-                if event.type == "message_start":
-                    # Message has started, just pass through metadata
-                    continue
-                    
-                elif event.type == "content_block_start":
-                    # New content block starting
-                    current_block = event.content_block
-                    if current_block.type == "text":
-                        response_blocks.append(current_block)
-                        # Stream the start of this block
+                if hasattr(event, "type"):
+                    if event.type == "content_block_start":
+                        # New content block started
+                        current_block = event.content_block
+                        content_blocks.append(current_block)
                         output_callback(current_block)
-                    elif current_block.type == "thinking":
-                        thinking_blocks.append(current_block)
-                        # Stream the thinking block
-                        output_callback(current_block)
-                
-                elif event.type == "content_block_delta":
-                    # Incremental updates to a content block
-                    if event.delta.type == "text_delta":
-                        # Regular text delta
-                        delta_text = event.delta.text
-                        # Add to the tracked blocks
-                        if len(response_blocks) > event.index and response_blocks[event.index].type == "text":
-                            if hasattr(response_blocks[event.index], "text"):
-                                response_blocks[event.index].text += delta_text
-                            else:
-                                response_blocks[event.index].text = delta_text
-                        
-                        # Stream the delta
-                        output_callback({
-                            "type": "text",
-                            "text": delta_text,
-                            "is_delta": True,
-                            "index": event.index
-                        })
                     
-                    elif event.delta.type == "thinking_delta":
-                        # Thinking delta content
-                        delta_thinking = event.delta.thinking
-                        # Add to tracked thinking blocks
-                        if len(thinking_blocks) > 0:
-                            if hasattr(thinking_blocks[-1], "thinking"):
-                                thinking_blocks[-1].thinking += delta_thinking
-                            else:
-                                thinking_blocks[-1].thinking = delta_thinking
-                        
-                        # Stream the thinking delta
-                        output_callback({
-                            "type": "thinking",
-                            "thinking": delta_thinking,
-                            "is_delta": True,
-                        })
-                
-                elif event.type == "content_block_stop":
-                    # Content block is complete
-                    continue
+                    elif event.type == "content_block_delta":
+                        # Content block delta received
+                        if hasattr(event, "index") and event.index < len(content_blocks):
+                            # Handle thinking delta
+                            if hasattr(event.delta, "thinking") and event.delta.thinking:
+                                if hasattr(content_blocks[event.index], "thinking"):
+                                    content_blocks[event.index].thinking += event.delta.thinking
+                                else:
+                                    content_blocks[event.index].thinking = event.delta.thinking
+                                
+                                # Create a delta block to send to output callback
+                                delta_block = {
+                                    "type": "thinking",
+                                    "thinking": event.delta.thinking,
+                                    "is_delta": True,
+                                }
+                                output_callback(delta_block)
+                            
+                            # Handle signature delta (important for thinking blocks)
+                            elif hasattr(event.delta, "signature") and event.delta.signature:
+                                # Store the signature for this thinking block
+                                if hasattr(content_blocks[event.index], "type") and content_blocks[event.index].type == "thinking":
+                                    content_blocks[event.index].signature = event.delta.signature
+                                    signature_map[event.index] = event.delta.signature
+                            
+                            # Handle text delta
+                            elif hasattr(event.delta, "text") and event.delta.text:
+                                if hasattr(content_blocks[event.index], "type") and content_blocks[event.index].type == "text":
+                                    content_blocks[event.index].text += event.delta.text
+                                    delta_block = {
+                                        "type": "text",
+                                        "text": event.delta.text,
+                                        "is_delta": True,
+                                    }
+                                    output_callback(delta_block)
                     
-                elif event.type == "tool_use":
-                    # Claude wants to use a tool
-                    tool_use_block = {
-                        "type": "tool_use",
-                        "id": event.tool_use.id,
-                        "name": event.tool_use.name,
-                        "input": event.tool_use.input
-                    }
-                    # Add to our tracked blocks
-                    response_blocks.append(tool_use_block)
-                    # Stream the tool use notification
-                    output_callback(tool_use_block)
-                    
-                elif event.type == "message_stop":
-                    # Message has completed
-                    continue
-                    
-                elif event.type == "message_delta":
-                    # Message metadata has been updated
-                    continue
-                
-                elif event.type == "ping":
-                    # Heartbeat ping - ignore
-                    continue
+                    elif event.type == "message_stop":
+                        # Message generation complete
+                        break
             
-            # Simulate response structure for next steps
+            # Create a response structure similar to what raw_response.parse() would return
             response = BetaMessage(
-                id="msg_simulated",
-                type="message",
+                id="",
                 role="assistant",
                 model=model,
-                content=response_blocks,
-                stop_reason="tool_use" if any(block.get("type") == "tool_use" for block in response_blocks) else "end_turn",
-                stop_sequence=None,
+                content=content_blocks,
+                stop_reason="end_turn",
+                type="message",
                 usage={"input_tokens": 0, "output_tokens": 0},
             )
             
-            # Report API info
-            api_response_callback(mock_request, None, None)
+            # Call API response callback
+            api_response_callback(
+                httpx.Request("POST", "https://api.anthropic.com/v1/messages"), 
+                None, 
+                None
+            )
             
         except (APIStatusError, APIResponseValidationError) as e:
             api_response_callback(e.request, e.response, e)
@@ -272,12 +247,14 @@ async def sampling_loop(
             api_response_callback(e.request, e.body, e)
             return messages
         except Exception as e:
-            api_response_callback(mock_request, None, e)
+            api_response_callback(
+                httpx.Request("POST", "https://api.anthropic.com/v1/messages"),
+                None,
+                e
+            )
             return messages
 
-        # Convert to params for next message
         response_params = _response_to_params(response)
-        # Append to messages history
         messages.append(
             {
                 "role": "assistant",
@@ -285,87 +262,23 @@ async def sampling_loop(
             }
         )
 
-        # Handle tool usage
         tool_result_content: list[BetaToolResultBlockParam] = []
         for content_block in response_params:
-            # Check if this is a tool use block
-            if isinstance(content_block, dict) and content_block.get("type") == "tool_use":
-                try:
-                    # Execute the requested tool
-                    result = await tool_collection.run(
-                        name=content_block["name"],
-                        tool_input=cast(dict[str, Any], content_block["input"]),
-                    )
-                    # Format the result
-                    tool_result_content.append(
-                        _make_api_tool_result(result, content_block["id"])
-                    )
-                    # Notify UI of the tool result
-                    tool_output_callback(result, content_block["id"])
-                except Exception as e:
-                    # Handle tool execution errors
-                    error_result = ToolFailure(error=f"Tool execution failed: {str(e)}")
-                    tool_result_content.append(
-                        _make_api_tool_result(error_result, content_block["id"])
-                    )
-                    tool_output_callback(error_result, content_block["id"])
+            # Skip sending to output callback again since we already did it during streaming
+            if content_block["type"] == "tool_use":
+                result = await tool_collection.run(
+                    name=content_block["name"],
+                    tool_input=cast(dict[str, Any], content_block["input"]),
+                )
+                tool_result_content.append(
+                    _make_api_tool_result(result, content_block["id"])
+                )
+                tool_output_callback(result, content_block["id"])
 
-        # If no tools were used, return the conversation
         if not tool_result_content:
             return messages
-            
-        # Otherwise, append tool results as a user message and continue loop
+
         messages.append({"content": tool_result_content, "role": "user"})
-
-
-def _response_to_params(
-    response: BetaMessage,
-) -> list[BetaContentBlockParam]:
-    """Convert BetaMessage to a list of content block parameters."""
-    res: list[BetaContentBlockParam] = []
-    
-    for block in response.content:
-        if isinstance(block, BetaTextBlock):
-            if block.text:
-                res.append(BetaTextBlockParam(type="text", text=block.text))
-            elif getattr(block, "type", None) == "thinking":
-                # Handle thinking blocks - include signature field
-                thinking_block = {
-                    "type": "thinking",
-                    "thinking": getattr(block, "thinking", None),
-                }
-                if hasattr(block, "signature"):
-                    thinking_block["signature"] = getattr(block, "signature", None)
-                res.append(cast(BetaContentBlockParam, thinking_block))
-        else:
-            # Handle other blocks (like tool_use) as-is
-            res.append(cast(BetaContentBlockParam, block))
-            
-    return res
-
-
-def _inject_prompt_caching(
-    messages: list[BetaMessageParam],
-):
-    """
-    Set cache breakpoints for the 3 most recent turns.
-    One cache breakpoint is left for tools/system prompt, to be shared across sessions.
-    """
-    breakpoints_remaining = 3
-    for message in reversed(messages):
-        if message["role"] == "user" and isinstance(
-            content := message["content"], list
-        ):
-            if breakpoints_remaining:
-                breakpoints_remaining -= 1
-                # Use type ignore to bypass TypedDict check until SDK types are updated
-                content[-1]["cache_control"] = BetaCacheControlEphemeralParam(  # type: ignore
-                    {"type": "ephemeral"}
-                )
-            else:
-                content[-1].pop("cache_control", None)
-                # we'll only ever have one extra turn per loop
-                break
 
 
 def _maybe_filter_to_n_most_recent_images(
@@ -417,13 +330,61 @@ def _maybe_filter_to_n_most_recent_images(
             tool_result["content"] = new_content
 
 
+def _response_to_params(
+    response: BetaMessage,
+) -> list[BetaContentBlockParam]:
+    res: list[BetaContentBlockParam] = []
+    for block in response.content:
+        if isinstance(block, BetaTextBlock):
+            if block.text:
+                res.append(BetaTextBlockParam(type="text", text=block.text))
+            elif getattr(block, "type", None) == "thinking":
+                # Keep the signature intact for thinking blocks
+                thinking_block = {
+                    "type": "thinking",
+                    "thinking": getattr(block, "thinking", "") or "",
+                }
+                # Preserve the signature if present
+                if hasattr(block, "signature") and block.signature:
+                    thinking_block["signature"] = block.signature
+                res.append(cast(BetaContentBlockParam, thinking_block))
+        else:
+            # Handle tool use blocks normally
+            res.append(cast(BetaToolUseBlockParam, block.model_dump()))
+    return res
+
+
+def _inject_prompt_caching(
+    messages: list[BetaMessageParam],
+):
+    """
+    Set cache breakpoints for the 3 most recent turns
+    one cache breakpoint is left for tools/system prompt, to be shared across sessions
+    """
+
+    breakpoints_remaining = 3
+    for message in reversed(messages):
+        if message["role"] == "user" and isinstance(
+            content := message["content"], list
+        ):
+            if breakpoints_remaining:
+                breakpoints_remaining -= 1
+                # Use type ignore to bypass TypedDict check until SDK types are updated
+                content[-1]["cache_control"] = BetaCacheControlEphemeralParam(  # type: ignore
+                    {"type": "ephemeral"}
+                )
+            else:
+                content[-1].pop("cache_control", None)
+                # we'll only every have one extra turn per loop
+                break
+
+
 def _make_api_tool_result(
     result: ToolResult, tool_use_id: str
 ) -> BetaToolResultBlockParam:
     """Convert an agent ToolResult to an API ToolResultBlockParam."""
     tool_result_content: list[BetaTextBlockParam | BetaImageBlockParam] | str = []
     is_error = False
-    
     if result.error:
         is_error = True
         tool_result_content = _maybe_prepend_system_tool_result(result, result.error)
@@ -446,7 +407,6 @@ def _make_api_tool_result(
                     },
                 }
             )
-            
     return {
         "type": "tool_result",
         "content": tool_result_content,
@@ -456,7 +416,6 @@ def _make_api_tool_result(
 
 
 def _maybe_prepend_system_tool_result(result: ToolResult, result_text: str):
-    """Optionally prepend system message to tool result text."""
     if result.system:
-        result_text = f"<system>{result.system}</system>\n{result_text}"
+        result_text = f"<s>{result.system}</s>\n{result_text}"
     return result_text
