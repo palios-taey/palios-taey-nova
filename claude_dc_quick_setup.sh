@@ -11,6 +11,7 @@ mkdir -p /home/computeruse/cache
 mkdir -p /home/computeruse/secrets
 mkdir -p /home/computeruse/utils/config 
 mkdir -p /home/computeruse/references
+mkdir -p /home/computeruse/test_environment
 
 # Copy /home/computeruse/ directories
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
@@ -18,6 +19,13 @@ cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computerus
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/utils/* /home/computeruse/utils/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/* /home/computeruse/references/
 # cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/run_claude_dc.py /home/computeruse/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/run_dev_container.sh /home/computeruse/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/test_dev_environment.py /home/computeruse/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/backup_current_env.sh /home/computeruse/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/deploy_to_production.sh
+ /home/computeruse/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/ /home/computeruse/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/ /home/computeruse/
 
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
