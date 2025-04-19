@@ -303,52 +303,52 @@ class ComputerTool20250124(BaseComputerTool, BaseAnthropicTool):
     api_type: Literal["custom"] = "custom"
     
     def to_params(self):
-        """Return parameters for the tool in the format expected by the API."""
-        # Convert Literal enum values to simple strings for JSON serialization
-        action_enum = [str(action) for action in get_args(Action_20250124)]
-        scroll_direction_enum = [str(direction) for direction in get_args(ScrollDirection)]
-        
-        # Create a custom tool definition that matches the API expectations
-        return {
-            "name": self.name,
-            "type": "custom",  # Use "custom" for tool type
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "action": {
-                        "type": "string",
-                        "enum": action_enum,  # Fixed: using string list
-                        "description": "The action to perform on the computer"
-                    },
-                    "text": {
-                        "type": "string", 
-                        "description": "Text to input via keyboard (for key and type actions)"
-                    },
-                    "coordinate": {
-                        "type": "array",
-                        "items": {"type": "integer"},
-                        "description": "X,Y coordinates for mouse actions"
-                    },
-                    "scroll_direction": {
-                        "type": "string",
-                        "enum": scroll_direction_enum,  # Fixed: using string list
-                        "description": "Direction to scroll (for scroll action)"
-                    },
-                    "scroll_amount": {
-                        "type": "integer",
-                        "description": "Amount to scroll (for scroll action)"
-                    },
-                    "duration": {
-                        "type": "number",
-                        "description": "Duration for hold_key and wait actions"
-                    },
-                    "key": {
-                        "type": "string",
-                        "description": "Specific key to use with actions like hold_key"
-                    }
+    """Return parameters for the tool in the format expected by the API."""
+    # Convert Literal enum values to simple strings for JSON serialization
+    action_enum = [str(action) for action in get_args(Action_20250124)]
+    scroll_direction_enum = [str(direction) for direction in get_args(ScrollDirection)]
+    
+    # Create a custom tool definition that matches the API expectations
+    return {
+        "name": self.name,
+        "type": "custom",  # Use "custom" for tool type
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": action_enum,
+                    "description": "The action to perform on the computer"
                 },
-                "required": ["action"]
+                "text": {
+                    "type": "string", 
+                    "description": "Text to input via keyboard (for key and type actions)"
+                },
+                "coordinate": {
+                    "type": "array",
+                    "items": {"type": "integer"},
+                    "description": "X,Y coordinates for mouse actions"
+                },
+                "scroll_direction": {
+                    "type": "string",
+                    "enum": scroll_direction_enum,
+                    "description": "Direction to scroll (for scroll action)"
+                },
+                "scroll_amount": {
+                    "type": "integer",
+                    "description": "Amount to scroll (for scroll action)"
+                },
+                "duration": {
+                    "type": "number",
+                    "description": "Duration for hold_key and wait actions"
+                },
+                "key": {
+                    "type": "string",
+                    "description": "Specific key to use with actions like hold_key"
+                }
             },
-            "description": "Interact with the computer using mouse and keyboard actions",
-            **self.options
-        }
+            "required": ["action"]
+        },
+        "description": "Interact with the computer using mouse and keyboard actions"
+        # Remove the **self.options spread which was causing the error
+    }
