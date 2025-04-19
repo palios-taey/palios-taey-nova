@@ -31,9 +31,50 @@ class EditTool20250124(BaseAnthropicTool):
         super().__init__()
 
     def to_params(self) -> Any:
+        """Return parameters for the editor tool in the format expected by the API."""
+        # Convert Command enum values to strings for JSON serialization
+        command_enum = [str(cmd) for cmd in get_args(Command)]
+        
         return {
             "name": self.name,
             "type": "custom",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "command": {
+                        "type": "string",
+                        "enum": command_enum,
+                        "description": "The command to execute (view, create, str_replace, insert, undo_edit)"
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "File path to operate on"
+                    },
+                    "file_text": {
+                        "type": "string",
+                        "description": "File content for create command"
+                    },
+                    "view_range": {
+                        "type": "array",
+                        "items": {"type": "integer"},
+                        "description": "Line range to view [start_line, end_line]"
+                    },
+                    "old_str": {
+                        "type": "string",
+                        "description": "String to replace for str_replace command"
+                    },
+                    "new_str": {
+                        "type": "string",
+                        "description": "Replacement string for str_replace or insert commands"
+                    },
+                    "insert_line": {
+                        "type": "integer",
+                        "description": "Line number for insert command"
+                    }
+                },
+                "required": ["command", "path"]
+            },
+            "description": "Edit, view, and manipulate files on the filesystem"
         }
 
     async def __call__(
