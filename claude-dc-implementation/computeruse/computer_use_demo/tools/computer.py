@@ -304,6 +304,10 @@ class ComputerTool20250124(BaseComputerTool, BaseAnthropicTool):
     
     def to_params(self):
         """Return parameters for the tool in the format expected by the API."""
+        # Convert Literal enum values to simple strings for JSON serialization
+        action_enum = [str(action) for action in get_args(Action_20250124)]
+        scroll_direction_enum = [str(direction) for direction in get_args(ScrollDirection)]
+        
         # Create a custom tool definition that matches the API expectations
         return {
             "name": self.name,
@@ -313,7 +317,7 @@ class ComputerTool20250124(BaseComputerTool, BaseAnthropicTool):
                 "properties": {
                     "action": {
                         "type": "string",
-                        "enum": list(get_args(Action_20250124)),
+                        "enum": action_enum,  # Fixed: using string list
                         "description": "The action to perform on the computer"
                     },
                     "text": {
@@ -327,7 +331,7 @@ class ComputerTool20250124(BaseComputerTool, BaseAnthropicTool):
                     },
                     "scroll_direction": {
                         "type": "string",
-                        "enum": list(get_args(ScrollDirection)),
+                        "enum": scroll_direction_enum,  # Fixed: using string list
                         "description": "Direction to scroll (for scroll action)"
                     },
                     "scroll_amount": {
