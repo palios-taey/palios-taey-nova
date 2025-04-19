@@ -3,7 +3,7 @@
 
 # Run the main setup script
 echo "Running main setup script..."
-./scripts/setup.sh
+/home/computeruse/github/palios-taey-nova/scripts/setup.sh
 
 # Run the Claude DC implementation setup
 echo "Running Claude DC implementation setup..."
