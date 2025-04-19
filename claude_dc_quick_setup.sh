@@ -7,25 +7,42 @@ echo "Running main setup script..."
 
 # Run the Claude DC implementation setup
 echo "Running Claude DC implementation setup..."
+
+# Create all required directories
 mkdir -p /home/computeruse/cache
 mkdir -p /home/computeruse/secrets
 mkdir -p /home/computeruse/utils/config 
 mkdir -p /home/computeruse/references
 mkdir -p /home/computeruse/test_environment
+mkdir -p /home/computeruse/bin
 
-# Copy /home/computeruse/ directories
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/secrets/* /home/computeruse/secrets/
-cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/utils/* /home/computeruse/utils/
-cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/* /home/computeruse/references/
-# cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/run_claude_dc.py /home/computeruse/
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/run_dev_container.sh /home/computeruse/
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/test_dev_environment.py /home/computeruse/
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/backup_current_env.sh /home/computeruse/
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/deploy_to_production.sh
- /home/computeruse/
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/ /home/computeruse/
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/ /home/computeruse/
+# Define source base path
+SOURCE_BASE="/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse"
+
+# Copy entire directory structures to maintain organization
+echo "Copying directory structures..."
+# Copy standard directories (this automatically includes all files)
+cp -r "$SOURCE_BASE/cache/"* /home/computeruse/cache/ 2>/dev/null || true
+cp -r "$SOURCE_BASE/secrets/"* /home/computeruse/secrets/ 2>/dev/null || true
+cp -r "$SOURCE_BASE/utils/"* /home/computeruse/utils/ 2>/dev/null || true
+cp -r "$SOURCE_BASE/references/"* /home/computeruse/references/ 2>/dev/null || true
+
+# Copy executable scripts from bin directory to /home/computeruse/bin
+echo "Copying executable scripts..."
+cp -r "$SOURCE_BASE/bin/"* /home/computeruse/bin/ 2>/dev/null || true
+chmod +x /home/computeruse/bin/* 2>/dev/null || true
+
+# Create symlinks in root directory for critical scripts
+echo "Creating symlinks for critical scripts in root directory..."
+ln -sf /home/computeruse/bin/run_claude_dc.py /home/computeruse/run_claude_dc.py
+ln -sf /home/computeruse/bin/run_dev_container.sh /home/computeruse/run_dev_container.sh
+ln -sf /home/computeruse/bin/test_dev_environment.py /home/computeruse/test_dev_environment.py
+ln -sf /home/computeruse/bin/backup_current_env.sh /home/computeruse/backup_current_env.sh
+ln -sf /home/computeruse/bin/deploy_to_production.sh /home/computeruse/deploy_to_production.sh
+
+# Copy documentation files to root directory
+echo "Copying documentation files..."
+cp "$SOURCE_BASE/"*.md /home/computeruse/ 2>/dev/null || true
 
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
