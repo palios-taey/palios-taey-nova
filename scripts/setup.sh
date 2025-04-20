@@ -9,17 +9,12 @@ sudo apt update -y
 
 # Install required system-level dependencies explicitly
 sudo apt install -y \
-    brltty \
-    command-not-found \
-    chrome-gnome-shell \
-    cups-bsd \
-    python3-dbus \
-    python3-apt \
-    system76-driver \
-    python3-systemd \
-    ubuntu-drivers-common \
-    ufw \
-    xkit
+    python3-pip \
+    python3-venv \
+    git \
+    curl \
+    httpx \
+    streamlit
 
 sudo apt-get install -y rsync
 

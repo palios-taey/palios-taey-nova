@@ -1,4 +1,4 @@
-#\!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Launch script for Claude DC Computer Use demo.
 This script starts the Streamlit application in the computer_use_demo directory.
@@ -21,6 +21,12 @@ logger = logging.getLogger('run_claude_dc')
 
 def main():
     """Main function to start Claude DC."""
+    # Parse command line arguments
+    import argparse
+    parser = argparse.ArgumentParser(description='Run Claude DC application')
+    parser.add_argument('--local', action='store_true', help='Run in local mode without Docker')
+    args = parser.parse_args()
+    
     # Determine the computer_use_demo directory
     computer_use_demo = "/home/computeruse/computer_use_demo"
     
@@ -40,12 +46,17 @@ def main():
     # Check for required environment variables
     api_key = os.environ.get('ANTHROPIC_API_KEY')
     if not api_key:
-        logger.warning("ANTHROPIC_API_KEY environment variable not set\!")
-        print("WARNING: ANTHROPIC_API_KEY environment variable not set\!")
+        logger.warning("ANTHROPIC_API_KEY environment variable not set!")
+        print("WARNING: ANTHROPIC_API_KEY environment variable not set!")
         # Continue anyway, Streamlit will show a field to enter it
     
     # Set the current working directory
     os.chdir(computer_use_demo)
+    
+    # Set environment mode for local
+    if args.local:
+        os.environ['CLAUDE_ENV'] = 'dev'
+        print("Running in local mode (CLAUDE_ENV=dev)")
     
     # Start the Streamlit application
     try:

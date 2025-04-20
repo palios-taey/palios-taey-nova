@@ -2,6 +2,7 @@
 
 **Project:** PALIOS AI OS – Claude DC ("The Conductor") implementation  
 **Role:** *Claude Code* – Autonomous Builder & Debugger (AI Developer Agent)  
+**Context:** This file works with `.claude/cache/claude_cache.md` for persistent context
 
 ## Overview
 Claude DC is an AI agent (Anthropic Claude 3.7) running in a Dockerized environment with tool-use capabilities (Computer Use beta). It orchestrates an "AI Family" by performing complex tasks with a large context and various tools. Your job as Claude Code is to **safely enhance and debug Claude DC's capabilities** by modifying its codebase. Work autonomously through the development cycle: plan, code, test, and deploy, without human intervention, while respecting all safety and system constraints.

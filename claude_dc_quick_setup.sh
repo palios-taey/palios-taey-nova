@@ -115,22 +115,22 @@ cd /home/computeruse/github/palios-taey-nova
 git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
 
 # Set up computer_use_demo directory
-# echo "Setting up computer_use_demo environment..."
-# cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
-# Make sure the launcher script is executable
-#chmod +x /home/computeruse/run_claude_dc.py
+echo "Setting up computer_use_demo environment..."
+mkdir -p /home/computeruse/computer_use_demo/tools
 
-# Run the launcher script as the final step
-#/home/computeruse/run_claude_dc.py
+# Copy the updated files from test environment to production
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
+
+# Make sure the launcher script is executable
+chmod +x /home/computeruse/run_claude_dc.py
 
 # Set Claude options
 echo "Please set the following Claude options manually:"
 echo "   - Model: claude-3-7-sonnet-20250219"
 echo "   - Verify end of API key"
-echo "   - Enable tcdoken-efficient tools beta - check"
-echo "   - Max output tokens: 12000"
+echo "   - Max output tokens: 65536"
 echo "   - Thinking Enabled: check"
-echo "   - Thinking Budget: 4000"
+echo "   - Thinking Budget: 32768"
 echo "   - Click Reset button"
 echo ""
 echo "Setup complete!"
