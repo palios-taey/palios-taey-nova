@@ -21,66 +21,6 @@ sudo apt install -y \
     ufw \
     xkit
 
-
-# Install required packages
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-venv \
-    git \
-    curl \
-    firefox-esr \
-    xvfb \
-    x11vnc \
-    fluxbox \
-    novnc \
-    websockify \
-    tigervnc-standalone-server \
-    wget \
-    sudo
-
-# Set up working directory
-WORKDIR /home/computeruse
-
-# Install Python dependencies
-RUN cd /home/computeruse/computer_use_demo && pip3 install -r requirements.txt
-
-# Setup environment
-ENV DISPLAY=:1
-ENV PYTHONUNBUFFERED=1
-
-# Start script
-COPY ./start.sh /start.sh
-RUN chmod +x /start.sh
-
-EXPOSE 5900 6080 8501
-
-CMD ["/start.sh"]
-EOF
-
-    # Create a start.sh script if it doesn't exist
-    cat > start.sh << 'EOF'
-#!/bin/bash
-set -e
-
-# Start Xvfb
-Xvfb :1 -screen 0 1280x800x16 &
-
-# Start VNC server
-x11vnc -display :1 -nopw -listen localhost -xkb -forever &
-
-# Start noVNC
-/usr/share/novnc/utils/launch.sh --vnc localhost:5900 --listen 6080 &
-
-# Start fluxbox window manager
-fluxbox -display :1 &
-
-# Start streamlit app in the background
-cd /home/computeruse/computer_use_demo
-python3 -m streamlit run streamlit.py --server.port=8501 --server.address=0.0.0.0
-
-wait
-
 sudo apt-get install -y rsync
 
 # Python environment setup
