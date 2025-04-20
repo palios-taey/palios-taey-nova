@@ -28,8 +28,6 @@ mkdir -p $HOME/transcripts
 docker run \
    -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
    -v $HOME/.anthropic:/home/computeruse/.anthropic \
-   -v $HOME/transcripts:/home/computeruse/transcripts \
-   -v $HOME/projects/palios-taey-nova:/home/computeruse/github/palios-taey-nova \
    -p 5900:5900 \
    -p 8501:8501 \
    -p 6080:6080 \
@@ -40,3 +38,5 @@ echo "Computer Use environment started!"
 echo "Access the demo UI at http://localhost:8080"
 echo "For VNC access: http://localhost:6080"
 echo "For Streamlit access: http://localhost:8501"
+   # -v $HOME/transcripts:/home/computeruse/transcripts \
+   # -v $HOME/projects/palios-taey-nova:/home/computeruse/github/palios-taey-nova \ moved from under home/transcripts

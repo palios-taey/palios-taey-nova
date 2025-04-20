@@ -1,61 +1,97 @@
 #!/bin/bash
-# Claude DC Quick Setup Script
-# This script sets up and runs Claude DC with Phase 2 enhancements
+# Consolidated setup script for Claude DC environment
 
-set -e  # Exit on error
+# Run the main setup script
+echo "Running main setup script..."
+/home/computeruse/github/palios-taey-nova/scripts/setup.sh
 
-REPO_ROOT="/home/jesse/projects/palios-taey-nova"
-LAUNCH_HELPERS="$REPO_ROOT/launch_helpers"
+# Run the Claude DC implementation setup
+echo "Running Claude DC implementation setup..."
+mkdir -p /home/computeruse/cache
+mkdir -p /home/computeruse/secrets
+mkdir -p /home/computeruse/utils/config 
+mkdir -p /home/computeruse/references
+mkdir -p /home/computeruse/bin
+mkdir -p /home/computeruse/current_experiment
+mkdir -p /home/computeruse/claude_dc_experiments
 
-# Display header
-echo "====================================================="
-echo "       Claude DC Quick Setup - Phase 2 Enhanced      "
-echo "====================================================="
-echo
 
-# Step 1: Run the setup script to prepare Claude DC
-echo "Step 1: Setting up Claude DC environment..."
-$LAUNCH_HELPERS/setup_claude_dc.sh
+# Copy /home/computeruse/ directories
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/secrets/* /home/computeruse/secrets/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/utils/* /home/computeruse/utils/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/* /home/computeruse/references/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/* /home/computeruse/bin/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/* /home/computeruse/current_experiment/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/claude_dc_experiments/* /home/computeruse/claude_dc_experiments/
+# cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/run_claude_dc.py /home/computeruse/
 
-# Step 2: Validate the Claude DC installation
-echo
-echo "Step 2: Validating Claude DC configuration..."
-$LAUNCH_HELPERS/validate_claude_dc.py
+# Setup git config
+git config --global user.email "jesselarose@gmail.com"
+git config --global user.name "palios-taey"
 
-# Check if validation succeeded
-if [ $? -ne 0 ]; then
-    echo
-    echo "❌ Validation failed. Please check the errors above."
-    echo "You can manually fix the issues and run the validation again with:"
-    echo "  $LAUNCH_HELPERS/validate_claude_dc.py"
-    exit 1
+# Remove 'testkey-' from all files in secrets directory
+echo "Removing 'testkey-' prefixes from secret files..."
+find /home/computeruse/secrets -type f -exec sed -i 's/testkey-//g' {} \;
+
+# Set up SSH configuration
+echo "Setting up SSH configuration..."
+
+# Create .ssh directory if it doesn't exist
+mkdir -p /home/computeruse/.ssh
+chmod 700 /home/computeruse/.ssh
+
+# Copy SSH key to standard location if it exists in secrets
+if [ -f "/home/computeruse/secrets/id_ed25519" ]; then
+    echo "Moving SSH key from secrets to .ssh directory..."
+    cp /home/computeruse/secrets/id_ed25519 /home/computeruse/.ssh/
+    chmod 600 /home/computeruse/.ssh/id_ed25519
+    
+    # Copy public key if it exists
+    if [ -f "/home/computeruse/secrets/id_ed25519.pub" ]; then
+        cp /home/computeruse/secrets/id_ed25519.pub /home/computeruse/.ssh/
+        chmod 644 /home/computeruse/.ssh/id_ed25519.pub
+    fi
 fi
 
-# Step 3: Launch Claude DC
-echo
-echo "Step 3: Launching Claude DC..."
-echo "Launch options:"
-echo "  1) Streamlit UI (recommended)"
-echo "  2) Console Mode"
-echo "  3) Exit without launching"
-echo
-read -p "Choose an option (1-3): " launch_option
+# Create SSH config file
+cat > /home/computeruse/.ssh/config << EOF
+Host github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+EOF
+chmod 600 /home/computeruse/.ssh/config
 
-case $launch_option in
-    1)
-        echo "Launching Streamlit UI..."
-        $REPO_ROOT/claude_dc_launch.sh
-        ;;
-    2)
-        echo "Launching Console Mode..."
-        $REPO_ROOT/claude_dc_launch.sh --mode console
-        ;;
-    3)
-        echo "Claude DC is set up but not launched."
-        echo "You can run it later with: $REPO_ROOT/claude_dc_launch.sh"
-        ;;
-    *)
-        echo "Invalid option. Claude DC is set up but not launched."
-        echo "You can run it later with: $REPO_ROOT/claude_dc_launch.sh"
-        ;;
-esac
+# Test SSH connection
+echo "Testing SSH connection to GitHub..."
+ssh -o StrictHostKeyChecking=no -T git@github.com || echo "SSH test complete - Note: Exit code 1 is normal for GitHub"
+
+# Change repository remote from HTTPS to SSH
+echo "Changing repository remote from HTTPS to SSH..."
+cd /home/computeruse/github/palios-taey-nova
+git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
+
+# Set up computer_use_demo directory
+# echo "Setting up computer_use_demo environment..."
+# cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
+# Make sure the launcher script is executable
+#chmod +x /home/computeruse/run_claude_dc.py
+
+# Run the launcher script as the final step
+#/home/computeruse/run_claude_dc.py
+
+# Set Claude options
+echo "Please set the following Claude options manually:"
+echo "   - Model: claude-3-7-sonnet-20250219"
+echo "   - Verify end of API key"
+echo "   - Enable tcdoken-efficient tools beta - check"
+echo "   - Max output tokens: 12000"
+echo "   - Thinking Enabled: check"
+echo "   - Thinking Budget: 4000"
+echo "   - Click Reset button"
+echo ""
+echo "Setup complete!"
+echo "You may need to refresh the browser to see the changes."
+# Run the launcher script as the final step
+# /home/computeruse/run_claude_dc.py
