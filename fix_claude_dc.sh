@@ -1,3 +1,21 @@
+#!/bin/bash
+# Script to fix Claude DC import issues
+
+echo "Fixing Claude DC import issues..."
+
+# Check if running inside Docker container
+if [ ! -d "/home/computeruse" ]; then
+    echo "ERROR: This script must be run inside the Claude DC container!"
+    exit 1
+fi
+
+# Create backup of current streamlit.py
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+cp /home/computeruse/computer_use_demo/streamlit.py /home/computeruse/computer_use_demo/streamlit.py.bak_${TIMESTAMP}
+echo "Created backup at /home/computeruse/computer_use_demo/streamlit.py.bak_${TIMESTAMP}"
+
+# Create fixed streamlit.py
+cat > /home/computeruse/computer_use_demo/streamlit.py << 'EOF'
 """
 Streamlit application for Claude Computer Use Demo.
 This version includes proper support for streaming with tools.
@@ -17,45 +35,38 @@ from functools import partial
 from pathlib import PosixPath
 from typing import cast, get_args, Any, Dict, Union, Optional
 
+# Setup system path to find modules properly
+import sys
+parent_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
 import httpx
 import streamlit as st
 from anthropic import RateLimitError
+
+# Import streamlit components with fallbacks for different versions
+try:
+    # Try newer versions first
+    from streamlit.delta_generator import DeltaGenerator
+except (ImportError, ModuleNotFoundError):
+    try:
+        # Try alternative import path
+        from streamlit import DeltaGenerator
+    except (ImportError, ModuleNotFoundError):
+        # Last resort - try to get it from st directly
+        DeltaGenerator = type(st.empty())
+
 from anthropic.types.beta import (
     BetaContentBlockParam,
     BetaTextBlockParam,
     BetaToolResultBlockParam,
 )
 
-# Add path to allow finding modules
-import sys
-import os
-parent_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
-
-# Conditional import for different Streamlit versions
-try:
-    # Try newer versions first
-    from streamlit.delta_generator import DeltaGenerator
-except ImportError:
-    try:
-        # Try alternative import path
-        from streamlit import DeltaGenerator
-    except ImportError:
-        # Last resort - try to get it from st directly
-        DeltaGenerator = type(st.empty())
-except ModuleNotFoundError:
-    # Fallback for newer Streamlit versions where the import structure changed
-    from streamlit import DeltaGenerator
-
-# Import tools module using a try-except for flexible module resolution
+# Import modules with fallbacks for different execution contexts
 try:
     # Try as a package first
     from computer_use_demo.tools import ToolResult, ToolVersion
-except ImportError:
-    # If running from within the package
-    from tools import ToolResult, ToolVersion
-try:
     from computer_use_demo.loop import (
         APIProvider, 
         sampling_loop,
@@ -65,7 +76,9 @@ try:
         DEFAULT_MAX_TOKENS,
         DEFAULT_THINKING_BUDGET
     )
-except ImportError:
+except (ImportError, ModuleNotFoundError):
+    # If running from within the package
+    from tools import ToolResult, ToolVersion
     from loop import (
         APIProvider, 
         sampling_loop,
@@ -300,7 +313,7 @@ async def main():
 
         st.number_input("Max Output Tokens", key="output_tokens", step=1)
 
-        st.checkbox("Thinking Enabled", key="thinking", value=False)
+        st.checkbox("Thinking Enabled", key="thinking", value=True)
         st.number_input(
             "Thinking Budget",
             key="thinking_budget",
@@ -736,3 +749,15 @@ def save_to_storage(filename: str, data: str) -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
+EOF
+
+echo "Fixed streamlit.py file created!"
+
+# Make the fix script executable
+chmod +x /home/computeruse/computer_use_demo/streamlit.py
+
+echo "To start Claude DC with the fixed code, run:"
+echo "cd /home/computeruse"
+echo "python3 -m streamlit run /home/computeruse/computer_use_demo/streamlit.py --server.port=8501 --server.address=0.0.0.0"
+echo ""
+echo "Or just run: python3 run_claude_dc.py --local"
