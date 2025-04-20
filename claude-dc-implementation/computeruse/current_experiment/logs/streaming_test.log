@@ -1,0 +1,185 @@
+2025-04-20 20:52:40,787 - stream_experiment - INFO - Configuration loaded with streaming: True
+2025-04-20 20:52:40,787 - stream_experiment - INFO - Using model: claude-3-7-sonnet-20250219
+2025-04-20 20:52:40,787 - stream_experiment - INFO - Beta features: Prompt Caching=False, Extended Output=False, Token Efficient=False
+2025-04-20 20:52:40,790 - stream_experiment - ERROR - Failed to import required modules: No module named 'computer_use_demo'
+2025-04-20 20:56:32,780 - stream_experiment - INFO - Configuration loaded with streaming: True
+2025-04-20 20:56:32,780 - stream_experiment - INFO - Using model: claude-3-7-sonnet-20250219
+2025-04-20 20:56:32,780 - stream_experiment - INFO - Beta features: Prompt Caching=False, Extended Output=False, Token Efficient=False
+2025-04-20 20:56:32,954 - stream_experiment - INFO - Successfully imported Anthropic client
+2025-04-20 20:56:32,954 - stream_experiment - INFO - Python path: [
+  "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo",
+  "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/implementation",
+  "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo",
+  "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse",
+  "/home/computeruse/github/palios-taey-nova/claude-dc-implementation",
+  "/home/computeruse/github/palios-taey-nova",
+  "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment",
+  "/home/computeruse/.pyenv/versions/3.11.6/lib/python311.zip",
+  "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11",
+  "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/lib-dynload",
+  "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages"
+]
+2025-04-20 20:56:32,954 - stream_experiment - INFO - Tools directory exists at: /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/tools
+2025-04-20 20:56:32,954 - stream_experiment - INFO - Contents: ['base.py', 'streaming_tool.py', 'bash.py', 'run.py', 'groups.py', 'computer.py', 'edit.py', '__pycache__', 'collection.py', '__init__.py']
+2025-04-20 20:56:32,957 - stream_experiment - INFO - Successfully imported tools
+2025-04-20 20:56:32,957 - stream_experiment - INFO - ENTER: get_api_key
+2025-04-20 20:56:32,958 - stream_experiment - INFO - PARAMS: "{}"
+2025-04-20 20:56:32,958 - stream_experiment - INFO - EXIT: get_api_key (success)
+2025-04-20 20:56:32,958 - stream_experiment - INFO - ENTER: run_streaming_test
+2025-04-20 20:56:32,958 - stream_experiment - INFO - PARAMS: "{'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': \"Hello Claude! Could you please run the 'date' command to show me the current date and time? Then explain what day of the week it is.\"}]}], 'api_key': '[redacted]', 'output_callback': <function print_response at 0x7d6a51cc0ae0>, 'tool_callback': <function print_tool_result at 0x7d6a51ac8fe0>}"
+2025-04-20 20:56:32,958 - stream_experiment - INFO - EXIT: run_streaming_test (success)
+2025-04-20 20:56:32,958 - stream_experiment - INFO - Starting streaming test
+2025-04-20 20:56:32,958 - stream_experiment - INFO - Created tool collection with 3 tools
+2025-04-20 20:56:32,982 - stream_experiment - INFO - Created Anthropic client
+2025-04-20 20:56:32,982 - stream_experiment - INFO - Added required beta flag: computer-use-2025-01-24
+2025-04-20 20:56:32,982 - stream_experiment - INFO - Added thinking budget: 2048
+2025-04-20 20:56:32,982 - stream_experiment - INFO - API CALL: {
+  "max_tokens": 4096,
+  "messages": "[1 messages - content omitted]",
+  "model": "claude-3-7-sonnet-20250219",
+  "system": "[system prompt omitted]",
+  "tools": [
+    {
+      "name": "computer",
+      "type": "custom",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "typing.Literal['key', 'type', 'mouse_move', 'left_click', 'left_click_drag', 'right_click', 'middle_click', 'double_click', 'screenshot', 'cursor_position']",
+              "typing.Literal['left_mouse_down', 'left_mouse_up', 'scroll', 'hold_key', 'wait', 'triple_click']"
+            ],
+            "description": "The action to perform on the computer"
+          },
+          "text": {
+            "type": "string",
+            "description": "Text to input via keyboard (for key and type actions)"
+          },
+          "coordinate": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "X,Y coordinates for mouse actions"
+          },
+          "scroll_direction": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down",
+              "left",
+              "right"
+            ],
+            "description": "Direction to scroll (for scroll action)"
+          },
+          "scroll_amount": {
+            "type": "integer",
+            "description": "Amount to scroll (for scroll action)"
+          },
+          "duration": {
+            "type": "number",
+            "description": "Duration for hold_key and wait actions"
+          },
+          "key": {
+            "type": "string",
+            "description": "Specific key to use with actions like hold_key"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "description": "Interact with the computer using mouse and keyboard actions"
+    },
+    {
+      "name": "str_replace_editor",
+      "type": "custom",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "view",
+              "create",
+              "str_replace",
+              "insert",
+              "undo_edit"
+            ],
+            "description": "The command to execute (view, create, str_replace, insert, undo_edit)"
+          },
+          "path": {
+            "type": "string",
+            "description": "File path to operate on"
+          },
+          "file_text": {
+            "type": "string",
+            "description": "File content for create command"
+          },
+          "view_range": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Line range to view [start_line, end_line]"
+          },
+          "old_str": {
+            "type": "string",
+            "description": "String to replace for str_replace command"
+          },
+          "new_str": {
+            "type": "string",
+            "description": "Replacement string for str_replace or insert commands"
+          },
+          "insert_line": {
+            "type": "integer",
+            "description": "Line number for insert command"
+          }
+        },
+        "required": [
+          "command",
+          "path"
+        ]
+      },
+      "description": "Edit, view, and manipulate files on the filesystem"
+    },
+    {
+      "name": "bash",
+      "type": "custom",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "Bash command to execute"
+          },
+          "restart": {
+            "type": "boolean",
+            "description": "Whether to restart the bash session"
+          },
+          "stream": {
+            "type": "boolean",
+            "description": "Whether to stream output in real-time (default: true)"
+          }
+        },
+        "required": [
+          "command"
+        ]
+      },
+      "description": "Execute bash commands in the system shell"
+    }
+  ],
+  "stream": true,
+  "beta": [
+    "computer-use-2025-01-24"
+  ],
+  "thinking": {
+    "type": "enabled",
+    "budget_tokens": 2048
+  }
+}
+2025-04-20 20:56:32,982 - stream_experiment - INFO - Making API call with streaming enabled
+2025-04-20 20:56:32,982 - stream_experiment - ERROR - Error in streaming test: Messages.create() got an unexpected keyword argument 'beta'
+2025-04-20 20:56:32,982 - stream_experiment - ERROR - Test failed: Messages.create() got an unexpected keyword argument 'beta'

@@ -3,8 +3,34 @@ import base64
 import os
 import shlex
 import shutil
-from enum import StrEnum
+import sys
+from enum import Enum
 from pathlib import Path
+
+# Define StrEnum for Python 3.10 compatibility
+if sys.version_info < (3, 11):
+    # Backport of StrEnum for Python < 3.11
+    class StrEnum(str, Enum):
+        """
+        Enum where members are also (and must be) strings.
+        """
+        def __new__(cls, *values):
+            if len(values) > 3:
+                raise TypeError(f'too many arguments for str(): {values!r}')
+            if len(values) == 1:
+                # Construct by name (default Enum behavior)
+                obj = str.__new__(cls, values[0])
+            else:
+                # Construct the normal way
+                obj = str.__new__(cls)
+            obj._value_ = values[0]
+            return obj
+        
+        def _generate_next_value_(name, start, count, last_values):
+            """Return the name as the value."""
+            return name
+else:
+    from enum import StrEnum
 from typing import Literal, TypedDict, cast, get_args
 from uuid import uuid4
 
@@ -111,15 +137,53 @@ class BaseComputerTool:
     def __init__(self):
         super().__init__()
 
-        self.width = int(os.getenv("WIDTH") or 0)
-        self.height = int(os.getenv("HEIGHT") or 0)
-        assert self.width and self.height, "WIDTH, HEIGHT must be set"
-        if (display_num := os.getenv("DISPLAY_NUM")) is not None:
-            self.display_num = int(display_num)
-            self._display_prefix = f"DISPLAY=:{self.display_num} "
-        else:
-            self.display_num = None
-            self._display_prefix = ""
+        # Get screen dimensions from environment or use reasonable defaults
+        # Default to 1024x768 (XGA) if not specified
+        try:
+            self.width = int(os.getenv("WIDTH") or 1024)
+        except ValueError:
+            print(f"WARNING: Invalid WIDTH value '{os.getenv('WIDTH')}', using default 1024")
+            self.width = 1024
+            
+        try:
+            self.height = int(os.getenv("HEIGHT") or 768)
+        except ValueError:
+            print(f"WARNING: Invalid HEIGHT value '{os.getenv('HEIGHT')}', using default 768")
+            self.height = 768
+        
+        # Validate dimensions are reasonable
+        if self.width < 640 or self.height < 480:
+            print(f"WARNING: Screen dimensions {self.width}x{self.height} are unusually small, defaulting to 1024x768")
+            self.width = 1024
+            self.height = 768
+            
+        # Setup display number and prefix
+        try:
+            # Try several methods to get the display number
+            # 1. From DISPLAY_NUM environment variable
+            display_num = os.getenv("DISPLAY_NUM")
+            
+            # 2. From DISPLAY environment variable
+            if display_num is None and os.getenv("DISPLAY"):
+                display_str = os.getenv("DISPLAY", "")
+                if display_str.startswith(":"):
+                    display_num = display_str[1:].split(".")[0]
+            
+            # Parse and validate
+            if display_num is not None:
+                self.display_num = int(display_num)
+                self._display_prefix = f"DISPLAY=:{self.display_num} "
+            else:
+                self.display_num = 1  # Default to display 1
+                self._display_prefix = "DISPLAY=:1 "
+                
+            # Always print the display settings
+            print(f"INFO: ComputerTool initialized with dimensions {self.width}x{self.height} on display :{self.display_num}")
+            
+        except ValueError:
+            print(f"WARNING: Invalid DISPLAY_NUM/DISPLAY value, using default 1")
+            self.display_num = 1
+            self._display_prefix = "DISPLAY=:1 "
 
         self.xdotool = f"{self._display_prefix}xdotool"
 

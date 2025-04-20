@@ -6,10 +6,36 @@ import argparse
 import logging
 import os
 import platform
+import sys
 from collections.abc import Callable
 from datetime import datetime
-from enum import StrEnum
+from enum import Enum
 from typing import Any, cast
+
+# Define StrEnum for Python 3.10 compatibility
+if sys.version_info < (3, 11):
+    # Backport of StrEnum for Python < 3.11
+    class StrEnum(str, Enum):
+        """
+        Enum where members are also (and must be) strings.
+        """
+        def __new__(cls, *values):
+            if len(values) > 3:
+                raise TypeError(f'too many arguments for str(): {values!r}')
+            if len(values) == 1:
+                # Construct by name (default Enum behavior)
+                obj = str.__new__(cls, values[0])
+            else:
+                # Construct the normal way
+                obj = str.__new__(cls)
+            obj._value_ = values[0]
+            return obj
+        
+        def _generate_next_value_(name, start, count, last_values):
+            """Return the name as the value."""
+            return name
+else:
+    from enum import StrEnum
 
 import httpx
 from anthropic import (
@@ -42,6 +68,10 @@ from computer_use_demo import (
     MODE,
     BACKUP_DIR,
     LOG_DIR,
+    ENABLE_PROMPT_CACHING,
+    ENABLE_EXTENDED_OUTPUT,
+    ENABLE_THINKING,
+    ENABLE_TOKEN_EFFICIENT,
 )
 
 from .tools import (
@@ -130,47 +160,134 @@ async def sampling_loop(
 
     while True:
         enable_prompt_caching = False
-        # Setup beta flags for enhanced capabilities
-        betas = [tool_group.beta_flag] if tool_group.beta_flag else []
         
-        # Add required beta flag for computer use if not already included
-        if tool_version == "computer_use_20250124" and "computer-use-2025-01-24" not in betas:
-            betas.append("computer-use-2025-01-24")
+        try:
+            # Setup beta flags for enhanced capabilities
+            betas = [tool_group.beta_flag] if tool_group.beta_flag else []
             
-        # Always enable 128K extended output for Claude 3.7 Sonnet
-        if "claude-3-7" in model:
-            logger.info("Enabling 128K extended output capability")
-            betas.append(OUTPUT_128K_BETA_FLAG)
+            # Add required beta flag for computer use if not already included
+            try:
+                if tool_version == "computer_use_20250124" and "computer-use-2025-01-24" not in betas:
+                    betas.append("computer-use-2025-01-24")
+                    logger.info("Added required beta flag for computer use 2025-01-24")
+            except Exception as e:
+                logger.error(f"Error adding computer-use beta flag: {e}")
+                # Do not exit the function - we can still continue
+                
+            # Enable beta features conditionally - with robust error handling
+            beta_status = {}
+                
+            # Enable 128K extended output for Claude 3.7 Sonnet if configured
+            try:
+                if ENABLE_EXTENDED_OUTPUT and "claude-3-7" in model:
+                    logger.info("Enabling 128K extended output capability")
+                    print("✅ 128K extended output enabled")
+                    betas.append(OUTPUT_128K_BETA_FLAG)
+                    beta_status["extended_output"] = True
+                else:
+                    beta_status["extended_output"] = False
+                    if ENABLE_EXTENDED_OUTPUT:
+                        logger.info("Extended output requested but not using Claude 3.7 model")
+                        print("⚠️ Extended output not enabled - requires Claude 3.7 model")
+                    else:
+                        logger.info("Extended output not requested")
+                        print("❌ Extended output not enabled")
+            except Exception as e:
+                logger.warning(f"Failed to enable extended output: {e}")
+                beta_status["extended_output"] = False
+                print("❌ Extended output failed to enable")
+                
+            # Only enable token-efficient tools beta if explicitly configured
+            try:
+                if ENABLE_TOKEN_EFFICIENT and token_efficient_tools_beta:
+                    logger.info("Enabling token-efficient tools beta")
+                    print("✅ Token-efficient tools beta enabled")
+                    betas.append(TOKEN_EFFICIENT_TOOLS_BETA_FLAG)
+                    beta_status["token_efficient"] = True
+                else:
+                    beta_status["token_efficient"] = False
+                    if ENABLE_TOKEN_EFFICIENT:
+                        logger.info("Token-efficient tools requested but token_efficient_tools_beta not set")
+                        print("⚠️ Token-efficient tools not enabled - parameter not set")
+                    else:
+                        logger.info("Token-efficient tools not requested")
+                        print("❌ Token-efficient tools not enabled")
+            except Exception as e:
+                logger.warning(f"Failed to enable token-efficient tools: {e}")
+                beta_status["token_efficient"] = False
+                print("❌ Token-efficient tools failed to enable")
+                
+            # Initialize appropriate client based on provider
+            if provider == APIProvider.ANTHROPIC:
+                client = Anthropic(api_key=api_key, max_retries=4)
+                
+                # Enable prompt caching if configured
+                try:
+                    enable_prompt_caching = ENABLE_PROMPT_CACHING
+                    beta_status["prompt_caching"] = enable_prompt_caching
+                    if enable_prompt_caching:
+                        logger.info("Prompt caching is enabled")
+                        print("✅ Prompt caching enabled")
+                    else:
+                        logger.info("Prompt caching is disabled")
+                        print("❌ Prompt caching not enabled")
+                except Exception as e:
+                    logger.warning(f"Failed to read prompt caching configuration: {e}")
+                    enable_prompt_caching = False
+                    beta_status["prompt_caching"] = False
+                    print("❌ Prompt caching failed to enable")
+                    
+            elif provider == APIProvider.VERTEX:
+                client = AnthropicVertex()
+            elif provider == APIProvider.BEDROCK:
+                client = AnthropicBedrock()
+            else:
+                # Fallback to Anthropic client
+                logger.warning(f"Unknown provider: {provider}, falling back to Anthropic")
+                client = Anthropic(api_key=api_key, max_retries=4)
             
-        # Only enable token-efficient tools beta if explicitly requested (default: off for stability)
-        if token_efficient_tools_beta:
-            logger.info("Enabling token-efficient tools beta")
-            betas.append(TOKEN_EFFICIENT_TOOLS_BETA_FLAG)
+            # Set image truncation threshold
+            image_truncation_threshold = only_n_most_recent_images or 0
+                
+            # Log all enabled beta features
+            if betas:
+                logger.info(f"Enabled beta features: {', '.join(betas)}")
+                print(f"✅ Beta flags enabled: {', '.join(betas)}")
+                
+            # Configure prompt caching if enabled
+            if enable_prompt_caching:
+                try:
+                    logger.info("Configuring prompt caching...")
+                    betas.append(PROMPT_CACHING_BETA_FLAG)
+                    _inject_prompt_caching(messages)
+                    # Because cached reads are 10% of the price, we don't think it's
+                    # ever sensible to break the cache by truncating images
+                    only_n_most_recent_images = 0
+                    # Use type ignore to bypass TypedDict check until SDK types are updated
+                    system["cache_control"] = {"type": "ephemeral"}  # type: ignore
+                    logger.info("Prompt caching successfully configured")
+                    print("✅ Prompt caching successfully configured")
+                except Exception as e:
+                    logger.error(f"Failed to configure prompt caching: {e}")
+                    # Remove from beta flags if setup failed
+                    if PROMPT_CACHING_BETA_FLAG in betas:
+                        betas.remove(PROMPT_CACHING_BETA_FLAG)
+                    beta_status["prompt_caching"] = False
+                    print("❌ Prompt caching configuration failed")
+                    
+            # Log beta feature status
+            logger.info(f"Beta feature status: {beta_status}")
             
-        # Set image truncation threshold
-        image_truncation_threshold = only_n_most_recent_images or 0
-        
-        # Initialize appropriate client based on provider
-        if provider == APIProvider.ANTHROPIC:
-            client = Anthropic(api_key=api_key, max_retries=4)
-            enable_prompt_caching = True
-        elif provider == APIProvider.VERTEX:
-            client = AnthropicVertex()
-        elif provider == APIProvider.BEDROCK:
-            client = AnthropicBedrock()
-            
-        # Log all enabled beta features
-        if betas:
-            logger.info(f"Enabled beta features: {', '.join(betas)}")
-
-        if enable_prompt_caching:
-            betas.append(PROMPT_CACHING_BETA_FLAG)
-            _inject_prompt_caching(messages)
-            # Because cached reads are 10% of the price, we don't think it's
-            # ever sensible to break the cache by truncating images
-            only_n_most_recent_images = 0
-            # Use type ignore to bypass TypedDict check until SDK types are updated
-            system["cache_control"] = {"type": "ephemeral"}  # type: ignore
+        except Exception as e:
+            logger.error(f"Error configuring beta features: {e}")
+            # Fallback to minimal beta configuration
+            logger.warning("Falling back to minimal beta configuration")
+            print("\n⚠️ ERROR IN BETA FEATURES - Falling back to minimal configuration")
+            print(f"Error: {e}")
+            betas = []
+            if tool_version == "computer_use_20250124":
+                betas.append("computer-use-2025-01-24")
+            enable_prompt_caching = False
 
         if only_n_most_recent_images:
             _maybe_filter_to_n_most_recent_images(
@@ -186,22 +303,66 @@ async def sampling_loop(
             "model": model,
             "system": [system],
             "tools": tool_collection.to_params(),
-            "stream": True,  # Enable streaming for long responses
-            "beta": betas,   # Include beta flags directly
         }
+        
+        # Configure streaming based on environment variable
+        try:
+            # Import from the module level, fallback to default True if not defined
+            from computer_use_demo import ENABLE_STREAMING
+            
+            # Enable streaming if configured (default is True)
+            stream_enabled = ENABLE_STREAMING
+            api_params["stream"] = stream_enabled
+            
+            if stream_enabled:
+                logger.info("Response streaming is ENABLED")
+                print("✅ Response streaming enabled for this request")
+            else:
+                logger.info("Response streaming is DISABLED")
+                print("❌ Response streaming disabled for this request")
+        except ImportError:
+            # Fallback if import fails
+            logger.warning("Could not import ENABLE_STREAMING, defaulting to True")
+            api_params["stream"] = True
+            print("✅ Response streaming enabled (by default)")
+        except Exception as e:
+            # Handle any other errors
+            logger.error(f"Error configuring streaming: {e}")
+            api_params["stream"] = True
+            print("⚠️ Error configuring streaming - defaulting to enabled")
+            
+        # Add beta flags conditionally with error handling
+        if betas:
+            try:
+                api_params["beta"] = betas
+                logger.info(f"Added beta flags to API call: {betas}")
+            except Exception as e:
+                logger.error(f"Failed to add beta flags to API call: {e}")
+                # Continue without beta flags if there's an error
         
         # Add thinking parameters if needed
         if thinking_budget:
-            api_params["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
+            try:
+                api_params["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
+                logger.info(f"Added thinking budget: {thinking_budget} tokens")
+            except Exception as e:
+                logger.error(f"Failed to add thinking parameter: {e}")
+                # Continue without thinking if there's an error
             
+        # Log the API parameters (excluding sensitive data)
+        safe_params = {k: v for k, v in api_params.items() if k not in ["messages", "system"]}
+        logger.info(f"API call parameters: {safe_params}")
+        
         # Call the API with streaming enabled
         try:
             # Check which client method to use - some versions use 'beta' namespace
             if hasattr(client, "beta") and hasattr(client.beta, "messages"):
                 # Newer Anthropic SDK with beta namespace
+                logger.info("Using client.beta.messages.create() - newer SDK version")
                 stream = client.beta.messages.create(**api_params)
             else:
                 # Older Anthropic SDK without beta namespace
+                logger.info("Using client.messages.create() - older SDK version")
                 stream = client.messages.create(**api_params)
             
             # Process the stream
@@ -416,7 +577,11 @@ def _inject_prompt_caching(
     """
     Set cache breakpoints for the 3 most recent turns
     one cache breakpoint is left for tools/system prompt, to be shared across sessions
+    
+    This is a critical function for prompt caching functionality, which can
+    significantly reduce token usage and improve performance.
     """
+    logger.info("Setting up prompt cache control for messages")
     breakpoints_remaining = 3
     for message in reversed(messages):
         if message["role"] == "user" and isinstance(
@@ -428,10 +593,14 @@ def _inject_prompt_caching(
                 content[-1]["cache_control"] = BetaCacheControlEphemeralParam(  # type: ignore
                     {"type": "ephemeral"}
                 )
+                logger.debug(f"Added cache_control:ephemeral to message (remaining: {breakpoints_remaining})")
             else:
                 content[-1].pop("cache_control", None)
                 # we'll only every have one extra turn per loop
                 break
+    
+    logger.info(f"Prompt caching configured with {3-breakpoints_remaining} breakpoints")
+    return True  # Return true to indicate successful configuration
 
 
 def _make_api_tool_result(

@@ -7,15 +7,41 @@ import asyncio
 import base64
 import os
 import subprocess
+import sys
 import traceback
 import logging
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from enum import StrEnum
+from enum import Enum
 from functools import partial
 from pathlib import PosixPath
 from typing import cast, get_args, Any, Dict, Union, Optional
+
+# Define StrEnum for Python 3.10 compatibility
+if sys.version_info < (3, 11):
+    # Backport of StrEnum for Python < 3.11
+    class StrEnum(str, Enum):
+        """
+        Enum where members are also (and must be) strings.
+        """
+        def __new__(cls, *values):
+            if len(values) > 3:
+                raise TypeError(f'too many arguments for str(): {values!r}')
+            if len(values) == 1:
+                # Construct by name (default Enum behavior)
+                obj = str.__new__(cls, values[0])
+            else:
+                # Construct the normal way
+                obj = str.__new__(cls)
+            obj._value_ = values[0]
+            return obj
+        
+        def _generate_next_value_(name, start, count, last_values):
+            """Return the name as the value."""
+            return name
+else:
+    from enum import StrEnum
 
 import httpx
 import streamlit as st
@@ -27,15 +53,49 @@ from anthropic.types.beta import (
 )
 
 # Import constants from module's __init__.py
-from computer_use_demo import (
-    PROMPT_CACHING_BETA_FLAG,
-    OUTPUT_128K_BETA_FLAG,
-    TOKEN_EFFICIENT_TOOLS_BETA_FLAG,
-    DEFAULT_MAX_TOKENS,
-    DEFAULT_THINKING_BUDGET,
-    APIProvider,
-    ToolVersion,
-)
+# Try different import paths based on how the module is being run
+try:
+    # Direct import when the module is in path
+    from computer_use_demo import (
+        PROMPT_CACHING_BETA_FLAG,
+        OUTPUT_128K_BETA_FLAG,
+        TOKEN_EFFICIENT_TOOLS_BETA_FLAG,
+        DEFAULT_MAX_TOKENS,
+        DEFAULT_THINKING_BUDGET,
+        APIProvider,
+        ToolVersion,
+    )
+except ImportError:
+    # Relative import when running from within the package
+    try:
+        # Import from current package using relative import
+        from . import (
+            PROMPT_CACHING_BETA_FLAG,
+            OUTPUT_128K_BETA_FLAG,
+            TOKEN_EFFICIENT_TOOLS_BETA_FLAG,
+            DEFAULT_MAX_TOKENS,
+            DEFAULT_THINKING_BUDGET,
+            APIProvider,
+            ToolVersion,
+        )
+    except ImportError:
+        # Last resort - define constants directly (for standalone running)
+        import logging
+        logging.warning("Using fallback constants - some features may be limited")
+        PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
+        OUTPUT_128K_BETA_FLAG = "output-128k-2025-02-19"
+        TOKEN_EFFICIENT_TOOLS_BETA_FLAG = "token-efficient-tools-2025-02-19"
+        DEFAULT_MAX_TOKENS = 65536
+        DEFAULT_THINKING_BUDGET = 32768
+        
+        # Define APIProvider as a class with string constants
+        class APIProvider:
+            ANTHROPIC = "anthropic"
+            BEDROCK = "bedrock"
+            VERTEX = "vertex"
+            
+        # Define ToolVersion
+        ToolVersion = "computer_use_20250124"
 
 # Conditional import for different Streamlit versions
 try:
@@ -52,9 +112,40 @@ except ModuleNotFoundError:
     # Fallback for newer Streamlit versions where the import structure changed
     from streamlit import DeltaGenerator
 
-# Import tools module
-from computer_use_demo.tools import ToolResult, ToolVersion
-from computer_use_demo.loop import sampling_loop
+# Import tools module using flexible import paths
+try:
+    # Direct package import
+    from computer_use_demo.tools import ToolResult, ToolVersion as ToolVersion_
+    from computer_use_demo.loop import sampling_loop
+except ImportError:
+    try:
+        # Relative import when part of package
+        from .tools import ToolResult, ToolVersion as ToolVersion_
+        from .loop import sampling_loop
+    except ImportError:
+        # Fallback for standalone execution
+        import logging
+        logging.warning("Using mock tool imports - functionality may be limited")
+        
+        # Define minimal ToolResult for UI display
+        @dataclass
+        class ToolResult:
+            output: Optional[str] = None
+            error: Optional[str] = None
+            base64_image: Optional[str] = None
+            system: Optional[str] = None
+        
+        # Define mock sampling_loop
+        async def sampling_loop(*args, **kwargs):
+            logging.error("sampling_loop not available - imports failed")
+            raise ImportError("Cannot import sampling_loop function")
+        
+        # Use ToolVersion from previous import if available
+        if 'ToolVersion' not in locals():
+            ToolVersion_ = "computer_use_20250124"
+            
+# Use ToolVersion_ to avoid conflict with the imported type hint
+ToolVersion = ToolVersion_
 
 # Configure logging
 logging.basicConfig(

@@ -22,6 +22,8 @@ The codebase is located in this repository and primarily consists of:
 - Run webhook tests: `python test_webhook.py`
 - Integration test: `python integration_test.py`
 - Run Claude DC: `python claude-dc-implementation/demo.py`
+- Validate all Claude DC features: `./launch_helpers/validate_claude_dc.py`
+- Launch Claude DC with all features: `./claude_dc_launch.sh`
 
 ## Code Style Guidelines
 - Python 3.10+ compatible
@@ -56,6 +58,93 @@ Finally, deploy the updates to the live environment:
 - Back up the current live code (to avoid any irreversible mistakes).
 - Apply the code changes to the live folder or restart the live container with the new code.
 - Ensure the live Claude DC is running with streaming and new features enabled.
+
+## Testing and Validation Requirements
+Before submitting any code changes, you MUST complete the following comprehensive validation steps:
+
+### 1. Static Analysis and Code Quality
+- Run static type checking: `mypy claude-dc-implementation/`
+- Format and check code style: `black . && isort . && flake8 claude-dc-implementation/`
+- Scan for circular dependencies using `import-linter` or similar tools
+- Check for compatibility with Python 3.10 (minimum version) by inspecting language features
+- Use the `validate_claude_dc.py` script for comprehensive verification
+
+### 2. Multi-Environment Import Validation
+- **Critical:** Test imports from both inside and outside directories
+- Ensure all imports work in real execution contexts, not just syntax checking
+- Execute test scripts that simulate the actual runtime environment
+- Verify direct, relative, and dynamic imports all function correctly
+- Check imports when running as main script vs. imported module
+
+### 3. Runtime Environment Testing
+- Complete `./launch_helpers/validate_claude_dc.py` checks before any deployment
+- Run the actual launch script in validation mode: `./claude_dc_launch.sh --validate-only` 
+- Execute the Python path validation to ensure modules are correctly discoverable
+- Test the same code in both container and local environments
+- Test all imports in the same sequence they're used in production
+- **CRITICAL:** Verify screen dimension environment variables (`WIDTH`, `HEIGHT`, `DISPLAY_NUM`)
+- Test with actual user interaction by typing "Hi Claude" in the Streamlit interface
+- Verify tool outputs during streaming responses are displayed correctly
+
+### 4. Integration Testing Workflow
+1. **Module Testing**: Test each component in isolation
+   ```bash
+   # Test module imports individually
+   python -c "from claude-dc-implementation.computeruse.computer_use_demo import tools"
+   
+   # Test streamlit component standalone
+   cd claude-dc-implementation/computeruse/computer_use_demo
+   python -m streamlit run streamlit.py
+   ```
+
+2. **Path Validation**: Verify PYTHONPATH and script execution paths
+   ```bash
+   # Run environment path validator
+   python /tmp/claude_dc_path_test.py
+   
+   # Test imports with various working directories
+   cd / && python -c "import sys; sys.path.insert(0, '/home/jesse/projects/palios-taey-nova'); import claude-dc-implementation.computeruse.computer_use_demo"
+   ```
+
+3. **Full System Tests**: Run complete system validations
+   ```bash
+   # Full validation
+   ./launch_helpers/validate_claude_dc.py
+   
+   # Specific validation of runtime imports
+   ./launch_helpers/validate_claude_dc.py --runtime-imports-only
+   ```
+
+### 5. Dependency Versioning and Environment Testing
+- Examine imports for version-specific features (e.g., Python 3.11+ functionality)
+- Create version-specific shims for features missing in Python 3.10 (like StrEnum)
+- Test with stripped-down PYTHONPATH to expose implicit dependencies
+- Verify behavior with alternative implementations of same dependencies
+- Use `requirements.txt` version pinning for predictable environments
+
+### 6. Fallback and Error Recovery
+- Implement graceful fallbacks for common failure modes
+- Test importing modules with alternative paths when primary imports fail
+- Add robust try/except blocks around imports with informative error messages
+- Provide runtime defaults for configuration values that can't be imported
+- Create self-diagnostic routines that report detailed environment state on failure
+- Add default values for all required environment variables (especially for ComputerTool)
+- Test with missing/invalid environment variables to ensure graceful degradation
+- Add comprehensive logging to help diagnose runtime failures
+
+### 7. Docker Environment Testing
+- Test inside the Docker container Claude DC uses in production
+- Verify file paths and permissions are correct in containerized environment
+- Ensure proper environmental variable handling between container/host
+- Test launching with various container configurations
+- Create container-specific path handling for consistent behavior
+
+### 8. Documentation and Debugging Aids
+- Document all import paths and dependencies clearly
+- Add verbose logging that can be enabled to trace import activity
+- Create debugging tools to visualize the module structure and imports
+- Document the exact sequence of imports that should succeed
+- Leave instructions for troubleshooting common import problems
 
 ## Constraints and Guardrails
 - **Do NOT disrupt live operations** until ready to deploy. Use the dev environment for all testing. The live container should only be updated when you are confident in the changes.
