@@ -21,7 +21,7 @@ sudo apt-get install -y rsync
 # Python environment setup
 echo "Installing Python dependencies from requirements.txt..."
 pip install --upgrade pip
-pip install -r claude-dc-implementation/requirements.txt
+pip install -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/requirements.txt
 
 # Install spaCy language model
 echo "Installing spaCy model..."

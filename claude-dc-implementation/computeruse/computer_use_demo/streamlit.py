@@ -25,7 +25,12 @@ from anthropic.types.beta import (
     BetaTextBlockParam,
     BetaToolResultBlockParam,
 )
-from streamlit.delta_generator import DeltaGenerator
+try:
+    # New Streamlit versions
+    from streamlit.delta_generator import DeltaGenerator
+except ModuleNotFoundError:
+    # Fallback for newer Streamlit versions where the import structure changed
+    from streamlit import DeltaGenerator
 from computer_use_demo.tools import ToolResult, ToolVersion
 from computer_use_demo.loop import (
     APIProvider, 

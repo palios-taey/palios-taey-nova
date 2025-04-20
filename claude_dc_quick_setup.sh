@@ -6,28 +6,12 @@ echo "Running main setup script..."
 /home/computeruse/github/palios-taey-nova/scripts/setup.sh
 
 
-# Install Docker in rootless mode (no sudo required)
-echo "Setting up Docker in rootless mode..."
+# Skip Docker installation - we're running inside Docker already
+echo "Skipping Docker installation (already in container environment)"
 
-# First check if Docker is already available
-if command -v docker &> /dev/null; then
-    echo "Docker already installed, skipping installation"
-else
-    echo "Installing Docker in rootless mode..."
-    # Install uidmap package if possible (required for rootless mode)
-    apt-get install -y uidmap || echo "Cannot install uidmap, continuing anyway..."
-    
-    # Download and run rootless installation script
-    curl -fsSL https://get.docker.com/rootless | sh || echo "Rootless Docker installation failed, will use local mode"
-    
-    # Set environment variables
-    export PATH=/home/$USER/bin:$PATH
-    export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock
-    
-    # Add these variables to .bashrc for persistence
-    echo 'export PATH=/home/$USER/bin:$PATH' >> ~/.bashrc
-    echo 'export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock' >> ~/.bashrc
-fi
+# Set environment variable for local mode
+export CLAUDE_ENV=dev
+echo "Setting CLAUDE_ENV=dev for local mode operation"
 
 # Run the Claude DC implementation setup
 echo "Running Claude DC implementation setup..."
@@ -119,7 +103,7 @@ echo "Setting up computer_use_demo environment..."
 mkdir -p /home/computeruse/computer_use_demo/tools
 
 # Copy the updated files from test environment to production
-cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
+# cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
 
 # Make sure the launcher script is executable
 chmod +x /home/computeruse/run_claude_dc.py
@@ -135,7 +119,14 @@ echo "   - Click Reset button"
 echo ""
 echo "Setup complete!"
 echo "You may need to refresh the browser to see the changes."
-# Run the Claude DC in local mode to avoid Docker issues
-echo "Starting Claude DC in local mode (no Docker required)..."
-cd /home/computeruse/
-python3 run_claude_dc.py --local
+# First test if the test environment has the working code
+if [ -d "/home/computeruse/test_environment" ] && [ -f "/home/computeruse/test_environment/streamlit.py" ]; then
+    echo "Found working test environment, starting Claude DC from there..."
+    cd /home/computeruse/test_environment
+    python3 -m streamlit run streamlit.py --server.port=8501 --server.address=0.0.0.0
+else
+    # Fall back to standard environment
+    echo "Starting Claude DC from computer_use_demo..."
+    cd /home/computeruse/
+    python3 run_claude_dc.py --local
+fi

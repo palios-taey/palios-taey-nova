@@ -29,6 +29,7 @@ docker run \
    -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
    -v $HOME/.anthropic:/home/computeruse/.anthropic \
    -v $HOME/transcripts:/home/computeruse/transcripts \
+   -v $HOME/projects/palios-taey-nova:/home/computeruse/github/palios-taey-nova \
    -p 5900:5900 \
    -p 8501:8501 \
    -p 6080:6080 \

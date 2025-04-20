@@ -199,37 +199,35 @@ async def sampling_loop(
             # Add thinking parameters to extra_params
             extra_params["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
         
-        # Add beta flags if needed
-        if betas:
-            # For Anthropic client, we need to include beta in the headers
-            extra_params["beta"] = betas
-            logger.info(f"Using beta flags: {betas}")
+        # Prepare API call parameters
+        api_params = {
+            "max_tokens": max_tokens,
+            "messages": messages,
+            "model": model,
+            "system": [system],
+            "tools": tool_collection.to_params(),
+            "stream": True,  # Enable streaming for long responses
+        }
         
+        # Add thinking parameters if needed
+        if thinking_budget:
+            api_params["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
+            
+        # Log beta flags but don't use extra_params with betas
+        if betas:
+            logger.info(f"Using beta flags: {betas}")
+            # Add beta flags directly to API call
+            api_params["beta"] = betas
+            
         # Call the API with streaming enabled
         try:
             # Check which client method to use - some versions use 'beta' namespace
             if hasattr(client, "beta") and hasattr(client.beta, "messages"):
                 # Newer Anthropic SDK with beta namespace
-                stream = client.beta.messages.create(
-                    max_tokens=max_tokens,
-                    messages=messages,
-                    model=model,
-                    system=[system],
-                    tools=tool_collection.to_params(),
-                    extra_body=extra_params,
-                    stream=True,  # Enable streaming for long responses
-                )
+                stream = client.beta.messages.create(**api_params)
             else:
                 # Older Anthropic SDK without beta namespace
-                stream = client.messages.create(
-                    max_tokens=max_tokens,
-                    messages=messages,
-                    model=model,
-                    system=[system],
-                    tools=tool_collection.to_params(),
-                    extra_body=extra_params,
-                    stream=True,  # Enable streaming for long responses
-                )
+                stream = client.messages.create(**api_params)
             
             # Process the stream
             content_blocks = []
