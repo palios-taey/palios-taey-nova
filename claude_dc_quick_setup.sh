@@ -5,6 +5,30 @@
 echo "Running main setup script..."
 /home/computeruse/github/palios-taey-nova/scripts/setup.sh
 
+
+# Install Docker in rootless mode (no sudo required)
+echo "Setting up Docker in rootless mode..."
+
+# First check if Docker is already available
+if command -v docker &> /dev/null; then
+    echo "Docker already installed, skipping installation"
+else
+    echo "Installing Docker in rootless mode..."
+    # Install uidmap package if possible (required for rootless mode)
+    apt-get install -y uidmap || echo "Cannot install uidmap, continuing anyway..."
+    
+    # Download and run rootless installation script
+    curl -fsSL https://get.docker.com/rootless | sh || echo "Rootless Docker installation failed, will use local mode"
+    
+    # Set environment variables
+    export PATH=/home/$USER/bin:$PATH
+    export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock
+    
+    # Add these variables to .bashrc for persistence
+    echo 'export PATH=/home/$USER/bin:$PATH' >> ~/.bashrc
+    echo 'export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock' >> ~/.bashrc
+fi
+
 # Run the Claude DC implementation setup
 echo "Running Claude DC implementation setup..."
 
@@ -111,5 +135,7 @@ echo "   - Click Reset button"
 echo ""
 echo "Setup complete!"
 echo "You may need to refresh the browser to see the changes."
-# Run the launcher script as the final step
-/home/computeruse/run_claude_dc.py
+# Run the Claude DC in local mode to avoid Docker issues
+echo "Starting Claude DC in local mode (no Docker required)..."
+cd /home/computeruse/
+python3 run_claude_dc.py --local

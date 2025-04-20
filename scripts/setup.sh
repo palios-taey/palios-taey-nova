@@ -14,7 +14,6 @@ sudo apt install -y \
     chrome-gnome-shell \
     cups-bsd \
     python3-dbus \
-    docker.io \
     python3-apt \
     system76-driver \
     python3-systemd \
