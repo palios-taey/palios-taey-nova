@@ -32,6 +32,18 @@ from anthropic.types.beta import (
     BetaToolUseBlockParam,
 )
 
+# Import constants from module's __init__.py
+from computer_use_demo import (
+    PROMPT_CACHING_BETA_FLAG,
+    OUTPUT_128K_BETA_FLAG,
+    TOKEN_EFFICIENT_TOOLS_BETA_FLAG,
+    DEFAULT_MAX_TOKENS,
+    DEFAULT_THINKING_BUDGET,
+    MODE,
+    BACKUP_DIR,
+    LOG_DIR,
+)
+
 from .tools import (
     TOOL_GROUPS_BY_VERSION,
     ToolCollection,
@@ -40,41 +52,15 @@ from .tools import (
 )
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger('claude_dc')
+logger = logging.getLogger('claude_dc.loop')
 
-# Environment configuration
+# Get environment configuration
 parser = argparse.ArgumentParser()
 parser.add_argument('--mode', choices=['dev', 'live'], default=os.getenv('CLAUDE_ENV', 'live'))
 args, unknown = parser.parse_known_args()
+
+# Override MODE from environment variables or command line
 MODE = args.mode
-
-# Beta feature flags
-PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
-OUTPUT_128K_BETA_FLAG = "output-128k-2025-02-19"
-TOKEN_EFFICIENT_TOOLS_BETA_FLAG = "token-efficient-tools-2025-02-19"
-
-# Default token settings for output
-DEFAULT_MAX_TOKENS = 65536  # ~64k max output
-DEFAULT_THINKING_BUDGET = 32768  # ~32k thinking budget
-
-# Environment-specific paths
-if MODE == "dev":
-    BACKUP_DIR = "/home/computeruse/dev_backups/"
-    LOG_DIR = "/home/computeruse/dev_logs/"
-else:
-    BACKUP_DIR = "/home/computeruse/my_stable_backup_complete/"
-    LOG_DIR = "/home/computeruse/logs/"
-
-# Create directories if they don't exist
-for directory in [BACKUP_DIR, LOG_DIR]:
-    try:
-        os.makedirs(directory, exist_ok=True)
-    except Exception as e:
-        logger.warning(f"Failed to create directory {directory}: {e}")
 
 logger.info(f"Claude DC initialized in {MODE} mode")
 
@@ -128,7 +114,7 @@ async def sampling_loop(
     api_key: str,
     only_n_most_recent_images: int | None = None,
     max_tokens: int = DEFAULT_MAX_TOKENS,  # Default to 64k tokens for output
-    tool_version: ToolVersion,
+    tool_version: ToolVersion = "computer_use_20250124",
     thinking_budget: int | None = DEFAULT_THINKING_BUDGET,  # Default to 32k tokens for thinking
     token_efficient_tools_beta: bool = False,
 ):
@@ -193,12 +179,6 @@ async def sampling_loop(
                 min_removal_threshold=image_truncation_threshold,
             )
         
-        # Prepare extra parameters
-        extra_params = {}
-        if thinking_budget:
-            # Add thinking parameters to extra_params
-            extra_params["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
-        
         # Prepare API call parameters
         api_params = {
             "max_tokens": max_tokens,
@@ -207,17 +187,12 @@ async def sampling_loop(
             "system": [system],
             "tools": tool_collection.to_params(),
             "stream": True,  # Enable streaming for long responses
+            "beta": betas,   # Include beta flags directly
         }
         
         # Add thinking parameters if needed
         if thinking_budget:
             api_params["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
-            
-        # Log beta flags but don't use extra_params with betas
-        if betas:
-            logger.info(f"Using beta flags: {betas}")
-            # Add beta flags directly to API call
-            api_params["beta"] = betas
             
         # Call the API with streaming enabled
         try:
@@ -442,7 +417,6 @@ def _inject_prompt_caching(
     Set cache breakpoints for the 3 most recent turns
     one cache breakpoint is left for tools/system prompt, to be shared across sessions
     """
-
     breakpoints_remaining = 3
     for message in reversed(messages):
         if message["role"] == "user" and isinstance(

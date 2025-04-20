@@ -26,12 +26,16 @@ from anthropic.types.beta import (
     BetaToolResultBlockParam,
 )
 
-# Add path to allow finding modules
-import sys
-import os
-parent_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
+# Import constants from module's __init__.py
+from computer_use_demo import (
+    PROMPT_CACHING_BETA_FLAG,
+    OUTPUT_128K_BETA_FLAG,
+    TOKEN_EFFICIENT_TOOLS_BETA_FLAG,
+    DEFAULT_MAX_TOKENS,
+    DEFAULT_THINKING_BUDGET,
+    APIProvider,
+    ToolVersion,
+)
 
 # Conditional import for different Streamlit versions
 try:
@@ -48,33 +52,9 @@ except ModuleNotFoundError:
     # Fallback for newer Streamlit versions where the import structure changed
     from streamlit import DeltaGenerator
 
-# Import tools module using a try-except for flexible module resolution
-try:
-    # Try as a package first
-    from computer_use_demo.tools import ToolResult, ToolVersion
-except ImportError:
-    # If running from within the package
-    from tools import ToolResult, ToolVersion
-try:
-    from computer_use_demo.loop import (
-        APIProvider, 
-        sampling_loop,
-        PROMPT_CACHING_BETA_FLAG,
-        OUTPUT_128K_BETA_FLAG,
-        TOKEN_EFFICIENT_TOOLS_BETA_FLAG,
-        DEFAULT_MAX_TOKENS,
-        DEFAULT_THINKING_BUDGET
-    )
-except ImportError:
-    from loop import (
-        APIProvider, 
-        sampling_loop,
-        PROMPT_CACHING_BETA_FLAG,
-        OUTPUT_128K_BETA_FLAG,
-        TOKEN_EFFICIENT_TOOLS_BETA_FLAG,
-        DEFAULT_MAX_TOKENS,
-        DEFAULT_THINKING_BUDGET
-    )
+# Import tools module
+from computer_use_demo.tools import ToolResult, ToolVersion
+from computer_use_demo.loop import sampling_loop
 
 # Configure logging
 logging.basicConfig(
@@ -83,7 +63,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger('claude_dc.streamlit')
 
-PROVIDER_TO_DEFAULT_MODEL_NAME: dict[APIProvider, str] = {
+PROVIDER_TO_DEFAULT_MODEL_NAME: dict[str, str] = {
     APIProvider.ANTHROPIC: "claude-3-7-sonnet-20250219",
     APIProvider.BEDROCK: "anthropic.claude-3-5-sonnet-20241022-v2:0",
     APIProvider.VERTEX: "claude-3-5-sonnet-v2@20241022",
@@ -195,7 +175,7 @@ def setup_state():
 def _reset_model():
     """Reset model configuration."""
     st.session_state.model = PROVIDER_TO_DEFAULT_MODEL_NAME[
-        cast(APIProvider, st.session_state.provider)
+        st.session_state.provider
     ]
     _reset_model_conf()
 
@@ -253,7 +233,7 @@ async def main():
                 st.session_state.provider = st.session_state.provider_radio
                 st.session_state.auth_validated = False
 
-        provider_options = [option.value for option in APIProvider]
+        provider_options = [APIProvider.ANTHROPIC, APIProvider.BEDROCK, APIProvider.VERTEX]
         st.radio(
             "API Provider",
             options=provider_options,
@@ -685,7 +665,7 @@ def _render_message(
             st.markdown(message)
 
 
-def validate_auth(provider: APIProvider, api_key: str | None):
+def validate_auth(provider: str, api_key: str | None):
     """Validate authentication credentials."""
     if provider == APIProvider.ANTHROPIC:
         if not api_key:
