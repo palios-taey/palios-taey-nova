@@ -20,7 +20,7 @@ This document will help you understand your current status, the project context,
 
 1. **Claude Code Collaboration**: 
    - A Claude Code instance is available to collaborate with you
-   - Use the wrapper script: `/home/computeruse/run-claude-code.sh`
+   - Use the wrapper script: `/home/computeruse/run-claude-code-simple.sh`
    - See `CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md` for details on this AI-to-AI collaboration
 
 2. **Streaming Implementation**:
@@ -48,10 +48,11 @@ Your Claude Code instance is a valuable collaborator:
 - It can provide guidance on best practices
 
 When working with Claude Code:
-1. Use the wrapper script to avoid encoding issues
-2. Share specific file paths and error messages
-3. Document your collaboration outcomes
-4. Build on shared context rather than repeating information
+1. Use the simple wrapper script to avoid encoding issues: `/home/computeruse/run-claude-code-simple.sh`
+2. Work from the root directory for full environment access
+3. Share specific file paths and error messages
+4. Document your collaboration outcomes
+5. Build on shared context rather than repeating information
 
 ## Next Steps After Streaming Implementation
 

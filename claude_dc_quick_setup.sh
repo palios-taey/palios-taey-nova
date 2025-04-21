@@ -87,6 +87,9 @@ if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/comp
       /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh
 fi
 
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-simple.sh /home/computeruse/
+
+
 # Set Claude options
 echo "Please set the following Claude options manually:"
 echo "   - Model: claude-3-7-sonnet-20250219"

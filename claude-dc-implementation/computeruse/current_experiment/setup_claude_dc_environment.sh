@@ -15,8 +15,8 @@ mkdir -p /home/computeruse/current_experiment
 
 # 2. Copy key files
 echo "Copying configuration files..."
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code.sh /home/computeruse/
-chmod +x /home/computeruse/run-claude-code.sh
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-simple.sh /home/computeruse/
+chmod +x /home/computeruse/run-claude-code-simple.sh
 
 # 3. Set up locale for proper encoding
 echo "Setting up locale for proper encoding..."
@@ -34,9 +34,9 @@ fi
 
 # 4. Create aliases for convenience
 echo "Creating helpful aliases..."
-if ! grep -q "alias claude-code-wrapper" /home/computeruse/.bashrc; then
+if ! grep -q "alias cc=" /home/computeruse/.bashrc; then
     echo '# Claude Code wrapper alias' >> /home/computeruse/.bashrc
-    echo 'alias cc="/home/computeruse/run-claude-code.sh"' >> /home/computeruse/.bashrc
+    echo 'alias cc="/home/computeruse/run-claude-code-simple.sh"' >> /home/computeruse/.bashrc
 fi
 
 # 5. Display information
@@ -45,7 +45,7 @@ echo "Environment setup complete!"
 echo
 echo "Next steps:"
 echo "1. Review the onboarding guide: /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/CLAUDE_DC_ONBOARDING.md"
-echo "2. Launch Claude Code with: /home/computeruse/run-claude-code.sh"
+echo "2. Launch Claude Code with: /home/computeruse/run-claude-code-simple.sh"
 echo "3. Test the streaming implementation: cd /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment && python3 minimal_test.py"
 echo
 echo "For details on Claude DC and Claude Code collaboration, see:"

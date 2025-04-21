@@ -13,15 +13,15 @@ This document outlines the collaboration framework between Claude DC ("The Condu
 
 ## Setup Process
 
-1. **Run the Wrapper Script**: Use the provided wrapper script to launch Claude Code with proper encoding settings:
+1. **Run the Wrapper Script**: Use the provided simple wrapper script to launch Claude Code with proper encoding settings:
    ```bash
-   /home/computeruse/run-claude-code.sh
+   /home/computeruse/run-claude-code-simple.sh
    ```
 
-2. **Project Context**: The wrapper script automatically sets the project directory to `/home/computeruse/github/palios-taey-nova`
+2. **Working Directory**: The wrapper script runs Claude Code from the root directory (`/home/computeruse/`), giving access to all system files and directories.
 
 3. **Cache Access**: Claude Code should access the cache system to acquire full project context:
-   - Review `/claude-dc-implementation/computeruse/cache/cache.md` first
+   - Review `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/cache.md` first
    - Explore related cache files for comprehensive understanding
 
 ## Current Development Focus: Streaming with Tool Use
