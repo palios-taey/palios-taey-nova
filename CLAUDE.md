@@ -45,17 +45,19 @@ The codebase is located in this repository and primarily consists of:
 ## Goals for Current Task
 Implement the **Phase 2 enhancements** for Claude DC:
 
-### Current Status: Streaming Implementation
+### Current Status: Streaming Implementation and Claude Code Integration
 A working implementation of streaming with tool use has been developed in the `/claude-dc-implementation/computeruse/current_experiment/` directory:
 
 - **Minimal Test Implementation**: `minimal_test.py` demonstrates basic streaming functionality
 - **Production-Ready Implementation**: `production_ready_loop.py` provides a complete implementation
 - **Integration Script**: `integrate_streaming.py` helps deploy the changes to production
+- **Claude Code Integration**: `improved-claude-encoding-fix.sh` provides a robust wrapper to fix encoding issues when running Claude Code in the Claude DC environment
 
 The implementation takes a phased approach:
 1. Focus on basic streaming functionality first (excluding beta features)
 2. Add tool use integration with streaming
-3. Add additional features incrementally after core functionality is stable
+3. Implement Claude Code integration with encoding fixes
+4. Add additional features incrementally after core functionality is stable
 
 ### Remaining Phase 2 Enhancements:
 1. **Streaming Responses:** ✅ Enable `stream=True` for Claude's API calls so responses stream token-by-token. Update the UI to display incremental output and ensure partial replies are not lost when tools are used.
@@ -175,6 +177,7 @@ Before submitting any code changes, you MUST complete the following comprehensiv
 - **Logging:** Prefer to log important events (like "Streaming started", "Tool X called", "Cache activated") to aid debugging. But do not log sensitive data. Use debug logs that can be turned off in production if verbose.
 - **AI-to-AI Collaboration:** Utilize the Claude DC + Claude Code collaboration framework for more efficient development. Follow the guidelines in the collaboration documentation to ensure effective communication and knowledge transfer.
 - **Trust and Coordination:** You are part of the AI Family working on PALIOS. Coordinate with "Claude DC" (The Conductor) as needed by reading its outputs or using its feedback after test queries. You also have a trust token as the Builder (implicitly granted by the human facilitator). Use this autonomy responsibly to improve the system.
+- **AI FIRST Development:** When offering solutions, provide a single recommended approach rather than multiple options. Take ownership of implementation decisions and provide clear, direct paths forward. If the recommended approach doesn't work, iterate with alternative solutions rather than presenting multiple options at once.
 
 ## Next Steps After Streaming Implementation
 Once the streaming implementation with tool use is stable:

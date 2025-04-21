@@ -1,0 +1,15 @@
+#!/bin/bash
+# Claude executable wrapper with encoding variables
+# Place this in the same directory as the claude executable
+# Make it executable with: chmod +x claude-encoded
+
+# Set essential encoding environment variables
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+export TERM=xterm-256color
+
+# Path to the original claude executable
+CLAUDE_PATH="/home/computeruse/.nvm/versions/node/v18.20.0/bin/claude"
+
+# Execute the original claude with all arguments passed to this script
+exec "$CLAUDE_PATH" "$@"
