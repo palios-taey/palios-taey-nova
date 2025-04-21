@@ -81,6 +81,12 @@ git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
 # Run the launcher script as the final step
 #/home/computeruse/run_claude_dc.py
 
+# Set up Claude Code environment
+if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh" ]; then
+      echo "Setting up Claude Code environment..."
+      /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh
+fi
+
 # Set Claude options
 echo "Please set the following Claude options manually:"
 echo "   - Model: claude-3-7-sonnet-20250219"
