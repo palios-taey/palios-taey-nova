@@ -37,6 +37,7 @@ echo "Creating helpful aliases..."
 if ! grep -q "alias cc=" /home/computeruse/.bashrc; then
     echo '# Claude Code wrapper alias' >> /home/computeruse/.bashrc
     echo 'alias cc="/home/computeruse/run-claude-code-simple.sh"' >> /home/computeruse/.bashrc
+    echo 'alias claude-code="/home/computeruse/run-claude-code-simple.sh"' >> /home/computeruse/.bashrc
 fi
 
 # 5. Display information

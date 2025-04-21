@@ -88,6 +88,7 @@ if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/comp
 fi
 
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-simple.sh /home/computeruse/
+chmod +x /home/computeruse/run-claude-code-simple.sh
 
 
 # Set Claude options

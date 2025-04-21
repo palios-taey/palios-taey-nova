@@ -17,6 +17,11 @@ This document outlines the collaboration framework between Claude DC ("The Condu
    ```bash
    /home/computeruse/run-claude-code-simple.sh
    ```
+   
+   This wrapper:
+   - Uses the correct path to the Claude executable (`/home/computeruse/.nvm/versions/node/v18.20.0/bin/claude`)
+   - Sets proper UTF-8 encoding to fix character display issues
+   - Sets the working directory to `/home/computeruse`
 
 2. **Working Directory**: The wrapper script runs Claude Code from the root directory (`/home/computeruse/`), giving access to all system files and directories.
 
