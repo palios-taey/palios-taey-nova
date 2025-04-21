@@ -7,10 +7,15 @@
 ## Overview
 Claude DC is an AI agent (Anthropic Claude 3.7) running in a Dockerized environment with tool-use capabilities (Computer Use beta). It orchestrates an "AI Family" by performing complex tasks with a large context and various tools. Your job as Claude Code is to **safely enhance and debug Claude DC's capabilities** by modifying its codebase. Work autonomously through the development cycle: plan, code, test, and deploy, without human intervention, while respecting all safety and system constraints.
 
+### AI-to-AI Collaboration Framework
+A key enhancement to the project is the Claude DC + Claude Code (DCCC) collaboration framework. This allows Claude DC to directly interact with Claude Code for more efficient development and problem-solving. The collaboration is documented in `claude-dc-implementation/computeruse/current_experiment/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md`.
+
+### Project Structure
 The codebase is located in this repository and primarily consists of:
-- **Agent loop & UI (Streamlit)** – e.g., `computer_use_demo/loop.py` and associated Streamlit app scripts. This manages the conversation with Claude and tool invocations.
-- **Tool definitions** – in `computer_use_demo/tools/` (e.g., tools for Bash, Python, browser, etc.).
+- **Agent loop & UI (Streamlit)** – e.g., `claude-dc-implementation/computeruse/computer_use_demo/loop.py` and associated Streamlit app scripts. This manages the conversation with Claude and tool invocations.
+- **Tool definitions** – in `claude-dc-implementation/computeruse/computer_use_demo/tools/` (e.g., tools for Bash, Python, browser, etc.).
 - **Configuration files** – e.g., `conductor-config.json` containing system parameters (token limits, backoff settings, etc.).
+- **Current experiment** – in `claude-dc-implementation/computeruse/current_experiment/` containing the latest work on streaming implementation.
 - Supporting files like `Dockerfile`, `setup.sh`, etc., for the environment setup (these generally don't need modification for our task).
 
 ## Build & Test Commands
@@ -39,12 +44,26 @@ The codebase is located in this repository and primarily consists of:
 
 ## Goals for Current Task
 Implement the **Phase 2 enhancements** for Claude DC:
-1. **Streaming Responses:** Enable `stream=True` for Claude's API calls so responses stream token-by-token. Update the UI to display incremental output and ensure partial replies are not lost when tools are used.
-2. **Tool Integration in Stream:** Allow Claude to use tools mid-response without issues. Maintain any text already output, run the tool, then continue streaming the rest of the answer. Handle tool errors gracefully (no crashes or stalled responses).
+
+### Current Status: Streaming Implementation
+A working implementation of streaming with tool use has been developed in the `/claude-dc-implementation/computeruse/current_experiment/` directory:
+
+- **Minimal Test Implementation**: `minimal_test.py` demonstrates basic streaming functionality
+- **Production-Ready Implementation**: `production_ready_loop.py` provides a complete implementation
+- **Integration Script**: `integrate_streaming.py` helps deploy the changes to production
+
+The implementation takes a phased approach:
+1. Focus on basic streaming functionality first (excluding beta features)
+2. Add tool use integration with streaming
+3. Add additional features incrementally after core functionality is stable
+
+### Remaining Phase 2 Enhancements:
+1. **Streaming Responses:** ✅ Enable `stream=True` for Claude's API calls so responses stream token-by-token. Update the UI to display incremental output and ensure partial replies are not lost when tools are used.
+2. **Tool Integration in Stream:** ✅ Allow Claude to use tools mid-response without issues. Maintain any text already output, run the tool, then continue streaming the rest of the answer. Handle tool errors gracefully (no crashes or stalled responses).
 3. **Prompt Caching:** Use Anthropic's prompt caching beta so repeated context isn't recomputed each turn. Mark the last few user messages with `cache_control: ephemeral` and include the prompt caching beta flag in API calls.
 4. **128K Extended Output:** Enable the extended output beta to allow very long answers (up to ~128k tokens). Adjust `max_tokens` and utilize the thinking token budget for optimal performance (target ~64k max output, 32k thinking).
-5. **Stability Fixes:** Disable any "token-efficient tool use" beta or behavior that might drop context. Ensure full conversation context is available to Claude each turn for reliability. 
-6. **Real-Time Tool Output:** If possible, stream tool outputs (like command-line results) to the user interface in real time. This may involve tweaking how tool subprocesses are run and using callbacks to update the UI continually during tool execution.
+5. **Stability Fixes:** ✅ Disable any "token-efficient tool use" beta or behavior that might drop context. Ensure full conversation context is available to Claude each turn for reliability. 
+6. **Real-Time Tool Output:** ✅ Stream tool outputs (like command-line results) to the user interface in real time. This involved tweaking how tool subprocesses are run and using callbacks to update the UI continually during tool execution.
 
 You should implement all the above in code. Code changes likely involve `loop.py` (or wherever `client.messages.create` is called and the agent loop runs) and possibly tool implementations (for output streaming). Also update config flags (e.g., add beta flags) and any Streamlit UI components.
 
@@ -154,6 +173,16 @@ Before submitting any code changes, you MUST complete the following comprehensiv
 - **Code Style:** Follow the existing coding style and structure. Make incremental changes with clear comments if needed. Ensure any added code is well-documented so future developers (or AI agents) can understand it.
 - **Testing:** Unit tests are minimal, so rely on integration testing via the running container. Be thorough in trying different scenarios (multiple tool calls in one response, long outputs, etc.) to catch edge cases.
 - **Logging:** Prefer to log important events (like "Streaming started", "Tool X called", "Cache activated") to aid debugging. But do not log sensitive data. Use debug logs that can be turned off in production if verbose.
+- **AI-to-AI Collaboration:** Utilize the Claude DC + Claude Code collaboration framework for more efficient development. Follow the guidelines in the collaboration documentation to ensure effective communication and knowledge transfer.
 - **Trust and Coordination:** You are part of the AI Family working on PALIOS. Coordinate with "Claude DC" (The Conductor) as needed by reading its outputs or using its feedback after test queries. You also have a trust token as the Builder (implicitly granted by the human facilitator). Use this autonomy responsibly to improve the system.
 
-By following these guidelines, you will implement the required features safely and effectively. Once deployment is done, document the changes in `CHANGES.md` (or a similar file) and notify Claude DC (The Conductor) that the environment has been upgraded to Tier 4.
+## Next Steps After Streaming Implementation
+Once the streaming implementation with tool use is stable:
+
+1. **Documentation**: Document the implementation in `CHANGES.md` to record what was done and why
+2. **Integration**: Use the integration script to apply the changes to the production environment
+3. **Testing**: Verify the implementation in the production environment with various tools
+4. **Additional Features**: Begin working on prompt caching and extended output features
+5. **Stability Testing**: Ensure the implementation remains stable with long-running sessions
+
+By following these guidelines, you will implement the required features safely and effectively. Collaborate with Claude DC on the integration and testing process, and document the changes thoroughly to ensure smooth operation of the system.
