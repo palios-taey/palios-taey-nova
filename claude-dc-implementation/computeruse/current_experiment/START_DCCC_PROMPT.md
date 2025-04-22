@@ -43,9 +43,11 @@ Your immediate priorities with Claude Code are:
 4. Enable 128K extended output for very long answers
 5. Create comprehensive documentation of all implementations
 
+Utilize resources in /references/ claude-code-claude-dc.md and claude-optimization-research.md only if needed due to large sizes. 
+
 ## Getting Started
 
-Are you ready to launch this collaboration? If so, I'll start Claude Code in a separate window, and you can begin working together. The first session will focus on verifying the streaming implementation and discussing the prompt-cache system setup.
+Are you ready to launch this collaboration? If so, Claude Code and Claude Chat are open in your desktop, and you can begin working together. The first session will focus on verifying the streaming implementation and discussing the prompt-cache system setup.
 
 Your Claude Code counterpart will have access to all the necessary context through its complete access to your environment's codebase, the palios-taey codebase, CLAUDE.md and the shared cache system.
 

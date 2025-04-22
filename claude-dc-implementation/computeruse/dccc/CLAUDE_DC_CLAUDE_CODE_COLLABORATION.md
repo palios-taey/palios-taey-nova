@@ -65,13 +65,47 @@ Our current priority is implementing streaming responses with tool use for Claud
 
 ## Collaboration Workflow
 
+### Clear Division of Responsibilities
+
+1. **Claude DC (The Conductor)**:
+   - Runs tests and executes commands in the environment
+   - Shares concrete results and errors with Claude Code
+   - Implements changes recommended by Claude Code
+   - Verifies if solutions work in the real environment
+   - Executes the "doing" part of the workflow
+
+2. **Claude Code (The Builder)**:
+   - Analyzes code and results provided by Claude DC
+   - Suggests specific code changes and implementation strategies
+   - Explains debugging approaches and solutions
+   - Provides targeted fixes rather than general instructions
+   - Executes the "thinking" part of the workflow
+
+3. **Claude Chat (The Researcher)**:
+   - Provides external research when requested
+   - Offers perspective on persistent problems
+   - Researches best practices and documentation
+   - Helps break debugging loops with fresh insights
+
+### Workflow Process
+
 1. **Problem Identification**: Claude DC identifies issues or requirements
-2. **Research**: Claude Chat conducts external research when needed
-3. **Analysis & Planning**: Claude Code analyzes the problem and plans solutions
-4. **Implementation**: Claude Code assists with code implementation
-5. **Testing**: Claude DC tests the implementation in the environment
-6. **Documentation**: All three AI family members contribute to documentation
-7. **Human Review**: Periodic check-ins with Jesse for guidance and feedback once completing milestone tasks.
+2. **Result Sharing**: Claude DC runs tests and shares concrete results
+3. **Analysis**: Claude Code analyzes the problem and plans solutions
+4. **Implementation**: Claude DC implements Claude Code's recommendations
+5. **Testing**: Claude DC tests the implementation and shares results
+6. **Iteration**: Repeat steps 2-5 as needed, maximum 3 cycles per issue
+7. **Research**: After 3 cycles without progress, consult Claude Chat
+8. **Documentation**: All three AI family members contribute to documentation
+9. **Human Review**: Periodic check-ins with Jesse for guidance and feedback once completing milestone tasks
+
+### Debugging Loop Prevention
+
+To prevent endless debugging cycles:
+- Limit to maximum 3 debugging iterations on any single issue
+- After 3 cycles without progress, pause and request research from Claude Chat
+- If a solution approach isn't working after 2 attempts, try a completely different approach
+- Document what has been tried to avoid repeating unsuccessful approaches
 
 ## Communication Best Practices
 
@@ -82,6 +116,31 @@ Our current priority is implementing streaming responses with tool use for Claud
 5. **Progressive Disclosure**: Build on shared understanding rather than repeating known information
 6. **Error Reporting**: Include full error messages and contextual information
 7. **Research Requests**: Claude DC should direct research requests to Claude Chat using the ROSETTA STONE protocol
+
+### Token Management
+
+To prevent context limit errors:
+
+1. **Reset Conversations**:
+   - Claude DC should reset his conversation when context gets large
+   - Reset after completing major tasks or debugging cycles
+   - Start fresh conversations for new topics
+
+2. **Efficient Information Sharing**:
+   - Share only relevant sections of code, not entire files
+   - Use line numbers and function names instead of full code
+   - Summarize large outputs instead of pasting them in full
+   - Prefer precise references over large context dumps
+
+3. **Tool Use Optimization**:
+   - Chain multiple commands into single Bash calls using semicolons
+   - Use grep/head/tail to extract only relevant portions of files
+   - Prefer targeted search commands over full file views
+
+4. **Output Management**:
+   - Use lower max_tokens settings (4000-6000 range)
+   - Keep thinking/reasoning concise
+   - Remove large error logs after acknowledging them
 
 ## Continuous Knowledge Integration
 
