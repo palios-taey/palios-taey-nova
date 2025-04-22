@@ -101,43 +101,44 @@ echo "   - Thinking Enabled: check"
 echo "   - Thinking Budget: 4000"
 echo "   - Click Reset button"
 echo ""
-# Set up DCCC (Claude DC + Claude Code) environment
-echo "Setting up DCCC environment..."
-
-# 1. Set up Claude Code environment using the STABLE solution
-echo "Setting up Claude Code environment..."
+# Set up Claude Code environment - ORIGINAL WORKING VERSION
 if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh" ]; then
+      echo "Setting up Claude Code environment..."
       /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh
 fi
 
-# 2. Ensure run-claude-code-simple.sh is copied and executable
+# Copy the original working scripts
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-simple.sh /home/computeruse/
 chmod +x /home/computeruse/run-claude-code-simple.sh
 
-# 3. Create DCCC directory and copy necessary files
-echo "Setting up DCCC documentation..."
+# Also copy the xterm version for reference
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-with-xterm.sh /home/computeruse/
+chmod +x /home/computeruse/run-claude-code-with-xterm.sh
+
+# Copy the cache version
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-with-cache.sh /home/computeruse/
+chmod +x /home/computeruse/run-claude-with-cache.sh
+
+# Create DCCC directory and copy documentation
 mkdir -p /home/computeruse/dccc
 if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/CLAUDE_CODE_DCCC.md" ]; then
     cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/CLAUDE_CODE_DCCC.md /home/computeruse/dccc/CLAUDE.md
     cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md /home/computeruse/dccc/
 fi
 
-# 4. Copy the DCCC launcher script with prompt cache
-echo "Setting up DCCC launcher with prompt cache..."
-if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/start-dccc-with-cache.sh" ]; then
-    cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/start-dccc-with-cache.sh /home/computeruse/start-dccc.sh
-    chmod +x /home/computeruse/start-dccc.sh
-    echo "Copied DCCC launcher to home directory"
-fi
-
 echo "Setup complete!"
 echo "You may need to refresh the browser to see the changes."
 echo ""
-echo "To start DCCC collaboration:"
-echo "  1. Ensure Claude DC is running"
-echo "  2. Run: ./start-dccc.sh"
+echo "To use Claude Code with the WORKING solution:"
+echo "  Run: ./run-claude-code-simple.sh"
 echo ""
-echo "For quick Claude Code access:"
-echo "  Run: ./claude-code or /home/computeruse/claude-code"
+echo "To use Claude Code with prompt cache:"
+echo "  Run: ./run-claude-with-cache.sh \"Please review /home/computeruse/dccc/CLAUDE.md for context\""
+echo ""
+echo "To use Claude Code with xterm (if needed):"
+echo "  Run: ./run-claude-code-with-xterm.sh"
+echo ""
+echo "IMPORTANT: Claude Code documentation is available at:"
+echo "  /home/computeruse/dccc/CLAUDE.md"
 # Run the launcher script as the final step
 # /home/computeruse/run_claude_dc.py
