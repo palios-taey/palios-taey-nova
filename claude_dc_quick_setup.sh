@@ -104,14 +104,17 @@ echo ""
 # Set up DCCC (Claude DC + Claude Code) environment
 echo "Setting up DCCC environment..."
 
-# 1. Set up Claude Code with xterm solution (simple and reliable)
-echo "Setting up Claude Code xterm launcher..."
-echo '#!/bin/bash
-# Launch Claude Code in xterm with proper encoding
-xterm -fa "Monospace" -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude $*"' > /home/computeruse/claude-code
-chmod +x /home/computeruse/claude-code
+# 1. Set up Claude Code environment using the STABLE solution
+echo "Setting up Claude Code environment..."
+if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh" ]; then
+      /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh
+fi
 
-# 2. Create DCCC directory and copy necessary files
+# 2. Ensure run-claude-code-simple.sh is copied and executable
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-simple.sh /home/computeruse/
+chmod +x /home/computeruse/run-claude-code-simple.sh
+
+# 3. Create DCCC directory and copy necessary files
 echo "Setting up DCCC documentation..."
 mkdir -p /home/computeruse/dccc
 if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/CLAUDE_CODE_DCCC.md" ]; then
@@ -119,26 +122,12 @@ if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/comp
     cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md /home/computeruse/dccc/
 fi
 
-# 3. Copy the start-dccc.sh launcher script
-echo "Setting up DCCC launcher..."
-if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/start-dccc.sh" ]; then
-    cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/start-dccc.sh /home/computeruse/
+# 4. Copy the DCCC launcher script with prompt cache
+echo "Setting up DCCC launcher with prompt cache..."
+if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/start-dccc-with-cache.sh" ]; then
+    cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/start-dccc-with-cache.sh /home/computeruse/start-dccc.sh
     chmod +x /home/computeruse/start-dccc.sh
-    echo "Copied start-dccc.sh to home directory"
-else
-    # Fallback if the script is not found
-    echo "Creating minimal start-dccc.sh in home directory..."
-    echo '#!/bin/bash
-# DCCC Launcher - Starts Claude Code with proper context and prompt cache
-cd /home/computeruse
-echo "=============================================="
-echo "  Starting DCCC Collaboration Environment     "
-echo "=============================================="
-echo "Starting Claude Code with prompt cache..."
-echo "Press ENTER to continue..."
-read -r
-./claude-code --prompt-cache-file=/home/computeruse/cache/cache.md "Please review /home/computeruse/dccc/CLAUDE.md for context. You are running in the Claude DC environment and will be collaborating directly with Claude DC."' > /home/computeruse/start-dccc.sh
-    chmod +x /home/computeruse/start-dccc.sh
+    echo "Copied DCCC launcher to home directory"
 fi
 
 echo "Setup complete!"
