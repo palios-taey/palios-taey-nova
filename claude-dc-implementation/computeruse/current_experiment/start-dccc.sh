@@ -1,24 +1,24 @@
 #!/bin/bash
-# Launch DCCC (Claude DC + Claude Code) Collaboration
+# DCCC Launcher - Starts Claude Code with proper context and prompt cache
 
-# Ensure we are in the home directory
+# Set up environment
 cd /home/computeruse
+mkdir -p /home/computeruse/dccc
 
-# Display DCCC header
+# Copy necessary files if they don't exist
+if [ ! -f "/home/computeruse/dccc/CLAUDE.md" ]; then
+  cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/CLAUDE_CODE_DCCC.md /home/computeruse/dccc/CLAUDE.md
+fi
+
+# Display header
 echo "=============================================="
 echo "  Starting DCCC Collaboration Environment     "
 echo "=============================================="
 echo "IMPORTANT: Please ensure Claude DC is already running"
 echo ""
-echo "Launch Claude DC if not already running with:"
-echo "   cd /home/computeruse/github/palios-taey-nova"
-echo "   ./claude_dc_launch.sh"
-echo ""
-echo "Starting Claude Code environment..."
-echo "   When Claude Code starts, it will use the prompt-cache for efficient access"
-echo ""
-echo "Press ENTER to launch Claude Code..."
+echo "Starting Claude Code with prompt cache..."
+echo "Press ENTER to continue..."
 read -r
 
-# Launch Claude Code with proper instructions - using the prompt-cache feature
-./claude-code --prompt-cache-file=/computeruse/cache/cache.md "Please review /computeruse/dccc/CLAUDE.md for context. You are running in the Claude DC environment and will be collaborating directly with Claude DC (The Conductor). Note: Your prompt-cache has been set up to use /computeruse/cache/cache.md efficiently."
+# Launch Claude Code with prompt-cache
+/home/computeruse/claude-code --prompt-cache-file=/home/computeruse/cache/cache.md "Please review /home/computeruse/dccc/CLAUDE.md for context. You are running in the Claude DC environment and will be collaborating directly with Claude DC (The Conductor)."

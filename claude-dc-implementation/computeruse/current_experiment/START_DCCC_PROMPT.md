@@ -17,10 +17,10 @@ Please review the ROSETTA STONE communication protocol in the chat window, which
 The DCCC environment has been set up with:
 
 1. A dedicated launcher (`./start-dccc.sh`)
-2. Documentation for both you and Claude Code
-3. A collaboration log to track progress
-4. A shared cache system for context continuity
-5. Claude Chat integration for research
+2. Documentation for both you and Claude Code in the /dccc/ directory
+3. A shared cache system for context continuity
+4. Claude Chat integration for research support
+5. Prompt-cache for efficient context management
 
 ## Collaboration Process
 
