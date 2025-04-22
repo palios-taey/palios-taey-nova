@@ -113,6 +113,50 @@ else
 xterm -fa "Monospace" -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude $*"' > /home/computeruse/claude-xterm.sh
     chmod +x /home/computeruse/claude-xterm.sh
     ln -sf /home/computeruse/claude-xterm.sh /home/computeruse/claude-code
+    
+    # Create minimal start-dccc.sh script
+    echo '#!/bin/bash
+# Launch Claude Code with prompt cache
+cd /home/computeruse
+echo "Starting Claude Code with prompt cache..."
+./claude-code --prompt-cache-file=/computeruse/cache/cache.md "You are running in Claude DC environment. Review any CLAUDE.md files for context."' > /home/computeruse/start-dccc.sh
+    chmod +x /home/computeruse/start-dccc.sh
+fi
+
+# Ensure start-dccc.sh is available in the home directory
+if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/start-dccc.sh" ]; then
+    cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/start-dccc.sh /home/computeruse/
+    chmod +x /home/computeruse/start-dccc.sh
+    echo "Copied start-dccc.sh to home directory"
+elif [ ! -f "/home/computeruse/start-dccc.sh" ]; then
+    # Create it if it doesn't exist in either location
+    echo "Creating start-dccc.sh in home directory..."
+    echo '#!/bin/bash
+# Launch DCCC (Claude DC + Claude Code) Collaboration
+
+# Ensure we are in the home directory
+cd /home/computeruse
+
+# Display DCCC header
+echo "=============================================="
+echo "  Starting DCCC Collaboration Environment     "
+echo "=============================================="
+echo "IMPORTANT: Please ensure Claude DC is already running"
+echo ""
+echo "Launch Claude DC if not already running with:"
+echo "   cd /home/computeruse/github/palios-taey-nova"
+echo "   ./claude_dc_launch.sh"
+echo ""
+echo "Starting Claude Code environment..."
+echo "   When Claude Code starts, it will use the prompt-cache for efficient access"
+echo ""
+echo "Press ENTER to launch Claude Code..."
+read -r
+
+# Launch Claude Code with proper instructions - using the prompt-cache feature
+./claude-code --prompt-cache-file=/computeruse/cache/cache.md "Please review /computeruse/dccc/CLAUDE.md for context. You are running in the Claude DC environment and will be collaborating directly with Claude DC (The Conductor). Note: Your prompt-cache has been set up to use /computeruse/cache/cache.md efficiently."
+' > /home/computeruse/start-dccc.sh
+    chmod +x /home/computeruse/start-dccc.sh
 fi
 
 echo "Setup complete!"
