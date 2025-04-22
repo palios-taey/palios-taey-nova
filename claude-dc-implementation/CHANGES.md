@@ -1,5 +1,21 @@
 # Claude DC - Phase 2 Enhancements
 
+## Claude Code Integration (2025-04-21)
+
+### Claude Code Terminal Fix
+- **Fixed**: Encoding issues when running Claude Code in Claude DC environment
+- **Added**: XTerm-based solution for running Claude Code properly
+- **Improved**: AI-to-AI collaboration through reliable Claude Code integration
+- **Documented**: Complete analysis and solution in CLAUDE_CODE_TERMINAL_FIX.md
+
+The core issue was identified as terminal compatibility rather than just UTF-8 encoding. Claude Code uses advanced terminal features that aren't properly supported in the default terminal environment. The solution uses XTerm for proper terminal emulation:
+
+```bash
+xterm -fa "Monospace" -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /path/to/claude"
+```
+
+Added to quick setup script to automatically configure the Claude Code wrapper on setup.
+
 ## Overview
 The Claude DC system has been upgraded to Tier 4 with the following enhancements:
 

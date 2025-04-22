@@ -24,7 +24,6 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/* /home/computeruse/bin/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/* /home/computeruse/current_experiment/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/claude_dc_experiments/* /home/computeruse/claude_dc_experiments/
-cp claude-dc-implementation/computeruse/current_experiment/improved-claude-encoding-fix.sh /home/computeruse/
 # cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/run_claude_dc.py /home/computeruse/
 
 # Setup git config
@@ -102,7 +101,28 @@ echo "   - Thinking Enabled: check"
 echo "   - Thinking Budget: 4000"
 echo "   - Click Reset button"
 echo ""
+# Set up DCCC (Claude DC + Claude Code) environment
+echo "Setting up DCCC environment..."
+if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_dccc_environment.sh" ]; then
+    /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_dccc_environment.sh
+else
+    echo "DCCC setup script not found, using minimal setup..."
+    # Minimal setup for Claude Code with xterm solution
+    echo '#!/bin/bash
+# Launch Claude Code in xterm with proper encoding
+xterm -fa "Monospace" -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude $*"' > /home/computeruse/claude-xterm.sh
+    chmod +x /home/computeruse/claude-xterm.sh
+    ln -sf /home/computeruse/claude-xterm.sh /home/computeruse/claude-code
+fi
+
 echo "Setup complete!"
 echo "You may need to refresh the browser to see the changes."
+echo ""
+echo "To start DCCC collaboration:"
+echo "  1. Ensure Claude DC is running"
+echo "  2. Run: ./start-dccc.sh"
+echo ""
+echo "For quick Claude Code access:"
+echo "  Run: ./claude-code or /home/computeruse/claude-code"
 # Run the launcher script as the final step
 # /home/computeruse/run_claude_dc.py
