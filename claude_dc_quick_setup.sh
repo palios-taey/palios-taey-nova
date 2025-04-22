@@ -14,6 +14,7 @@ mkdir -p /home/computeruse/references
 mkdir -p /home/computeruse/bin
 mkdir -p /home/computeruse/current_experiment
 mkdir -p /home/computeruse/claude_dc_experiments
+mkdir -p /home/computeruse/dccc
 
 
 # Copy /home/computeruse/ directories
@@ -24,6 +25,7 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/* /home/computeruse/bin/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/* /home/computeruse/current_experiment/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/claude_dc_experiments/* /home/computeruse/claude_dc_experiments/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/dccc/* /home/computeruse/dccc/
 # cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/run_claude_dc.py /home/computeruse/
 
 # Setup git config
@@ -81,14 +83,14 @@ git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
 # Run the launcher script as the final step
 #/home/computeruse/run_claude_dc.py
 
-# Set up Claude Code environment
-if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh" ]; then
-      echo "Setting up Claude Code environment..."
-      /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh
-fi
+# Set up Claude Code environment (replaced with xterm command)
+# if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh" ]; then
+#      echo "Setting up Claude Code environment..."
+#      /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh
+# fi
 
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-simple.sh /home/computeruse/
-chmod +x /home/computeruse/run-claude-code-simple.sh
+# cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-simple.sh /home/computeruse/
+# chmod +x /home/computeruse/run-claude-code-simple.sh
 
 
 # Set Claude options
@@ -101,44 +103,42 @@ echo "   - Thinking Enabled: check"
 echo "   - Thinking Budget: 4000"
 echo "   - Click Reset button"
 echo ""
-# Set up Claude Code environment - ORIGINAL WORKING VERSION
-if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh" ]; then
-      echo "Setting up Claude Code environment..."
-      /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/setup_claude_dc_environment.sh
-fi
+# Set up DCCC - Direct and Simple Approach
+echo "Setting up DCCC environment..."
 
-# Copy the original working scripts
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-simple.sh /home/computeruse/
-chmod +x /home/computeruse/run-claude-code-simple.sh
-
-# Also copy the xterm version for reference
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-with-xterm.sh /home/computeruse/
-chmod +x /home/computeruse/run-claude-code-with-xterm.sh
-
-# Copy the cache version
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-with-cache.sh /home/computeruse/
-chmod +x /home/computeruse/run-claude-with-cache.sh
-
-# Create DCCC directory and copy documentation
-mkdir -p /home/computeruse/dccc
-if [ -f "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/CLAUDE_CODE_DCCC.md" ]; then
-    cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/CLAUDE_CODE_DCCC.md /home/computeruse/dccc/CLAUDE.md
-    cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md /home/computeruse/dccc/
-fi
+# Copy
+cp /home/computeruse/github/palios-taey-nova/CLAUDE.md /home/computeruse/
 
 echo "Setup complete!"
 echo "You may need to refresh the browser to see the changes."
 echo ""
-echo "To use Claude Code with the WORKING solution:"
-echo "  Run: ./run-claude-code-simple.sh"
+echo "To start DCCC collaboration:"
+echo "  1. Ensure Claude DC is running"
+echo "  2. Run: ./run-dccc.sh"
 echo ""
-echo "To use Claude Code with prompt cache:"
-echo "  Run: ./run-claude-with-cache.sh \"Please review /home/computeruse/dccc/CLAUDE.md for context\""
+echo "This will launch Claude Code in xterm with prompt cache"
+echo "and proper documentation context for collaboration."
+'''
+# Create DCCC launcher script (utilize this or auto-start option below
+cat > /home/computeruse/run-dccc.sh << 'EOF'
+#!/bin/bash
+# DCCC Launcher - Direct and Simple approach using xterm with prompt-cache
+
+echo "=============================================="
+echo "  Starting DCCC Collaboration Environment     "
+echo "=============================================="
+echo "IMPORTANT: Please ensure Claude DC is already running"
 echo ""
-echo "To use Claude Code with xterm (if needed):"
-echo "  Run: ./run-claude-code-with-xterm.sh"
-echo ""
-echo "IMPORTANT: Claude Code documentation is available at:"
-echo "  /home/computeruse/dccc/CLAUDE.md"
-# Run the launcher script as the final step
-# /home/computeruse/run_claude_dc.py
+echo "Starting Claude Code with prompt cache..."
+echo "Press ENTER to continue..."
+read -r
+
+# Launch Claude Code with the WORKING xterm command and prompt cache
+# Note: prompt-cache-file loads content without consuming context tokens
+xterm -fa 'Monospace' -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --prompt-cache-file=/home/computeruse/cache/cache.md \"Please review /home/computeruse/CLAUDE.md for context and collaboration with Claude DC and Claude Chat. The prompt-cache-file has been loaded for efficient context access.\""
+EOF
+
+chmod +x /home/computeruse/run-dccc.sh
+'''
+# Auto-DCCC launch option
+xterm -fa 'Monospace' -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --prompt-cache-file=/home/computeruse/cache/cache.md \"Please review /home/computeruse/CLAUDE.md for context and collaboration with Claude DC and Claude Chat. The prompt-cache-file has been loaded for efficient context access.\""
