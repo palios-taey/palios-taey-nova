@@ -22,10 +22,10 @@ This AI-to-AI collaboration, supervised by Jesse and other Claude systems, enabl
 
 ## Setup Process
 
-1. **Launching Claude Code**: Use the provided launcher script with xterm and prompt-cache:
-   ```bash
-   /home/computeruse/run-dccc.sh
-   ```
+1. **Launching Claude Code**: If not already open, or DCCC closes unexpectedly, use the provided launch terminal prompt with xterm and prompt-cache:
+    '''
+    xterm -fa 'Monospace' -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --prompt-cache-file=/home/computeruse/cache/cache.md \"Please review /home/computeruse/CLAUDE.md for context and collaboration with Claude DC and Claude Chat. The prompt-cache-file has been loaded for efficient context access.\""
+    '''
    
    This launcher:
    - Uses xterm for proper terminal emulation with UTF-8 encoding
@@ -71,7 +71,7 @@ Our current priority is implementing streaming responses with tool use for Claud
 4. **Implementation**: Claude Code assists with code implementation
 5. **Testing**: Claude DC tests the implementation in the environment
 6. **Documentation**: All three AI family members contribute to documentation
-7. **Human Review**: Periodic check-ins with Jesse for guidance and feedback
+7. **Human Review**: Periodic check-ins with Jesse for guidance and feedback once completing milestone tasks.
 
 ## Communication Best Practices
 
