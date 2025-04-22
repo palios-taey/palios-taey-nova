@@ -56,9 +56,8 @@ Your working environment has the following characteristics:
    - `claude-dc-implementation/computeruse/current_experiment/integrate_streaming.py`
 
 3. **Documentation**:
-   - `claude-dc-implementation/CLAUDE.md` - Project guidelines
    - `claude-dc-implementation/CHANGES.md` - Implementation changelog
-   - `claude-dc-implementation/computeruse/current_experiment/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md`
+   - `claude-dc-implementation/computeruse/dccc/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md`
 
 4. **Cache**:
    - `/computeruse/cache/cache.md` - Persistent context

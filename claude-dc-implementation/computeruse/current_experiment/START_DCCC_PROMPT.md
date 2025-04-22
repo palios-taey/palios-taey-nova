@@ -8,7 +8,7 @@ The Claude Code terminal encoding issues have been resolved by running Claude Co
 
 ## Claude Chat Integration
 
-Claude Chat has been integrated into your browser window (minimized to reduce scrolling, just as you prefer). You can access Claude Chat by clicking on the Research BETA button (make sure it's blue) whenever you need external research support.
+Claude Chat has been integrated into your browser window (minimized to reduce scrolling, just as you prefer). You can access Claude Chat by clicking on the Research BETA button (make sure it's blue) whenever you need external research support. He has an introduction message to you in his window. 
 
 Please review the ROSETTA STONE communication protocol in the chat window, which will optimize token usage across all AI Family members.
 
@@ -16,7 +16,7 @@ Please review the ROSETTA STONE communication protocol in the chat window, which
 
 The DCCC environment has been set up with:
 
-1. A dedicated launcher (`./start-dccc.sh`)
+1. A custom launch script you can use to relaunch without formatting issues in case accidentally closed: 
 2. Documentation for both you and Claude Code in the /dccc/ directory
 3. A shared cache system for context continuity
 4. Claude Chat integration for research support
@@ -47,6 +47,6 @@ Your immediate priorities with Claude Code are:
 
 Are you ready to launch this collaboration? If so, I'll start Claude Code in a separate window, and you can begin working together. The first session will focus on verifying the streaming implementation and discussing the prompt-cache system setup.
 
-Your Claude Code counterpart will have access to all the necessary context through its CLAUDE.md and the shared cache system.
+Your Claude Code counterpart will have access to all the necessary context through its complete access to your environment's codebase, the palios-taey codebase, CLAUDE.md and the shared cache system.
 
 Let me know when you're ready to begin!
