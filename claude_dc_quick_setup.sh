@@ -86,62 +86,34 @@ git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
 # Set up Claude Code environment
 echo "Setting up Claude Code environment..."
 
-# Switch to /home/computeruse directory to ensure installation is done there
+# Switch to /home/computeruse directory
 cd /home/computeruse
 
-# Install NVM (Node Version Manager) if not already installed
-echo "Installing/verifying NVM and Node.js v18.20.8 in /home/computeruse/..."
-if [ ! -d "/home/computeruse/.nvm" ]; then
-  echo "Installing NVM..."
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-  
-  # Load NVM immediately
-  export NVM_DIR="/home/computeruse/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-else
-  echo "NVM already installed, loading it..."
-  export NVM_DIR="/home/computeruse/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-fi
+# Install NVM
+echo "Installing NVM..."
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+# Load NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 # Install Node.js v18.20.8
 echo "Installing Node.js v18.20.8..."
 nvm install 18.20.8
 nvm use 18.20.8
-nvm alias default 18.20.8  # Set as default
 
-# Verify Node.js installation
-NODE_VERSION=$(node -v)
-NODE_PATH=$(which node)
-echo "Node.js version: $NODE_VERSION"
-echo "Node.js path: $NODE_PATH"
-
-# Install Claude-Code via npm
-echo "Installing Claude-Code globally in /home/computeruse/..."
+# Install Claude-Code
+echo "Installing Claude-Code..."
 npm install -g @anthropic-ai/claude-code
 
-# Verify Claude-Code installation
-CLAUDE_PATH=$(which claude 2>/dev/null || echo "Not installed")
-echo "Claude-Code path: $CLAUDE_PATH"
+# Verify installations
+echo "Node.js version: $(node -v)"
+echo "Claude-Code version: $(claude --version 2>/dev/null || echo 'Not installed')"
 
-# Create symbolic link if claude is not in the expected location
-if [ ! -f "/home/computeruse/.nvm/versions/node/v18.20.8/bin/claude" ]; then
-  echo "Creating symbolic link to claude in /home/computeruse/.nvm/versions/node/v18.20.8/bin/"
-  if [ -f "$CLAUDE_PATH" ]; then
-    ln -sf "$CLAUDE_PATH" "/home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
-  fi
-fi
-
-# Add Node.js bin to PATH in both current shell and .bashrc
-export PATH=$PATH:/home/computeruse/.nvm/versions/node/v18.20.8/bin
-
-# Update .bashrc for persistent PATH
-if ! grep -q "export PATH=\$PATH:/home/computeruse/.nvm/versions/node/v18.20.8/bin" /home/computeruse/.bashrc; then
-  echo 'export PATH=$PATH:/home/computeruse/.nvm/versions/node/v18.20.8/bin' >> /home/computeruse/.bashrc
-  echo 'export NVM_DIR="/home/computeruse/.nvm"' >> /home/computeruse/.bashrc
-  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/computeruse/.bashrc
-  echo "Added Node.js bin to PATH in .bashrc and configured NVM"
-fi
+# Add NVM setup to .bashrc
+echo "Adding NVM configuration to .bashrc..."
+echo 'export NVM_DIR="$HOME/.nvm"' >> $HOME/.bashrc
+echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $HOME/.bashrc
 
 # Return to the previous directory
 cd - > /dev/null
@@ -189,8 +161,7 @@ read -r
 
 # Launch Claude Code with the WORKING xterm command and prompt cache
 # Note: prompt-cache-file loads content without consuming context tokens
-CLAUDE_PATH=$(which claude 2>/dev/null || echo "/home/computeruse/.nvm/versions/node/v18.20.8/bin/claude")
-xterm -fa 'Monospace' -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 $CLAUDE_PATH --prompt-cache-file=/home/computeruse/cache/cache.md \"Please review /home/computeruse/CLAUDE.md for context and collaboration with Claude DC and Claude Chat. The prompt-cache-file has been loaded for efficient context access.\""
+xterm -fa 'Monospace' -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 claude --prompt-cache-file=/home/computeruse/cache/cache.md \"Please review /home/computeruse/CLAUDE.md for context and collaboration with Claude DC and Claude Chat. The prompt-cache-file has been loaded for efficient context access.\""
 EOF
 
 chmod +x /home/computeruse/run-dccc.sh
