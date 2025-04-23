@@ -9,14 +9,14 @@ echo "    Claude DC Environment Setup"
 echo "==================================================="
 
 # 1. Ensure proper directories exist
-mkdir -p /home/computeruse/logs
-mkdir -p /home/computeruse/temp
-mkdir -p /home/computeruse/current_experiment
+#mkdir -p /home/computeruse/logs
+#mkdir -p /home/computeruse/temp
+#mkdir -p /home/computeruse/current_experiment
 
 # 2. Copy key files
-echo "Copying configuration files..."
-cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-simple.sh /home/computeruse/
-chmod +x /home/computeruse/run-claude-code-simple.sh
+#echo "Copying configuration files..."
+#cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/run-claude-code-simple.sh /home/computeruse/
+#chmod +x /home/computeruse/run-claude-code-simple.sh
 
 # 3. Set up locale for proper encoding
 echo "Setting up locale for proper encoding..."
