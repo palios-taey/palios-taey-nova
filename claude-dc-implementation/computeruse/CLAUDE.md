@@ -81,10 +81,10 @@ Your working environment has the following characteristics:
    - `claude-dc-implementation/computeruse/computer_use_demo/streamlit.py`
 
 2. **Streaming Implementation**:
-   - `bin/streaming/fixed_production_ready_loop.py` - Production-ready streaming implementation
-   - `bin/streaming/tool_input_handler.py` - Tool parameter validation and fixes
-   - `bin/streaming/direct_streaming_test.py` - Direct streaming test without complexity
-   - `bin/streaming/test_fixed_implementation.py` - Test script for the fixed implementation
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/fixed_production_ready_loop.py` - Production-ready streaming implementation
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/tool_input_handler.py` - Tool parameter validation and fixes
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/direct_streaming_test.py` - Direct streaming test without complexity
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/test_fixed_implementation.py` - Test script for the fixed implementation
    
 3. **Current Experiment**:
    - `current_experiment/minimal_test.py` - Basic streaming proof of concept
@@ -93,21 +93,22 @@ Your working environment has the following characteristics:
    - `current_experiment/streamlit_test_app.py` - Test app for continuity solution
 
 4. **Streamlit Continuity Solution**:
-   - `bin/continuity/save_conversation_state.py` - Script to save Streamlit state
-   - `bin/continuity/restore_conversation_state.py` - Script to restore Streamlit state
-   - `bin/continuity/restart_with_continuity.sh` - Script to orchestrate the continuity process
-   - `bin/continuity/json_utils.py` - JSON serialization utilities for complex objects
-   - `bin/continuity/transition_prompt_template.md` - Template for context preservation
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/save_conversation_state.py` - Script to save Streamlit state
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/restore_conversation_state.py` - Script to restore Streamlit state
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/restart_with_continuity.sh` - Script to orchestrate the continuity process
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/json_utils.py` - JSON serialization utilities for complex objects
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/transition_prompt_template.md` - Template for context preservation
 
 5. **Documentation**:
-   - `references/STREAMING_IMPLEMENTATION.md` - Comprehensive documentation of the streaming implementation
-   - `references/STREAMLIT_CONTINUITY.md` - Documentation of the Streamlit continuity solution
-   - `references/IMPLEMENTATION_LESSONS.md` - Key lessons learned during implementation
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/references/STREAMING_IMPLEMENTATION.md` - Comprehensive documentation of the streaming implementation
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/references/STREAMLIT_CONTINUITY.md` - Documentation of the Streamlit continuity solution
+   - `github/palios-taey-nova/claude-dc-implementation/computeruse/references/IMPLEMENTATION_LESSONS.md` - Key lessons learned during implementation
    
-6. **GitHub Repository**:
-   - `github/palios-taey-nova/claude-dc-implementation/tools/streaming/` - Streaming implementation tools
-   - `github/palios-taey-nova/claude-dc-implementation/tools/continuity/` - Continuity solution tools
-   - `github/palios-taey-nova/claude-dc-implementation/docs/` - Documentation files
+6. **Build & Test Commands**:
+   - Test streaming: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/direct_streaming_test.py`
+   - Test fixed implementation: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/test_fixed_implementation.py`
+   - Test continuity solution: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/test_continuity.py`
+   - Run Streamlit test app: `streamlit run /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/streamlit_test_app.py`
 
 7. **Cache**:
    - `/computeruse/cache/cache.md` - Used as prompt-cache for efficient context
@@ -193,13 +194,13 @@ Your immediate next steps are:
    - Enable 128K extended output for very long answers
    - Create comprehensive documentation of all implementations
 
-## Build & Test Commands
+## Test Commands
 
-- Test streaming: `python current_experiment/minimal_test.py`
-- Test production implementation: `python current_experiment/test_fixed_implementation.py`
-- Test continuity solution: `python current_experiment/test_continuity.py`
-- Run Streamlit test app: `streamlit run current_experiment/streamlit_test_app.py`
-- Run Claude DC: `python claude-dc-implementation/demo.py`
+- Test streaming: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/direct_streaming_test.py`
+- Test fixed implementation: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/test_fixed_implementation.py`
+- Test continuity solution: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/test_continuity.py`
+- Run Streamlit test app: `streamlit run /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/streamlit_test_app.py`
+- Run Claude DC: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/demo.py`
 - Launch Claude DC with all features: `./claude_dc_launch.sh`
 
 By following these guidelines and leveraging our learnings from implementation, you will be able to effectively collaborate with Claude DC and Claude Chat to enhance the PALIOS AI OS system.
