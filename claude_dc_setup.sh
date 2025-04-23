@@ -6,7 +6,7 @@
 set -e  # Exit on error
 
 echo "==================================================="
-echo "  Claude DC Setup - Minimal Enhancement Version"
+echo "  Claude DC Setup - with Claude Code Integration"
 echo "==================================================="
 
 # Check if we're inside the container
@@ -25,6 +25,38 @@ if [ ! -d "/home/computeruse/github/palios-taey-nova/claude-dc-implementation" ]
   echo "Please make sure the repository is properly mounted in the container."
   exit 1
 fi
+
+# Install NVM (Node Version Manager) if not already installed
+echo "Installing/verifying NVM and Node.js..."
+if [ ! -d "/home/computeruse/.nvm" ]; then
+  echo "Installing NVM..."
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  
+  # Load NVM
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+else
+  echo "NVM already installed, loading it..."
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+fi
+
+# Install Node.js v18.20.8
+echo "Installing Node.js v18.20.8..."
+nvm install 18.20.8
+nvm use 18.20.8
+
+# Verify Node.js installation
+NODE_VERSION=$(node -v)
+echo "Node.js version: $NODE_VERSION"
+
+# Install Claude-Code
+echo "Installing Claude-Code..."
+npm install -g @anthropic/claude-code
+
+# Verify Claude-Code installation
+CLAUDE_VERSION=$(claude --version 2>/dev/null || echo "Not installed")
+echo "Claude-Code version: $CLAUDE_VERSION"
 
 # Set up environment variables for ComputerTool
 export WIDTH=1024
@@ -151,6 +183,18 @@ echo "* Streamlit UI: http://localhost:8501"
 echo "* Combined UI: http://localhost:8080"
 echo
 
-# Start in the background
+# Create a Claude Code launcher script with proper UTF-8 encoding
+CLAUDE_CODE_SCRIPT="/home/computeruse/run_claude_code.sh"
+cat > $CLAUDE_CODE_SCRIPT << 'EOF'
+#!/bin/bash
+# Run Claude Code in an XTerm window with proper UTF-8 encoding
+xterm -fa 'Monospace' -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 PATH=$PATH:/home/computeruse/.nvm/versions/node/v18.20.8/bin claude $*"
+EOF
+
+chmod +x $CLAUDE_CODE_SCRIPT
+echo "✅ Created Claude Code launcher script at $CLAUDE_CODE_SCRIPT"
+echo "* To run Claude Code: $CLAUDE_CODE_SCRIPT"
+
+# Start Claude DC in the background
 cd /home/computeruse
 python3 $WRAPPER_SCRIPT
