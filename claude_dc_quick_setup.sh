@@ -118,7 +118,7 @@ echo "Node.js path: $NODE_PATH"
 
 # Install Claude-Code via npm
 echo "Installing Claude-Code globally in /home/computeruse/..."
-npm install -g @anthropic/claude-code
+npm install -g @anthropic-ai/claude-code
 
 # Verify Claude-Code installation
 CLAUDE_PATH=$(which claude 2>/dev/null || echo "Not installed")
