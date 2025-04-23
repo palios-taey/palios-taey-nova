@@ -1,0 +1,30 @@
+2025-04-23 19:33:55,437 - claude_dc - INFO - Feature Flags => Streaming: True, Prompt Caching: False, Extended Output: False, Thinking: True, Token-Efficient: False
+2025-04-23 19:33:55,615 - claude_dc.test.streaming_impl - INFO - Successfully imported required modules
+2025-04-23 19:33:55,616 - claude_dc.test.streaming_impl - INFO - Starting streaming with tools test...
+2025-04-23 19:33:55,616 - claude_dc.streaming - INFO - Starting streaming loop at 2025-04-23T19:33:55.616213
+2025-04-23 19:33:55,637 - claude_dc.streaming - INFO - Added computer-use beta flag
+2025-04-23 19:33:55,637 - claude_dc.streaming - INFO - Making non-streaming API call
+2025-04-23 19:33:55,637 - claude_dc.streaming - WARNING - Beta parameter not supported, removing it and retrying
+2025-04-23 19:33:55,637 - claude_dc.streaming - INFO - Retrying non-streaming API call without beta parameter
+2025-04-23 19:33:57,258 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-04-23 19:33:57,260 - claude_dc.test.streaming_impl - INFO - API response received
+2025-04-23 19:33:57,260 - claude_dc.streaming - INFO - Running tool: bash with ID: toolu_01Qz8zbPfmweX1q1t2Wqigw9
+2025-04-23 19:33:57,763 - claude_dc.tools - INFO - Running tool with streaming: bash
+2025-04-23 19:33:57,767 - claude_dc.bash - INFO - New bash session started
+2025-04-23 19:33:57,767 - claude_dc.bash - INFO - Running bash command: date
+2025-04-23 19:33:57,767 - claude_dc.bash - INFO - Using streaming mode for bash command
+2025-04-23 19:33:57,768 - claude_dc.test.streaming_impl - INFO - Tool output received (ID: bash)
+2025-04-23 19:33:57,769 - claude_dc.streaming - INFO - Sampling loop completed at 2025-04-23T19:33:57.769248 (duration: 2.15s)
+2025-04-23 19:33:57,769 - claude_dc.test.streaming_impl - INFO - Test completed successfully
+2025-04-23 19:34:12,614 - claude_dc - INFO - Feature Flags => Streaming: True, Prompt Caching: False, Extended Output: False, Thinking: True, Token-Efficient: False
+2025-04-23 19:34:12,767 - claude_dc.streaming - INFO - Streaming enabled: True
+2025-04-23 19:34:12,769 - claude_dc.test.streaming_impl - INFO - Successfully imported required modules
+2025-04-23 19:34:12,769 - claude_dc.test.streaming_impl - INFO - Starting streaming with tools test...
+2025-04-23 19:34:12,769 - claude_dc.streaming - INFO - Starting streaming loop at 2025-04-23T19:34:12.769479
+2025-04-23 19:34:12,790 - claude_dc.streaming - INFO - Streaming enabled
+2025-04-23 19:34:12,790 - claude_dc.streaming - INFO - Added computer-use beta flag
+2025-04-23 19:34:12,790 - claude_dc.streaming - INFO - Making streaming API call
+2025-04-23 19:34:12,790 - claude_dc.streaming - WARNING - Beta parameter not supported, removing it and retrying
+2025-04-23 19:34:12,790 - claude_dc.streaming - INFO - Retrying streaming API call without beta parameter
+2025-04-23 19:34:13,719 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-04-23 19:34:13,719 - claude_dc.streaming - INFO - Stream created successfully after removing unsupported parameters

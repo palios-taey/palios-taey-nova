@@ -1,0 +1,6 @@
+PROMPT: Hello! Please provide a short explanation of how streaming works in AI systems.
+
+RESPONSE:
+Streaming in AI systems allows responses to be sent piece by piece as they're generated, rather than waiting for the complete response to be finished. This creates a more natural, real-time experience as users can see the AI's "thinking" unfold gradually. Technically, it works by sending text tokens sequentially through an API connection instead of returning everything in a single payload.
+
+Message complete

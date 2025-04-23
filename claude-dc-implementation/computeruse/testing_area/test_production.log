@@ -1,0 +1,13 @@
+2025-04-23 19:39:59,315 - claude_dc.test.production - ERROR - Failed to import required modules: attempted relative import with no known parent package
+2025-04-23 19:40:18,777 - claude_dc.test.production - INFO - Successfully imported required modules
+2025-04-23 19:40:18,777 - claude_dc.test.production - INFO - Starting production implementation test...
+2025-04-23 19:40:18,777 - claude_dc.test.production - INFO - Streaming enabled: True
+2025-04-23 19:40:18,799 - claude_dc.test.production - ERROR - API error: 'MessagesWithRawResponse' object has no attribute 'stream'
+2025-04-23 19:40:18,799 - claude_dc.test.production - INFO - Test completed with 1 messages
+2025-04-23 19:40:18,799 - claude_dc.test.production - INFO - Received 0 streaming tokens
+2025-04-23 19:40:51,167 - claude_dc.test.production - INFO - Successfully imported required modules
+2025-04-23 19:40:51,168 - claude_dc.test.production - INFO - Starting production implementation test...
+2025-04-23 19:40:51,168 - claude_dc.test.production - INFO - Streaming enabled: True
+2025-04-23 19:40:51,189 - claude_dc.test.production - ERROR - API error: 'MessagesWithRawResponse' object has no attribute 'stream'
+2025-04-23 19:40:51,189 - claude_dc.test.production - INFO - Test completed with 1 messages
+2025-04-23 19:40:51,189 - claude_dc.test.production - INFO - Received 0 streaming tokens

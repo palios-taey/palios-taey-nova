@@ -1,0 +1,12 @@
+2025-04-23 19:43:19,036 - claude_dc.minimal - INFO - Successfully imported required modules
+2025-04-23 19:43:19,036 - claude_dc.minimal - INFO - Starting minimal streaming test...
+2025-04-23 19:43:19,057 - claude_dc.minimal - INFO - Created Anthropic client
+2025-04-23 19:43:19,057 - claude_dc.minimal - INFO - Making streaming API call
+2025-04-23 19:43:20,265 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-04-23 19:43:20,266 - claude_dc.minimal - INFO - Stream created successfully
+2025-04-23 19:43:20,930 - claude_dc.minimal - INFO - Message generation complete
+2025-04-23 19:43:20,930 - claude_dc.minimal - INFO - Running tool: bash
+2025-04-23 19:43:20,930 - claude_dc.minimal - WARNING - Bash tool called without command, adding default
+2025-04-23 19:43:21,134 - claude_dc.minimal - INFO - Tool execution successful: Please specify a command
+2025-04-23 19:43:21,134 - claude_dc.minimal - INFO - Test completed with 2 content blocks
+2025-04-23 19:43:21,134 - claude_dc.minimal - INFO - Received approximately 0 streaming tokens
