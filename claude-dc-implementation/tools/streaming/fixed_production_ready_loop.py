@@ -1,6 +1,6 @@
 """
 Production-ready loop implementation with streaming support.
-Based on the successful minimal streaming test.
+Fixed version based on successful direct streaming test.
 """
 
 import os
@@ -55,7 +55,15 @@ from anthropic import (
 )
 
 # Constants
-DEFAULT_MAX_TOKENS = 65536  # ~64k max output
+# Import the tool input handler
+try:
+    from tool_input_handler import validate_tool_input
+    TOOL_INPUT_VALIDATION_ENABLED = True
+except ImportError:
+    TOOL_INPUT_VALIDATION_ENABLED = False
+    logger.warning("Tool input validation not available - tool_input_handler.py not found")
+
+DEFAULT_MAX_TOKENS = 64000  # Max output tokens for Claude-3-7-Sonnet
 DEFAULT_THINKING_BUDGET = 32768  # ~32k thinking budget
 
 # Get boolean environment variable with default value
@@ -75,7 +83,7 @@ def get_bool_env(name, default=False):
         return default
 
 # Feature flags - simplified with focus on streaming
-ENABLE_STREAMING = get_bool_env('ENABLE_STREAMING', True)  # Default to True
+ENABLE_STREAMING = True  # Always enable streaming
 ENABLE_THINKING = get_bool_env('ENABLE_THINKING', True)  # Default to True
 
 class APIProvider:
@@ -105,12 +113,21 @@ async def sampling_loop(
 ):
     """
     Agentic sampling loop with streaming support.
-    Simplified from the original to focus on reliable streaming functionality.
+    Simplified to focus on reliable streaming functionality.
     """
-    # Get tool group for specified version
-    tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
-    tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
-    
+    # Only add tools if tool_version is provided
+    if tool_version:
+        # Get tool group for specified version
+        try:
+            tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
+            tool_collection = ToolCollection(*(ToolCls() for ToolCls in tool_group.tools))
+            logger.info(f"Created tool collection for version {tool_version}")
+        except Exception as e:
+            logger.error(f"Failed to create tool collection: {e}")
+            tool_collection = None
+    else:
+        tool_collection = None
+        
     # Create system prompt
     system = {
         "type": "text",
@@ -136,9 +153,16 @@ async def sampling_loop(
         "messages": messages,
         "model": model,
         "system": [system],
-        "tools": tool_collection.to_params(),
-        "stream": ENABLE_STREAMING  # Enable streaming (default: True)
+        "stream": True  # Always enable streaming
     }
+    
+    # Add tools if available
+    if tool_collection:
+        try:
+            api_params["tools"] = tool_collection.to_params()
+            logger.info(f"Added {len(tool_collection.tools)} tools to API call")
+        except Exception as e:
+            logger.warning(f"Failed to add tools to API params: {e}")
     
     # Add thinking budget if enabled
     if ENABLE_THINKING and thinking_budget:
@@ -148,15 +172,7 @@ async def sampling_loop(
         except Exception as e:
             logger.warning(f"Failed to add thinking parameter: {e}")
     
-    # Simplified approach: add required beta flag for computer use tools
-    try:
-        if tool_version == "computer_use_20250124":
-            api_params["beta"] = ["computer-use-2025-01-24"]
-            logger.info("Added required beta flag: computer-use-2025-01-24")
-    except Exception as e:
-        logger.warning(f"Failed to add computer-use beta flag: {e}")
-    
-    logger.info(f"Making API call with streaming: {ENABLE_STREAMING}")
+    logger.info(f"Making API call with streaming enabled")
     
     try:
         # Make API call with proper error handling
@@ -164,15 +180,15 @@ async def sampling_loop(
             # First try with all parameters
             stream = client.messages.create(**api_params)
         except TypeError as e:
-            # If 'beta' parameter is causing issues, remove it and try again
-            if "got an unexpected keyword argument 'beta'" in str(e):
-                logger.warning("Beta parameter not supported, removing it and retrying")
-                api_params.pop('beta', None)
+            # Handle unsupported parameters gracefully
+            if "got an unexpected keyword argument" in str(e):
+                logger.warning(f"Parameter not supported: {e}")
                 
-                # Also check for thinking parameter support
-                if "thinking" in api_params and "got an unexpected keyword argument 'thinking'" in str(e):
-                    logger.warning("Thinking parameter not supported, removing it and retrying")
-                    api_params.pop('thinking', None)
+                # Remove any unsupported parameters
+                for param in ["beta", "thinking", "tools"]:
+                    if param in api_params and param in str(e):
+                        logger.warning(f"Removing '{param}' parameter and retrying")
+                        api_params.pop(param, None)
                 
                 # Try API call again without the unsupported parameters
                 stream = client.messages.create(**api_params)
@@ -290,44 +306,55 @@ async def sampling_loop(
     })
     
     # Process tools if any
-    tool_result_content = []
-    for content_block in response_params:
-        if content_block["type"] == "tool_use":
-            # Extract tool information
-            tool_name = content_block["name"]
-            tool_id = content_block["id"]
-            tool_input = content_block["input"]
-            
-            logger.info(f"Running tool: {tool_name} with ID: {tool_id}")
-            
-            # Configure tool collection for streaming if supported
-            for tool in tool_collection.tools:
-                if hasattr(tool, 'set_stream_callback'):
-                    tool.set_stream_callback(
-                        lambda chunk, tid=tool_id: tool_output_callback(
-                            ToolResult(output=chunk, error=None),
-                            tid
+    if tool_collection:
+        tool_result_content = []
+        for content_block in response_params:
+            if content_block["type"] == "tool_use":
+                # Extract tool information
+                tool_name = content_block["name"]
+                tool_id = content_block["id"]
+                tool_input = content_block["input"]
+                
+                logger.info(f"Running tool: {tool_name} with ID: {tool_id}")
+                
+                # Configure tool collection for streaming if supported
+                for tool in tool_collection.tools:
+                    if hasattr(tool, 'set_stream_callback'):
+                        tool.set_stream_callback(
+                            lambda chunk, tid=tool_id: tool_output_callback(
+                                ToolResult(output=chunk, error=None),
+                                tid
+                            )
                         )
-                    )
-            
-            # Run the tool
-            result = await tool_collection.run(
-                name=tool_name,
-                tool_input=tool_input,
-                streaming=True,  # Enable streaming for the tool
-            )
-            
-            # Create tool result and notify callback
-            tool_result = _make_api_tool_result(result, tool_id)
-            tool_result_content.append(tool_result)
-            
-            # Only send final result if tools don't support streaming
-            if not any(hasattr(t, 'set_stream_callback') for t in tool_collection.tools):
-                tool_output_callback(result, tool_id)
-    
-    # Add tool results to messages if any
-    if tool_result_content:
-        messages.append({"content": tool_result_content, "role": "user"})
+                
+                # Validate tool input if available
+                validated_tool_input = tool_input
+                if TOOL_INPUT_VALIDATION_ENABLED:
+                    try:
+                        validated_tool_input = validate_tool_input(tool_name, tool_input)
+                        if validated_tool_input != tool_input:
+                            logger.info(f"Tool input for {tool_name} was fixed by validation")
+                    except Exception as e:
+                        logger.error(f"Error in tool input validation: {e}")
+                
+                # Run the tool with validated input
+                result = await tool_collection.run(
+                    name=tool_name,
+                    tool_input=validated_tool_input,
+                    streaming=True,  # Enable streaming for the tool
+                )
+                
+                # Create tool result and notify callback
+                tool_result = _make_api_tool_result(result, tool_id)
+                tool_result_content.append(tool_result)
+                
+                # Only send final result if tools don't support streaming
+                if not any(hasattr(t, 'set_stream_callback') for t in tool_collection.tools):
+                    tool_output_callback(result, tool_id)
+        
+        # Add tool results to messages if any
+        if tool_result_content:
+            messages.append({"content": tool_result_content, "role": "user"})
     
     return messages
 
@@ -371,12 +398,12 @@ def _make_api_tool_result(result, tool_use_id):
         is_error = True
         tool_result_content = result.error
     else:
-        if result.output:
+        if hasattr(result, 'output') and result.output:
             tool_result_content.append({
                 "type": "text",
                 "text": result.output,
             })
-        if result.base64_image:
+        if hasattr(result, 'base64_image') and result.base64_image:
             tool_result_content.append({
                 "type": "image",
                 "source": {
