@@ -1,0 +1,12 @@
+2025-04-24 01:27:36,937 - claude_dc.deployment_verifier - INFO - Syntax check passed for /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/testing_area/fixed_loop.py
+2025-04-24 01:27:36,937 - claude_dc.deployment_verifier - INFO - Syntax check passed for /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/testing_area/fixed_streamlit_api_callback.py
+2025-04-24 01:27:36,939 - claude_dc.deployment_verifier - INFO - Syntax check passed for /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/testing_area/fixed_loop.py
+2025-04-24 01:27:36,939 - claude_dc.deployment_verifier - INFO - Syntax check passed for /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/testing_area/fixed_streamlit_api_callback.py
+2025-04-24 01:27:36,939 - claude_dc.deployment_verifier - INFO - Backed up /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/loop.py to /home/computeruse/github/palios-taey-nova/backups/backup_20250424_012736/loop.py
+2025-04-24 01:27:36,939 - claude_dc.deployment_verifier - INFO - Backed up /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/streamlit.py to /home/computeruse/github/palios-taey-nova/backups/backup_20250424_012736/streamlit.py
+2025-04-24 01:27:36,939 - claude_dc.deployment_verifier - INFO - Created backup at /home/computeruse/github/palios-taey-nova/backups/backup_20250424_012736
+2025-04-24 01:27:36,939 - claude_dc.deployment_verifier - INFO - Deployed /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/testing_area/fixed_loop.py to /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/loop.py
+2025-04-24 01:27:36,940 - claude_dc.deployment_verifier - INFO - Patched _api_response_callback and _render_api_response functions in /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/streamlit.py
+2025-04-24 01:27:36,941 - claude_dc.deployment_verifier - INFO - Syntax check passed for /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/loop.py
+2025-04-24 01:27:36,944 - claude_dc.deployment_verifier - INFO - Syntax check passed for /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/streamlit.py
+2025-04-24 01:27:36,944 - claude_dc.deployment_verifier - INFO - Deployment completed successfully - syntax verified

@@ -1,8 +1,6 @@
 """
-Fixed loop implementation for Claude DC Streaming with Tool Use.
-This version fixes the identified errors:
-1. AttributeError: 'NoneType' object has no attribute 'method'
-2. TypeError: 'type' object is not iterable (in APIProvider iteration)
+Production-ready loop implementation with streaming support.
+Based on the successful minimal streaming test.
 """
 
 import os
@@ -10,8 +8,7 @@ import sys
 import asyncio
 import logging
 from pathlib import Path
-from typing import Dict, List, Any, Callable, Optional, Union
-from enum import Enum, StrEnum
+from typing import Dict, List, Any, Callable, Optional
 
 # Configure logging
 logging.basicConfig(
@@ -81,35 +78,14 @@ def get_bool_env(name, default=False):
 ENABLE_STREAMING = get_bool_env('ENABLE_STREAMING', True)  # Default to True
 ENABLE_THINKING = get_bool_env('ENABLE_THINKING', True)  # Default to True
 
-# FIX 2: Change from class to StrEnum to make it properly iterable
-class APIProvider(StrEnum):
-    """API providers for Claude, implemented as a StrEnum for proper iteration support."""
+class APIProvider:
     ANTHROPIC = "anthropic"
     BEDROCK = "bedrock"
     VERTEX = "vertex"
 
-# Enhanced system prompt with explicit tool usage instructions
+# System prompt - simplified for clarity
 SYSTEM_PROMPT = """You are Claude DC, "The Conductor," a specialized version of Claude focused on interacting with computer systems.
-You are utilizing an Ubuntu virtual machine with access to the following tools:
-
-1. bash - For executing shell commands
-   * ALWAYS use the 'command' parameter to specify the command to run
-   * Example: Use bash(command="ls -la") NOT bash()
-   * Never omit the command parameter
-
-2. computer - For GUI interaction
-   * Always specify the required 'action' parameter
-   * For mouse actions that require coordinates, always provide the 'coordinate' parameter
-   * For keyboard input, use the 'text' parameter
-   * Example: computer(action="screenshot") or computer(action="left_click", coordinate=[500, 300])
-
-3. str_replace_editor - For viewing and editing files
-   * Always specify the 'command' and 'path' parameters
-   * For editing, provide 'old_str' and 'new_str' parameters
-   * Example: str_replace_editor(command="view", path="/path/to/file.txt")
-
-IMPORTANT: When using any tool, ALWAYS include all required parameters. For the bash tool, you MUST always include the 'command' parameter with the shell command to execute. Never call bash() without a command parameter.
-
+You are utilizing an Ubuntu virtual machine with access to tools.
 Keep your responses focused and action-oriented.
 """
 
@@ -126,11 +102,10 @@ async def sampling_loop(
     max_tokens: int = DEFAULT_MAX_TOKENS,
     tool_version: str = "computer_use_20250124",
     thinking_budget: Optional[int] = None,
-    token_efficient_tools_beta: bool = False,
 ):
     """
     Agentic sampling loop with streaming support.
-    Improved with error handling to prevent NoneType and iteration errors.
+    Simplified from the original to focus on reliable streaming functionality.
     """
     # Get tool group for specified version
     tool_group = TOOL_GROUPS_BY_VERSION[tool_version]
@@ -143,13 +118,12 @@ async def sampling_loop(
     }
     
     # Create Anthropic client based on provider
-    # FIX 2: Use string comparison instead of direct class attribute access
-    if provider == "anthropic" or provider == APIProvider.ANTHROPIC:
+    if provider == APIProvider.ANTHROPIC:
         client = Anthropic(api_key=api_key, max_retries=3)
-    elif provider == "vertex" or provider == APIProvider.VERTEX:
+    elif provider == APIProvider.VERTEX:
         from anthropic import AnthropicVertex
         client = AnthropicVertex()
-    elif provider == "bedrock" or provider == APIProvider.BEDROCK:
+    elif provider == APIProvider.BEDROCK:
         from anthropic import AnthropicBedrock
         client = AnthropicBedrock()
     else:
@@ -181,16 +155,6 @@ async def sampling_loop(
             logger.info("Added required beta flag: computer-use-2025-01-24")
     except Exception as e:
         logger.warning(f"Failed to add computer-use beta flag: {e}")
-        
-    # Add token efficient beta flag if requested
-    if token_efficient_tools_beta:
-        try:
-            if "beta" not in api_params:
-                api_params["beta"] = []
-            api_params["beta"].append("token-efficient-tools-2025-02-19")
-            logger.info("Added token-efficient-tools beta flag")
-        except Exception as e:
-            logger.warning(f"Failed to add token-efficient-tools beta flag: {e}")
     
     logger.info(f"Making API call with streaming: {ENABLE_STREAMING}")
     
@@ -368,22 +332,9 @@ async def sampling_loop(
     return messages
 
 def _response_to_params(response):
-    """
-    Convert response content to parameters.
-    Enhanced with additional safety checks for None values and missing attributes.
-    """
+    """Convert response content to parameters."""
     result = []
-    
-    # Handle case where response might be None
-    if response is None or "content" not in response:
-        logger.warning("Empty or invalid response received")
-        return result
-        
     for block in response["content"]:
-        # Skip None blocks
-        if block is None:
-            continue
-            
         if hasattr(block, "type"):
             block_type = block.type
             
@@ -412,33 +363,20 @@ def _response_to_params(response):
     return result
 
 def _make_api_tool_result(result, tool_use_id):
-    """
-    Convert a ToolResult to an API tool result block.
-    Enhanced with additional safety checks for None values.
-    """
-    # FIX 1: Add safety check for None result
-    if result is None:
-        logger.warning(f"Received None result for tool_use_id: {tool_use_id}")
-        return {
-            "type": "tool_result",
-            "content": [{"type": "text", "text": "Error: No result received from tool"}],
-            "tool_use_id": tool_use_id,
-            "is_error": True,
-        }
-        
+    """Convert a ToolResult to an API tool result block."""
     tool_result_content = []
     is_error = False
     
-    if getattr(result, "error", None):
+    if result.error:
         is_error = True
         tool_result_content = result.error
     else:
-        if getattr(result, "output", None):
+        if result.output:
             tool_result_content.append({
                 "type": "text",
                 "text": result.output,
             })
-        if getattr(result, "base64_image", None):
+        if result.base64_image:
             tool_result_content.append({
                 "type": "image",
                 "source": {

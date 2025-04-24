@@ -1,0 +1,72 @@
+2025-04-24 00:12:21,787 - claude_dc - INFO - Feature Flags => Streaming: True, Prompt Caching: False, Extended Output: False, Thinking: True, Token-Efficient: False
+2025-04-24 00:12:21,976 - claude_dc.test_runner - INFO - Running test suite: Mock Streamlit UI Tests
+2025-04-24 00:12:21,976 - claude_dc.test_framework - INFO - Running test suite: Mock Streamlit UI Tests
+2025-04-24 00:12:21,976 - claude_dc.mock_streamlit_tests - INFO - Mock Streamlit environment set up successfully
+2025-04-24 00:12:21,976 - claude_dc.test_framework - INFO - Running test: test_mock_streamlit_initialization
+2025-04-24 00:12:21,976 - claude_dc.test_framework - INFO - Test test_mock_streamlit_initialization passed in 0.00ms
+2025-04-24 00:12:21,976 - claude_dc.test_framework - INFO - Running test: test_mock_streamlit_chat_message
+2025-04-24 00:12:21,976 - claude_dc.test_framework - INFO - Test test_mock_streamlit_chat_message passed in 0.01ms
+2025-04-24 00:12:21,976 - claude_dc.test_framework - INFO - Running test: test_mock_streamlit_placeholders
+2025-04-24 00:12:21,976 - claude_dc.test_framework - ERROR - Error in test test_mock_streamlit_placeholders: name 'MockPlaceholder' is not defined
+2025-04-24 00:12:21,976 - claude_dc.mock_streamlit_tests - INFO - Mock Streamlit environment cleaned up
+2025-04-24 00:12:21,977 - claude_dc.test_runner - INFO - Running test suite: Callback Parameter Validation Tests
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test suite: Callback Parameter Validation Tests
+2025-04-24 00:12:21,977 - claude_dc.mock_streamlit_tests - INFO - Mock Streamlit environment set up successfully
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test: test_validate_output_callback_text_block
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Test test_validate_output_callback_text_block passed in 0.01ms
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test: test_validate_output_callback_tool_use_block
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Test test_validate_output_callback_tool_use_block passed in 0.01ms
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test: test_validate_tool_output_callback_params
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Test test_validate_tool_output_callback_params passed in 0.01ms
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test: test_validate_api_response_callback_params
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Test test_validate_api_response_callback_params passed in 0.00ms
+2025-04-24 00:12:21,977 - claude_dc.mock_streamlit_tests - INFO - Mock Streamlit environment cleaned up
+2025-04-24 00:12:21,977 - claude_dc.test_runner - INFO - Running test suite: Error Path Testing
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test suite: Error Path Testing
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test: test_handle_null_request
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Test test_handle_null_request passed in 0.00ms
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test: test_handle_api_error
+2025-04-24 00:12:21,977 - claude_dc.test_framework - ERROR - Error in test test_handle_api_error: APIError.__init__() got an unexpected keyword argument 'status_code'
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test: test_handle_rate_limit_error
+2025-04-24 00:12:21,977 - claude_dc.test_framework - ERROR - Error in test test_handle_rate_limit_error: APIStatusError.__init__() got an unexpected keyword argument 'status_code'
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test: test_handle_invalid_content_block
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Test test_handle_invalid_content_block passed in 0.00ms
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test: test_handle_null_tool_id
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Test test_handle_null_tool_id passed in 0.00ms
+2025-04-24 00:12:21,977 - claude_dc.test_runner - INFO - Running test suite: API Interaction Tests
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test suite: API Interaction Tests
+2025-04-24 00:12:21,977 - claude_dc.test_framework - INFO - Running test: test_mock_anthropic_client_success
+2025-04-24 00:12:21,978 - claude_dc.test_framework - INFO - Test test_mock_anthropic_client_success passed in 0.57ms
+2025-04-24 00:12:21,978 - claude_dc.test_framework - INFO - Running test: test_mock_anthropic_client_error
+2025-04-24 00:12:21,978 - claude_dc.test_framework - ERROR - Error in test test_mock_anthropic_client_error: APIError.__init__() got an unexpected keyword argument 'status_code'
+2025-04-24 00:12:21,978 - claude_dc.test_framework - INFO - Running test: test_response_to_params_conversion
+2025-04-24 00:12:21,978 - claude_dc.test_framework - INFO - Test test_response_to_params_conversion passed in 0.02ms
+2025-04-24 00:12:21,978 - claude_dc.test_framework - INFO - Running test: test_make_api_tool_result
+2025-04-24 00:12:21,978 - claude_dc.test_framework - INFO - Test test_make_api_tool_result passed in 0.01ms
+2025-04-24 00:12:21,978 - claude_dc.test_runner - INFO - Running test suite: Deployment Verification Tests
+2025-04-24 00:12:21,978 - claude_dc.test_framework - INFO - Running test suite: Deployment Verification Tests
+2025-04-24 00:12:21,978 - claude_dc.test_framework - INFO - Running test: test_verify_environment
+2025-04-24 00:12:21,978 - claude_dc.test_framework - ERROR - Test test_verify_environment failed: Environment variable PYTHONPATH not set
+2025-04-24 00:12:21,978 - claude_dc.test_framework - INFO - Running test: test_verify_anthropic_api
+2025-04-24 00:12:21,999 - claude_dc.test_framework - INFO - Anthropic client created successfully
+2025-04-24 00:12:21,999 - claude_dc.test_framework - INFO - Test test_verify_anthropic_api passed in 21.05ms
+2025-04-24 00:12:21,999 - claude_dc.test_runner - INFO - Running test suite: NoneType AttributeError Fix Tests
+2025-04-24 00:12:21,999 - claude_dc.test_framework - INFO - Running test suite: NoneType AttributeError Fix Tests
+2025-04-24 00:12:21,999 - claude_dc.test_framework - INFO - Running test: test_identify_none_type_error
+2025-04-24 00:12:21,999 - claude_dc.test_framework - ERROR - Test test_identify_none_type_error failed: Error should have been triggered
+2025-04-24 00:12:21,999 - claude_dc.test_framework - INFO - Running test: test_fix_none_type_error
+2025-04-24 00:12:21,999 - claude_dc.test_framework - ERROR - Test test_fix_none_type_error failed: Problematic callback should raise AttributeError
+2025-04-24 00:12:21,999 - claude_dc.test_framework - INFO - Running test: test_implement_none_type_fix
+2025-04-24 00:12:22,001 - claude_dc.error_fix_tests - INFO - Successfully implemented and verified fix for NoneType AttributeError
+2025-04-24 00:12:22,001 - claude_dc.test_framework - INFO - Test test_implement_none_type_fix passed in 1.37ms
+2025-04-24 00:12:22,001 - claude_dc.test_runner - INFO - Running test suite: TypeError Iteration Fix Tests
+2025-04-24 00:12:22,001 - claude_dc.test_framework - INFO - Running test suite: TypeError Iteration Fix Tests
+2025-04-24 00:12:22,001 - claude_dc.test_framework - INFO - Running test: test_identify_type_iteration_error
+2025-04-24 00:12:22,001 - claude_dc.error_fix_tests - INFO - Identified source of TypeError: trying to iterate over APIProvider class. Error: 'type' object is not iterable
+2025-04-24 00:12:22,001 - claude_dc.test_framework - INFO - Test test_identify_type_iteration_error passed in 0.02ms
+2025-04-24 00:12:22,001 - claude_dc.test_framework - INFO - Running test: test_fix_type_iteration_error
+2025-04-24 00:12:22,001 - claude_dc.error_fix_tests - INFO - Fixed TypeError by using proper Enum or providing values() method
+2025-04-24 00:12:22,001 - claude_dc.test_framework - INFO - Test test_fix_type_iteration_error passed in 0.09ms
+2025-04-24 00:12:22,001 - claude_dc.test_framework - INFO - Running test: test_implement_type_iteration_fix
+2025-04-24 00:12:22,001 - claude_dc.error_fix_tests - INFO - Successfully implemented and verified fix for APIProvider iteration TypeError
+2025-04-24 00:12:22,001 - claude_dc.test_framework - INFO - Test test_implement_type_iteration_fix passed in 0.02ms

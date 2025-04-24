@@ -637,14 +637,13 @@ def _tool_output_callback(tool_output: ToolResult, tool_id: str, tool_state: dic
 
 
 def _api_response_callback(
-    request: Union[httpx.Request, None],
+    request: httpx.Request,
     response: Union[httpx.Response, object, None],
     error: Optional[Exception],
     tab: DeltaGenerator,
     response_state: dict,
 ):
-    """
-    Handle API response callbacks."""
+    """Handle API response callbacks."""
     # Generate a unique ID for this response
     response_id = datetime.now().isoformat()
     response_state[response_id] = (request, response)
@@ -658,13 +657,12 @@ def _api_response_callback(
 
 
 def _render_api_response(
-    request: Union[httpx.Request, None],
+    request: httpx.Request,
     response: Union[httpx.Response, object, None],
     response_id: str,
     tab: DeltaGenerator,
 ):
-    """
-    Render API request/response in the logs tab."""
+    """Render API request/response in the logs tab."""
     with tab:
         with st.expander(f"Request/Response ({response_id})"):
             newline = "\n\n"

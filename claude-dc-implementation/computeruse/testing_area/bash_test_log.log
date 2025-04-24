@@ -1,0 +1,22 @@
+2025-04-24 00:18:00,653 - claude_dc - INFO - Feature Flags => Streaming: True, Prompt Caching: False, Extended Output: False, Thinking: True, Token-Efficient: False
+2025-04-24 00:18:00,830 - claude_dc.loop - INFO - Added required beta flag: computer-use-2025-01-24
+2025-04-24 00:18:00,830 - claude_dc.loop - INFO - Making API call with streaming: True
+2025-04-24 00:18:00,830 - claude_dc.loop - WARNING - Beta parameter not supported, removing it and retrying
+2025-04-24 00:18:01,852 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-04-24 00:18:01,852 - claude_dc.loop - INFO - Stream created successfully
+2025-04-24 00:18:02,582 - claude_dc.loop - INFO - Message generation complete
+2025-04-24 00:18:02,582 - claude_dc.loop - INFO - Running tool: bash with ID: toolu_017ouRLvfUo7uT5Yxrc2fhxK
+2025-04-24 00:18:02,582 - claude_dc.tools - INFO - Running tool with streaming: bash
+2025-04-24 00:18:02,586 - claude_dc.bash - INFO - New bash session started
+2025-04-24 00:18:02,586 - claude_dc.tools - ERROR - Tool error: no command provided.
+2025-04-24 00:18:23,590 - claude_dc - INFO - Feature Flags => Streaming: True, Prompt Caching: False, Extended Output: False, Thinking: True, Token-Efficient: False
+2025-04-24 00:18:23,767 - claude_dc.loop - INFO - Added required beta flag: computer-use-2025-01-24
+2025-04-24 00:18:23,767 - claude_dc.loop - INFO - Making API call with streaming: True
+2025-04-24 00:18:23,767 - claude_dc.loop - WARNING - Beta parameter not supported, removing it and retrying
+2025-04-24 00:18:24,688 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-04-24 00:18:24,688 - claude_dc.loop - INFO - Stream created successfully
+2025-04-24 00:18:25,482 - claude_dc.loop - INFO - Message generation complete
+2025-04-24 00:18:25,482 - claude_dc.loop - INFO - Running tool: bash with ID: toolu_01AM6WBAaFXXz1YqnjEmeemF
+2025-04-24 00:18:25,482 - claude_dc.tools - INFO - Running tool with streaming: bash
+2025-04-24 00:18:25,485 - claude_dc.bash - INFO - New bash session started
+2025-04-24 00:18:25,485 - claude_dc.tools - ERROR - Tool error: no command provided.
