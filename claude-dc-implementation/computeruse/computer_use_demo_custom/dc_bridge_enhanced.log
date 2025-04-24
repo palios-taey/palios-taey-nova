@@ -1,0 +1,30 @@
+2025-04-24 14:47:48,673 - dc_bridge_enhanced - INFO - Added /home/computeruse/github/palios-taey-nova to sys.path
+2025-04-24 14:47:48,673 - dc_bridge_enhanced - INFO - Added /home/computeruse/computer_use_demo/dc_impl to sys.path
+2025-04-24 14:47:48,679 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-04-24 14:47:48,679 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-04-24 14:47:48,679 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-04-24 14:47:48,679 - dc_setup - INFO - DC implementation initialized successfully
+2025-04-24 14:47:48,679 - dc_bridge_enhanced - INFO - Successfully imported and initialized DC Custom Implementation
+2025-04-24 14:47:48,679 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:47:48,679 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:47:48,679 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 14:47:48,679 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 14:47:48,679 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:47:48,679 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:47:48,679 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Hello from Enhanced Bridge
+2025-04-24 14:47:48,679 - dc_tool_adapters - INFO - Executing mock command: echo Hello from Enhanced Bridge
+2025-04-24 14:48:01,542 - dc_bridge_enhanced - INFO - Added /home/computeruse/github/palios-taey-nova to sys.path
+2025-04-24 14:48:01,542 - dc_bridge_enhanced - INFO - Added /home/computeruse/computer_use_demo/dc_impl to sys.path
+2025-04-24 14:48:01,544 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-04-24 14:48:01,544 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-04-24 14:48:01,544 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-04-24 14:48:01,545 - dc_setup - INFO - DC implementation initialized successfully
+2025-04-24 14:48:01,545 - dc_bridge_enhanced - INFO - Successfully imported and initialized DC Custom Implementation
+2025-04-24 14:48:01,545 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:48:01,545 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:48:01,545 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 14:48:01,545 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 14:48:01,545 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:48:01,545 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:48:01,545 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Hello from Enhanced Bridge
+2025-04-24 14:48:01,545 - dc_tool_adapters - INFO - Executing mock command: echo Hello from Enhanced Bridge

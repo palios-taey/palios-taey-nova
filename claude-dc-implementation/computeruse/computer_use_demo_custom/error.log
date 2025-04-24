@@ -1,0 +1,15 @@
+2025-04-24 14:10:06,289 - dc_bridge - INFO - Added /home/computeruse/github/palios-taey-nova to sys.path
+2025-04-24 14:10:06,290 - dc_bridge - INFO - Added /home/computeruse/computer_use_demo/dc_custom to sys.path
+2025-04-24 14:10:06,292 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-04-24 14:10:06,292 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-04-24 14:10:06,292 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-04-24 14:10:06,292 - dc_setup - INFO - DC implementation initialized successfully
+2025-04-24 14:10:06,292 - dc_bridge - INFO - Successfully imported and initialized DC Custom Implementation
+2025-04-24 14:10:06,292 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:10:06,292 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:10:06,292 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 14:10:06,292 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 14:10:06,292 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:10:06,292 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:10:06,292 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Hello from DC Custom
+2025-04-24 14:10:06,292 - dc_tool_adapters - INFO - Executing mock command: echo Hello from DC Custom

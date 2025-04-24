@@ -1,0 +1,160 @@
+2025-04-24 13:49:27,290 - dc_real_adapters - INFO - DC Real Bash Tool - Command: echo 'Hello from Real Tool Test'
+2025-04-24 13:49:27,291 - dc_real_adapters - WARNING - Direct import failed: No module named 'tools.computer', trying spec-based import
+2025-04-24 13:49:27,447 - dc_real_adapters - ERROR - Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:27,448 - dc_real_adapters - ERROR - Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 69, in _safely_import_production_tools
+    import tools.computer
+ModuleNotFoundError: No module named 'tools.computer'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 89, in _safely_import_production_tools
+    computer_spec.loader.exec_module(computer_module)
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/computeruse/computer_use_demo/tools/computer.py", line 13, in <module>
+    from .base import BaseAnthropicTool, ToolError, ToolResult
+ImportError: attempted relative import with no known parent package
+
+2025-04-24 13:49:27,448 - dc_real_adapters - WARNING - Using mock implementation due to import error: Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:27,448 - dc_real_adapters - INFO - DC Real Bash Tool - Command: ls -la /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl
+2025-04-24 13:49:27,448 - dc_real_adapters - WARNING - Direct import failed: No module named 'tools.computer', trying spec-based import
+2025-04-24 13:49:27,448 - dc_real_adapters - ERROR - Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:27,448 - dc_real_adapters - ERROR - Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 69, in _safely_import_production_tools
+    import tools.computer
+ModuleNotFoundError: No module named 'tools.computer'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 89, in _safely_import_production_tools
+    computer_spec.loader.exec_module(computer_module)
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/computeruse/computer_use_demo/tools/computer.py", line 13, in <module>
+    from .base import BaseAnthropicTool, ToolError, ToolResult
+ImportError: attempted relative import with no known parent package
+
+2025-04-24 13:49:27,448 - dc_real_adapters - WARNING - Using mock implementation due to import error: Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:27,449 - dc_real_adapters - INFO - DC Real Computer Tool - Action: screenshot
+2025-04-24 13:49:27,449 - dc_real_adapters - WARNING - Direct import failed: No module named 'tools.computer', trying spec-based import
+2025-04-24 13:49:27,449 - dc_real_adapters - ERROR - Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:27,449 - dc_real_adapters - ERROR - Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 69, in _safely_import_production_tools
+    import tools.computer
+ModuleNotFoundError: No module named 'tools.computer'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 89, in _safely_import_production_tools
+    computer_spec.loader.exec_module(computer_module)
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/computeruse/computer_use_demo/tools/computer.py", line 13, in <module>
+    from .base import BaseAnthropicTool, ToolError, ToolResult
+ImportError: attempted relative import with no known parent package
+
+2025-04-24 13:49:27,449 - dc_real_adapters - WARNING - Using mock implementation due to import error: Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:27,449 - dc_real_adapters - INFO - DC Real Edit Tool - Command: view, Path: /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/README.md
+2025-04-24 13:49:27,449 - dc_real_adapters - WARNING - Direct import failed: No module named 'tools.computer', trying spec-based import
+2025-04-24 13:49:27,449 - dc_real_adapters - ERROR - Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:27,449 - dc_real_adapters - ERROR - Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 69, in _safely_import_production_tools
+    import tools.computer
+ModuleNotFoundError: No module named 'tools.computer'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 89, in _safely_import_production_tools
+    computer_spec.loader.exec_module(computer_module)
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/computeruse/computer_use_demo/tools/computer.py", line 13, in <module>
+    from .base import BaseAnthropicTool, ToolError, ToolResult
+ImportError: attempted relative import with no known parent package
+
+2025-04-24 13:49:27,449 - dc_real_adapters - WARNING - Using mock implementation due to import error: Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:51,205 - dc_real_adapters - INFO - DC Real Bash Tool - Command: echo 'Hello from Real Tool Test'
+2025-04-24 13:49:51,205 - dc_real_adapters - WARNING - Direct import failed: No module named 'tools.computer', trying spec-based import
+2025-04-24 13:49:51,381 - dc_real_adapters - ERROR - Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:51,382 - dc_real_adapters - ERROR - Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 69, in _safely_import_production_tools
+    import tools.computer
+ModuleNotFoundError: No module named 'tools.computer'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 89, in _safely_import_production_tools
+    computer_spec.loader.exec_module(computer_module)
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/computeruse/computer_use_demo/tools/computer.py", line 13, in <module>
+    from .base import BaseAnthropicTool, ToolError, ToolResult
+ImportError: attempted relative import with no known parent package
+
+2025-04-24 13:49:51,382 - dc_real_adapters - WARNING - Using mock implementation due to import error: Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:51,382 - dc_real_adapters - INFO - DC Real Bash Tool - Command: ls -la /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl
+2025-04-24 13:49:51,382 - dc_real_adapters - WARNING - Direct import failed: No module named 'tools.computer', trying spec-based import
+2025-04-24 13:49:51,382 - dc_real_adapters - ERROR - Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:51,382 - dc_real_adapters - ERROR - Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 69, in _safely_import_production_tools
+    import tools.computer
+ModuleNotFoundError: No module named 'tools.computer'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 89, in _safely_import_production_tools
+    computer_spec.loader.exec_module(computer_module)
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/computeruse/computer_use_demo/tools/computer.py", line 13, in <module>
+    from .base import BaseAnthropicTool, ToolError, ToolResult
+ImportError: attempted relative import with no known parent package
+
+2025-04-24 13:49:51,382 - dc_real_adapters - WARNING - Using mock implementation due to import error: Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:51,383 - dc_real_adapters - INFO - DC Real Computer Tool - Action: screenshot
+2025-04-24 13:49:51,383 - dc_real_adapters - WARNING - Direct import failed: No module named 'tools.computer', trying spec-based import
+2025-04-24 13:49:51,383 - dc_real_adapters - ERROR - Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:51,383 - dc_real_adapters - ERROR - Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 69, in _safely_import_production_tools
+    import tools.computer
+ModuleNotFoundError: No module named 'tools.computer'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 89, in _safely_import_production_tools
+    computer_spec.loader.exec_module(computer_module)
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/computeruse/computer_use_demo/tools/computer.py", line 13, in <module>
+    from .base import BaseAnthropicTool, ToolError, ToolResult
+ImportError: attempted relative import with no known parent package
+
+2025-04-24 13:49:51,383 - dc_real_adapters - WARNING - Using mock implementation due to import error: Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:51,383 - dc_real_adapters - INFO - DC Real Edit Tool - Command: view, Path: /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/README.md
+2025-04-24 13:49:51,383 - dc_real_adapters - WARNING - Direct import failed: No module named 'tools.computer', trying spec-based import
+2025-04-24 13:49:51,383 - dc_real_adapters - ERROR - Failed to import production tools: attempted relative import with no known parent package
+2025-04-24 13:49:51,383 - dc_real_adapters - ERROR - Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 69, in _safely_import_production_tools
+    import tools.computer
+ModuleNotFoundError: No module named 'tools.computer'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/dc_impl/tools/dc_real_adapters.py", line 89, in _safely_import_production_tools
+    computer_spec.loader.exec_module(computer_module)
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/computeruse/computer_use_demo/tools/computer.py", line 13, in <module>
+    from .base import BaseAnthropicTool, ToolError, ToolResult
+ImportError: attempted relative import with no known parent package
+
+2025-04-24 13:49:51,383 - dc_real_adapters - WARNING - Using mock implementation due to import error: Failed to import production tools: attempted relative import with no known parent package
