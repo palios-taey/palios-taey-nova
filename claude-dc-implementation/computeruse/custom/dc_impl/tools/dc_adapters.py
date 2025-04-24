@@ -4,10 +4,19 @@ Tool adapters with namespace isolation for safely integrating with production to
 
 import logging
 import time
+import os
+import sys
+from pathlib import Path
 from typing import Dict, Any
 
-# Import from our namespace-isolated modules
-from ..models.dc_models import DCToolResult
+# Fix imports to work both as relative import and direct import
+try:
+    # When imported directly (for tests)
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from models.dc_models import DCToolResult
+except ImportError:
+    # When imported as a package
+    from ..models.dc_models import DCToolResult
 
 # Configure logging
 logging.basicConfig(

@@ -9,30 +9,13 @@ import sys
 from pathlib import Path
 
 # Add the parent directory to the system path
-parent_dir = Path(__file__).parent.parent.parent.parent.parent.parent
+current_dir = Path(__file__).parent.absolute()
+parent_dir = current_dir.parent  # dc_impl directory
 sys.path.insert(0, str(parent_dir))
 
-# Import from our namespace-isolated modules
-from claude_dc_implementation.computeruse.custom.dc_impl.dc_setup import dc_initialize
-from claude_dc_implementation.computeruse.custom.dc_impl.dc_executor import dc_execute_tool
-
-# Alternative imports for your environment
-try:
-    # First try the standard import
-    dc_initialize()
-except ImportError:
-    # If that fails, try the direct import
-    import sys
-    from pathlib import Path
-    # Get the current directory
-    current_dir = Path(__file__).parent.absolute()
-    # Add the parent directory to the path
-    sys.path.insert(0, str(current_dir.parent))
-    # Import again
-    from dc_setup import dc_initialize
-    from dc_executor import dc_execute_tool
-    # Initialize
-    dc_initialize()
+# Import from our namespace-isolated modules directly
+from dc_setup import dc_initialize
+from dc_executor import dc_execute_tool
 
 class TestDCTools(unittest.TestCase):
     """Test case for DC tools implementation."""

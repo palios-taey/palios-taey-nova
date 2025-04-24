@@ -2,10 +2,19 @@
 Tool registry implementation with namespace isolation.
 """
 
+import os
+import sys
+from pathlib import Path
 from typing import Dict, Any, List, Callable, Awaitable, Optional
 
-# Import with namespace isolation
-from ..models.dc_models import DCToolResult, DCToolInfo
+# Fix imports to work both as relative import and direct import
+try:
+    # When imported directly (for tests)
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from models.dc_models import DCToolResult, DCToolInfo
+except ImportError:
+    # When imported as a package
+    from ..models.dc_models import DCToolResult, DCToolInfo
 
 # Tool definitions with namespace-isolated names
 DC_COMPUTER_TOOL = {
@@ -83,5 +92,4 @@ def dc_get_tool_validator(tool_name: str) -> Optional[Callable]:
     """Get the validator for a specific tool."""
     if tool_name not in DC_TOOL_REGISTRY:
         return None
-    return DC_TOOL_REGISTRY[tool_name].validator</parameter>
-</invoke>
+    return DC_TOOL_REGISTRY[tool_name].validator

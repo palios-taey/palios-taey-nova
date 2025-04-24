@@ -5,10 +5,19 @@ Safe executor for tools with namespace isolation.
 import logging
 import asyncio
 from typing import Dict, Any, Optional
+import os
+import sys
+from pathlib import Path
 
-# Import from our namespace-isolated modules
-from .models.dc_models import DCToolResult
-from .registry.dc_registry import dc_get_tool_executor, dc_get_tool_validator
+# Fix imports to work both as relative import and direct import
+try:
+    # When imported directly (for tests)
+    from models.dc_models import DCToolResult
+    from registry.dc_registry import dc_get_tool_executor, dc_get_tool_validator
+except ImportError:
+    # When imported as a package
+    from .models.dc_models import DCToolResult
+    from .registry.dc_registry import dc_get_tool_executor, dc_get_tool_validator
 
 # Configure logging
 logging.basicConfig(
