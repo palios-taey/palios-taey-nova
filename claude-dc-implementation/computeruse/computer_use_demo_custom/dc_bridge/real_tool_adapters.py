@@ -131,64 +131,109 @@ manager = ProductionToolManager()
 
 # Adapter for computer tool
 async def adapt_computer_tool(tool: Any, tool_input: Dict[str, Any]) -> DCToolResult:
-    """Adapter for computer tool with enhanced screenshot functionality."""
+    """Adapter for computer tool with enhanced functionality."""
     try:
         action = tool_input.get("action")
         
         if not action:
             return DCToolResult(error="Missing required 'action' parameter")
         
-        # Import feature toggle system to check if the screenshot adapter is enabled
+        # Import feature toggle system to check feature toggles
         try:
             from dc_bridge.enhanced_bridge import toggles
             use_screenshot_adapter = toggles.is_enabled("use_screenshot_adapter")
+            use_mouse_movement = toggles.is_enabled("use_mouse_movement")
+            use_mouse_click = toggles.is_enabled("use_mouse_click")
+            use_mouse_drag = toggles.is_enabled("use_mouse_drag")
         except ImportError:
             logger.warning("Could not import feature toggles, defaulting to standard adapter")
             use_screenshot_adapter = False
+            use_mouse_movement = False
+            use_mouse_click = False
+            use_mouse_drag = False
         
-        # Use the enhanced screenshot adapter if enabled and the action is screenshot
-        if use_screenshot_adapter and action == "screenshot":
-            logger.info("Using enhanced screenshot adapter")
+        # Import path constants
+        DC_IMPL_PATH = str(Path("/home/computeruse/computer_use_demo/dc_impl"))
+        
+        # Use the enhanced adapter if enabled and action matches
+        enhanced_adapter_enabled = (
+            (use_screenshot_adapter and action == "screenshot") or
+            (use_mouse_movement and action == "mouse_move") or
+            (use_mouse_click and action in ["left_click", "right_click", "middle_click", "double_click", "triple_click"]) or
+            (use_mouse_drag and action == "left_click_drag")
+        )
+        
+        if enhanced_adapter_enabled:
+            logger.info(f"Using enhanced adapter for {action}")
             try:
-                # Import the custom screenshot implementation
-                sys.path.insert(0, str(Path("/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo_custom/dc_impl")))
+                # Import the custom implementation
+                if DC_IMPL_PATH not in sys.path:
+                    sys.path.insert(0, DC_IMPL_PATH)
                 from tools.dc_adapters import dc_execute_computer_tool
                 
                 # Call the enhanced implementation
                 result = await dc_execute_computer_tool(tool_input)
                 
-                # Convert to the format expected by the bridge
+                # Return the result directly
                 return result
             except ImportError as e:
-                logger.error(f"Could not import screenshot adapter: {str(e)}")
+                logger.error(f"Could not import enhanced adapter: {str(e)}")
                 logger.error("Falling back to standard adapter")
             except Exception as e:
-                logger.error(f"Error in screenshot adapter: {str(e)}")
+                logger.error(f"Error in enhanced adapter: {str(e)}")
                 logger.error(traceback.format_exc())
                 logger.error("Falling back to standard adapter")
         
-        # Standard adapter for computer tool (used for non-screenshot actions or when adapter is disabled)
+        # Standard adapter for computer tool
         # Transform input to format expected by production tool
         kwargs = {}
         
+        # Parameter mapping based on action
         if action == "screenshot":
-            # Production tool doesn't need additional parameters for screenshot
+            # No additional parameters needed
             pass
-        elif action == "move_mouse":
+        elif action == "mouse_move":
             if "coordinates" not in tool_input:
                 return DCToolResult(error="Missing required 'coordinates' parameter")
             coords = tool_input["coordinates"]
-            kwargs["coordinate"] = coords  # Fixed parameter name to match production tool
-        elif action == "left_click":
-            if "coordinates" not in tool_input:
-                return DCToolResult(error="Missing required 'coordinates' parameter")
-            coords = tool_input["coordinates"]
-            kwargs["coordinate"] = coords  # Fixed parameter name to match production tool
+            kwargs["coordinate"] = coords
+        elif action in ["left_click", "right_click", "middle_click", "double_click", "triple_click"]:
+            # Optional coordinates
+            if "coordinates" in tool_input:
+                coords = tool_input["coordinates"]
+                kwargs["coordinate"] = coords
+        elif action == "left_click_drag":
+            if "start_coordinate" not in tool_input:
+                return DCToolResult(error="Missing required 'start_coordinate' parameter")
+            if "coordinate" not in tool_input:
+                return DCToolResult(error="Missing required 'coordinate' parameter")
+            
+            kwargs["start_coordinate"] = tool_input["start_coordinate"]
+            kwargs["coordinate"] = tool_input["coordinate"]
         elif action == "type":
             if "text" not in tool_input:
                 return DCToolResult(error="Missing required 'text' parameter")
             kwargs["text"] = tool_input["text"]
-        # Add other actions as needed
+        elif action == "key":
+            if "text" not in tool_input:
+                return DCToolResult(error="Missing required 'text' parameter")
+            kwargs["text"] = tool_input["text"]
+        elif action == "wait":
+            if "duration" not in tool_input:
+                return DCToolResult(error="Missing required 'duration' parameter")
+            kwargs["duration"] = tool_input["duration"]
+        elif action == "scroll":
+            if "direction" not in tool_input:
+                return DCToolResult(error="Missing required 'direction' parameter")
+            if "scroll_amount" not in tool_input:
+                return DCToolResult(error="Missing required 'scroll_amount' parameter")
+            
+            kwargs["direction"] = tool_input["direction"]
+            kwargs["scroll_amount"] = tool_input["scroll_amount"]
+            
+            # Optional coordinates
+            if "coordinates" in tool_input:
+                kwargs["coordinate"] = tool_input["coordinates"]
         
         # Call the appropriate method on the production tool
         method = getattr(tool, action, None)

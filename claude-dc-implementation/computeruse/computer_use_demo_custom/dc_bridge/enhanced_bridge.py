@@ -156,8 +156,13 @@ class FeatureToggles:
             "collect_metrics": True,
             "use_real_tools": True,
             "use_fallbacks": True,
-            "use_screenshot_adapter": True,  # Toggle for the new screenshot adapter
-            "use_readonly_bash_adapter": True  # Toggle for the read-only bash commands adapter
+            "use_screenshot_adapter": True,  # Toggle for the screenshot adapter
+            "use_readonly_bash_adapter": True,  # Toggle for the read-only bash commands adapter
+            "use_mouse_movement": True,  # Toggle for mouse movement operations
+            "use_mouse_click": True,  # Toggle for mouse click operations
+            "use_mouse_drag": True,  # Toggle for mouse drag operations
+            "use_rate_limiting": True,  # Toggle for operation rate limiting
+            "use_position_verification": True  # Toggle for position verification
         }
         
         # Load toggles from config file if available
