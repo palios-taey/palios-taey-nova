@@ -8,6 +8,7 @@ import json
 import time
 import sys
 from pathlib import Path
+from json_helper import json_serialize
 
 # Configure paths
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
@@ -92,7 +93,7 @@ async def test_metrics_collection():
     # Get metrics
     print("\nGetting metrics...")
     metrics = await get_metrics()
-    print(f"Metrics: {json.dumps(metrics, indent=2)}")
+    print(f"Metrics: {json_serialize(metrics)}")
 
 async def test_caching():
     """Test result caching"""

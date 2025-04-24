@@ -1,0 +1,166 @@
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - ERROR - Error importing DC Custom Implementation: No module named 'claude_dc_implementation'
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Custom implementation disabled by feature toggle
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:29:11,178 - dc_bridge_enhanced - INFO - Using mock implementation for invalid_tool
+2025-04-24 14:30:55,705 - dc_bridge_enhanced - ERROR - Error importing DC Custom Implementation: No module named 'claude_dc_implementation'
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Custom implementation disabled by feature toggle
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_bash
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for invalid_tool
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:30:55,706 - dc_bridge_enhanced - INFO - Using mock implementation for dc_computer
+2025-04-24 14:31:36,045 - dc_bridge_enhanced - INFO - Added /home/computeruse/computer_use_demo/dc_custom to sys.path
+2025-04-24 14:31:36,047 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-04-24 14:31:36,047 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-04-24 14:31:36,047 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-04-24 14:31:36,047 - dc_setup - INFO - DC implementation initialized successfully
+2025-04-24 14:31:36,047 - dc_bridge_enhanced - INFO - Successfully imported and initialized DC Custom Implementation
+2025-04-24 14:31:36,047 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:31:36,047 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:31:36,047 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 14:31:36,047 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Computer Tool - Action: move_mouse
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Moving mock mouse to: [100, 200]
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Hello from Enhanced Bridge
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Executing mock command: echo Hello from Enhanced Bridge
+2025-04-24 14:31:36,048 - dc_bridge_enhanced - INFO - Custom implementation disabled by feature toggle
+2025-04-24 14:31:36,048 - dc_bridge_enhanced - INFO - Cache hit for dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Test 0
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Executing mock command: echo Test 0
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Computer Tool - Action: move_mouse
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Moving mock mouse to: [0, 0]
+2025-04-24 14:31:36,048 - dc_bridge_enhanced - INFO - Cache hit for dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Test 1
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Executing mock command: echo Test 1
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Computer Tool - Action: move_mouse
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Moving mock mouse to: [100, 100]
+2025-04-24 14:31:36,048 - dc_bridge_enhanced - INFO - Cache hit for dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Test 2
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Executing mock command: echo Test 2
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Computer Tool - Action: move_mouse
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Moving mock mouse to: [200, 200]
+2025-04-24 14:31:36,048 - dc_bridge_enhanced - INFO - Cache hit for dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Test 3
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Executing mock command: echo Test 3
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Computer Tool - Action: move_mouse
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Moving mock mouse to: [300, 300]
+2025-04-24 14:31:36,048 - dc_bridge_enhanced - INFO - Cache hit for dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Test 4
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Executing mock command: echo Test 4
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - DC Computer Tool - Action: move_mouse
+2025-04-24 14:31:36,048 - dc_tool_adapters - INFO - Moving mock mouse to: [400, 400]
+2025-04-24 14:31:36,048 - dc_executor - INFO - DC Execute Tool - Tool: invalid_tool
+2025-04-24 14:31:36,049 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:31:36,049 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:31:36,049 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 14:31:36,049 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 14:31:36,049 - dc_bridge_enhanced - INFO - Cache hit for dc_computer
+2025-04-24 14:31:36,049 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:31:36,049 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:31:36,049 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 14:31:36,049 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 14:32:08,405 - dc_bridge_enhanced - INFO - Added /home/computeruse/github/palios-taey-nova to sys.path
+2025-04-24 14:32:08,405 - dc_bridge_enhanced - INFO - Added /home/computeruse/computer_use_demo/dc_custom to sys.path
+2025-04-24 14:32:08,407 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-04-24 14:32:08,407 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-04-24 14:32:08,407 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-04-24 14:32:08,407 - dc_setup - INFO - DC implementation initialized successfully
+2025-04-24 14:32:08,407 - dc_bridge_enhanced - INFO - Successfully imported and initialized DC Custom Implementation
+2025-04-24 14:32:08,408 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:32:08,408 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:32:08,408 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 14:32:08,408 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 14:32:08,408 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:32:08,408 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:32:08,408 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Hello from Enhanced Bridge
+2025-04-24 14:32:08,408 - dc_tool_adapters - INFO - Executing mock command: echo Hello from Enhanced Bridge
+2025-04-24 14:32:08,408 - dc_bridge_enhanced - INFO - Custom implementation disabled by feature toggle
+2025-04-24 14:32:34,926 - dc_bridge_enhanced - INFO - Added /home/computeruse/github/palios-taey-nova to sys.path
+2025-04-24 14:32:34,926 - dc_bridge_enhanced - INFO - Added /home/computeruse/computer_use_demo/dc_custom to sys.path
+2025-04-24 14:32:34,928 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-04-24 14:32:34,928 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-04-24 14:32:34,928 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-04-24 14:32:34,928 - dc_setup - INFO - DC implementation initialized successfully
+2025-04-24 14:32:34,928 - dc_bridge_enhanced - INFO - Successfully imported and initialized DC Custom Implementation
+2025-04-24 14:32:34,928 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:32:34,928 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:32:34,928 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 14:32:34,928 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 14:32:34,928 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:32:34,928 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:32:34,928 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Hello from Enhanced Bridge
+2025-04-24 14:32:34,928 - dc_tool_adapters - INFO - Executing mock command: echo Hello from Enhanced Bridge
+2025-04-24 14:33:19,110 - dc_bridge_enhanced - INFO - Added /home/computeruse/github/palios-taey-nova to sys.path
+2025-04-24 14:33:19,111 - dc_bridge_enhanced - INFO - Added /home/computeruse/computer_use_demo/dc_custom to sys.path
+2025-04-24 14:33:19,113 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-04-24 14:33:19,113 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-04-24 14:33:19,113 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-04-24 14:33:19,113 - dc_setup - INFO - DC implementation initialized successfully
+2025-04-24 14:33:19,113 - dc_bridge_enhanced - INFO - Successfully imported and initialized DC Custom Implementation
+2025-04-24 14:33:19,113 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-04-24 14:33:19,113 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_computer
+2025-04-24 14:33:19,113 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 14:33:19,113 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 14:33:19,113 - dc_executor - INFO - DC Execute Tool - Tool: dc_bash
+2025-04-24 14:33:19,113 - dc_executor - INFO - DC Execute With Fallback - Attempt 1 for dc_bash
+2025-04-24 14:33:19,113 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Test command
+2025-04-24 14:33:19,113 - dc_tool_adapters - INFO - Executing mock command: echo Test command
+2025-04-24 14:33:19,113 - dc_executor - INFO - DC Execute Tool - Tool: invalid_tool

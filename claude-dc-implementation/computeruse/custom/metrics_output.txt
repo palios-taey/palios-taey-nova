@@ -1,0 +1,36 @@
+
+Current feature toggles:
+{
+  "use_custom_implementation": true,
+  "use_caching": true,
+  "collect_metrics": true,
+  "use_real_tools": true,
+  "use_fallbacks": true
+}
+
+Making tool calls to generate metrics...
+
+Metrics:
+
+Uptime: 0.002543
+Total calls: 3
+Total errors: 1
+Success rate: 0.6666666666666666
+Overall average time: 5.801518758138021e-05
+
+Tool stats:
+  dc_computer:
+    Calls: 1
+    Avg time: 9.5367431640625e-05
+  dc_bash:
+    Calls: 1
+    Avg time: 6.175041198730469e-05
+  invalid_tool:
+    Calls: 1
+    Avg time: 1.6927719116210938e-05
+
+Testing feature toggle...
+Changing use_caching from True to False
+Toggle result: Feature 'use_caching' disabled
+New use_caching value: False
+Restored use_caching to True

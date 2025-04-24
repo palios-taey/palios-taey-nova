@@ -70,11 +70,14 @@ def verify_github_implementation():
     # Run tests
     logger.info("Running tests to verify implementation")
     try:
-        os.chdir(Path("/home/computeruse/github/palios-taey-nova"))
+        # Change to the dc_impl directory
+        test_dir = DC_IMPL_DIR
+        os.chdir(test_dir)
         env = os.environ.copy()
-        env["PYTHONPATH"] = str(Path("/home/computeruse/github/palios-taey-nova"))
+        
+        # Run the tests directly
         result = subprocess.run(
-            ["python", "-m", "claude_dc_implementation.computeruse.custom.dc_impl.tests.test_tools"],
+            ["python", "tests/test_tools.py"],
             env=env,
             capture_output=True,
             text=True
@@ -133,8 +136,15 @@ if str(GITHUB_DIR) not in sys.path:
 
 # Import from custom implementation
 try:
-    from claude_dc_implementation.computeruse.custom.dc_impl.dc_setup import dc_initialize
-    from claude_dc_implementation.computeruse.custom.dc_impl.dc_executor import dc_execute_tool
+    # Add the dc_custom directory to the path
+    DC_CUSTOM_DIR = Path("/home/computeruse/computer_use_demo/dc_custom")
+    if str(DC_CUSTOM_DIR) not in sys.path:
+        sys.path.insert(0, str(DC_CUSTOM_DIR))
+        logger.info(f"Added {DC_CUSTOM_DIR} to sys.path")
+    
+    # Import directly
+    from dc_setup import dc_initialize
+    from dc_executor import dc_execute_tool
     
     # Initialize the implementation
     dc_initialize()

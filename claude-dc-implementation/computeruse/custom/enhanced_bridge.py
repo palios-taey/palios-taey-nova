@@ -192,8 +192,15 @@ toggles = FeatureToggles()
 
 # Import from custom implementation
 try:
-    from claude_dc_implementation.computeruse.custom.dc_impl.dc_setup import dc_initialize
-    from claude_dc_implementation.computeruse.custom.dc_impl.dc_executor import dc_execute_tool
+    # Add the dc_custom directory to the path
+    DC_CUSTOM_DIR = Path("/home/computeruse/computer_use_demo/dc_custom")
+    if str(DC_CUSTOM_DIR) not in sys.path:
+        sys.path.insert(0, str(DC_CUSTOM_DIR))
+        logger.info(f"Added {DC_CUSTOM_DIR} to sys.path")
+    
+    # Import directly
+    from dc_setup import dc_initialize
+    from dc_executor import dc_execute_tool
     
     # Initialize the implementation
     dc_initialize()

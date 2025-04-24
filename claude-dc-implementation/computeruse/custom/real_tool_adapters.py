@@ -22,7 +22,25 @@ logging.basicConfig(
 logger = logging.getLogger("real_adapters")
 
 # Import from custom implementation
-from claude_dc_implementation.computeruse.custom.dc_impl.models.dc_models import DCToolResult
+try:
+    # Add the dc_custom directory to the path
+    DC_CUSTOM_DIR = Path("/home/computeruse/computer_use_demo/dc_custom")
+    if str(DC_CUSTOM_DIR) not in sys.path:
+        sys.path.insert(0, str(DC_CUSTOM_DIR))
+        logger.info(f"Added {DC_CUSTOM_DIR} to sys.path")
+    
+    # Import directly
+    from models.dc_models import DCToolResult
+except ImportError:
+    # Define a simple version for testing
+    from dataclasses import dataclass
+    
+    @dataclass
+    class DCToolResult:
+        """Represents the result of a tool execution."""
+        output: str = None
+        error: str = None
+        base64_image: str = None
 
 class ProductionToolManager:
     """Safely manages access to production tools."""
