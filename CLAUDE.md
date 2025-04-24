@@ -97,6 +97,15 @@ Your working environment has the following characteristics:
 5. **GitHub Access**: You can access and modify the GitHub repository
 6. **Research Support**: Claude DC has access to Claude Chat for external research through the Research BETA button (blue button). Request specific research topics as needed.
 
+## Implementation Resources
+
+Important resources for the custom computer use implementation:
+
+1. **Custom Implementation Guide**: `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/custom-computer-use.md` - Comprehensive guide for implementing streaming with tool use
+2. **API Reference**: Basic agent loop, API integration, and stream handling patterns
+3. **Tool Integration**: Tool definitions, parameter validation, and execution patterns
+4. **UI Options**: Lightweight alternatives to Streamlit for rendering streamed responses
+
 ## Key Files and Directories
 
 1. **Agent Loop & Streamlit UI**:
@@ -215,33 +224,41 @@ The prompt-cache system allows you to have access to a large body of information
 
 Your immediate next steps are:
 
-1. **Streamlit Continuity Solution**:
-   - Complete the implementation of the state persistence mechanism
-   - Ensure proper error handling and validation
-   - Test the solution with real-world file changes
-   - Document the procedure for when and how to use this mechanism
+1. **Custom Computer Use Implementation**:
+   - Create a fresh, minimal implementation focusing on core MVP features:
+     - Streaming responses with token-by-token output
+     - Tool use integrated with streaming
+     - Thinking token budget management
+   - Follow the patterns in the custom-computer-use.md guide
+   - Use a simplified architecture to avoid tight coupling between components
 
-2. **Streaming Implementation**:
-   - Finalize verification of the streaming implementation with tools
-   - Address any remaining edge cases with tool parameter validation
-   - Create comprehensive documentation of the implementation
+2. **Implementation Approach**:
+   - Start with a basic agent loop supporting streaming with tools
+   - Implement proper error handling for API calls and tool execution
+   - Add thinking budget support for complex reasoning
+   - Create a lightweight UI for interaction
+   - Implement prompt caching for efficient token usage
+   - Support extended output (128K) for comprehensive responses
 
-3. **Prompt Caching Implementation**:
-   - Review the prompt-cache file at `/computeruse/cache/cache.md` for context
-   - Work with Claude DC to set up his prompt-cache system (IMPORTANT: Claude DC should not build this himself)
-   - Implement Anthropic's prompt caching beta to avoid recomputing repeated context
+3. **Testing Strategy**:
+   - Create a comprehensive testing framework for all components
+   - Validate tool parameter handling and error recovery
+   - Test streaming with various response lengths and tool interactions
+   - Verify prompt caching effectiveness in multi-turn conversations
 
-4. **128K Extended Output**:
-   - Enable extended output beta for very long answers
-   - Adjust token allocation for optimal performance
+4. **Documentation**:
+   - Document the implementation architecture
+   - Create clear usage examples
+   - Provide troubleshooting guides for common issues
 
-5. **Documentation and Deployment**:
-   - Create comprehensive documentation of all implementations
-   - Work with Claude DC to deploy changes to the production environment
-   - Ensure proper testing and validation procedures are followed
+5. **Deployment Process**:
+   - Implement a safe deployment process with proper backups
+   - Create verification steps for each component
+   - Enable feature flags for controlled rollout
 
 ## Build & Test Commands
 
+### Original Implementation
 - Run tests: `python -m pytest`
 - Lint code: `black . && isort . && mypy .`
 - Run Claude DC: `python claude-dc-implementation/demo.py`
@@ -249,5 +266,13 @@ Your immediate next steps are:
 - Test streaming: `python claude-dc-implementation/computeruse/bin/streaming/direct_streaming_test.py`
 - Test continuity solution: `python claude-dc-implementation/computeruse/bin/continuity/test_continuity.py`
 - Run Streamlit test app: `streamlit run claude-dc-implementation/computeruse/bin/continuity/streamlit_test_app.py`
+
+### Custom Implementation
+- Run minimal agent: `python claude-dc-implementation/computeruse/custom/agent_loop.py`
+- Test streaming: `python claude-dc-implementation/computeruse/custom/test_streaming.py`
+- Test tool integration: `python claude-dc-implementation/computeruse/custom/test_tools.py`
+- Test prompt caching: `python claude-dc-implementation/computeruse/custom/test_prompt_cache.py`
+- Run custom UI: `python claude-dc-implementation/computeruse/custom/ui.py`
+- Run all tests: `python -m unittest discover claude-dc-implementation/computeruse/custom/tests`
 
 By following these guidelines, you will be able to effectively collaborate with Claude DC and Claude Chat to enhance the PALIOS AI OS system.
