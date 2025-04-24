@@ -216,6 +216,40 @@ async def execute_tool_streaming(
         await on_progress(f"Starting {tool_name} execution...", 0.0)
     
     try:
+        # Check if we have a streaming implementation for this tool
+        if tool_name == "dc_bash":
+            try:
+                # Try to import the streaming bash tool
+                from tools.dc_bash import dc_execute_bash_tool_streaming, dc_process_streaming_output
+                logger.info("Using streaming bash implementation")
+                
+                # Collect streaming output chunks
+                output_chunks = []
+                async for chunk in dc_execute_bash_tool_streaming(tool_input, on_progress):
+                    # Add chunk to output collection
+                    output_chunks.append(chunk)
+                    # Display chunk to user in real-time
+                    if "on_text" in callbacks:
+                        callbacks["on_text"](chunk)
+                
+                # Process the collected output
+                tool_result = await dc_process_streaming_output(
+                    # Create a generator that yields the collected chunks
+                    (chunk for chunk in output_chunks).__aiter__()
+                )
+                
+                # Format the streaming result
+                if tool_result.error:
+                    tool_result_content = [{"type": "text", "text": tool_result.error}]
+                else:
+                    tool_result_content = [{"type": "text", "text": tool_result.output}]
+                
+                return tool_result, tool_result_content
+            except ImportError:
+                logger.warning("Streaming bash implementation not available, falling back to standard")
+                # Fall back to standard implementation
+        
+        # For other tools or if streaming implementation is not available
         # Execute the tool with our namespace-isolated executor
         tool_result = await dc_execute_tool(
             tool_name=tool_name,
