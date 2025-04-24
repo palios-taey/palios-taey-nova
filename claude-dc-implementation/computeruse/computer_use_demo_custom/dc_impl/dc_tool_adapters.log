@@ -1,0 +1,35 @@
+2025-04-24 16:08:18,874 - dc_tool_adapters - INFO - DC Computer Tool - Action: nonexistent_action
+2025-04-24 16:08:18,874 - dc_tool_adapters - ERROR - Could not import computer tool: No module named 'tools.computer'
+2025-04-24 16:08:18,874 - dc_tool_adapters - INFO - Using mock implementation for nonexistent_action
+2025-04-24 16:08:18,874 - dc_tool_adapters - INFO - DC Computer Tool - Action: None
+2025-04-24 16:08:18,874 - dc_tool_adapters - ERROR - Missing required 'action' parameter
+2025-04-24 16:08:18,874 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 16:08:18,874 - dc_tool_adapters - ERROR - Could not import computer tool: No module named 'tools.computer'
+2025-04-24 16:08:18,874 - dc_tool_adapters - INFO - Using mock implementation for screenshot
+2025-04-24 16:08:18,874 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 16:08:18,875 - dc_tool_adapters - INFO - DC Computer Tool - Action: screenshot
+2025-04-24 16:08:18,875 - dc_tool_adapters - ERROR - Could not import computer tool: No module named 'tools.computer'
+2025-04-24 16:08:18,875 - dc_tool_adapters - INFO - Using mock implementation for screenshot
+2025-04-24 16:08:18,875 - dc_tool_adapters - INFO - Taking mock screenshot
+2025-04-24 16:22:20,653 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Hello, world!
+2025-04-24 16:22:20,654 - dc_tool_adapters - ERROR - Could not import bash tool: No module named 'tools.bash'
+2025-04-24 16:22:20,654 - dc_tool_adapters - INFO - Using mock implementation for command: echo Hello, world!
+2025-04-24 16:22:20,655 - dc_tool_adapters - INFO - DC Bash Tool - Command: rm -rf /tmp/test
+2025-04-24 16:22:20,655 - dc_tool_adapters - ERROR - Command validation failed: Command 'rm' is not in the whitelist of read-only commands
+2025-04-24 16:22:20,655 - dc_tool_adapters - INFO - DC Bash Tool - Command: nonexistent_command
+2025-04-24 16:22:20,655 - dc_tool_adapters - ERROR - Command validation failed: Command 'nonexistent_command' is not in the whitelist of read-only commands
+2025-04-24 16:22:20,655 - dc_tool_adapters - INFO - DC Bash Tool - Command: None
+2025-04-24 16:22:20,655 - dc_tool_adapters - ERROR - Missing or empty 'command' parameter
+2025-04-24 16:22:20,655 - dc_tool_adapters - INFO - DC Bash Tool - Command: 
+2025-04-24 16:22:20,655 - dc_tool_adapters - ERROR - Missing or empty 'command' parameter
+2025-04-24 16:22:51,270 - dc_tool_adapters - INFO - DC Bash Tool - Command: echo Hello, world!
+2025-04-24 16:22:51,271 - dc_tool_adapters - ERROR - Could not import bash tool: No module named 'tools.bash'
+2025-04-24 16:22:51,271 - dc_tool_adapters - INFO - Using mock implementation for command: echo Hello, world!
+2025-04-24 16:22:51,272 - dc_tool_adapters - INFO - DC Bash Tool - Command: rm -rf /tmp/test
+2025-04-24 16:22:51,272 - dc_tool_adapters - ERROR - Command validation failed: Command 'rm' is not in the whitelist of read-only commands
+2025-04-24 16:22:51,272 - dc_tool_adapters - INFO - DC Bash Tool - Command: nonexistent_command
+2025-04-24 16:22:51,272 - dc_tool_adapters - ERROR - Command validation failed: Command 'nonexistent_command' is not in the whitelist of read-only commands
+2025-04-24 16:22:51,272 - dc_tool_adapters - INFO - DC Bash Tool - Command: None
+2025-04-24 16:22:51,272 - dc_tool_adapters - ERROR - Missing or empty 'command' parameter
+2025-04-24 16:22:51,272 - dc_tool_adapters - INFO - DC Bash Tool - Command: 
+2025-04-24 16:22:51,272 - dc_tool_adapters - ERROR - Missing or empty 'command' parameter

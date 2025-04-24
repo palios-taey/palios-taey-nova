@@ -257,6 +257,36 @@ def _response_to_params(
     return res
 
 
+def optimize_context(messages: list[BetaMessageParam], max_history: int = 10):
+    """
+    Optimize context by limiting history and marking older messages for caching.
+    
+    Args:
+        messages: The conversation history messages
+        max_history: Maximum number of messages to keep
+        
+    Returns:
+        Optimized list of messages
+    """
+    # If we have too many messages, keep only recent ones
+    if len(messages) > max_history:
+        # Keep system messages plus most recent N messages
+        system_messages = [m for m in messages if m.get("role") == "system"]
+        recent_messages = messages[-max_history:]
+        messages = system_messages + recent_messages
+    
+    # Mark older messages for caching
+    for i, msg in enumerate(messages[:-3]):  # Keep last 3 messages uncached
+        if msg.get("role") == "user" and isinstance(msg.get("content"), str):
+            # Convert to format needed for cache control
+            messages[i]["content"] = [{
+                "type": "text",
+                "text": msg.get("content", ""),
+                "cache_control": "ephemeral"
+            }]
+    
+    return messages
+
 def _inject_prompt_caching(
     messages: list[BetaMessageParam],
 ):
@@ -264,7 +294,9 @@ def _inject_prompt_caching(
     Set cache breakpoints for the 3 most recent turns
     one cache breakpoint is left for tools/system prompt, to be shared across sessions
     """
-
+    # Apply context optimization first
+    messages = optimize_context(messages)
+    
     breakpoints_remaining = 3
     for message in reversed(messages):
         if message["role"] == "user" and isinstance(
@@ -278,7 +310,7 @@ def _inject_prompt_caching(
                 )
             else:
                 content[-1].pop("cache_control", None)
-                # we'll only every have one extra turn per loop
+                # we'll only ever have one extra turn per loop
                 break
 
 

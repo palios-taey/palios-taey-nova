@@ -155,7 +155,9 @@ class FeatureToggles:
             "use_caching": True,
             "collect_metrics": True,
             "use_real_tools": True,
-            "use_fallbacks": True
+            "use_fallbacks": True,
+            "use_screenshot_adapter": True,  # Toggle for the new screenshot adapter
+            "use_readonly_bash_adapter": True  # Toggle for the read-only bash commands adapter
         }
         
         # Load toggles from config file if available

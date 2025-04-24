@@ -7,6 +7,7 @@ import sys
 import logging
 import importlib
 import traceback
+import asyncio
 from pathlib import Path
 from typing import Dict, Any, Optional, Callable, Awaitable
 
@@ -130,13 +131,43 @@ manager = ProductionToolManager()
 
 # Adapter for computer tool
 async def adapt_computer_tool(tool: Any, tool_input: Dict[str, Any]) -> DCToolResult:
-    """Adapter for computer tool."""
+    """Adapter for computer tool with enhanced screenshot functionality."""
     try:
         action = tool_input.get("action")
         
         if not action:
             return DCToolResult(error="Missing required 'action' parameter")
         
+        # Import feature toggle system to check if the screenshot adapter is enabled
+        try:
+            from dc_bridge.enhanced_bridge import toggles
+            use_screenshot_adapter = toggles.is_enabled("use_screenshot_adapter")
+        except ImportError:
+            logger.warning("Could not import feature toggles, defaulting to standard adapter")
+            use_screenshot_adapter = False
+        
+        # Use the enhanced screenshot adapter if enabled and the action is screenshot
+        if use_screenshot_adapter and action == "screenshot":
+            logger.info("Using enhanced screenshot adapter")
+            try:
+                # Import the custom screenshot implementation
+                sys.path.insert(0, str(Path("/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo_custom/dc_impl")))
+                from tools.dc_adapters import dc_execute_computer_tool
+                
+                # Call the enhanced implementation
+                result = await dc_execute_computer_tool(tool_input)
+                
+                # Convert to the format expected by the bridge
+                return result
+            except ImportError as e:
+                logger.error(f"Could not import screenshot adapter: {str(e)}")
+                logger.error("Falling back to standard adapter")
+            except Exception as e:
+                logger.error(f"Error in screenshot adapter: {str(e)}")
+                logger.error(traceback.format_exc())
+                logger.error("Falling back to standard adapter")
+        
+        # Standard adapter for computer tool (used for non-screenshot actions or when adapter is disabled)
         # Transform input to format expected by production tool
         kwargs = {}
         
@@ -147,15 +178,13 @@ async def adapt_computer_tool(tool: Any, tool_input: Dict[str, Any]) -> DCToolRe
             if "coordinates" not in tool_input:
                 return DCToolResult(error="Missing required 'coordinates' parameter")
             coords = tool_input["coordinates"]
-            kwargs["x"] = coords[0]
-            kwargs["y"] = coords[1]
-        elif action == "left_button_press":
+            kwargs["coordinate"] = coords  # Fixed parameter name to match production tool
+        elif action == "left_click":
             if "coordinates" not in tool_input:
                 return DCToolResult(error="Missing required 'coordinates' parameter")
             coords = tool_input["coordinates"]
-            kwargs["x"] = coords[0]
-            kwargs["y"] = coords[1]
-        elif action == "type_text":
+            kwargs["coordinate"] = coords  # Fixed parameter name to match production tool
+        elif action == "type":
             if "text" not in tool_input:
                 return DCToolResult(error="Missing required 'text' parameter")
             kwargs["text"] = tool_input["text"]
@@ -185,15 +214,69 @@ async def adapt_computer_tool(tool: Any, tool_input: Dict[str, Any]) -> DCToolRe
 
 # Adapter for bash tool
 async def adapt_bash_tool(tool: Any, tool_input: Dict[str, Any]) -> DCToolResult:
-    """Adapter for bash tool."""
+    """Adapter for bash tool with enhanced read-only command safety."""
     try:
         if "command" not in tool_input:
             return DCToolResult(error="Missing required 'command' parameter")
         
         command = tool_input["command"]
         
-        # Call the production tool
-        result = await tool(command=command)
+        # Import feature toggle system to check if the read-only bash adapter is enabled
+        try:
+            from dc_bridge.enhanced_bridge import toggles
+            use_readonly_bash_adapter = toggles.is_enabled("use_readonly_bash_adapter")
+        except ImportError:
+            logger.warning("Could not import feature toggles, defaulting to standard adapter")
+            use_readonly_bash_adapter = False
+        
+        # Use the enhanced read-only bash adapter if enabled
+        if use_readonly_bash_adapter:
+            logger.info("Using enhanced read-only bash adapter")
+            try:
+                # Import the custom bash implementation
+                sys.path.insert(0, str(Path("/home/computeruse/computer_use_demo/dc_impl")))
+                from tools.dc_adapters import dc_execute_bash_tool, dc_validate_read_only_command
+                
+                # First validate it's a read-only command
+                is_valid, validation_message = dc_validate_read_only_command(command)
+                if not is_valid:
+                    logger.error(f"Command validation failed: {validation_message}")
+                    return DCToolResult(error=f"Command validation failed: {validation_message}")
+                
+                # Call the enhanced implementation
+                result = await dc_execute_bash_tool(tool_input)
+                
+                # Convert to the format expected by the bridge
+                return result
+            except ImportError as e:
+                logger.error(f"Could not import read-only bash adapter: {str(e)}")
+                logger.error("Falling back to standard adapter")
+            except Exception as e:
+                logger.error(f"Error in read-only bash adapter: {str(e)}")
+                logger.error(traceback.format_exc())
+                logger.error("Falling back to standard adapter")
+        
+        # Standard adapter for bash tool when adapter is disabled or on fallback
+        # Call the production tool with resource limits for safety
+        # Set timeout and resource limits
+        timeout = 15.0  # seconds
+        modified_command = f"timeout {timeout} bash -c 'ulimit -t 10 -v 500000; {command}'"
+        
+        try:
+            # Execute with timeout
+            result = await asyncio.wait_for(
+                tool(command=modified_command),
+                timeout=timeout + 2  # Add a small buffer for the timeout command itself
+            )
+        except asyncio.TimeoutError:
+            # Handle timeout
+            logger.error(f"Command timed out after {timeout} seconds")
+            # Attempt to clean up by restarting bash
+            try:
+                await tool(restart=True)
+            except Exception:
+                pass
+            return DCToolResult(error=f"Command timed out after {timeout} seconds")
         
         # Transform the result to our format
         return DCToolResult(
