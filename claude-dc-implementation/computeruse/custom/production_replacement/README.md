@@ -50,12 +50,12 @@ This is a complete, custom-built replacement for the Claude DC production enviro
 2. **Deploy**: Run `./deploy.sh` to back up the current environment and deploy.
 3. **Verify**: After deployment, verify the installation:
    ```bash
-   cd /home/jesse/projects/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo
+   cd /home/computeruse/computer_use_demo
    python -c 'import loop, streamlit; print("Import check passed")'
    ```
 4. **Run**: Start the application:
    ```bash
-   cd /home/jesse/projects/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo
+   cd /home/computeruse/computer_use_demo
    streamlit run streamlit.py
    ```
 
@@ -63,7 +63,7 @@ This is a complete, custom-built replacement for the Claude DC production enviro
 
 If needed, restore from the backup:
 ```bash
-cp -r /path/to/backup/* /home/jesse/projects/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/
+cp -r /home/computeruse/computer_use_demo_backup_YYYYMMDD_HHMMSS/* /home/computeruse/computer_use_demo/
 ```
 
 ## Core Components

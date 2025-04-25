@@ -5,9 +5,9 @@
 set -e
 
 # Define paths
-SOURCE_DIR="/home/jesse/projects/palios-taey-nova/claude-dc-implementation/computeruse/custom/production_replacement"
-TARGET_DIR="/home/jesse/projects/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo"
-BACKUP_DIR="/home/jesse/projects/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo_backup_$(date +%Y%m%d_%H%M%S)"
+SOURCE_DIR="/home/computeruse/production_replacement"
+TARGET_DIR="/home/computeruse/computer_use_demo"
+BACKUP_DIR="/home/computeruse/computer_use_demo_backup_$(date +%Y%m%d_%H%M%S)"
 
 # Parse arguments
 VALIDATE_ONLY=false
