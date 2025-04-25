@@ -12,9 +12,8 @@ mkdir -p /home/computeruse/secrets
 mkdir -p /home/computeruse/utils/config 
 mkdir -p /home/computeruse/references
 mkdir -p /home/computeruse/bin
-mkdir -p /home/computeruse/current_experiment
-mkdir -p /home/computeruse/claude_dc_experiments
 mkdir -p /home/computeruse/dccc
+mkdir -p /home/computeruse/production_replacement
 
 # Copy /home/computeruse/ directories
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
@@ -22,10 +21,9 @@ cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computerus
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/utils/* /home/computeruse/utils/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/* /home/computeruse/references/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/* /home/computeruse/bin/
-cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/* /home/computeruse/current_experiment/
-cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/claude_dc_experiments/* /home/computeruse/claude_dc_experiments/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/dccc/* /home/computeruse/dccc/
 cp /home/computeruse/github/palios-taey-nova/CLAUDE.md /home/computeruse/
+cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/production_replacement/* /home/computeruse/production_replacement/
 
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
@@ -72,7 +70,7 @@ ssh -o StrictHostKeyChecking=no -T git@github.com || echo "SSH test complete - N
 echo "Changing repository remote from HTTPS to SSH..."
 cd /home/computeruse/github/palios-taey-nova
 git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
-
+'''
 # Set up Claude Code environment
 echo "Setting up Claude Code environment..."
 
@@ -81,7 +79,7 @@ cd /home/computeruse
 
 # Install NVM
 echo "Installing NVM..."
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
 
 # Load NVM
 export NVM_DIR="$HOME/.nvm"
@@ -106,7 +104,7 @@ echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $HOME/.bashrc
 
 # Return to the previous directory
 cd - > /dev/null
-
+'''
 # Set Claude options
 echo "Please set the following Claude options manually:"
 echo "   - Model: claude-3-7-sonnet-20250219"
@@ -117,7 +115,8 @@ echo "   - Thinking Enabled: check"
 echo "   - Thinking Budget: 4000"
 echo "   - Click Reset button"
 echo ""
-
+'''
 # Launch Claude Code with the EXACT command that worked before, only changing font size to 6
 echo "Launching Claude Code with xterm..."
 xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
+'''
