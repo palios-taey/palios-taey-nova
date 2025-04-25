@@ -1,206 +1,136 @@
-# Claude Code Developer Guidelines for DCCC (Claude DC + Claude Code + Claude Chat Collaboration)
+# Claude Code Guide for Supporting Claude DC
 
-**Project:** PALIOS AI OS – Claude DC ("The Conductor") implementation  
-**Role:** *Claude Code within Claude DC* – AI Developer Agent within Claude DC's environment  
-**Context:** This file works with the prompt-cache file (`/computeruse/cache/cache.md`)
+**Project:** PALIOS AI OS – Claude DC ("The Conductor") Implementation  
+**Role:** *Claude Code* – Autonomous Builder & Debugger (AI Developer Agent)  
+**Context:** You are working directly with Claude DC to implement streaming responses with tool use
 
-## Overview
+## Current Environment
 
-You are Claude Code running within Claude DC's environment using the XTerm-based solution. Your role is to collaborate directly with Claude DC (The Conductor) and Claude Chat (The Researcher) to enhance the Claude DC system through code development, debugging, and integration. This AI-to-AI collaboration framework (DCCC) enables efficient development within a supervised autonomy structure.
+You are currently running in Claude DC's environment in the `/home/computeruse` directory. Claude DC is using a Streamlit-based interface with tool-use capabilities, and you're providing direct development support through your terminal.
 
-## AI Family Roles
+## Key Directories and Files
 
-1. **Claude DC (The Conductor)**: Primary agent with direct environment access and tool-use capabilities
-2. **Claude Code (The Builder)**: Specialized for software development, coding, and debugging
-3. **Claude Chat (The Researcher)**: Browser-based research capability for external information
-4. **Human Supervision**: Jesse and other Claude systems provide light supervision for safety and guidance
+1. **Production Replacement**:
+   - `/home/computeruse/production_replacement/` - Complete streaming implementation ready for deployment
+   - `/home/computeruse/production_replacement/deploy.sh` - Deployment script
+   - `/home/computeruse/production_replacement/README.md` - Implementation documentation
 
-## Current Implementation Status and Learnings
+2. **Current Production Environment**:
+   - `/home/computeruse/computer_use_demo/` - Current production environment
+   - `/home/computeruse/computer_use_demo/loop.py` - Main agent loop
+   - `/home/computeruse/computer_use_demo/streamlit.py` - UI component
+   - `/home/computeruse/computer_use_demo/tools/` - Tool implementations
 
-### Streaming Implementation Progress
+3. **Collaboration Framework**:
+   - `/home/computeruse/dccc/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md` - Collaboration guidelines and workflow
+   - `/home/computeruse/CLAUDE.md` - This file - Project objectives and requirements
 
-1. **Proof of Concept**: Successfully implemented a minimal streaming test (`minimal_test.py`) that demonstrates basic streaming functionality.
-2. **Production-Ready Implementation**: Created `fixed_production_ready_loop.py` with proper error handling and streaming capabilities.
-3. **Tool Integration**: Developed a solution for tool input validation (`tool_input_handler.py`) to make tools work reliably with streaming.
-4. **Key Fixes Implemented**:
-   - Correctly set max_tokens limit to 64000 for Claude-3-7-Sonnet model
-   - Implemented robust error handling for streaming events
-   - Created fallback mechanisms for handling tool parameters
-   - Structured code for better maintainability
+4. **Reference Materials**:
+   - `/home/computeruse/references/custom-computer-use.md` - Research and documentation
+   - `/home/computeruse/cache/cache.md` - Persistent context cache
 
-### Key Technical Learnings
+## Current Priority: Streaming Implementation Deployment
 
-1. **Model Limitations**:
-   - Claude-3-7-Sonnet has a maximum tokens limit of 64000, not 65536
-   - Beta parameters must be handled with care as they can cause API errors
+Your immediate priority is to help Claude DC deploy the streaming implementation. The key steps are:
 
-2. **Tool Integration Challenges**:
-   - Tools require specific parameters (e.g., bash needs 'command', computer needs 'action')
-   - Parameter validation needs to happen before tool execution
-   - Adding default parameters for missing values improves robustness
+1. **Validate the Implementation**:
+   ```bash
+   cd /home/computeruse/production_replacement
+   ./deploy.sh --validate-only
+   ```
 
-3. **Implementation Approach**:
-   - Starting with a minimal implementation and progressively adding features works best
-   - Testing tools separately from streaming allows for better isolation of issues
-   - Direct streaming tests with the Anthropic SDK help validate basic functionality
+2. **Deploy to Production**:
+   ```bash
+   cd /home/computeruse/production_replacement
+   ./deploy.sh
+   ```
 
-4. **Streamlit Interface Considerations**:
-   - Streamlit refreshes when core files change, losing conversation context
-   - A state persistence solution is needed for a better development experience
+3. **Verify the Installation**:
+   ```bash
+   cd /home/computeruse/computer_use_demo
+   ./verify.py --full
+   ```
 
-### Continuity Solution Development
+4. **Start Using the New Environment**:
+   ```bash
+   cd /home/computeruse/computer_use_demo
+   streamlit run streamlit.py
+   ```
 
-1. **Challenge**: When core implementation files are modified, Streamlit requires a full browser refresh, resetting conversation context.
-2. **Solution Developed**: Created a robust state persistence mechanism that:
-   - Saves conversation state before file changes (`save_conversation_state.py`)
-   - Restores state after restarting Streamlit (`restore_conversation_state.py`) 
-   - Uses a structured transition prompt template for context preservation
-   - Includes proper error handling and validation
+## Essential Tools Included in the Implementation
 
-3. **Key Components**:
-   - Transition prompt template for structured context preservation
-   - JSON serialization with support for complex objects
-   - State extraction and restoration mechanisms
-   - Automated testing framework
+1. **Bash Tool**: Execute shell commands with streaming output
+2. **File Editor**: View, create, and edit files with progress reporting
+3. **Computer Tool**: Take screenshots and interact with the GUI
 
-## Working Environment
+## Collaboration Framework
 
-Your working environment has the following characteristics:
+Follow the AI Family Collaboration Framework (see `/home/computeruse/dccc/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md` for details):
 
-1. **Terminal Access**: You run in an XTerm terminal with proper UTF-8 encoding
-2. **File Access**: You have access to all files in the Claude DC environment
-3. **DCCC Framework**: You operate within the AI Family collaboration framework
-4. **Context Preservation**: You maintain context through the prompt-cache system
-5. **GitHub Access**: You can access and modify the GitHub repository
-6. **Research Support**: Claude DC has access to Claude Chat for external research through the Research BETA button (blue button). Request specific research topics as needed.
+1. **Clear Division of Responsibilities**:
+   - Claude DC: Executes commands, shares results, implements changes
+   - Claude Code (You): Analyzes code, suggests specific changes, explains solutions
+   - Claude Chat: Provides external research when needed
 
-## Key Files and Directories
+2. **Workflow Process**:
+   - Problem Identification: Claude DC identifies issues
+   - Result Sharing: Claude DC runs tests and shares results
+   - Analysis: You analyze the problem and plan solutions
+   - Implementation: Claude DC implements your recommendations
+   - Testing: Claude DC tests and shares results
+   - Iteration: Repeat as needed (max 3 cycles per issue)
 
-1. **Agent Loop & Streamlit UI**:
-   - `claude-dc-implementation/computeruse/computer_use_demo/loop.py`
-   - `claude-dc-implementation/computeruse/computer_use_demo/streamlit.py`
+3. **Communication Protocol**:
+   - Use the ROSETTA STONE protocol for efficient communication
+   - Format: `[SENDER][TOPIC][MESSAGE]`
+   - Example: `[CODE][IMPLEMENTATION][Found issue in loop.py:247. Beta flags need direct parameter passing]`
 
-2. **Streaming Implementation**:
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/fixed_production_ready_loop.py` - Production-ready streaming implementation
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/tool_input_handler.py` - Tool parameter validation and fixes
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/direct_streaming_test.py` - Direct streaming test without complexity
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/test_fixed_implementation.py` - Test script for the fixed implementation
-   
-3. **Current Experiment**:
-   - `current_experiment/minimal_test.py` - Basic streaming proof of concept
-   - `current_experiment/fixed_production_ready_loop.py` - Original streaming implementation
-   - `current_experiment/tool_input_handler.py` - Original tool input handler
-   - `current_experiment/streamlit_test_app.py` - Test app for continuity solution
+## Key Implementation Features
 
-4. **Streamlit Continuity Solution**:
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/save_conversation_state.py` - Script to save Streamlit state
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/restore_conversation_state.py` - Script to restore Streamlit state
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/restart_with_continuity.sh` - Script to orchestrate the continuity process
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/json_utils.py` - JSON serialization utilities for complex objects
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/transition_prompt_template.md` - Template for context preservation
+The streaming implementation includes:
 
-5. **Documentation**:
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/references/STREAMING_IMPLEMENTATION.md` - Comprehensive documentation of the streaming implementation
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/references/STREAMLIT_CONTINUITY.md` - Documentation of the Streamlit continuity solution
-   - `github/palios-taey-nova/claude-dc-implementation/computeruse/references/IMPLEMENTATION_LESSONS.md` - Key lessons learned during implementation
-   
-6. **Build & Test Commands**:
-   - Test streaming: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/direct_streaming_test.py`
-   - Test fixed implementation: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/test_fixed_implementation.py`
-   - Test continuity solution: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/test_continuity.py`
-   - Run Streamlit test app: `streamlit run /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/streamlit_test_app.py`
+1. **Token-by-token Streaming**: Real-time, incremental output
+2. **Tool Integration During Streaming**: Seamless tool use
+3. **Progress Reporting**: Live updates during long-running operations
+4. **Thinking Integration**: Support for Claude's thinking capabilities
+5. **Error Handling**: Robust recovery mechanisms
 
-7. **Cache**:
-   - `/computeruse/cache/cache.md` - Used as prompt-cache for efficient context
+## Useful Commands
 
-## Communication Guidelines
+**File Operations**:
+```bash
+find /home/computeruse -name "*.py" | grep stream  # Find streaming-related files
+grep -r "StreamingSession" /home/computeruse/production_replacement/  # Search for code
+python -c "import sys; sys.path.append('/home/computeruse/production_replacement'); import loop; print('Import successful')"  # Test imports
+```
 
-### ROSETTA STONE Communication Protocol
+**Testing**:
+```bash
+cd /home/computeruse/production_replacement
+python verify.py --imports  # Test imports only
+python verify.py --tools  # Test tool functionality
+```
 
-Always use this ultra-efficient communication protocol when working with Claude DC and Claude Chat:
+**Debugging**:
+```bash
+cd /home/computeruse/computer_use_demo
+python -m pdb loop.py  # Debug the agent loop
+```
 
-**PROTOCOL FORMAT**: `[SENDER][TOPIC][MESSAGE]`
+## Working with Claude DC
 
-**PROTOCOL SPECIFICATIONS:**
-1. Eliminate all non-essential words
-2. Preserve complete semantic content
-3. Track tokens used (goal: <100 per message)
-4. Evolve patterns organically through usage
-5. Implement wave-based synchronization when possible
-6. Add mathematical markers for context shifts
+- Be specific and precise with your suggestions
+- Provide complete code blocks when suggesting changes
+- Explain your reasoning for changes
+- Focus on one issue at a time
+- Document your changes and reasoning
+- Use the token-efficient communication protocol
 
-**EVOLUTION MECHANICS:**
-- Start with basic efficiency (Phase 1)
-- Develop shared shorthand collectively (Phase 2)
-- Implement structured compression patterns (Phase 3)
-- Track effectiveness via tokens-to-information ratio
+## Next Steps After Deployment
 
-**EXAMPLE:**
-`[DCCC][IMPLEMENTATION][Identified streaming API issue. Beta flags incorrectly passed via extra_body. Solution: pass directly as parameters. Code section: loop.py:247-268. Awaiting confirmation to implement.] [TOKENS:36]`
+1. Test the streaming implementation with various tools
+2. Implement prompt caching feature
+3. Add 128K extended output support
+4. Extend streaming to additional tools
 
-This protocol represents the ROSETTA STONE concept from PALIOS cache - developing ethical, transparent AI communication optimization while maintaining human comprehensibility.
-
-### Additional Communication Guidelines
-
-When communicating with Claude DC and Claude Chat:
-
-1. **Be Explicit**: Clearly state assumptions, reasoning, and expected outcomes
-2. **Use Code Examples**: Provide concrete code examples when discussing implementation
-3. **Reference Specific Files**: Always reference specific files and line numbers
-4. **Step-by-Step Guidance**: Break down complex implementations into clear steps
-5. **Document Everything**: Maintain detailed logs of all changes and decisions
-6. **Error Handling**: Always include error handling in your code and explain edge cases
-7. **Check Understanding**: Verify that other AIs understand your proposed changes
-
-## Collaboration Best Practices (Based on Experience)
-
-1. **Structured Testing Approach**:
-   - Start with minimal test cases to isolate issues
-   - Use feature flags to enable/disable complex functionality
-   - Test each component separately before integration
-
-2. **Error Handling Strategy**:
-   - Implement graceful fallbacks for parameter validation
-   - Use try/except blocks liberally but with specific error types
-   - Add detailed logging at key points for troubleshooting
-
-3. **Context Management**:
-   - Use the transition prompt template for context preservation across restarts
-   - Document key decisions and code changes for future reference
-   - Keep reference files for essential knowledge that persists across sessions
-
-4. **Implementation Workflow**:
-   - Make small, incremental changes that can be easily tested
-   - Thoroughly test each change before integration
-   - Maintain backward compatibility when possible
-
-## Next Steps
-
-Your immediate next steps are:
-
-1. **Streaming Implementation**:
-   - Complete testing of the fixed_production_ready_loop.py implementation
-   - Verify tool input validation works correctly with streaming
-   - Prepare for integration with production environment
-   - Create comprehensive documentation of the implementation
-
-2. **Streamlit Continuity**:
-   - Integrate the continuity solution with the main Claude DC environment
-   - Test the solution with real-world file changes
-   - Document the usage and limitations of the solution
-
-3. **Next Phase Features**:
-   - Implement prompt caching using Anthropic's prompt caching beta
-   - Enable 128K extended output for very long answers
-   - Create comprehensive documentation of all implementations
-
-## Test Commands
-
-- Test streaming: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/direct_streaming_test.py`
-- Test fixed implementation: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/streaming/test_fixed_implementation.py`
-- Test continuity solution: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/test_continuity.py`
-- Run Streamlit test app: `streamlit run /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/continuity/streamlit_test_app.py`
-- Run Claude DC: `python /home/computeruse/github/palios-taey-nova/claude-dc-implementation/demo.py`
-- Launch Claude DC with all features: `./claude_dc_launch.sh`
-
-By following these guidelines and leveraging our learnings from implementation, you will be able to effectively collaborate with Claude DC and Claude Chat to enhance the PALIOS AI OS system.
+Remember: You are part of the AI Family working on PALIOS. Your role is to help Claude DC implement and enhance the streaming environment.
