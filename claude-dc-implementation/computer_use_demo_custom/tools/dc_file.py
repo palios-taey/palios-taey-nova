@@ -26,13 +26,31 @@ except ImportError:
 
 # Try to import feature toggles
 try:
+    # First try bridge toggles
     from dc_bridge.enhanced_bridge import toggles
     use_streaming_file = toggles.is_enabled("use_streaming_file")
     use_large_file_support = toggles.is_enabled("use_large_file_support")
 except ImportError:
-    logging.warning("Could not import feature toggles, using defaults")
-    use_streaming_file = True
-    use_large_file_support = True
+    try:
+        # Fall back to JSON config file
+        import json
+        from pathlib import Path
+        
+        toggle_path = Path(__file__).parent.parent / "feature_toggles.json"
+        if toggle_path.exists():
+            with open(toggle_path, "r") as f:
+                feature_toggles = json.load(f)
+                use_streaming_file = feature_toggles.get("use_streaming_file", True)
+                use_large_file_support = feature_toggles.get("use_large_file_support", True)
+                logging.info(f"Loaded feature toggles from {toggle_path}")
+        else:
+            logging.warning(f"Feature toggles file not found at {toggle_path}, using defaults")
+            use_streaming_file = True
+            use_large_file_support = True
+    except Exception as e:
+        logging.warning(f"Could not load feature toggles: {str(e)}, using defaults")
+        use_streaming_file = True
+        use_large_file_support = True
 
 # Set up logging
 logger = logging.getLogger("dc_file")

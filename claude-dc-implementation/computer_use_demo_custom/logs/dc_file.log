@@ -1,0 +1,19 @@
+2025-04-24 20:02:19,376 - dc_file - INFO - Executing file operation: view on /tmp/tmpd0qa7zox
+2025-04-24 20:02:19,376 - dc_file - ERROR - Error reading file /tmp/tmpd0qa7zox: 'float' object cannot be interpreted as an integer
+2025-04-24 20:02:19,377 - dc_file - ERROR - Traceback (most recent call last):
+  File "/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo_custom/dc_impl/tools/dc_file.py", line 221, in dc_file_view_streaming
+    for i in range(start_line, end_line + 1):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'float' object cannot be interpreted as an integer
+
+2025-04-24 20:02:19,377 - dc_file - INFO - Executing file operation: create on /tmp/streaming_create_test.txt
+2025-04-24 20:03:20,711 - dc_file - INFO - Executing file operation: view on /tmp/tmptmmq_99b
+2025-04-24 20:03:20,711 - dc_file - INFO - Executing file operation: create on /tmp/streaming_create_test.txt
+2025-04-24 20:03:46,713 - dc_file - INFO - Executing file operation: view on /tmp/tmpiolq0yde
+2025-04-24 20:03:46,713 - dc_file - INFO - Executing file operation: create on /tmp/streaming_create_test.txt
+2025-04-24 20:04:08,327 - dc_file - INFO - Executing file operation: view on /tmp/tmp_6oovw4i
+2025-04-24 20:04:08,327 - dc_file - INFO - Starting file view streaming with params: start_line=1, max_lines=None
+2025-04-24 20:04:08,327 - dc_file - INFO - Executing file operation: create on /tmp/streaming_create_test.txt
+2025-04-24 20:04:33,508 - dc_file - INFO - Starting file view streaming with params: start_line=1, max_lines=None
+2025-04-24 20:49:53,907 - dc_file - INFO - Executing file operation: view on /tmp/streaming_test.txt
+2025-04-24 20:49:53,907 - dc_file - INFO - Starting file view streaming with params: start_line=1, max_lines=None

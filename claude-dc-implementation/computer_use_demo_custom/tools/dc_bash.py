@@ -28,15 +28,35 @@ except ImportError:
 
 # Try to import feature toggles
 try:
+    # First try bridge toggles
     from dc_bridge.enhanced_bridge import toggles
     use_streaming_bash = toggles.is_enabled("use_streaming_bash")
     use_bash_timeouts = toggles.is_enabled("use_bash_timeouts")
     use_rate_limiting = toggles.is_enabled("use_rate_limiting")
 except ImportError:
-    logging.warning("Could not import feature toggles, using defaults")
-    use_streaming_bash = True
-    use_bash_timeouts = True
-    use_rate_limiting = True
+    try:
+        # Fall back to JSON config file
+        import json
+        from pathlib import Path
+        
+        toggle_path = Path(__file__).parent.parent / "feature_toggles.json"
+        if toggle_path.exists():
+            with open(toggle_path, "r") as f:
+                feature_toggles = json.load(f)
+                use_streaming_bash = feature_toggles.get("use_streaming_bash", True)
+                use_bash_timeouts = feature_toggles.get("use_bash_timeouts", True)
+                use_rate_limiting = feature_toggles.get("use_rate_limiting", True)
+                logging.info(f"Loaded feature toggles from {toggle_path}")
+        else:
+            logging.warning(f"Feature toggles file not found at {toggle_path}, using defaults")
+            use_streaming_bash = True
+            use_bash_timeouts = True
+            use_rate_limiting = True
+    except Exception as e:
+        logging.warning(f"Could not load feature toggles: {str(e)}, using defaults")
+        use_streaming_bash = True
+        use_bash_timeouts = True
+        use_rate_limiting = True
 
 # Set up logging
 logger = logging.getLogger("dc_bash")

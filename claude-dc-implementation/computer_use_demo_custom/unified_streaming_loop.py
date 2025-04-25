@@ -338,9 +338,21 @@ async def unified_streaming_agent_loop(
     # Get tool definitions from our registry
     tools = dc_get_tool_definitions()
     
+    # Try to load feature toggles
+    feature_toggles = {}
+    try:
+        import json
+        toggle_path = Path(__file__).parent / "feature_toggles.json"
+        if toggle_path.exists():
+            with open(toggle_path, "r") as f:
+                feature_toggles = json.load(f)
+                logger.info(f"Loaded feature toggles from {toggle_path}")
+    except Exception as e:
+        logger.warning(f"Could not load feature toggles: {str(e)}")
+
     # Set up beta flags
     beta_flags = ["computer-use-2025-01-24"]  # Required for computer use tools
-    if thinking_budget is not None:
+    if thinking_budget is not None and feature_toggles.get("use_streaming_thinking", True):
         beta_flags.append("thinking-2023-05-24")  # Enable thinking
     
     # Create API parameters
