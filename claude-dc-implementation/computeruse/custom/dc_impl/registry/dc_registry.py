@@ -61,6 +61,46 @@ DC_BASH_TOOL = {
     }
 }
 
+DC_EDIT_TOOL = {
+    "name": "dc_str_replace_editor",  # Different name from production
+    "description": "View, create, and edit files on the system",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "command": {
+                "type": "string",
+                "enum": ["view", "create", "str_replace", "insert", "undo_edit"],
+                "description": "The file operation to perform"
+            },
+            "path": {
+                "type": "string",
+                "description": "The file path to operate on"
+            },
+            "old_string": {
+                "type": "string",
+                "description": "The string to replace (for str_replace)"
+            },
+            "new_string": {
+                "type": "string",
+                "description": "The replacement string (for str_replace)"
+            },
+            "expected_replacements": {
+                "type": "integer",
+                "description": "The expected number of replacements (for str_replace)"
+            },
+            "content": {
+                "type": "string",
+                "description": "The content to write (for create or insert)"
+            },
+            "position": {
+                "type": "string",
+                "description": "Where to insert content (for insert): start, end, or line number"
+            }
+        },
+        "required": ["command", "path"]
+    }
+}
+
 # Will be populated by implementations
 DC_TOOL_REGISTRY: Dict[str, DCToolInfo] = {}
 

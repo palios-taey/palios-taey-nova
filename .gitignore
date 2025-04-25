@@ -23,22 +23,75 @@ var/
 # Virtual Environment
 venv/
 ENV/
+.env/
+.venv/
+.python-version
 
-# IDE
+# IDE and editors
 .idea/
 .vscode/
 *.swp
 *.swo
+.vim/
+.emacs.d/
+*~
+\#*\#
+.elc
+.project
+.settings/
+.classpath
+.history/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
 
 # OS specific
 .DS_Store
 Thumbs.db
+.directory
+.Trash*
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Logs and databases
+*.log
+*.sqlite
+*.sqlite3
+.local/
+.cache/
+.bash_history
+.zsh_history
+.mysql_history
+.node_repl_history
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+.yarn/
+.yarnrc
+.node_repl_history
+.npmrc
 
 # Project specific
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
 credentials.json
 claude-dc-implementation/credentials/
 service_account.json
 *.pem
 10e91f1f-83ba-4b38-b640-3e1cfce03e4e.json
+
+# General hidden files and directories
+.*
+!.gitignore
+!.github
+!.gitattributes
+!.gitlab-ci.yml
+!.dockerignore

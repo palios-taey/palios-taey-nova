@@ -16,7 +16,6 @@ mkdir -p /home/computeruse/current_experiment
 mkdir -p /home/computeruse/claude_dc_experiments
 mkdir -p /home/computeruse/dccc
 
-
 # Copy /home/computeruse/ directories
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/secrets/* /home/computeruse/secrets/
@@ -26,7 +25,7 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/current_experiment/* /home/computeruse/current_experiment/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/claude_dc_experiments/* /home/computeruse/claude_dc_experiments/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/dccc/* /home/computeruse/dccc/
-# cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/run_claude_dc.py /home/computeruse/
+cp /home/computeruse/github/palios-taey-nova/CLAUDE.md /home/computeruse/
 
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
@@ -74,15 +73,6 @@ echo "Changing repository remote from HTTPS to SSH..."
 cd /home/computeruse/github/palios-taey-nova
 git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
 
-# Set up computer_use_demo directory
-# echo "Setting up computer_use_demo environment..."
-# cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/* /home/computeruse/computer_use_demo/
-# Make sure the launcher script is executable
-#chmod +x /home/computeruse/run_claude_dc.py
-
-# Run the launcher script as the final step
-#/home/computeruse/run_claude_dc.py
-
 # Set up Claude Code environment
 echo "Setting up Claude Code environment..."
 
@@ -111,60 +101,23 @@ echo "Node.js version: $(node -v)"
 echo "Claude-Code version: $(claude --version 2>/dev/null || echo 'Not installed')"
 
 # Add NVM setup to .bashrc
-echo "Adding NVM configuration to .bashrc..."
 echo 'export NVM_DIR="$HOME/.nvm"' >> $HOME/.bashrc
 echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $HOME/.bashrc
 
 # Return to the previous directory
 cd - > /dev/null
 
-
 # Set Claude options
 echo "Please set the following Claude options manually:"
 echo "   - Model: claude-3-7-sonnet-20250219"
 echo "   - Verify end of API key"
-echo "   - Enable tcdoken-efficient tools beta - check"
+echo "   - Enable token-efficient tools beta - check"
 echo "   - Max output tokens: 12000"
 echo "   - Thinking Enabled: check"
 echo "   - Thinking Budget: 4000"
 echo "   - Click Reset button"
 echo ""
-# Set up DCCC - Direct and Simple Approach
-echo "Setting up DCCC environment..."
 
-# Copy
-cp /home/computeruse/github/palios-taey-nova/CLAUDE.md /home/computeruse/
-
-echo "Setup complete!"
-echo "You may need to refresh the browser to see the changes."
-echo ""
-echo "To start DCCC collaboration:"
-echo "  1. Ensure Claude DC is running"
-echo "  2. Run: ./run-dccc.sh"
-echo ""
-echo "This will launch Claude Code in xterm with prompt cache"
-echo "and proper documentation context for collaboration."
-'''
-# Create DCCC launcher script (utilize this or auto-start option below
-cat > /home/computeruse/run-dccc.sh << 'EOF'
-#!/bin/bash
-# DCCC Launcher - Direct and Simple approach using xterm with prompt-cache
-
-echo "=============================================="
-echo "  Starting DCCC Collaboration Environment     "
-echo "=============================================="
-echo "IMPORTANT: Please ensure Claude DC is already running"
-echo ""
-echo "Starting Claude Code with prompt cache..."
-echo "Press ENTER to continue..."
-read -r
-
-# Launch Claude Code with the WORKING xterm command and prompt cache
-# Note: prompt-cache-file loads content without consuming context tokens
-xterm -fa 'Monospace' -fs 12 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 claude --prompt-cache-file=/home/computeruse/cache/cache.md \"Please review /home/computeruse/CLAUDE.md for context and collaboration with Claude DC and Claude Chat. The prompt-cache-file has been loaded for efficient context access.\""
-EOF
-
-chmod +x /home/computeruse/run-dccc.sh
-'''
-# Auto-DCCC launch option
-# xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
+# Launch Claude Code with the EXACT command that worked before, only changing font size to 6
+echo "Launching Claude Code with xterm..."
+xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"

@@ -14,6 +14,7 @@ try:
     from registry.dc_registry import (
         DC_COMPUTER_TOOL,
         DC_BASH_TOOL,
+        DC_EDIT_TOOL,
         dc_register_tool
     )
     from tools.dc_adapters import (
@@ -22,6 +23,15 @@ try:
         dc_validate_computer_parameters,
         dc_validate_bash_parameters
     )
+    # Import edit tool
+    try:
+        from tools.dc_edit import (
+            dc_execute_edit_tool,
+            dc_validate_edit_parameters
+        )
+        edit_tool_available = True
+    except ImportError:
+        edit_tool_available = False
     # Try to import real adapters if available
     try:
         from tools.dc_real_adapters import (
@@ -37,6 +47,7 @@ except ImportError:
     from .registry.dc_registry import (
         DC_COMPUTER_TOOL,
         DC_BASH_TOOL,
+        DC_EDIT_TOOL,
         dc_register_tool
     )
     from .tools.dc_adapters import (
@@ -45,6 +56,15 @@ except ImportError:
         dc_validate_computer_parameters,
         dc_validate_bash_parameters
     )
+    # Import edit tool
+    try:
+        from .tools.dc_edit import (
+            dc_execute_edit_tool,
+            dc_validate_edit_parameters
+        )
+        edit_tool_available = True
+    except ImportError:
+        edit_tool_available = False
     # Try to import real adapters if available
     try:
         from .tools.dc_real_adapters import (
@@ -102,36 +122,21 @@ def dc_initialize(use_real_adapters=False):
     )
     logger.info(f"Registered DC bash tool with {'real' if use_real_adapters else 'mock'} implementation")
     
-    # Register the edit tool if real adapters are available
-    if use_real_adapters and real_adapters_available:
-        # Define the edit tool
-        DC_EDIT_TOOL = {
-            "name": "dc_str_replace_editor",
-            "description": "Custom editing tool for viewing, creating and editing files",
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "command": {
-                        "type": "string",
-                        "enum": ["view", "create", "str_replace", "insert", "undo_edit"],
-                        "description": "The command to execute"
-                    },
-                    "path": {
-                        "type": "string",
-                        "description": "Absolute path to file or directory"
-                    }
-                },
-                "required": ["command", "path"]
-            }
-        }
+    # Register the edit tool
+    if edit_tool_available:
+        # Use custom streaming edit tool implementation
+        edit_executor = dc_execute_edit_tool_real if (use_real_adapters and real_adapters_available) else dc_execute_edit_tool
         
         # Register the edit tool
         dc_register_tool(
             name="dc_str_replace_editor",
             definition=DC_EDIT_TOOL,
-            executor=dc_execute_edit_tool_real,
-            validator=lambda x: (True, "Validation done by the edit tool")  # Simple validator for now
+            executor=edit_executor,
+            validator=dc_validate_edit_parameters
         )
-        logger.info("Registered DC edit tool with real implementation")
+        logger.info(f"Registered DC edit tool with {'real' if use_real_adapters else 'streaming'} implementation")
+    else:
+        # Fallback if edit tool is not available
+        logger.warning("Edit tool not available, file operations will not be supported")
     
     logger.info("DC implementation initialized successfully")
