@@ -1,333 +1,579 @@
-from collections import defaultdict
+"""
+File editing tool with streaming support.
+
+This module provides a streaming-compatible tool for viewing, creating, and editing files.
+It includes proper validation, safety controls, and real-time progress updates.
+"""
+
+import asyncio
+import logging
+import time
+import os
+import re
+import traceback
 from pathlib import Path
-from typing import Any, Literal, get_args
+from typing import Dict, Any, Optional, Callable, AsyncGenerator, List, Tuple, Union
 
-from .base import BaseAnthropicTool, CLIResult, ToolError, ToolResult
-from .run import maybe_truncate, run
+from models.tool_models import ToolResult
 
-Command = Literal[
-    "view",
-    "create",
-    "str_replace",
-    "insert",
-    "undo_edit",
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger("edit_tool")
+
+# Constants for security controls
+MAX_FILE_SIZE = 1024 * 1024 * 10  # 10MB maximum file size
+SAFE_PATH_PREFIXES = [
+    "/home/computeruse",
+    "/home/jesse",
+    "/tmp"
 ]
-SNIPPET_LINES: int = 4
 
-
-class EditTool20250124(BaseAnthropicTool):
+# Validator for file paths
+def validate_file_path(file_path: str) -> Tuple[bool, str]:
     """
-    An filesystem editor tool that allows the agent to view, create, and edit files.
-    The tool parameters are defined by Anthropic and are not editable.
-    """
-
-    api_type: Literal["text_editor_20250124"] = "text_editor_20250124"
-    name: Literal["str_replace_editor"] = "str_replace_editor"
-
-    _file_history: dict[Path, list[str]]
-
-    def __init__(self):
-        self._file_history = defaultdict(list)
-        super().__init__()
-
-    def to_params(self) -> Any:
-        """Return parameters for the editor tool in the format expected by the API."""
-        # Convert Command enum values to strings for JSON serialization
-        command_enum = [str(cmd) for cmd in get_args(Command)]
+    Validate that a file path is safe.
+    
+    Args:
+        file_path: The file path to validate
         
-        return {
-            "name": self.name,
-            "type": "custom",
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "command": {
-                        "type": "string",
-                        "enum": command_enum,
-                        "description": "The command to execute (view, create, str_replace, insert, undo_edit)"
-                    },
-                    "path": {
-                        "type": "string",
-                        "description": "File path to operate on"
-                    },
-                    "file_text": {
-                        "type": "string",
-                        "description": "File content for create command"
-                    },
-                    "view_range": {
-                        "type": "array",
-                        "items": {"type": "integer"},
-                        "description": "Line range to view [start_line, end_line]"
-                    },
-                    "old_str": {
-                        "type": "string",
-                        "description": "String to replace for str_replace command"
-                    },
-                    "new_str": {
-                        "type": "string",
-                        "description": "Replacement string for str_replace or insert commands"
-                    },
-                    "insert_line": {
-                        "type": "integer",
-                        "description": "Line number for insert command"
-                    }
-                },
-                "required": ["command", "path"]
-            },
-            "description": "Edit, view, and manipulate files on the filesystem"
-        }
+    Returns:
+        Tuple of (is_valid, message)
+    """
+    if not file_path:
+        return False, "Empty file path"
+    
+    # Convert to absolute path
+    path = Path(file_path).resolve()
+    path_str = str(path)
+    
+    # Check if path is within allowed directories
+    if not any(path_str.startswith(prefix) for prefix in SAFE_PATH_PREFIXES):
+        return False, f"Path must be within allowed directories: {', '.join(SAFE_PATH_PREFIXES)}"
+    
+    # Check for potentially dangerous paths
+    dangerous_patterns = [
+        r"/etc/(passwd|shadow|sudoers)",
+        r"/var/log/auth\.log",
+        r"/root/",
+        r"/sys/",
+        r"/boot/",
+        r"\.ssh/",
+    ]
+    
+    for pattern in dangerous_patterns:
+        if re.search(pattern, path_str):
+            return False, f"Path matches potentially dangerous pattern: {pattern}"
+    
+    return True, "Path validated"
 
-    async def __call__(
-        self,
-        *,
-        command: Command,
-        path: str,
-        file_text: str | None = None,
-        view_range: list[int] | None = None,
-        old_str: str | None = None,
-        new_str: str | None = None,
-        insert_line: int | None = None,
-        **kwargs,
-    ):
-        _path = Path(path)
-        self.validate_path(command, _path)
+# Validator for edit parameters
+def validate_edit_parameters(tool_input: Dict[str, Any]) -> Tuple[bool, str]:
+    """
+    Validate parameters for the edit tool.
+    
+    Args:
+        tool_input: The tool input parameters
+        
+    Returns:
+        Tuple of (is_valid, message)
+    """
+    # Check for required parameters
+    if "command" not in tool_input:
+        return False, "Missing required 'command' parameter"
+    
+    if "path" not in tool_input:
+        return False, "Missing required 'path' parameter"
+    
+    # Validate command
+    command = tool_input.get("command")
+    valid_commands = ["view", "create", "str_replace", "insert", "undo_edit"]
+    if command not in valid_commands:
+        return False, f"Invalid command: {command}. Valid commands: {', '.join(valid_commands)}"
+    
+    # Validate path
+    path = tool_input.get("path")
+    path_valid, path_message = validate_file_path(path)
+    if not path_valid:
+        return False, path_message
+    
+    # Command-specific validation
+    if command == "str_replace":
+        if "old_string" not in tool_input:
+            return False, "Missing required 'old_string' parameter for str_replace"
+        if "new_string" not in tool_input:
+            return False, "Missing required 'new_string' parameter for str_replace"
+    
+    elif command == "insert":
+        if "content" not in tool_input:
+            return False, "Missing required 'content' parameter for insert"
+    
+    return True, "Parameters valid"
+
+async def execute_edit_streaming(
+    tool_input: Dict[str, Any],
+    progress_callback: Optional[Callable[[str, float], None]] = None
+) -> ToolResult:
+    """
+    Execute a file editing operation with streaming progress.
+    
+    Args:
+        tool_input: The tool input parameters
+        progress_callback: Optional callback for progress updates
+        
+    Returns:
+        ToolResult with the operation result
+    """
+    # Extract parameters
+    command = tool_input.get("command", "")
+    path = tool_input.get("path", "")
+    
+    if not command or not path:
+        return ToolResult(error="Missing command or path")
+    
+    logger.info(f"Executing edit command: {command} on path: {path}")
+    start_time = time.time()
+    
+    # Validate parameters
+    valid, message = validate_edit_parameters(tool_input)
+    if not valid:
+        logger.warning(f"Parameter validation failed: {message}")
+        return ToolResult(error=message)
+    
+    # Report initial progress
+    if progress_callback:
+        await progress_callback(f"Starting {command} operation on {path}", 0.0)
+    
+    try:
+        # Execute the appropriate command
         if command == "view":
-            return await self.view(_path, view_range)
+            # View file content
+            result = await view_file(path, progress_callback)
+        
         elif command == "create":
-            if file_text is None:
-                raise ToolError("Parameter `file_text` is required for command: create")
-            self.write_file(_path, file_text)
-            self._file_history[_path].append(file_text)
-            return ToolResult(output=f"File created successfully at: {_path}")
+            # Create a new file
+            content = tool_input.get("content", "")
+            result = await create_file(path, content, progress_callback)
+        
         elif command == "str_replace":
-            if old_str is None:
-                raise ToolError(
-                    "Parameter `old_str` is required for command: str_replace"
-                )
-            return self.str_replace(_path, old_str, new_str)
+            # Replace string in file
+            old_string = tool_input.get("old_string", "")
+            new_string = tool_input.get("new_string", "")
+            expected_replacements = tool_input.get("expected_replacements", 1)
+            result = await str_replace(path, old_string, new_string, expected_replacements, progress_callback)
+        
         elif command == "insert":
-            if insert_line is None:
-                raise ToolError(
-                    "Parameter `insert_line` is required for command: insert"
-                )
-            if new_str is None:
-                raise ToolError("Parameter `new_str` is required for command: insert")
-            return self.insert(_path, insert_line, new_str)
-        elif command == "undo_edit":
-            return self.undo_edit(_path)
-        raise ToolError(
-            f'Unrecognized command {command}. The allowed commands for the {self.name} tool are: {", ".join(get_args(Command))}'
-        )
+            # Insert content in file
+            content = tool_input.get("content", "")
+            position = tool_input.get("position", "end")
+            result = await insert_content(path, content, position, progress_callback)
+        
+        else:
+            result = ToolResult(error=f"Unsupported command: {command}")
+        
+        # Report completion
+        if progress_callback:
+            await progress_callback(f"Completed {command} operation on {path}", 1.0)
+        
+        return result
+    
+    except Exception as e:
+        logger.error(f"Error executing edit command: {str(e)}")
+        logger.error(traceback.format_exc())
+        
+        # Report error in progress
+        if progress_callback:
+            await progress_callback(f"Error: {str(e)}", 1.0)
+        
+        # Return error message
+        return ToolResult(error=f"Error executing {command} operation: {str(e)}\n{traceback.format_exc()}")
 
-    def validate_path(self, command: str, path: Path):
-        """
-        Check that the path/command combination is valid.
-        """
-        # Check if its an absolute path
-        if not path.is_absolute():
-            suggested_path = Path("") / path
-            raise ToolError(
-                f"The path {path} is not an absolute path, it should start with `/`. Maybe you meant {suggested_path}?"
-            )
-        # Check if path exists
-        if not path.exists() and command != "create":
-            raise ToolError(
-                f"The path {path} does not exist. Please provide a valid path."
-            )
-        if path.exists() and command == "create":
-            raise ToolError(
-                f"File already exists at: {path}. Cannot overwrite files using command `create`."
-            )
-        # Check if the path points to a directory
-        if path.is_dir():
-            if command != "view":
-                raise ToolError(
-                    f"The path {path} is a directory and only the `view` command can be used on directories"
-                )
+# Mark function as supporting streaming
+execute_edit_streaming.streaming = True
 
-    async def view(self, path: Path, view_range: list[int] | None = None):
-        """Implement the view command"""
-        if path.is_dir():
-            if view_range:
-                raise ToolError(
-                    "The `view_range` parameter is not allowed when `path` points to a directory."
-                )
+async def view_file(
+    path: str,
+    progress_callback: Optional[Callable[[str, float], None]] = None
+) -> ToolResult:
+    """
+    View file content with streaming progress.
+    
+    Args:
+        path: The file path
+        progress_callback: Optional callback for progress updates
+        
+    Returns:
+        ToolResult with file content
+    """
+    file_path = Path(path).resolve()
+    
+    try:
+        # Check if file exists
+        if not file_path.exists():
+            return ToolResult(error=f"File not found: {path}")
+        
+        # Check if it's a file (not a directory)
+        if not file_path.is_file():
+            return ToolResult(error=f"Not a file: {path}")
+        
+        # Get file size
+        file_size = file_path.stat().st_size
+        
+        # Check file size
+        if file_size > MAX_FILE_SIZE:
+            warning = f"Warning: File size ({file_size} bytes) exceeds maximum allowed size. Showing first part only.\n\n"
+        else:
+            warning = ""
+        
+        # Initial progress update
+        if progress_callback:
+            await progress_callback(f"Reading file: {path}", 0.1)
+        
+        # Read file in chunks
+        output = []
+        with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+            # Read in chunks of 4KB
+            chunk_size = 4096
+            bytes_read = 0
+            line_number = 1
+            
+            # Start with a header
+            output.append(f"File: {path}\n")
+            output.append(f"Size: {file_size} bytes\n\n")
+            
+            if warning:
+                output.append(warning)
+            
+            # Read and format file content
+            while True:
+                chunk = f.read(chunk_size)
+                if not chunk:
+                    break
+                
+                # Format with line numbers
+                lines = chunk.split('\n')
+                formatted_chunk = ""
+                
+                for i, line in enumerate(lines):
+                    # Skip the last line if it's not complete (unless it's the end of the file)
+                    if i == len(lines) - 1 and chunk_size == 4096:
+                        # Check if we're at the end of the file
+                        pos = f.tell()
+                        if pos < file_size:
+                            # We're not at the end yet, so this line is incomplete
+                            f.seek(pos - len(lines[-1]))
+                            break
+                    
+                    # Add line number
+                    formatted_chunk += f"{line_number:6d} | {line}\n"
+                    line_number += 1
+                
+                # Add the formatted chunk to output
+                output.append(formatted_chunk)
+                
+                # Update bytes read
+                bytes_read += len(chunk)
+                
+                # Update progress
+                if progress_callback and file_size > 0:
+                    progress = min(0.99, bytes_read / file_size)
+                    await progress_callback(
+                        f"Reading file: {path} ({bytes_read}/{file_size} bytes)", 
+                        progress
+                    )
+                
+                # Check if we've reached the size limit
+                if bytes_read >= MAX_FILE_SIZE:
+                    output.append(f"\n\nFile truncated at {MAX_FILE_SIZE} bytes. Full size: {file_size} bytes")
+                    break
+                
+                # Small delay to allow for cancellation
+                await asyncio.sleep(0.01)
+        
+        # Final progress update
+        if progress_callback:
+            await progress_callback(f"Completed reading file: {path}", 1.0)
+        
+        return ToolResult(output="".join(output))
+    
+    except UnicodeDecodeError:
+        return ToolResult(error=f"Unable to read file as text: {path}. It may be a binary file.")
+    
+    except Exception as e:
+        logger.error(f"Error reading file: {str(e)}")
+        return ToolResult(error=f"Error reading file: {str(e)}")
 
-            _, stdout, stderr = await run(
-                rf"find {path} -maxdepth 2 -not -path '*/\.*'"
-            )
-            if not stderr:
-                stdout = f"Here's the files and directories up to 2 levels deep in {path}, excluding hidden items:\n{stdout}\n"
-            return CLIResult(output=stdout, error=stderr)
+async def create_file(
+    path: str,
+    content: str,
+    progress_callback: Optional[Callable[[str, float], None]] = None
+) -> ToolResult:
+    """
+    Create a new file with streaming progress.
+    
+    Args:
+        path: The file path
+        content: The content to write
+        progress_callback: Optional callback for progress updates
+        
+    Returns:
+        ToolResult with status
+    """
+    file_path = Path(path).resolve()
+    
+    try:
+        # Initial progress update
+        if progress_callback:
+            await progress_callback(f"Creating file: {path}", 0.1)
+        
+        # Create parent directories if they don't exist
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Progress update before writing
+        if progress_callback:
+            await progress_callback(f"Writing content to file: {path}", 0.5)
+        
+        # Write content to file
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        # Final progress update
+        if progress_callback:
+            await progress_callback(f"File created: {path}", 1.0)
+        
+        # Calculate stats
+        file_size = file_path.stat().st_size
+        line_count = content.count('\n') + 1
+        
+        return ToolResult(output=f"File created: {path}\nSize: {file_size} bytes\nLines: {line_count}")
+    
+    except Exception as e:
+        logger.error(f"Error creating file: {str(e)}")
+        return ToolResult(error=f"Error creating file: {str(e)}")
 
-        file_content = self.read_file(path)
-        init_line = 1
-        if view_range:
-            if len(view_range) != 2 or not all(isinstance(i, int) for i in view_range):
-                raise ToolError(
-                    "Invalid `view_range`. It should be a list of two integers."
-                )
-            file_lines = file_content.split("\n")
-            n_lines_file = len(file_lines)
-            init_line, final_line = view_range
-            if init_line < 1 or init_line > n_lines_file:
-                raise ToolError(
-                    f"Invalid `view_range`: {view_range}. Its first element `{init_line}` should be within the range of lines of the file: {[1, n_lines_file]}"
-                )
-            if final_line > n_lines_file:
-                raise ToolError(
-                    f"Invalid `view_range`: {view_range}. Its second element `{final_line}` should be smaller than the number of lines in the file: `{n_lines_file}`"
-                )
-            if final_line != -1 and final_line < init_line:
-                raise ToolError(
-                    f"Invalid `view_range`: {view_range}. Its second element `{final_line}` should be larger or equal than its first `{init_line}`"
-                )
+async def str_replace(
+    path: str,
+    old_string: str,
+    new_string: str,
+    expected_replacements: int = 1,
+    progress_callback: Optional[Callable[[str, float], None]] = None
+) -> ToolResult:
+    """
+    Replace text in a file with streaming progress.
+    
+    Args:
+        path: The file path
+        old_string: The text to replace
+        new_string: The replacement text
+        expected_replacements: Expected number of replacements
+        progress_callback: Optional callback for progress updates
+        
+    Returns:
+        ToolResult with status
+    """
+    file_path = Path(path).resolve()
+    
+    try:
+        # Check if file exists
+        if not file_path.exists():
+            return ToolResult(error=f"File not found: {path}")
+        
+        # Initial progress update
+        if progress_callback:
+            await progress_callback(f"Reading file for replacement: {path}", 0.1)
+        
+        # Read file content
+        with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+            content = f.read()
+        
+        # Perform replacement
+        if progress_callback:
+            await progress_callback(f"Performing replacements in {path}", 0.4)
+        
+        # Count occurrences before replacement
+        occurrences = content.count(old_string)
+        
+        # Check if expected replacements matches actual occurrences
+        if expected_replacements != occurrences:
+            return ToolResult(error=f"Expected {expected_replacements} replacements, but found {occurrences} occurrences of the string to replace")
+        
+        # Perform replacement
+        new_content = content.replace(old_string, new_string, expected_replacements)
+        
+        # Check if any changes were made
+        if new_content == content:
+            return ToolResult(output=f"No changes made: The specified string was not found in {path}")
+        
+        # Write back to file
+        if progress_callback:
+            await progress_callback(f"Writing changes to {path}", 0.7)
+        
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        
+        # Final progress update
+        if progress_callback:
+            await progress_callback(f"Replacement completed in {path}", 1.0)
+        
+        return ToolResult(output=f"Successfully replaced {occurrences} occurrence(s) in {path}")
+    
+    except Exception as e:
+        logger.error(f"Error replacing text in file: {str(e)}")
+        return ToolResult(error=f"Error replacing text in file: {str(e)}")
 
-            if final_line == -1:
-                file_content = "\n".join(file_lines[init_line - 1 :])
-            else:
-                file_content = "\n".join(file_lines[init_line - 1 : final_line])
+async def insert_content(
+    path: str,
+    content: str,
+    position: str = "end",
+    progress_callback: Optional[Callable[[str, float], None]] = None
+) -> ToolResult:
+    """
+    Insert content into a file with streaming progress.
+    
+    Args:
+        path: The file path
+        content: The content to insert
+        position: Where to insert the content (start, end, or line number)
+        progress_callback: Optional callback for progress updates
+        
+    Returns:
+        ToolResult with status
+    """
+    file_path = Path(path).resolve()
+    
+    try:
+        # Create file if it doesn't exist
+        if not file_path.exists():
+            if progress_callback:
+                await progress_callback(f"Creating new file: {path}", 0.2)
+            
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            
+            if progress_callback:
+                await progress_callback(f"Created new file: {path}", 1.0)
+            
+            return ToolResult(output=f"Created new file with content: {path}")
+        
+        # Read existing content
+        if progress_callback:
+            await progress_callback(f"Reading file for insertion: {path}", 0.2)
+        
+        with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+            existing_content = f.read()
+        
+        # Determine where to insert
+        if progress_callback:
+            await progress_callback(f"Inserting content in {path}", 0.5)
+        
+        if position == "start":
+            # Insert at the beginning
+            new_content = content + existing_content
+        elif position == "end":
+            # Insert at the end
+            new_content = existing_content + content
+        else:
+            try:
+                # Try to parse position as line number
+                line_number = int(position)
+                lines = existing_content.splitlines(True)
+                
+                if line_number <= 0:
+                    # Insert at the beginning
+                    new_content = content + existing_content
+                elif line_number > len(lines):
+                    # Insert at the end
+                    new_content = existing_content + content
+                else:
+                    # Insert at the specified line
+                    before = ''.join(lines[:line_number-1])
+                    after = ''.join(lines[line_number-1:])
+                    new_content = before + content + after
+            except ValueError:
+                # Invalid position, insert at the end
+                new_content = existing_content + content
+        
+        # Write the new content
+        if progress_callback:
+            await progress_callback(f"Writing updated content to {path}", 0.8)
+        
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        
+        # Final progress update
+        if progress_callback:
+            await progress_callback(f"Content insertion completed in {path}", 1.0)
+        
+        return ToolResult(output=f"Successfully inserted content at {position} in {path}")
+    
+    except Exception as e:
+        logger.error(f"Error inserting content in file: {str(e)}")
+        return ToolResult(error=f"Error inserting content in file: {str(e)}")
 
-        return CLIResult(
-            output=self._make_output(file_content, str(path), init_line=init_line)
-        )
+async def execute_edit(tool_input: Dict[str, Any]) -> ToolResult:
+    """
+    Execute an edit command (non-streaming wrapper).
+    
+    Args:
+        tool_input: The tool input parameters
+        
+    Returns:
+        ToolResult with the operation result
+    """
+    return await execute_edit_streaming(tool_input)
 
-    def str_replace(self, path: Path, old_str: str, new_str: str | None):
-        """Implement the str_replace command, which replaces old_str with new_str in the file content"""
-        # Read the file content
-        file_content = self.read_file(path).expandtabs()
-        old_str = old_str.expandtabs()
-        new_str = new_str.expandtabs() if new_str is not None else ""
+# Test function for direct execution
+async def test_edit_tool():
+    """Test the edit tool."""
+    print("\nTesting edit tool...\n")
+    
+    # Create a test file
+    test_file = "/tmp/edit_tool_test.txt"
+    test_content = "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\n"
+    
+    with open(test_file, 'w') as f:
+        f.write(test_content)
+    
+    # Define a progress callback
+    async def progress_callback(message, progress):
+        print(f"\r[Progress: {message} - {progress:.0%}]", end="", flush=True)
+    
+    # Test viewing file
+    print("\nViewing file:")
+    result = await execute_edit_streaming(
+        {"command": "view", "path": test_file},
+        progress_callback=progress_callback
+    )
+    
+    if result.error:
+        print(f"\nError: {result.error}")
+    else:
+        print(f"\nOutput: {result.output}")
+    
+    # Test string replacement
+    print("\nReplacing 'Line 3' with 'REPLACED LINE':")
+    result = await execute_edit_streaming(
+        {
+            "command": "str_replace",
+            "path": test_file,
+            "old_string": "Line 3",
+            "new_string": "REPLACED LINE",
+            "expected_replacements": 1
+        },
+        progress_callback=progress_callback
+    )
+    
+    if result.error:
+        print(f"\nError: {result.error}")
+    else:
+        print(f"\nOutput: {result.output}")
+    
+    # Clean up
+    os.remove(test_file)
+    print("\nTest completed and cleaned up.")
 
-        # Check if old_str is unique in the file
-        occurrences = file_content.count(old_str)
-        if occurrences == 0:
-            raise ToolError(
-                f"No replacement was performed, old_str `{old_str}` did not appear verbatim in {path}."
-            )
-        elif occurrences > 1:
-            file_content_lines = file_content.split("\n")
-            lines = [
-                idx + 1
-                for idx, line in enumerate(file_content_lines)
-                if old_str in line
-            ]
-            raise ToolError(
-                f"No replacement was performed. Multiple occurrences of old_str `{old_str}` in lines {lines}. Please ensure it is unique"
-            )
-
-        # Replace old_str with new_str
-        new_file_content = file_content.replace(old_str, new_str)
-
-        # Write the new content to the file
-        self.write_file(path, new_file_content)
-
-        # Save the content to history
-        self._file_history[path].append(file_content)
-
-        # Create a snippet of the edited section
-        replacement_line = file_content.split(old_str)[0].count("\n")
-        start_line = max(0, replacement_line - SNIPPET_LINES)
-        end_line = replacement_line + SNIPPET_LINES + new_str.count("\n")
-        snippet = "\n".join(new_file_content.split("\n")[start_line : end_line + 1])
-
-        # Prepare the success message
-        success_msg = f"The file {path} has been edited. "
-        success_msg += self._make_output(
-            snippet, f"a snippet of {path}", start_line + 1
-        )
-        success_msg += "Review the changes and make sure they are as expected. Edit the file again if necessary."
-
-        return CLIResult(output=success_msg)
-
-    def insert(self, path: Path, insert_line: int, new_str: str):
-        """Implement the insert command, which inserts new_str at the specified line in the file content."""
-        file_text = self.read_file(path).expandtabs()
-        new_str = new_str.expandtabs()
-        file_text_lines = file_text.split("\n")
-        n_lines_file = len(file_text_lines)
-
-        if insert_line < 0 or insert_line > n_lines_file:
-            raise ToolError(
-                f"Invalid `insert_line` parameter: {insert_line}. It should be within the range of lines of the file: {[0, n_lines_file]}"
-            )
-
-        new_str_lines = new_str.split("\n")
-        new_file_text_lines = (
-            file_text_lines[:insert_line]
-            + new_str_lines
-            + file_text_lines[insert_line:]
-        )
-        snippet_lines = (
-            file_text_lines[max(0, insert_line - SNIPPET_LINES) : insert_line]
-            + new_str_lines
-            + file_text_lines[insert_line : insert_line + SNIPPET_LINES]
-        )
-
-        new_file_text = "\n".join(new_file_text_lines)
-        snippet = "\n".join(snippet_lines)
-
-        self.write_file(path, new_file_text)
-        self._file_history[path].append(file_text)
-
-        success_msg = f"The file {path} has been edited. "
-        success_msg += self._make_output(
-            snippet,
-            "a snippet of the edited file",
-            max(1, insert_line - SNIPPET_LINES + 1),
-        )
-        success_msg += "Review the changes and make sure they are as expected (correct indentation, no duplicate lines, etc). Edit the file again if necessary."
-        return CLIResult(output=success_msg)
-
-    def undo_edit(self, path: Path):
-        """Implement the undo_edit command."""
-        if not self._file_history[path]:
-            raise ToolError(f"No edit history found for {path}.")
-
-        old_text = self._file_history[path].pop()
-        self.write_file(path, old_text)
-
-        return CLIResult(
-            output=f"Last edit to {path} undone successfully. {self._make_output(old_text, str(path))}"
-        )
-
-    def read_file(self, path: Path):
-        """Read the content of a file from a given path; raise a ToolError if an error occurs."""
-        try:
-            return path.read_text()
-        except Exception as e:
-            raise ToolError(f"Ran into {e} while trying to read {path}") from None
-
-    def write_file(self, path: Path, file: str):
-        """Write the content of a file to a given path; raise a ToolError if an error occurs."""
-        try:
-            path.write_text(file)
-        except Exception as e:
-            raise ToolError(f"Ran into {e} while trying to write to {path}") from None
-
-    def _make_output(
-        self,
-        file_content: str,
-        file_descriptor: str,
-        init_line: int = 1,
-        expand_tabs: bool = True,
-    ):
-        """Generate output for the CLI based on the content of a file."""
-        file_content = maybe_truncate(file_content)
-        if expand_tabs:
-            file_content = file_content.expandtabs()
-        file_content = "\n".join(
-            [
-                f"{i + init_line:6}\t{line}"
-                for i, line in enumerate(file_content.split("\n"))
-            ]
-        )
-        return (
-            f"Here's the result of running `cat -n` on {file_descriptor}:\n"
-            + file_content
-            + "\n"
-        )
-
-
-class EditTool20241022(EditTool20250124):
-    api_type: Literal["text_editor_20241022"] = "text_editor_20241022"  # pyright: ignore[reportIncompatibleVariableOverride]
+if __name__ == "__main__":
+    asyncio.run(test_edit_tool())
