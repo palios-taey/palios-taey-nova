@@ -70,7 +70,7 @@ ssh -o StrictHostKeyChecking=no -T git@github.com || echo "SSH test complete - N
 echo "Changing repository remote from HTTPS to SSH..."
 cd /home/computeruse/github/palios-taey-nova
 git remote set-url origin git@github.com:palios-taey/palios-taey-nova.git
-'''
+
 # Set up Claude Code environment
 echo "Setting up Claude Code environment..."
 
@@ -102,9 +102,15 @@ echo "Claude-Code version: $(claude --version 2>/dev/null || echo 'Not installed
 echo 'export NVM_DIR="$HOME/.nvm"' >> $HOME/.bashrc
 echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $HOME/.bashrc
 
-# Return to the previous directory
-cd - > /dev/null
-'''
+# Set proper encoding environment variables (these are crucial)
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+export TERM=xterm-256color
+
+# Launch Claude Code with the EXACT command that worked before, only changing font size to 6
+echo "Launching Claude Code with xterm..."
+xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
+
 # Set Claude options
 echo "Please set the following Claude options manually:"
 echo "   - Model: claude-3-7-sonnet-20250219"
@@ -115,8 +121,6 @@ echo "   - Thinking Enabled: check"
 echo "   - Thinking Budget: 4000"
 echo "   - Click Reset button"
 echo ""
-'''
-# Launch Claude Code with the EXACT command that worked before, only changing font size to 6
-echo "Launching Claude Code with xterm..."
-xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
-'''
+
+
+
