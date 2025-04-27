@@ -155,8 +155,7 @@ async def execute_tool(
     """
     Execute a tool with the given input.
     
-    In a real implementation, this would call the actual tool execution logic.
-    For testing, this provides mock responses.
+    Calls the appropriate tool implementation based on the tool name.
     
     Args:
         tool_name: The name of the tool to execute
@@ -165,82 +164,22 @@ async def execute_tool(
     """
     logger.info(f"Executing tool: {tool_name} with input: {tool_input}")
     
-    if progress_callback:
-        progress_callback(f"Executing {tool_name}...")
-    
     try:
-        # Validate required parameters
-        if tool_name == "computer":
-            if "action" not in tool_input:
-                return ToolResult(error="Missing required 'action' parameter")
-            
-            action = tool_input.get("action")
-            
-            # Validate parameters based on action
-            if action in ["move_mouse", "left_button_press"] and "coordinates" not in tool_input:
-                return ToolResult(error=f"Missing required 'coordinates' parameter for {action}")
-                
-            if action == "type_text" and "text" not in tool_input:
-                return ToolResult(error="Missing required 'text' parameter for type_text")
-            
-            # In a real implementation, we would execute the computer action
-            # For testing, we return mock results
-            if action == "screenshot":
-                if progress_callback:
-                    progress_callback("Taking screenshot...")
-                    await asyncio.sleep(0.5)  # Simulate processing time
-                
-                return ToolResult(
-                    output="Screenshot captured",
-                    # In a real implementation, this would be the base64-encoded image
-                    base64_image=None
-                )
-            
-            elif action == "move_mouse":
-                coordinates = tool_input.get("coordinates", [0, 0])
-                
-                if progress_callback:
-                    progress_callback(f"Moving mouse to {coordinates}...")
-                    await asyncio.sleep(0.2)
-                
-                return ToolResult(output=f"Mouse moved to {coordinates}")
-            
-            elif action == "type_text":
-                text = tool_input.get("text", "")
-                
-                if progress_callback:
-                    progress_callback(f"Typing text: {text[:10]}...")
-                    await asyncio.sleep(0.3)
-                
-                return ToolResult(output=f"Typed text: {text}")
-            
-            # Handle other actions similarly...
-            return ToolResult(output=f"Executed {action} (mock implementation)")
-            
-        elif tool_name == "bash":
-            if "command" not in tool_input:
-                return ToolResult(error="Missing required 'command' parameter")
-            
-            command = tool_input.get("command", "")
-            
-            if progress_callback:
-                progress_callback(f"Executing command: {command}")
-                await asyncio.sleep(0.5)
-            
-            # In a real implementation, we would execute the command
-            # For testing, we return mock results
-            if command == "ls":
-                return ToolResult(output="file1.txt\nfile2.txt\ndirectory1/")
-            elif command == "pwd":
-                return ToolResult(output="/home/user")
-            elif command.startswith("echo"):
-                return ToolResult(output=command[5:])  # Return what comes after "echo "
-            
-            return ToolResult(output=f"Executed: {command} (mock implementation)")
+        # Import the tool implementations
+        from tools.computer import execute_computer_tool
+        from tools.bash import execute_bash_tool
         
+        # Call the appropriate tool implementation
+        if tool_name == "computer":
+            return await execute_computer_tool(tool_input, progress_callback)
+        elif tool_name == "bash":
+            return await execute_bash_tool(tool_input, progress_callback)
         else:
             return ToolResult(error=f"Unknown tool: {tool_name}")
             
+    except ImportError as e:
+        logger.error(f"Error importing tool module: {str(e)}")
+        return ToolResult(error=f"Tool module not found: {str(e)}")
     except Exception as e:
         logger.error(f"Error executing tool {tool_name}: {str(e)}")
         return ToolResult(error=f"Tool execution failed: {str(e)}")

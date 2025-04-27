@@ -73,12 +73,14 @@ deploy_implementation() {
   cp "$SOURCE_DIR/streamlit.py" "$TARGET_DIR/streamlit.py"
   cp "$SOURCE_DIR/requirements.txt" "$TARGET_DIR/requirements.txt"
   
-  # Create tools directory if it doesn't exist
+  # Create and copy tools directory
   mkdir -p "$TARGET_DIR/tools"
+  cp "$SOURCE_DIR/tools/__init__.py" "$TARGET_DIR/tools/__init__.py"
+  cp "$SOURCE_DIR/tools/bash.py" "$TARGET_DIR/tools/bash.py"
+  cp "$SOURCE_DIR/tools/computer.py" "$TARGET_DIR/tools/computer.py"
   
-  # Create __init__.py files
+  # Create __init__.py file in root directory
   touch "$TARGET_DIR/__init__.py"
-  touch "$TARGET_DIR/tools/__init__.py"
   
   # Create README file
   cat > "$TARGET_DIR/README.md" << EOF
