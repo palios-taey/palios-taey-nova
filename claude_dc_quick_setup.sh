@@ -13,7 +13,6 @@ mkdir -p /home/computeruse/utils/config
 mkdir -p /home/computeruse/references
 mkdir -p /home/computeruse/bin
 mkdir -p /home/computeruse/dccc
-mkdir -p /home/computeruse/production_replacement
 
 # Copy /home/computeruse/ directories
 cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/* /home/computeruse/cache/
@@ -23,7 +22,6 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/* /home/computeruse/bin/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/dccc/* /home/computeruse/dccc/
 cp /home/computeruse/github/palios-taey-nova/CLAUDE.md /home/computeruse/
-cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/custom/production_replacement/* /home/computeruse/production_replacement/
 
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
