@@ -56,23 +56,38 @@ Please review the current implementation in /home/computeruse/computer_use_demo/
 - test_cli.py - Command-line test for the implementation
 - launch_new.sh - Script to launch the implementation
 
-To help you view these files with thinking enabled and high token limits, I've created a special utility:
+To help you examine files and understand the implementation, I've created a special interactive CLI tool:
 
 ```
-python /home/computeruse/computer_use_demo/view_file.py /path/to/file [--max-tokens 30000] [--thinking-budget 5000]
+python /home/computeruse/computer_use_demo/setup_dccc_cli.py
 ```
 
-For example, to view the core loop implementation with thinking enabled:
+This tool provides a simple menu-based interface for:
+1. Viewing files with line numbers
+2. Listing directory contents
+3. Running commands
+4. Running the test suite
+5. Starting the Streamlit UI
+
+You can also use direct command-line arguments:
 ```
-python /home/computeruse/computer_use_demo/view_file.py /home/computeruse/computer_use_demo/loop.py
+# View a file
+python setup_dccc_cli.py --view loop.py
+
+# List a directory
+python setup_dccc_cli.py --list /home/computeruse/computer_use_demo
+
+# Run a command
+python setup_dccc_cli.py --run "ls -la"
+
+# Run the test suite
+python setup_dccc_cli.py --test
+
+# Start the UI
+python setup_dccc_cli.py --ui
 ```
 
-Or to view a larger file with increased token limits:
-```
-python /home/computeruse/computer_use_demo/view_file.py /home/computeruse/computer_use_demo/tools_new.py --max-tokens 40000 --thinking-budget 8000
-```
-
-This utility will help you understand the implementation details without hitting streaming or token limits.
+This interactive utility eliminates the need to format JSON parameters correctly and will help you explore and understand the implementation details without hitting any limitations.
 
 I've also created a launcher script to help you start the DCCC collaboration environment:
 
