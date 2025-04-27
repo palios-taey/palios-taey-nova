@@ -1,63 +1,96 @@
-# Changes to Claude Custom Agent
+# Changes to Claude Computer Use Implementation
 
-## MVP Implementation - 2025-04-23
+## Version 2.0.0 (2025-04-26)
+
+### Core Fixes and Improvements
+
+1. **Fixed Beta Flags Implementation**
+   - Corrected issues with beta flag format and usage
+   - Implemented a dictionary-based approach for clarity and maintainability
+   - Fixed specific issues with the thinking capability implementation
+
+2. **Thinking Capability Fix**
+   - Correctly implemented thinking as a parameter in the request body, not as a beta flag
+   - Set proper minimum budget of 1024 tokens
+   - Added validation for thinking budget values
+
+3. **Streaming Implementation**
+   - Properly handles different event types during streaming
+   - Correctly processes content blocks and deltas
+   - Manages tool execution during streaming
+
+4. **Tool Parameter Validation**
+   - Added comprehensive parameter validation before execution
+   - Implemented proper error handling for invalid parameters
+   - Added required parameter verification
+
+5. **Error Handling**
+   - Specific exception handling for different error types
+   - Detailed error messages for debugging
+   - Recovery mechanisms for API errors
+
+### Implementation Details
+
+1. **Beta Flags Handling**
+   ```python
+   BETA_FLAGS = {
+       "computer_use_20241022": "computer-use-2024-10-22",  # Claude 3.5 Sonnet
+       "computer_use_20250124": "computer-use-2025-01-24",  # Claude 3.7 Sonnet
+   }
+   ```
+
+2. **Thinking Configuration**
+   ```python
+   # Configure thinking for Claude 3.7 Sonnet
+   if thinking_budget:
+       extra_body["thinking"] = {
+           "type": "enabled",
+           "budget_tokens": max(1024, thinking_budget)
+       }
+   ```
+
+3. **API Call Structure**
+   ```python
+   stream = await client.messages.create(
+       model=model,
+       messages=messages,
+       system=system,
+       max_tokens=max_tokens,
+       tools=tools,
+       stream=True,
+       anthropic_beta=",".join(betas) if betas else None,
+       **extra_body  # Unpack extra_body to include thinking configuration
+   )
+   ```
+
+4. **Prompt Caching**
+   ```python
+   # Add prompt caching beta flag if enabled
+   if enable_prompt_caching:
+       betas.append("cache-control-2024-07-01")
+       # Apply cache control to messages
+       messages = apply_cache_control(messages)
+   ```
+
+5. **Extended Output**
+   ```python
+   # Add extended output beta flag if enabled
+   if enable_extended_output:
+       betas.append("output-128k-2025-02-19")
+   ```
+
+## Version 1.0.0 (2025-04-23)
 
 Initial implementation of the Claude Custom Agent with core MVP features:
 
 ### Core Components
-- **agent_loop.py**: Implemented the core agent loop with:
-  - Streaming responses with token-by-token output
-  - Tool use integrated with streaming
-  - Thinking token budget management
-  - Prompt caching using Anthropic's cache-control beta
-  - Extended output support (128K)
-  - Tool parameter validation
-  - Error handling
-  - Tool definitions for computer use and bash
+- **agent_loop.py**: Core agent loop implementation
+- **ui.py**: Streamlit UI implementation
+- **requirements.txt**: Dependency management
 
-### UI Integration
-- **ui.py**: Streamlit UI for the custom agent with:
-  - Real-time streaming of Claude's responses
-  - Display of tool outputs
-  - Configuration options for all features
-  - Conversation history management
-  - API key management
-
-### CLI Support
-- **main.py**: Command-line interface with:
-  - Option to run in CLI mode or launch the UI
-  - Common entry point for both interfaces
-  - CLI-based interaction for terminal use
-
-### Testing
-- **tests/**: Test framework for the implementation:
-  - Unit tests for tool validation
-  - Unit tests for tool execution
-  - Mock-based tests for the agent loop
-  - Callback testing for UI integration
-
-### Documentation
-- **README.md**: Documentation for the implementation:
-  - Feature overview
-  - Installation instructions
-  - Usage examples
-  - Architecture description
-  - Configuration options
-
-## Implementation Decisions
-
-1. **Focused on Minimal Core**: Implemented only the essential components needed for the MVP (streaming + tool use + thinking)
-2. **UI/CLI Separation**: Created separate interfaces for CLI and UI use to support different use cases
-3. **Callback Architecture**: Implemented a callback system to support UI integration without tight coupling
-4. **Error Handling**: Added comprehensive error handling throughout the implementation
-5. **Parameter Validation**: Added strict validation of tool parameters to prevent runtime errors
-6. **Mock Implementation**: Used mock implementations for tool actions to focus on the core agent loop logic
-7. **Clean API**: Designed a clean, consistent API for all functions and methods
-
-## Future Enhancements
-
-1. **Real Tool Implementations**: Replace mock tool implementations with real functionality
-2. **Additional Tools**: Add more tools beyond computer use and bash
-3. **Enhanced UI**: Improve the UI with more advanced features
-4. **Conversation Management**: Add conversation saving and loading
-5. **Performance Optimization**: Optimize token usage and API calls
+### Features
+- Streaming responses (with issues in beta flag implementation)
+- Tool use support
+- Thinking capabilities (with incorrect implementation)
+- Prompt caching
+- Extended output support

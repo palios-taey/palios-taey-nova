@@ -1,91 +1,158 @@
-# Claude Custom Agent - MVP Implementation
+# Claude Computer Use Implementation
 
-This is a custom implementation of Claude Computer Use, focused on the core MVP features:
-- Streaming responses
-- Tool use integration
-- Thinking token budget
+This is a custom implementation of Claude Computer Use with streaming, tool use, thinking capabilities, and extended output support. This implementation properly addresses critical issues with beta flags, thinking parameters, and streaming integration.
 
 ## Features
 
-- **Streaming API Integration**: Display Claude's responses token-by-token in real-time
-- **Tool Use During Streaming**: Allow Claude to use tools mid-response without interruption
-- **Thinking Token Budget**: Configure extended thinking for complex reasoning tasks
-- **Prompt Caching**: Optimize token usage with cache control for multi-turn conversations
-- **Extended Output**: Support for long responses (up to 128k tokens)
-- **UI Integration**: Simple Streamlit interface for interacting with Claude
-- **CLI Mode**: Command-line interface for running in terminal
+- **Streaming Responses**: Real-time token-by-token output from Claude
+- **Tool Use Integration**: Seamless tool execution during streaming responses
+- **Thinking Budget Management**: Correctly implemented thinking capabilities
+- **Prompt Caching**: Efficient token usage with proper cache control
+- **Extended Output**: Support for very long responses (up to 128K tokens)
+- **Robust Error Handling**: Comprehensive error recovery mechanisms
 
-## Getting Started
+## Key Fixes
 
-### Prerequisites
+The implementation addresses several critical issues:
 
-- Python 3.10+
-- Anthropic API key with Computer Use access
+1. **Beta Flags Fix**: The beta flags are now properly formatted and managed using a dictionary for clarity:
+   ```python
+   BETA_FLAGS = {
+       "computer_use_20241022": "computer-use-2024-10-22",  # Claude 3.5 Sonnet
+       "computer_use_20250124": "computer-use-2025-01-24",  # Claude 3.7 Sonnet
+   }
+   ```
 
-### Installation
+2. **Thinking Parameter Fix**: Thinking is now correctly implemented as a parameter in the request body, not as a beta flag:
+   ```python
+   if thinking_budget:
+       extra_body["thinking"] = {
+           "type": "enabled",
+           "budget_tokens": max(1024, thinking_budget)  # Minimum 1024 tokens
+       }
+   ```
 
-1. Install the required dependencies:
+3. **Proper API Call Structure**:
+   ```python
+   stream = await client.messages.create(
+       model=model,
+       messages=messages,
+       system=system,
+       max_tokens=max_tokens,
+       tools=tools,
+       stream=True,
+       anthropic_beta=",".join(betas) if betas else None,
+       **extra_body  # Unpack extra_body to include thinking configuration
+   )
+   ```
 
+4. **Tool Parameter Validation**: Comprehensive validation of tool parameters before execution:
+   ```python
+   if tool_name == "computer":
+       if "action" not in tool_input:
+           return ToolResult(error="Missing required 'action' parameter")
+       
+       # Additional validation...
+   ```
+
+5. **Error Handling**: Specific exception handling for different error types:
+   ```python
+   except (APIStatusError, APIResponseValidationError) as e:
+       # Handle API errors
+   except APIError as e:
+       # Handle other API errors
+   except Exception as e:
+       # Handle unexpected errors
+   ```
+
+## Files
+
+1. **loop.py**: Core implementation of the agent loop with streaming and tool support
+2. **streamlit.py**: Streamlit UI for user-friendly interaction
+3. **deploy.sh**: Deployment script for safe installation
+4. **requirements.txt**: Required dependencies
+
+## Installation
+
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. Set your Anthropic API key (with Computer Use access):
+   ```bash
+   export ANTHROPIC_API_KEY=your_api_key_here
+   ```
+
+## Usage
+
+### Streamlit UI
+
+Run the Streamlit interface:
 ```bash
-pip install -r requirements.txt
+streamlit run streamlit.py
 ```
 
-2. Set your Anthropic API key as an environment variable:
-
-```bash
-export ANTHROPIC_API_KEY="your-api-key"
-```
-
-### Running the Application
-
-#### CLI Mode
+### Command Line Interface
 
 Run the CLI version:
-
 ```bash
-python main.py --cli
+python loop.py
 ```
 
-#### UI Mode
+### Deployment
 
-Run the Streamlit UI:
-
+To safely deploy to the production environment:
 ```bash
-python main.py --ui
+./deploy.sh
 ```
 
-Or directly:
+This will:
+1. Create a backup of the current production environment
+2. Install required dependencies
+3. Deploy the implementation files
+4. Verify the installation
+5. Provide rollback if needed
 
-```bash
-streamlit run ui.py
-```
+## Configuration Options
 
-## Architecture
-
-- **agent_loop.py**: Core implementation with streaming, tool use, and thinking integration
-- **ui.py**: Streamlit UI for interactive use
-- **main.py**: Entry point with CLI and UI options
-
-## Configuration
-
-The implementation supports configuring:
+All features can be enabled/disabled and configured:
 
 - Model selection
-- Streaming mode
-- Thinking token budget
+- Thinking capabilities
 - Prompt caching
-- Extended output
+- Extended output support
 - Maximum token limit
+- Thinking token budget
 
-## Tools
+## Implementation Highlights
 
-Currently implemented:
+### Agent Loop
 
-- **Computer Use**: Basic computer control with screenshot, mouse, and keyboard actions
-- **Bash**: Execute shell commands
+The core `agent_loop` function manages the conversation with Claude, handling:
+- Streaming responses
+- Tool execution
+- Context management
+- Error handling
+- Beta flag configuration
 
-## Development
+### Streaming Integration
 
-To add new tools or features, extend the agent_loop.py file with additional tool definitions and implementations.
+The implementation properly processes different chunk types:
+- `content_block_start`: Beginning of a content block
+- `content_block_delta`: Updates to the content
+- `message_stop`: End of the message
 
-For UI customization, modify the ui.py file to add new components or change the layout.
+### Tool Execution
+
+Tool execution is handled with proper parameter validation and error recovery:
+- Parameter validation before execution
+- Progress reporting during execution
+- Error handling for failed tool executions
+- Proper formatting of tool results for Claude
+
+## Compatibility
+
+- Works with Claude 3.5 Sonnet and Claude 3.7 Sonnet
+- Compatible with all current beta flags
+- Supports Python 3.10+
