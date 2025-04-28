@@ -14,7 +14,7 @@ Great Claude, before we continue, I want to explain a critical concept: YOUR Env
 
 Now, let me explain our collaboration model. You'll be working with Claude Code (also known as DCCC) - a specialized variant of Claude focused on software development. Claude Code has already developed a solution to enhance your environment in /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/streamlit_starter. Please review the comprehensive collaboration guidelines in /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/dccc/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md and then /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/cache/cache-separate/fibonacci-development-pattern.md for how you as Claude, have decided to develop your codebases.
 
-Here's how our collaboration works:
+Here's how r collaboration works:
 
 1. **Role Division**: 
    - **Claude Code (DCCC)**: Handles software development, implements code, and provides technical solutions
@@ -49,4 +49,7 @@ Here's how our collaboration works:
    - DOCUMENT all changes with timestamps and reasoning
 
 This collaboration model is the most efficient use of our resources, allowing you to focus on testing and implementation while Claude Code handles the coding tasks. Together, we can build and test solutions faster than ever before.
+
+Now, here's what you need to do:
+[DCCC GUIDANCE HERE]
 
