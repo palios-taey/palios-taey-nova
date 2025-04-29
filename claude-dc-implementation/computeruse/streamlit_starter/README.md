@@ -4,6 +4,19 @@
 
 This guide outlines the correct implementation of streaming responses with tool use for Claude DC, focusing on key areas where previous implementations have failed. This implementation follows the Fibonacci Development Pattern principles, starting with the smallest functional components first.
 
+## Recent Updates - APIProvider Compatibility
+
+This implementation has been updated to address the error:
+
+```
+ImportError: cannot import name 'APIProvider' from 'computer_use_demo.loop'
+```
+
+The key changes include:
+1. Added the `APIProvider` enum to maintain backward compatibility
+2. Added a `sampling_loop` function that wraps the agent_loop functionality
+3. Ensured all imports and function signatures match the original implementation
+
 ## Critical Implementation Requirements
 
 1. **Beta Flags Handling**
@@ -128,5 +141,53 @@ This starter package includes:
 - Core implementation files for streaming with tool use
 - Base Streamlit UI for testing and demonstration
 - Test scripts to validate the implementation
+- Deployment script for easy installation
 
 Start by examining `loop.py` for the core implementation, then review the tool implementations and Streamlit UI.
+
+## Deployment Instructions
+
+To deploy this implementation and fix the `ImportError`:
+
+1. Run the deployment script:
+   ```
+   ./deploy.sh
+   ```
+
+   This script:
+   - Creates a backup of your current environment
+   - Copies the new implementation to the computer_use_demo directory
+   - Installs required dependencies
+
+2. Launch the Streamlit application:
+   ```
+   cd /home/computeruse/computer_use_demo
+   streamlit run streamlit_app.py
+   ```
+
+## Compatibility Features
+
+The implementation maintains compatibility by:
+
+1. **APIProvider Enum**: Added to match the original implementation
+   ```python
+   class APIProvider(StrEnum):
+       ANTHROPIC = "anthropic"
+       BEDROCK = "bedrock"
+       VERTEX = "vertex"
+   ```
+
+2. **sampling_loop Function**: Acts as a wrapper around agent_loop
+   ```python
+   async def sampling_loop(
+       *,
+       system_prompt_suffix: str = "",
+       model: str,
+       provider: APIProvider = APIProvider.ANTHROPIC,
+       messages: List[Dict[str, Any]],
+       # ... other parameters ...
+   ) -> List[Dict[str, Any]]:
+       # Call agent_loop with appropriate parameters
+   ```
+
+These changes ensure that existing code that relies on imports from computer_use_demo.loop will continue to work.

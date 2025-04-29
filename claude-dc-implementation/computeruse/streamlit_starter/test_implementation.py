@@ -21,6 +21,8 @@ logger = logging.getLogger("test_implementation")
 try:
     from loop import (
         agent_loop,
+        sampling_loop,
+        APIProvider,
         DEFAULT_SYSTEM_PROMPT,
         BETA_FLAGS,
         PROMPT_CACHING_FLAG,
@@ -175,6 +177,46 @@ async def test_agent_loop_interface():
     
     return True
 
+async def test_compatibility_features():
+    """Test compatibility features (APIProvider and sampling_loop)"""
+    print_header("Testing Compatibility Features")
+    
+    # Check APIProvider enum
+    print("Checking APIProvider enum...")
+    if not hasattr(APIProvider, "ANTHROPIC") or not hasattr(APIProvider, "BEDROCK") or not hasattr(APIProvider, "VERTEX"):
+        print("❌ APIProvider is missing required attributes")
+        return False
+    
+    print("✅ APIProvider enum correctly defined")
+    
+    # Check sampling_loop function signature
+    print("Checking sampling_loop function...")
+    import inspect
+    sig = inspect.signature(sampling_loop)
+    params = sig.parameters
+    
+    required_params = [
+        "model", "provider", "messages", "output_callback",
+        "system_prompt_suffix", "thinking_budget", "token_efficient_tools_beta"
+    ]
+    
+    missing_params = [param for param in required_params if param not in params]
+    if missing_params:
+        print(f"❌ sampling_loop is missing required parameters: {missing_params}")
+        return False
+    
+    print("✅ sampling_loop has all required parameters")
+    
+    # Check that sampling_loop calls agent_loop
+    sampling_loop_source = inspect.getsource(sampling_loop)
+    if "agent_loop" not in sampling_loop_source:
+        print("❌ sampling_loop should call agent_loop")
+        return False
+    
+    print("✅ sampling_loop correctly calls agent_loop")
+    
+    return True
+
 async def test_streamlit_app():
     """Test the Streamlit app implementation"""
     print_header("Testing Streamlit App")
@@ -225,7 +267,7 @@ async def test_streamlit_app():
 async def main():
     """Main test function"""
     parser = argparse.ArgumentParser(description="Test the Claude DC implementation")
-    parser.add_argument("--tests", type=str, choices=["all", "api", "tools", "loop", "streamlit"], 
+    parser.add_argument("--tests", type=str, choices=["all", "api", "tools", "loop", "compatibility", "streamlit"], 
                        default="all", help="Which tests to run")
     args = parser.parse_args()
     
@@ -241,6 +283,9 @@ async def main():
     
     if args.tests in ["all", "loop"]:
         results["agent_loop"] = await test_agent_loop_interface()
+    
+    if args.tests in ["all", "compatibility"]:
+        results["compatibility"] = await test_compatibility_features()
     
     if args.tests in ["all", "streamlit"]:
         results["streamlit_app"] = await test_streamlit_app()

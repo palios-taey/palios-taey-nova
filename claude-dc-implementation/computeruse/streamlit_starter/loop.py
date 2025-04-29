@@ -8,6 +8,7 @@ import json
 import logging
 import asyncio
 from typing import Dict, Any, List, Optional, Callable, Union, AsyncGenerator
+from enum import StrEnum
 
 # Configure logging
 logging.basicConfig(
@@ -15,6 +16,13 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger("claude_agent")
+
+# Add APIProvider for compatibility with existing code
+class APIProvider(StrEnum):
+    """Enum for different API providers"""
+    ANTHROPIC = "anthropic" 
+    BEDROCK = "bedrock"
+    VERTEX = "vertex"
 
 try:
     from anthropic import AsyncAnthropic, APIError, APIResponseValidationError, APIStatusError
@@ -591,6 +599,55 @@ async def main():
             user_input=user_input,
             conversation_history=conversation_history
         )
+
+# Add compatibility function for existing code
+async def sampling_loop(
+    *,
+    system_prompt_suffix: str = "",
+    model: str,
+    provider: APIProvider = APIProvider.ANTHROPIC,
+    messages: List[Dict[str, Any]],
+    output_callback: Callable[[Any], None],
+    tool_output_callback: Optional[Callable[[Any, str], None]] = None,
+    api_response_callback: Optional[Callable[[Any, Optional[Any], Optional[Exception]], None]] = None,
+    api_key: Optional[str] = None,
+    only_n_most_recent_images: Optional[int] = None,
+    tool_version: str = "computer_use_20250124",
+    max_tokens: int = 4096,
+    thinking_budget: Optional[int] = None,
+    token_efficient_tools_beta: bool = False,
+) -> List[Dict[str, Any]]:
+    """
+    Compatibility wrapper for the agent_loop function.
+    This provides the same interface as the original sampling_loop function.
+    """
+    # Combine system prompts if needed
+    custom_system = DEFAULT_SYSTEM_PROMPT
+    if system_prompt_suffix:
+        custom_system = f"{DEFAULT_SYSTEM_PROMPT}\n\n{system_prompt_suffix}"
+        
+    # Set up prompt caching and extended output flags
+    enable_prompt_caching = True
+    enable_extended_output = True
+    
+    # Call our agent_loop function with the provided parameters
+    return await agent_loop(
+        model=model,
+        messages=messages,
+        tools=[COMPUTER_TOOL, BASH_TOOL],
+        output_callback=output_callback,
+        tool_output_callback=tool_output_callback,
+        api_response_callback=api_response_callback,
+        api_key=api_key,
+        tool_version=tool_version,
+        max_tokens=max_tokens,
+        thinking_budget=thinking_budget,
+        system_prompt=custom_system,
+        enable_prompt_caching=enable_prompt_caching,
+        enable_extended_output=enable_extended_output,
+        token_efficient_tools=token_efficient_tools_beta,
+        debug=True
+    )
 
 if __name__ == "__main__":
     try:
