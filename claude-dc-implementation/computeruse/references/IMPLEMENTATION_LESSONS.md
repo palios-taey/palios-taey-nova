@@ -1,5 +1,24 @@
 # Implementation Lessons from Claude DC Development
 
+## URGENT STREAMING IMPLEMENTATION LESSONS
+
+1. **Critical Error Alert**:
+   - Simply adding `stream=True` to API calls without implementing event handlers breaks Claude DC
+   - Runtime error: `httpx.ResponseNotRead: Attempted to access streaming response content, without having called 'read()'`
+   - Partial implementations must never be deployed to production environment
+
+2. **Production Environment Safety**:
+   - Always create backups before modifying `/home/computeruse/computer_use_demo/loop.py`
+   - Test all changes in isolated environments first
+   - Never leave half-implemented changes in production code
+   - Follow true Fibonacci pattern with complete functional units
+
+3. **Complete Implementation Requirements**:
+   - Streaming requires complete event handling implementation
+   - Must collect content blocks and tool use blocks during streaming
+   - Cannot use `raw_response.parse()` with streaming enabled
+   - Requires significant refactoring of current code structure
+
 ## Technical Lessons
 
 ### 1. Model API Parameters
@@ -15,9 +34,10 @@
    - Testing with and without beta parameters is essential
 
 3. **Streaming Implementation**:
-   - Basic streaming with `stream=True` works well without additional complexity
-   - Streaming support is now a core feature, not a beta feature
-   - The SDK provides detailed event types for handling different streaming events
+   - Adding just `stream=True` without proper event handlers breaks functionality
+   - Streaming requires different response handling than non-streaming calls
+   - `response.parse()` cannot be used with streaming responses
+   - Must implement handlers for `content_block_start`, `content_block_delta`, `message_stop`
 
 ### 2. Tool Integration
 
