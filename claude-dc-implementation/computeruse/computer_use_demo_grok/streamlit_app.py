@@ -1,17 +1,18 @@
 """
-Streamlit UI for Claude Computer Use with streaming capability.
-This provides a simple interface for interacting with the agent loop.
+Streamlit UI for Claude DC with streaming support.
+This implements the UI for Claude DC using Streamlit.
 """
-
 import os
 import sys
-import asyncio
-import streamlit as st
-from typing import Dict, Any, List, Optional
-import logging
-from pathlib import Path
 import json
 import time
+import asyncio
+import logging
+from typing import Dict, Any, List, Optional, Callable, Union
+import threading
+
+import streamlit as st
+import nest_asyncio
 
 # Configure logging
 logging.basicConfig(
@@ -19,321 +20,212 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler("streamlit_app.log")
+        logging.FileHandler("claude_dc.log")
     ]
 )
 logger = logging.getLogger("streamlit_ui")
 
-# Add the current directory to path for importing the agent_loop module
-current_dir = Path(__file__).parent.absolute()
-sys.path.append(str(current_dir))
+# Apply nest_asyncio to run asyncio in Streamlit
+nest_asyncio.apply()
 
+# Import agent loop for conversation
 try:
-    # Import the agent_loop module
-    from loop import agent_loop, DEFAULT_SYSTEM_PROMPT
+    from loop import agent_loop, chat_with_claude, AVAILABLE_TOOLS
+    from anthropic import AsyncAnthropic
+    import anthropic
+    logger.info(f"Using Anthropic SDK version: {anthropic.__version__}")
 except ImportError as e:
-    st.error(f"Error importing agent_loop module: {e}")
-    logger.error(f"Error importing agent_loop module: {e}")
+    st.error(f"Failed to import required modules: {e}")
+    st.info("Run: pip install anthropic==0.50.0 streamlit==1.31.0 nest_asyncio==1.5.8")
     sys.exit(1)
 
-try:
-    # Try to import nest_asyncio for running async code in Streamlit
-    import nest_asyncio
-    nest_asyncio.apply()
-except ImportError:
-    st.error("nest_asyncio not installed. Please install with: pip install nest_asyncio")
-    sys.exit(1)
+# Initialize session state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-# Function to run async code in Streamlit
-def run_async(coroutine):
-    """Run an async function in a synchronous context"""
-    loop = asyncio.get_event_loop()
-    return loop.run_until_complete(coroutine)
+if "conversation_history" not in st.session_state:
+    st.session_state.conversation_history = []
 
-def initialize_session_state():
-    """Initialize Streamlit session state variables"""
-    # Initialize conversation history
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-    
-    # Initialize Claude history
-    if "claude_history" not in st.session_state:
-        st.session_state.claude_history = []
-    
-    # Initialize current response
-    if "current_response" not in st.session_state:
-        st.session_state.current_response = ""
-    
-    # Initialize tool state
-    if "current_tool" not in st.session_state:
-        st.session_state.current_tool = None
-    
-    # Initialize API key
-    if "api_key" not in st.session_state:
-        st.session_state.api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    
-    # Initialize configuration
-    if "model" not in st.session_state:
-        st.session_state.model = "claude-3-7-sonnet-20250219"
-    
-    if "enable_thinking" not in st.session_state:
-        st.session_state.enable_thinking = True
-    
-    if "enable_prompt_caching" not in st.session_state:
-        st.session_state.enable_prompt_caching = True
-    
-    if "enable_extended_output" not in st.session_state:
-        st.session_state.enable_extended_output = True
-    
-    if "max_tokens" not in st.session_state:
-        st.session_state.max_tokens = 16000
-    
-    if "thinking_budget" not in st.session_state:
-        st.session_state.thinking_budget = 4000
-    
-    # Initialize debug mode
-    if "debug_mode" not in st.session_state:
-        st.session_state.debug_mode = False
+if "thinking" not in st.session_state:
+    st.session_state.thinking = None
 
-def create_sidebar():
-    """Create the sidebar with configuration options"""
-    with st.sidebar:
-        st.title("Claude Computer Use")
-        st.subheader("Configuration")
-        
-        # API key input
-        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-        if not api_key:
-            st.session_state.api_key = st.text_input(
-                "Anthropic API Key", 
-                value=st.session_state.api_key,
-                type="password"
-            )
-        
-        # Model selection
-        st.session_state.model = st.selectbox(
-            "Model",
-            ["claude-3-7-sonnet-20250219", "claude-3-5-sonnet-20241022"],
-            index=0
-        )
-        
-        # Feature toggles
-        st.session_state.enable_thinking = st.toggle("Enable Thinking", value=True)
-        st.session_state.enable_prompt_caching = st.toggle("Enable Prompt Caching", value=True)
-        st.session_state.enable_extended_output = st.toggle("Enable Extended Output", value=True)
-        st.session_state.debug_mode = st.toggle("Debug Mode", value=False)
-        
-        # Advanced settings
-        with st.expander("Advanced Settings"):
-            st.session_state.max_tokens = st.slider("Max Tokens", 1000, 32000, 16000)
-            if st.session_state.enable_thinking:
-                st.session_state.thinking_budget = st.slider("Thinking Budget", 1024, 8000, 4000)
-        
-        # Clear conversation button
-        if st.button("Clear Conversation"):
-            st.session_state.messages = []
-            st.session_state.claude_history = []
-            st.session_state.current_response = ""
-            st.session_state.current_tool = None
-            st.rerun()
+if "streaming_active" not in st.session_state:
+    st.session_state.streaming_active = False
 
-def handle_output_event(event, response_container):
-    """Handle an output event from the agent loop"""
-    
-    # Debug output
-    if st.session_state.debug_mode:
-        with response_container:
-            st.text(f"DEBUG: {event}")
-    
-    # Handle different event types
-    if event.get("type") == "text_delta":
-        st.session_state.current_response += event.get("text", "")
-        with response_container:
-            st.markdown(st.session_state.current_response)
-    
-    elif event.get("type") == "content_start":
-        # Content block is starting
-        st.session_state.current_response = ""
-        with response_container:
-            st.empty()
-    
-    elif event.get("type") == "tool_use_start":
-        tool_name = event.get("name", "")
-        tool_id = event.get("id", "")
-        st.session_state.current_tool = {
-            "name": tool_name,
-            "id": tool_id,
-            "input": {},
-            "output": "Preparing tool execution..."
-        }
-        with response_container:
-            st.info(f"Using tool: {tool_name}")
-    
-    elif event.get("type") == "tool_input_delta":
-        if st.session_state.current_tool:
-            # Accumulate tool input
-            # (Just for UI display - actual accumulation happens in the agent loop)
-            input_delta = event.get("input_delta", "")
-            with response_container:
-                st.info(f"Building tool input: {input_delta}")
-    
-    elif event.get("type") == "tool_executing":
-        if st.session_state.current_tool:
-            tool_name = event.get("name", "")
-            tool_input = event.get("input", {})
-            st.session_state.current_tool["input"] = tool_input
-            with response_container:
-                st.info(f"Executing tool: {tool_name}\nInput: {json.dumps(tool_input, indent=2)}")
-    
-    elif event.get("type") == "tool_progress":
-        if st.session_state.current_tool:
-            progress_msg = event.get("message", "")
-            st.session_state.current_tool["output"] = progress_msg
-            with response_container:
-                st.info(f"Tool progress: {progress_msg}")
-    
-    elif event.get("type") == "tool_result":
-        if st.session_state.current_tool:
-            result = event.get("result", "")
-            st.session_state.current_tool["output"] = result
-            with response_container:
-                st.success(f"Tool result: {result}")
-    
-    elif event.get("type") == "error":
-        with response_container:
-            st.error(f"Error: {event.get('message', 'Unknown error')}")
-    
-    elif event.get("type") == "message_stop":
-        # Final cleanup
-        with response_container:
-            if not st.session_state.current_response:
-                st.info("Message complete (no text response)")
-
-async def process_user_message(user_input, response_container):
-    """Process a user message and handle the response"""
-    # Check if API key is available
-    api_key = os.environ.get("ANTHROPIC_API_KEY", st.session_state.api_key)
-    if not api_key:
-        with response_container:
-            st.error("Please provide an API key in the sidebar settings.")
-        return
-    
-    # Show thinking indicator
-    with response_container:
-        thinking_placeholder = st.empty()
-        thinking_placeholder.markdown("_Thinking..._")
-    
-    # Reset current response
-    st.session_state.current_response = ""
-    st.session_state.current_tool = None
-    
-    # Configure callbacks
-    def handle_output(event):
-        handle_output_event(event, response_container)
-    
-    def handle_tool_output(tool_input, tool_id):
-        # This could be enhanced to show tool output in a different way
-        pass
-    
-    # Get thinking budget if enabled
-    thinking_budget = None
-    if st.session_state.enable_thinking:
-        thinking_budget = st.session_state.thinking_budget
-    
-    # Create user message
-    user_message = {"role": "user", "content": user_input}
-    
-    # Add to Claude's history
-    claude_history = list(st.session_state.claude_history)
-    claude_history.append(user_message)
-    
-    try:
-        # Run the agent loop
-        updated_history = await agent_loop(
-            model=st.session_state.model,
-            messages=claude_history,
-            output_callback=handle_output,
-            tool_output_callback=handle_tool_output,
-            max_tokens=st.session_state.max_tokens,
-            thinking_budget=thinking_budget,
+if "api_client" not in st.session_state:
+    # Create client with beta flags in header
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if api_key:
+        st.session_state.api_client = AsyncAnthropic(
             api_key=api_key,
-            enable_prompt_caching=st.session_state.enable_prompt_caching,
-            enable_extended_output=st.session_state.enable_extended_output,
-            debug=st.session_state.debug_mode
+            default_headers={"anthropic-beta": "tools-2024-05-16,output-128k-2025-02-19"}
         )
-        
-        # Remove thinking indicator
-        thinking_placeholder.empty()
-        
-        # Update Claude history
-        st.session_state.claude_history = updated_history
-        
-        # Add assistant response to chat
-        if st.session_state.current_response:
-            st.session_state.messages.append({
-                "role": "assistant", 
-                "content": st.session_state.current_response
-            })
-    
-    except Exception as e:
-        logger.error(f"Error processing message: {e}")
-        with response_container:
-            st.error(f"Error: {e}")
+    else:
+        st.error("ANTHROPIC_API_KEY environment variable not set!")
 
-def main():
-    """Main Streamlit application"""
-    # Set page config
-    st.set_page_config(
-        page_title="Claude Computer Use",
-        page_icon="🤖",
-        layout="wide",
-        initial_sidebar_state="expanded"
+# Set up UI
+st.title("Claude DC - Streaming Implementation")
+st.caption("GROK Implementation with streaming and tool use")
+
+# Configuration sidebar
+with st.sidebar:
+    st.header("Settings")
+    
+    # Model selection
+    model = st.selectbox(
+        "Model",
+        ["claude-3-7-sonnet-20250219", "claude-3-5-sonnet-20240620"],
+        index=0
     )
     
-    # Initialize session state
-    initialize_session_state()
+    # Max tokens
+    max_tokens = st.slider("Max Tokens", min_value=1000, max_value=64000, value=4000, step=1000)
     
-    # Create sidebar
-    create_sidebar()
+    # Temperature
+    temperature = st.slider("Temperature", min_value=0.0, max_value=1.0, value=0.7, step=0.1)
     
-    # Create main layout
-    st.title("Claude Computer Use 🤖")
-    st.caption("Streaming implementation with tool use & thinking")
+    # Thinking parameter
+    thinking_enabled = st.checkbox("Enable Thinking", value=True)
+    thinking_budget = st.slider("Thinking Budget (tokens)", min_value=256, max_value=8192, value=1024, step=256,
+                               disabled=not thinking_enabled)
     
-    # Create message container
-    message_container = st.container()
+    # Show thinking toggle
+    show_thinking = st.checkbox("Show Thinking", value=False)
     
-    # Display chat messages
-    with message_container:
-        for message in st.session_state.messages:
-            if message["role"] == "user":
-                with st.chat_message("user"):
-                    st.write(message["content"])
-            else:
-                with st.chat_message("assistant"):
-                    st.write(message["content"])
+    st.divider()
     
-    # Create input area
-    user_input = st.chat_input("Your message to Claude:")
+    # Save/Load conversation
+    st.header("Conversation")
     
-    # Process user input
-    if user_input:
-        # Add user message to chat
-        with message_container:
-            with st.chat_message("user"):
-                st.write(user_input)
-        
-        # Add to conversation history for UI display
-        st.session_state.messages.append({
-            "role": "user", 
-            "content": user_input
-        })
-        
-        # Create response container
-        response_container = st.empty()
-        
-        # Process message
-        run_async(process_user_message(user_input, response_container))
+    # Clear conversation button
+    if st.button("Clear Conversation"):
+        st.session_state.messages = []
+        st.session_state.conversation_history = []
+        st.session_state.thinking = None
+        st.rerun()
+    
+    # Save conversation
+    if st.button("Save Conversation"):
+        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        filename = f"conversation_{timestamp}.json"
+        try:
+            with open(filename, "w") as f:
+                json.dump(st.session_state.conversation_history, f, indent=2)
+            st.success(f"Conversation saved to {filename}")
+        except Exception as e:
+            st.error(f"Error saving conversation: {e}")
+    
+    # Show conversation history
+    conversation_json = st.toggle("Show Conversation JSON", value=False)
+    if conversation_json:
+        st.json(st.session_state.conversation_history)
 
-if __name__ == "__main__":
-    main()
+# Display messages
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
+
+# Display thinking if enabled
+if show_thinking and st.session_state.thinking:
+    with st.expander("Claude's Thinking Process", expanded=True):
+        st.write(st.session_state.thinking)
+
+# Create chat input
+prompt = st.chat_input("Message Claude...")
+
+# Handle user input
+if prompt:
+    # Add user message to UI and history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    st.session_state.conversation_history.append({"role": "user", "content": prompt})
+    
+    # Display user message
+    with st.chat_message("user"):
+        st.write(prompt)
+    
+    # Set up thinking parameter if enabled
+    thinking = None
+    if thinking_enabled:
+        thinking = {"type": "enabled", "budget_tokens": thinking_budget}
+    
+    # Create placeholder for streaming response
+    with st.chat_message("assistant"):
+        message_placeholder = st.empty()
+        
+        # Create container for tool use outputs
+        tool_container = st.container()
+        
+        # Start streaming with placeholder
+        current_response_text = ""
+        
+        # Set streaming active flag
+        st.session_state.streaming_active = True
+        
+        # Define stream handler function
+        async def stream_handler(event):
+            # Use the properly scoped variable
+            nonlocal current_response_text
+            
+            if event.type == "content_block_delta" and event.delta.type == "text_delta":
+                current_response_text += event.delta.text
+                message_placeholder.markdown(current_response_text)
+            
+            elif event.type == "content_block_stop" and event.content_block.type == "tool_use":
+                # Display tool use in the UI
+                with tool_container:
+                    st.info(f"Using tool: {event.content_block.tool_use.get('name', 'unknown')}")
+                    st.json(event.content_block.tool_use)
+            
+            elif event.type == "message_delta" and event.delta.thinking:
+                # Store thinking content
+                st.session_state.thinking = event.delta.thinking
+                # Update thinking display if enabled
+                if show_thinking:
+                    with st.sidebar:
+                        with st.expander("Claude's Thinking Process", expanded=True):
+                            st.write(event.delta.thinking)
+        
+        # Run agent loop in async function
+        async def run_agent():
+            try:
+                response = await agent_loop(
+                    client=st.session_state.api_client,
+                    messages=st.session_state.conversation_history,
+                    model=model,
+                    max_tokens=max_tokens,
+                    temperature=temperature,
+                    thinking=thinking,
+                    stream_handler=stream_handler,
+                    tools=AVAILABLE_TOOLS,
+                    save_conversation=True
+                )
+                
+                # Extract text content from response
+                text_content = ""
+                for block in response["content"]:
+                    if block["type"] == "text" and block["text"]:
+                        text_content += block["text"]
+                
+                # Add assistant response to history
+                st.session_state.conversation_history.append({
+                    "role": "assistant",
+                    "content": text_content
+                })
+                
+                # Add to UI message history
+                st.session_state.messages.append({"role": "assistant", "content": text_content})
+                
+                # Set streaming flag to False
+                st.session_state.streaming_active = False
+                
+            except Exception as e:
+                logger.error(f"Error in agent loop: {e}")
+                message_placeholder.error(f"Error: {str(e)}")
+                st.session_state.streaming_active = False
+        
+        # Run in asyncio
+        asyncio.run(run_agent())
+
+# Add a footer with version info
+st.divider()
+st.caption(f"Claude DC GROK Implementation | Anthropic SDK v{anthropic.__version__} | Streamlit v{st.__version__}")

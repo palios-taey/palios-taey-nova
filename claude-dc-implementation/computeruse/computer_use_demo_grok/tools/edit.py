@@ -1,210 +1,175 @@
-"""
-Edit tool implementation for Claude Computer Use.
-Provides basic file operations like reading, writing and appending.
-"""
-
+"""Edit tool implementation for Claude DC."""
 import os
-import asyncio
+import json
 import logging
-from typing import Dict, Any, Optional, Callable, List
+import asyncio
+from typing import Dict, Any, Optional
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(levelname)s - %(message)s"
 )
-logger = logging.getLogger("edit_tool")
+logger = logging.getLogger("tools.edit")
 
-class ToolResult:
-    """Container for tool execution results"""
-    def __init__(self, 
-                 output: Optional[str] = None, 
-                 error: Optional[str] = None, 
-                 base64_image: Optional[str] = None):
-        self.output = output
-        self.error = error
-        self.base64_image = base64_image
-    
-    def __str__(self):
-        if self.error:
-            return f"Error: {self.error}"
-        return self.output or ""
-
-# List of potentially dangerous paths to check
-DANGEROUS_PATHS = [
-    "/etc/passwd", "/etc/shadow", "/etc/sudoers", 
-    "/boot", "/bin", "/sbin", "/usr/bin", "/usr/sbin",
-    "/proc", "/sys", "/dev", "/var/run"
-]
-
-async def validate_edit_parameters(tool_input: Dict[str, Any]) -> tuple[bool, str]:
+async def execute_edit_tool(tool_input: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Validate the parameters for the edit tool.
+    Execute file operations such as read, write, append, delete.
     
     Args:
-        tool_input: The input parameters for the tool
+        tool_input: Tool input with action, path, and optional content
         
     Returns:
-        (is_valid, error_message)
+        Tool execution result
     """
-    if "action" not in tool_input:
-        return False, "Missing required 'action' parameter"
-    
-    action = tool_input.get("action", "")
-    if not action or not isinstance(action, str):
-        return False, "Action must be a non-empty string"
-    
-    if action not in ["read", "write", "append"]:
-        return False, f"Unknown action: {action}. Must be 'read', 'write', or 'append'"
-    
-    if "path" not in tool_input:
-        return False, "Missing required 'path' parameter"
-    
-    path = tool_input.get("path", "")
-    if not path or not isinstance(path, str):
-        return False, "Path must be a non-empty string"
-    
-    # Check for potentially dangerous paths
-    for dangerous_path in DANGEROUS_PATHS:
-        if path.startswith(dangerous_path):
-            return False, f"Cannot modify system paths: {dangerous_path}"
-    
-    # Check for write/append-specific parameters
-    if action in ["write", "append"] and "content" not in tool_input:
-        return False, f"Missing required 'content' parameter for {action} action"
-    
-    return True, "Valid parameters"
-
-async def safe_read_file(path: str, progress_callback: Optional[Callable[[str], None]] = None) -> ToolResult:
-    """Safely read a file with progress updates"""
     try:
-        if not os.path.exists(path):
-            return ToolResult(error=f"File not found: {path}")
-        
-        if not os.path.isfile(path):
-            return ToolResult(error=f"Not a file: {path}")
-        
-        if progress_callback:
-            progress_callback(f"Reading file: {path}")
-        
-        # Get file size for progress reporting
-        file_size = os.path.getsize(path)
-        
-        # Read the file
-        with open(path, 'r') as f:
-            content = f.read()
-        
-        if progress_callback:
-            progress_callback(f"Read {len(content)} bytes from {path}")
-        
-        return ToolResult(output=content)
-    
-    except Exception as e:
-        logger.error(f"Error reading file {path}: {str(e)}")
-        return ToolResult(error=f"Error reading file: {str(e)}")
-
-async def safe_write_file(path: str, content: str, append: bool = False, 
-                         progress_callback: Optional[Callable[[str], None]] = None) -> ToolResult:
-    """Safely write to a file with progress updates"""
-    try:
-        # Make sure parent directory exists
-        parent_dir = os.path.dirname(path)
-        if parent_dir and not os.path.exists(parent_dir):
-            if progress_callback:
-                progress_callback(f"Creating directory: {parent_dir}")
-            os.makedirs(parent_dir, exist_ok=True)
-        
-        # Log the action
-        mode = 'a' if append else 'w'
-        action = "Appending to" if append else "Writing to"
-        if progress_callback:
-            progress_callback(f"{action} file: {path}")
-        
-        # Write to the file
-        with open(path, mode) as f:
-            f.write(content)
-        
-        if progress_callback:
-            progress_callback(f"Wrote {len(content)} bytes to {path}")
-        
-        return ToolResult(output=f"Successfully {action.lower()} file: {path}")
-    
-    except Exception as e:
-        logger.error(f"Error writing to file {path}: {str(e)}")
-        return ToolResult(error=f"Error writing to file: {str(e)}")
-
-async def execute_edit_tool(
-    tool_input: Dict[str, Any],
-    progress_callback: Optional[Callable[[str], None]] = None
-) -> ToolResult:
-    """
-    Execute a file operation.
-    
-    Args:
-        tool_input: The input parameters for the tool
-        progress_callback: Optional callback for progress updates
-        
-    Returns:
-        ToolResult with the output or error
-    """
-    # Validate parameters
-    valid, error_message = await validate_edit_parameters(tool_input)
-    if not valid:
-        return ToolResult(error=error_message)
-    
-    action = tool_input.get("action", "")
-    path = tool_input.get("path", "")
-    
-    try:
-        # Handle different actions
-        if action == "read":
-            return await safe_read_file(path, progress_callback)
-        
-        elif action == "write":
-            content = tool_input.get("content", "")
-            return await safe_write_file(path, content, False, progress_callback)
-        
-        elif action == "append":
-            content = tool_input.get("content", "")
-            return await safe_write_file(path, content, True, progress_callback)
-        
+        # Handle different input formats
+        if "parameters" in tool_input:
+            # New tool format (tool_type format)
+            params = tool_input.get("parameters", {})
         else:
-            return ToolResult(error=f"Unknown action: {action}")
+            # Old format (function format) or direct input
+            params = tool_input.get("input", {})
+            if not params:
+                # Handle direct parameters case
+                params = tool_input
+    
+        # Validate input format
+        if not isinstance(params, dict):
+            return {"error": "Invalid input format, expected dictionary"}
+            
+        action = params.get("action")
+        if not action:
+            return {"error": "Action parameter is required"}
+            
+        path = params.get("path")
+        if not path:
+            return {"error": "Path parameter is required"}
+            
+        # Make path absolute if it's not already
+        if not os.path.isabs(path):
+            path = os.path.abspath(path)
+            
+        # Log the action
+        logger.info(f"Executing file {action} operation on {path}")
         
+        if action == "read":
+            # Read file
+            try:
+                if not os.path.exists(path):
+                    return {"error": f"File not found: {path}"}
+                    
+                with open(path, 'r', encoding='utf-8') as file:
+                    content = file.read()
+                    
+                return {
+                    "success": True,
+                    "content": content,
+                    "path": path
+                }
+            except Exception as e:
+                return {"error": f"Failed to read file: {str(e)}"}
+                
+        elif action == "write":
+            # Write file (overwrites existing)
+            content = params.get("content")
+            if content is None:
+                return {"error": "Content parameter is required for write action"}
+                
+            try:
+                # Create directory if it doesn't exist
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                
+                with open(path, 'w', encoding='utf-8') as file:
+                    file.write(content)
+                    
+                return {
+                    "success": True,
+                    "message": f"File written successfully: {path}",
+                    "path": path
+                }
+            except Exception as e:
+                return {"error": f"Failed to write file: {str(e)}"}
+                
+        elif action == "append":
+            # Append to file
+            content = params.get("content")
+            if content is None:
+                return {"error": "Content parameter is required for append action"}
+                
+            try:
+                # Create directory if it doesn't exist
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                
+                with open(path, 'a', encoding='utf-8') as file:
+                    file.write(content)
+                    
+                return {
+                    "success": True,
+                    "message": f"Content appended successfully to: {path}",
+                    "path": path
+                }
+            except Exception as e:
+                return {"error": f"Failed to append to file: {str(e)}"}
+                
+        elif action == "delete":
+            # Delete file
+            try:
+                if not os.path.exists(path):
+                    return {"error": f"File not found: {path}"}
+                    
+                os.remove(path)
+                
+                return {
+                    "success": True,
+                    "message": f"File deleted successfully: {path}",
+                    "path": path
+                }
+            except Exception as e:
+                return {"error": f"Failed to delete file: {str(e)}"}
+                
+        else:
+            return {"error": f"Unknown action: {action}"}
+            
     except Exception as e:
-        logger.error(f"Error executing edit action: {str(e)}")
-        return ToolResult(error=f"Error executing action: {str(e)}")
+        logger.error(f"Error executing file operation: {e}")
+        return {"error": f"Operation failed: {str(e)}"}
 
 if __name__ == "__main__":
-    # Test the tool
-    import sys
-    import json
+    # Simple test
+    import nest_asyncio
+    nest_asyncio.apply()
     
-    async def test_action(action, path, content=None):
-        tool_input = {"action": action, "path": path}
-        if content is not None:
-            tool_input["content"] = content
+    async def test_edit():
+        # Write test
+        write_result = await execute_edit_tool({
+            "name": "edit",
+            "input": {
+                "action": "write",
+                "path": "test_file.txt",
+                "content": "This is a test file created by the edit tool."
+            }
+        })
+        print("Write result:", json.dumps(write_result, indent=2))
         
-        result = await execute_edit_tool(tool_input)
-        if result.error:
-            print(f"Error: {result.error}")
-            return 1
-        else:
-            print(f"Output: {result.output}")
-            return 0
+        # Read test
+        read_result = await execute_edit_tool({
+            "name": "edit",
+            "input": {
+                "action": "read",
+                "path": "test_file.txt"
+            }
+        })
+        print("\nRead result:", json.dumps(read_result, indent=2))
+        
+        # Delete test
+        delete_result = await execute_edit_tool({
+            "name": "edit",
+            "input": {
+                "action": "delete",
+                "path": "test_file.txt"
+            }
+        })
+        print("\nDelete result:", json.dumps(delete_result, indent=2))
     
-    if len(sys.argv) > 2:
-        action = sys.argv[1]
-        path = sys.argv[2]
-        content = sys.argv[3] if len(sys.argv) > 3 else None
-        
-        # Run the test
-        exit_code = asyncio.run(test_action(action, path, content))
-        sys.exit(exit_code)
-    else:
-        print("Usage: python edit.py <action> <path> [content]")
-        print("Examples:")
-        print("  python edit.py read /path/to/file.txt")
-        print("  python edit.py write /path/to/file.txt \"Hello, world!\"")
-        print("  python edit.py append /path/to/file.txt \"Another line\"")
-        sys.exit(1)
+    asyncio.run(test_edit())

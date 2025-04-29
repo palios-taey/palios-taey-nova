@@ -1,131 +1,96 @@
-# Claude DC Streaming Implementation
+# Claude DC GROK Implementation
 
-This is a production-ready implementation of Claude with streaming capabilities, tool use, thinking parameters, and other advanced features. It is based on extensive research and testing to ensure compatibility with the latest Anthropic API and SDK.
+This is the GROK implementation of Claude DC with streaming support and tool use. It provides a robust, production-ready implementation based on the latest research and best practices.
 
-## Key Features
+## Features
 
-1. **Streaming with Tool Use**: Real-time, token-by-token streaming with seamless tool integration
-2. **Proper Parameter Handling**: Correct implementation of thinking as a parameter (not a beta flag)
-3. **Beta Flags Configuration**: Proper header-based beta flag configuration
-4. **Event-Based Processing**: Comprehensive handling of all streaming event types
-5. **Tool Validation**: Parameter validation for all tools before execution
-6. **Error Handling**: Robust error recovery with proper exception handling
-7. **Streamlit UI**: Real-time UI updates with state persistence
+- **Streaming Implementation**: Real-time streaming responses with proper event handling
+- **Tool Use**: Bash, Computer, and Edit tools for environment interaction
+- **Thinking Parameter**: Properly implemented thinking capability
+- **Extended Output**: Support for large responses (up to 128K tokens)
+- **Streamlit UI**: Interactive UI with real-time updates during streaming
 
-## Requirements
+## Installation
 
-- Python 3.11+
-- Anthropic SDK v0.50.0
-- Streamlit 1.31.0+
-- Pydantic 2.5.2+
-- PyAutoGUI (optional, for computer control)
+1. Install required dependencies:
 
-## Project Structure
-
-- `loop.py` - Core implementation with streaming and tool use
-- `streamlit_app.py` - Streamlit UI for interacting with Claude
-- `tools/` - Tool implementations:
-  - `bash.py` - Execute shell commands
-  - `computer.py` - Control the computer (mouse/keyboard)
-  - `edit.py` - File operations (read/write/append)
-- `run_streamlit.sh` - Script to launch the Streamlit UI
-
-## API Implementation Details
-
-### Beta Flags Setup
-
-Beta flags are correctly set in the client headers, not as parameters:
-
-```python
-client = AsyncAnthropic(
-    api_key=api_key,
-    default_headers={"anthropic-beta": "output-128k-2025-02-19,tools-2024-05-16"}
-)
+```bash
+pip install anthropic==0.50.0 streamlit==1.31.0 nest_asyncio==1.5.8 pyautogui==0.9.54
 ```
 
-### Thinking Parameter Configuration
+2. Set your API key:
 
-Thinking is implemented as a parameter, not a beta flag:
-
-```python
-# Add thinking parameter (if provided)
-if thinking_budget:
-    params["thinking"] = {
-        "type": "enabled", 
-        "budget_tokens": max(1024, thinking_budget)  # Minimum 1024 tokens
-    }
+```bash
+export ANTHROPIC_API_KEY=your_api_key_here
 ```
 
-### Streaming Event Handling
+## Usage
 
-Comprehensive event handling for all streaming events:
+### Running the Streamlit UI
 
-- `content_block_start` - For detecting new content blocks
-- `content_block_delta` - For processing streaming content updates
-- `content_block_stop` - For finalizing tool inputs and processing
-- `message_stop` - For detecting message completion
-
-### Tool Input Processing
-
-Proper accumulation and validation of tool inputs:
-
-```python
-if event.type == "content_block_delta" and event.delta.type == "input_json_delta":
-    tool_input_acc += event.delta.partial_json
-
-elif event.type == "content_block_stop":
-    # We have a complete tool input
-    tool_input = json.loads(tool_input_acc)
-    # Validate and execute the tool...
+```bash
+cd /path/to/claude-dc-implementation/computeruse/computer_use_demo_grok
+./run_streamlit.sh
 ```
 
-## Getting Started
+### Testing the Implementation
 
-1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+# Run all tests
+./run_tests.sh
 
-2. **Set API Key**:
-   ```bash
-   export ANTHROPIC_API_KEY=your_api_key_here
-   ```
+# Run specific test components
+python verify.py --all
+python test_tools.py
+python test_streaming.py
+```
 
-3. **Run the Streamlit App**:
-   ```bash
-   ./run_streamlit.sh
-   ```
+### Deploying to Production
 
-## Configuration Options
+```bash
+# Deploy to production environment
+./deployment.sh
+```
 
-The Streamlit UI provides several configuration options:
+## Implementation Details
 
-- **Model Selection**: Choose between Claude models
-- **Thinking**: Enable/disable thinking and adjust budget
-- **Prompt Caching**: Enable/disable prompt caching
-- **Extended Output**: Enable/disable 128k output
-- **Debug Mode**: View detailed event information
+This implementation correctly handles:
 
-## Implementation Notes
+1. **Beta Flags**: Properly set in client headers, not as parameters
+2. **Thinking Parameter**: Implemented as a request parameter with budget control
+3. **Streaming Event Handling**: Handles all event types with proper accumulation of partial content
+4. **Tool Parameter Validation**: Validates parameters before tool execution
 
-- This implementation is based on the latest research and API documentation
-- Uses Anthropic SDK v0.50.0 to ensure compatibility
-- Beta flags are properly handled in headers
-- Thinking parameters are correctly implemented in the request body
-- Full event handling for streaming responses
+## Testing & Validation
 
-## Troubleshooting
+The implementation includes a comprehensive testing and validation framework:
 
-If you encounter issues:
+1. **Verification Tests**: `verify.py` checks dependencies and API connectivity
+2. **Tool Tests**: `test_tools.py` validates all tool implementations
+3. **Streaming Tests**: `test_streaming.py` tests streaming functionality
+4. **Deployment Script**: `deployment.sh` provides safe deployment with backup
 
-1. Verify the Anthropic SDK version: `pip show anthropic`
-2. Check API key: Ensure it's correctly set in the environment
-3. Enable debug mode: Add `--debug` to see detailed events
-4. Check logs: Review `streamlit_app.log` for errors
+## Architecture
 
-## Production Considerations
+The implementation consists of:
 
-- Add retries for transient errors
-- Implement rate limiting to stay within API constraints
-- Add authentication for multi-user environments
-- Consider containerizing for consistent deployment
+- **Core Agent Loop**: `loop.py` - Implements the streaming agent loop with tool use
+- **Tool Implementations**: `tools/` directory contains all tool implementations
+- **UI Component**: `streamlit_app.py` - Streamlit UI with real-time updates
+- **Testing Framework**: Comprehensive test suite for all components
+
+## Known Limitations
+
+1. **GUI Operations**: Computer tool requires a GUI environment for full functionality. Use `CLAUDE_DC_GUI_ENABLED=1` for headless testing.
+2. **Streamlit Reloading**: State is lost when Streamlit reloads due to file changes. Use the state persistence features to mitigate.
+
+## References
+
+This implementation is based on:
+- Anthropic Claude API documentation
+- Streaming with tool use research
+- Best practices for Claude DC implementation
+
+## License
+
+This implementation is intended for internal use within the Claude DC project.

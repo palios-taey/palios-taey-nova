@@ -9,6 +9,7 @@ import logging
 import asyncio
 from typing import Dict, Any, List, Optional, Callable, Union, AsyncGenerator
 import warnings
+from enum import Enum
 
 # Configure logging
 logging.basicConfig(
@@ -21,14 +22,29 @@ logging.basicConfig(
 )
 logger = logging.getLogger("claude_agent")
 
+# APIProvider class for compatibility with existing code
+class APIProvider(str, Enum):
+    ANTHROPIC = "anthropic"
+    BEDROCK = "bedrock"
+    VERTEX = "vertex"
+
 try:
     from anthropic import AsyncAnthropic, Anthropic
-    from anthropic.__version__ import __version__ as anthropic_version
+    # Fix: Import version directly since anthropic.__version__ structure changed
+    import anthropic
+    anthropic_version = anthropic.__version__
     logger.info(f"Using Anthropic SDK version: {anthropic_version}")
     if anthropic_version != "0.50.0":
         warnings.warn(f"Expected Anthropic SDK v0.50.0, but found v{anthropic_version}. This may cause issues.")
+        logger.error(f"VERSION MISMATCH: Expected Anthropic SDK v0.50.0, found v{anthropic_version}")
+        logger.error("To fix this issue, run: ./update_anthropic_sdk.sh")
+        print(f"\n\033[1;31mWARNING: Expected Anthropic SDK v0.50.0, found v{anthropic_version}\033[0m")
+        print("\033[1;31mThis version mismatch will cause API compatibility issues!\033[0m")
+        print("\033[1;32mTo fix, run: ./update_anthropic_sdk.sh\033[0m\n")
 except ImportError:
     logger.error("Anthropic SDK not installed. Install with: pip install anthropic==0.50.0")
+    print("\n\033[1;31mERROR: Anthropic SDK not installed\033[0m")
+    print("\033[1;32mTo install, run: pip install anthropic==0.50.0\033[0m\n")
     sys.exit(1)
 
 try:
@@ -44,582 +60,448 @@ BETA_FLAGS = {
     "prompt_caching": "cache-control-2024-07-01"  # For prompt caching
 }
 
-# Tool definitions
+# Tool definitions - Updated to use current format expected by API
 COMPUTER_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "computer",
-        "description": "Control the computer through mouse and keyboard actions or capture screenshots",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "type": "string",
-                    "enum": [
-                        "screenshot", "left_button_press", "move_mouse", "type_text",
-                        "press_key", "hold_key", "left_mouse_down", "left_mouse_up",
-                        "scroll", "triple_click", "wait"
-                    ],
-                    "description": "The action to perform"
-                },
-                "coordinates": {
-                    "type": "array",
-                    "items": {"type": "integer"},
-                    "description": "The x and y coordinates for mouse actions"
-                },
-                "text": {
-                    "type": "string",
-                    "description": "The text to type or the key to press"
-                },
-                "duration": {
-                    "type": "number",
-                    "description": "Duration in seconds (for wait action)"
-                }
+    "type": "computer_use_20250124",
+    "description": "Control the computer",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "action": {
+                "type": "string",
+                "enum": ["click", "type", "pressKey", "moveMouse", "screenshot"],
+                "description": "The action to perform"
             },
-            "required": ["action"]
-        }
+            "x": {
+                "type": "number",
+                "description": "x coordinate (for click or moveMouse)"
+            },
+            "y": {
+                "type": "number",
+                "description": "y coordinate (for click or moveMouse)"
+            },
+            "text": {
+                "type": "string",
+                "description": "Text to type (for type action)"
+            },
+            "key": {
+                "type": "string",
+                "description": "Key to press (for pressKey action)"
+            }
+        },
+        "required": ["action"]
     }
 }
 
 BASH_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "bash",
-        "description": "Execute bash commands on the system",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "command": {
-                    "type": "string",
-                    "description": "The bash command to execute"
-                }
+    "type": "bash_20250124",
+    "description": "Execute a bash command",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "command": {
+                "type": "string",
+                "description": "The bash command to execute"
             },
-            "required": ["command"]
-        }
+            "timeout": {
+                "type": "number",
+                "description": "Command timeout in seconds (default: 30)"
+            }
+        },
+        "required": ["command"]
     }
 }
 
 EDIT_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "edit",
-        "description": "Create, read, or modify files on the system",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "type": "string",
-                    "enum": ["read", "write", "append"],
-                    "description": "The action to perform on the file"
-                },
-                "path": {
-                    "type": "string",
-                    "description": "The path to the file"
-                },
-                "content": {
-                    "type": "string",
-                    "description": "The content to write to the file (for write/append actions)"
-                }
+    "type": "text_editor_20250124",
+    "description": "Edit files on the system",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "action": {
+                "type": "string",
+                "enum": ["read", "write", "append", "delete"],
+                "description": "The action to perform"
             },
-            "required": ["action", "path"]
-        }
+            "path": {
+                "type": "string",
+                "description": "File path to operate on"
+            },
+            "content": {
+                "type": "string", 
+                "description": "Content to write (for write/append actions)"
+            }
+        },
+        "required": ["action", "path"]
     }
 }
 
-# Default system prompt
-DEFAULT_SYSTEM_PROMPT = """You are Claude, an AI assistant with access to computer use tools.
-You are running in a Linux environment with the following tools:
-
-1. computer - For interacting with the computer GUI
-   * ALWAYS include the 'action' parameter
-   * For mouse actions that need coordinates, ALWAYS include the 'coordinates' parameter
-   * For text input actions, ALWAYS include the 'text' parameter
-   * For the wait action, you can optionally include 'duration' in seconds
-
-2. bash - For executing shell commands
-   * ALWAYS include the 'command' parameter with the specific command to execute
-
-3. edit - For working with files
-   * ALWAYS include the 'action' parameter ('read', 'write', or 'append')
-   * ALWAYS include the 'path' parameter with the file path
-   * For 'write' and 'append' actions, ALWAYS include the 'content' parameter
-
-IMPORTANT GUIDELINES:
-- Be precise and careful with tool parameters. Always include all required parameters.
-- When using tools, wait for their output before continuing.
-- Don't use tools unless necessary for the task.
-- If a task requires multiple steps, break it down and explain your approach.
-- For file paths, use absolute paths starting with / when possible.
-"""
-
-class ToolResult:
-    """Container for tool execution results"""
-    def __init__(self, 
-                 output: Optional[str] = None, 
-                 error: Optional[str] = None, 
-                 base64_image: Optional[str] = None):
-        self.output = output
-        self.error = error
-        self.base64_image = base64_image
-    
-    def __str__(self):
-        if self.error:
-            return f"Error: {self.error}"
-        return self.output or ""
-
-def apply_cache_control(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """
-    Apply cache control to messages for prompt caching.
-    Sets cache breakpoints for recent turns.
-    """
-    if not messages:
-        return messages
-    
-    # Create a deep copy to avoid modifying the original
-    processed_messages = json.loads(json.dumps(messages))
-    
-    breakpoints_remaining = 3
-    for i, message in enumerate(reversed(processed_messages)):
-        if message["role"] == "user" and breakpoints_remaining > 0:
-            # Skip the most recent user message
-            if i > 0:
-                breakpoints_remaining -= 1
-                content = message.get("content", "")
-                
-                # Handle different content formats
-                if isinstance(content, list):
-                    # List content format
-                    for block in content:
-                        if isinstance(block, dict) and block.get("type") == "text":
-                            block["cache_control"] = {"type": "ephemeral"}
-                            break
-                elif isinstance(content, str) and content:
-                    # Convert string content to block format
-                    message["content"] = [
-                        {"type": "text", "text": content, "cache_control": {"type": "ephemeral"}}
-                    ]
-    
-    return processed_messages
-
-async def execute_tool(
-    tool_name: str, 
-    tool_input: Dict[str, Any],
-    progress_callback: Optional[Callable[[str], None]] = None
-) -> ToolResult:
-    """
-    Execute a tool with the given input.
-    Dynamically imports the appropriate tool implementation.
-    """
-    logger.info(f"Executing tool: {tool_name} with input: {tool_input}")
-    
-    try:
-        # Import the tool implementations
-        if tool_name == "computer":
-            from tools.computer import execute_computer_tool
-            return await execute_computer_tool(tool_input, progress_callback)
-        elif tool_name == "bash":
-            from tools.bash import execute_bash_tool
-            return await execute_bash_tool(tool_input, progress_callback)
-        elif tool_name == "edit":
-            from tools.edit import execute_edit_tool
-            return await execute_edit_tool(tool_input, progress_callback)
-        else:
-            return ToolResult(error=f"Unknown tool: {tool_name}")
-    except ImportError as e:
-        logger.error(f"Tool module not found: {e}")
-        return ToolResult(error=f"Tool module not found: {str(e)}")
-    except Exception as e:
-        logger.error(f"Error executing tool {tool_name}: {str(e)}")
-        return ToolResult(error=f"Tool execution failed: {str(e)}")
-
-def format_tool_result(result: ToolResult) -> Union[List[Dict[str, Any]], str]:
-    """
-    Format a tool result for sending back to the API.
-    """
-    if result.error:
-        return result.error
-    
-    content = []
-    
-    # Add text output if present
-    if result.output:
-        content.append({
-            "type": "text",
-            "text": result.output
-        })
-    
-    # Add image if present
-    if result.base64_image:
-        content.append({
-            "type": "image",
-            "source": {
-                "type": "base64",
-                "media_type": "image/png",
-                "data": result.base64_image
-            }
-        })
-    
-    return content
+# List of available tools
+AVAILABLE_TOOLS = [COMPUTER_TOOL, BASH_TOOL, EDIT_TOOL]
 
 async def agent_loop(
-    *,
-    model: str,
-    messages: List[Dict[str, Any]],
-    output_callback: Callable[[Dict[str, Any]], None],
-    tool_output_callback: Optional[Callable[[Dict[str, Any], str], None]] = None,
-    api_response_callback: Optional[Callable[[Any, Optional[Any], Optional[Exception]], None]] = None,
-    api_key: Optional[str] = None,
-    max_tokens: int = 4096,
-    thinking_budget: Optional[int] = None,
-    system_prompt: Optional[str] = None,
-    enable_prompt_caching: bool = True,
-    enable_extended_output: bool = True,
-    debug: bool = False
-):
-    """
-    Agent loop for Claude with streaming and tool use.
-    
-    Args:
-        model: The Claude model to use
-        messages: The conversation history
-        output_callback: Function to call with each content block from Claude
-        tool_output_callback: Function to call with tool results
-        api_response_callback: Function to call with API response info
-        api_key: Your Anthropic API key
-        max_tokens: Maximum tokens in the response
-        thinking_budget: Budget for thinking tokens
-        system_prompt: Optional system prompt
-        enable_prompt_caching: Whether to enable prompt caching
-        enable_extended_output: Whether to enable extended output
-        debug: Whether to print debug information
-    """
-    # Get API key from environment if not provided
-    if not api_key:
-        api_key = os.environ.get("ANTHROPIC_API_KEY")
-        if not api_key:
-            raise ValueError("API key not provided and ANTHROPIC_API_KEY not set in environment")
-    
-    # Configure beta flags in headers
-    beta_headers = {}
-    beta_flags = []
-    
-    # Always include tools flag
-    beta_flags.append(BETA_FLAGS["tools"])
-    
-    # Add extended output flag if enabled
-    if enable_extended_output:
-        beta_flags.append(BETA_FLAGS["output_128k"])
-    
-    # Add prompt caching flag if enabled
-    if enable_prompt_caching:
-        beta_flags.append(BETA_FLAGS["prompt_caching"])
-        # Apply cache control to messages
-        messages = apply_cache_control(messages)
-    
-    # Set the beta flags in the headers
-    if beta_flags:
-        beta_headers["anthropic-beta"] = ",".join(beta_flags)
-    
-    # Create client with beta flags in headers
-    client = AsyncAnthropic(
-        api_key=api_key,
-        default_headers=beta_headers
-    )
-    
-    # Configure tools
-    tools = [COMPUTER_TOOL, BASH_TOOL, EDIT_TOOL]
-    
-    # Configure thinking parameter
-    params = {
-        "model": model,
-        "max_tokens": max_tokens,
-        "messages": messages,
-        "system": system_prompt or DEFAULT_SYSTEM_PROMPT,
-        "tools": tools,
-    }
-    
-    # Add thinking parameter (if provided)
-    if thinking_budget:
-        params["thinking"] = {
-            "type": "enabled",
-            "budget_tokens": max(1024, thinking_budget)  # Minimum 1024 tokens
-        }
-    
-    if debug:
-        logger.info(f"Using model: {model}")
-        logger.info(f"Beta flags: {beta_flags}")
-        logger.info(f"Thinking budget: {thinking_budget if thinking_budget else 'Not enabled'}")
-    
-    # Main conversation loop
-    while True:
-        try:
-            # Stream the message
-            async with client.messages.stream(**params) as stream:
-                tool_input_acc = ""
-                tool_name = None
-                tool_id = None
-                
-                # Process the stream
-                async for event in stream:
-                    # Debug event details
-                    if debug:
-                        logger.debug(f"Event: {event}")
-                    
-                    # Handle different event types
-                    if event.type == "content_block_start":
-                        if hasattr(event.content_block, "type"):
-                            # Check if this is a tool use block
-                            if event.content_block.type == "tool_use":
-                                tool_name = event.content_block.name
-                                tool_id = event.content_block.id
-                                # Reset tool input accumulator
-                                tool_input_acc = ""
-                                
-                                # Notify about tool use
-                                output_callback({
-                                    "type": "tool_use_start",
-                                    "name": tool_name,
-                                    "id": tool_id
-                                })
-                            elif event.content_block.type == "text":
-                                # Text content block starting
-                                output_callback({
-                                    "type": "content_start", 
-                                    "content_type": "text"
-                                })
-                    
-                    elif event.type == "content_block_delta":
-                        if hasattr(event.delta, "type"):
-                            # Handle text deltas
-                            if event.delta.type == "text_delta":
-                                output_callback({
-                                    "type": "text_delta",
-                                    "text": event.delta.text
-                                })
-                            # Handle tool input deltas
-                            elif event.delta.type == "input_json_delta" and event.delta.partial_json:
-                                tool_input_acc += event.delta.partial_json
-                                output_callback({
-                                    "type": "tool_input_delta",
-                                    "input_delta": event.delta.partial_json,
-                                    "tool_id": tool_id,
-                                    "tool_name": tool_name
-                                })
-                    
-                    elif event.type == "content_block_stop":
-                        # Content block completed
-                        if tool_input_acc:
-                            # We have a complete tool input
-                            try:
-                                # Parse the JSON
-                                tool_input = json.loads(tool_input_acc)
-                                
-                                # Execute the tool
-                                output_callback({
-                                    "type": "tool_executing",
-                                    "name": tool_name,
-                                    "input": tool_input,
-                                    "id": tool_id
-                                })
-                                
-                                # Execute the tool
-                                result = await execute_tool(
-                                    tool_name,
-                                    tool_input,
-                                    progress_callback=lambda msg: output_callback({
-                                        "type": "tool_progress",
-                                        "message": msg,
-                                        "tool_id": tool_id
-                                    })
-                                )
-                                
-                                # Format the result
-                                formatted_result = format_tool_result(result)
-                                
-                                # Call tool output callback
-                                if tool_output_callback:
-                                    tool_output_callback(tool_input, tool_id)
-                                
-                                # Notify about tool result
-                                output_callback({
-                                    "type": "tool_result",
-                                    "name": tool_name,
-                                    "result": str(result),
-                                    "tool_id": tool_id
-                                })
-                                
-                                # Add tool result to messages
-                                messages.append({
-                                    "role": "user",
-                                    "content": [{
-                                        "type": "tool_result",
-                                        "tool_call_id": tool_id,
-                                        "content": formatted_result
-                                    }]
-                                })
-                                
-                                # Reset tool state
-                                tool_input_acc = ""
-                                tool_name = None
-                                tool_id = None
-                                
-                            except json.JSONDecodeError:
-                                logger.error(f"Invalid JSON in tool input: {tool_input_acc}")
-                                output_callback({
-                                    "type": "error",
-                                    "message": f"Invalid JSON in tool input: {tool_input_acc}"
-                                })
-                            except Exception as e:
-                                logger.error(f"Error executing tool: {str(e)}")
-                                output_callback({
-                                    "type": "error",
-                                    "message": f"Error executing tool: {str(e)}"
-                                })
-                    
-                    elif event.type == "message_stop":
-                        # Message complete
-                        output_callback({"type": "message_stop"})
-                
-                # Get the final message for history
-                final_message = await stream.get_final_message()
-                
-                # Add to conversation history
-                messages.append({
-                    "role": "assistant",
-                    "content": final_message.content
-                })
-                
-                # If we had no tools to execute, we're done
-                if not tool_id:
-                    return messages
-                
-        except Exception as e:
-            logger.error(f"Error in agent loop: {str(e)}")
-            output_callback({
-                "type": "error",
-                "message": f"API Error: {str(e)}"
-            })
-            
-            if api_response_callback:
-                api_response_callback(None, None, e)
-            
-            return messages
-
-async def chat_with_claude(
-    query: str,
-    conversation_history: Optional[List[Dict[str, Any]]] = None,
+    client: Optional[AsyncAnthropic] = None,
+    messages: List[Dict[str, Any]] = None,
     model: str = "claude-3-7-sonnet-20250219",
     max_tokens: int = 4096,
-    thinking_budget: int = 1024,
-    api_key: Optional[str] = None,
-    output_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
-    enable_prompt_caching: bool = True,
-    enable_extended_output: bool = True,
-    debug: bool = False
-) -> List[Dict[str, Any]]:
+    temperature: float = 0.7,
+    thinking: Optional[Dict[str, Any]] = None,
+    stream_handler: Optional[Callable] = None,
+    tools: List[Dict[str, Any]] = AVAILABLE_TOOLS,
+    save_conversation: bool = True,
+    conversation_path: str = "conversation_history.json"
+) -> Dict[str, Any]:
     """
-    Simple function to chat with Claude with streaming and tool use.
+    Main agent loop for Claude DC with proper streaming support.
     
     Args:
-        query: The user query
-        conversation_history: Existing conversation history
-        model: The Claude model to use
-        max_tokens: Maximum tokens in the response
-        thinking_budget: Budget for thinking tokens
-        api_key: Your Anthropic API key
-        output_callback: Function to call with Claude's output
-        enable_prompt_caching: Whether to enable prompt caching
-        enable_extended_output: Whether to enable extended output
-        debug: Whether to print debug information
+        client: AsyncAnthropic client instance (will create one if not provided)
+        messages: List of message objects for conversation history
+        model: Claude model to use
+        max_tokens: Maximum tokens in response
+        temperature: Model temperature (0.0-1.0)
+        thinking: Thinking parameter configuration
+        stream_handler: Callback for streaming events
+        tools: List of tool definitions to expose to Claude
+        save_conversation: Whether to save the conversation history
+        conversation_path: Path to save conversation history
         
     Returns:
-        Updated conversation history
+        Complete response from Claude after processing
     """
-    # Initialize conversation history if not provided
-    if conversation_history is None:
+    if not messages:
+        messages = [{"role": "user", "content": "Hello, Claude!"}]
+    
+    if not client:
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        if not api_key:
+            logger.error("ANTHROPIC_API_KEY environment variable not set")
+            raise ValueError("ANTHROPIC_API_KEY environment variable not set")
+        
+        # Create client with beta flags in header (IMPORTANT: this is the correct way)
+        beta_flags = f"{BETA_FLAGS['tools']},{BETA_FLAGS['output_128k']}"
+        client = AsyncAnthropic(
+            api_key=api_key,
+            default_headers={"anthropic-beta": beta_flags}
+        )
+    
+    # Prepare request parameters
+    params = {
+        "model": model,
+        "messages": messages,
+        "max_tokens": max_tokens,
+        "temperature": temperature,
+        "tools": tools,
+        "stream": True
+    }
+    
+    # Add thinking parameter if specified (as a request parameter, not beta flag)
+    if thinking:
+        params["thinking"] = thinking
+    
+    # Initialize streaming state
+    current_content_block = None
+    partial_json = ""
+    tool_use_index = None
+    completed_response = {
+        "content": [],
+        "tool_use": [],
+        "thinking": None
+    }
+    
+    try:
+        # Start streaming
+        logger.info(f"Starting streaming request to {model}")
+        stream = await client.messages.create(**params)
+        
+        async for event in stream:
+            # Process each streaming event type
+            if stream_handler:
+                await stream_handler(event)
+                
+            if event.type == "message_start":
+                logger.info("Message started")
+                
+            elif event.type == "content_block_start":
+                logger.info(f"Content block started: {event.content_block.type}")
+                current_content_block = {
+                    "type": event.content_block.type,
+                    "text": "" if event.content_block.type == "text" else None,
+                    "tool_use": None
+                }
+                
+                if event.content_block.type == "tool_use":
+                    current_content_block["tool_use"] = {
+                        "name": None,
+                        "input": {}
+                    }
+                    tool_use_index = len(completed_response["content"])
+                
+            elif event.type == "content_block_delta":
+                if event.delta.type == "text_delta" and current_content_block:
+                    current_content_block["text"] += event.delta.text
+                    
+                elif event.delta.type == "input_json_delta" and current_content_block:
+                    partial_json += event.delta.partial_json
+                    
+            elif event.type == "content_block_stop":
+                logger.info(f"Content block stopped")
+                
+                # Handle tool use JSON
+                if current_content_block and current_content_block["type"] == "tool_use" and partial_json:
+                    try:
+                        # Parse the accumulated JSON
+                        tool_input = json.loads(partial_json)
+                        current_content_block["tool_use"] = tool_input
+                        
+                        # Get tool name or type for display
+                        tool_identifier = tool_input.get("type", tool_input.get("name", "unknown-tool"))
+                        logger.info(f"Executing tool {tool_identifier}")
+                        
+                        # Execute the tool
+                        tool_result = await execute_tool(tool_input)
+                        logger.info(f"Tool execution completed: {tool_identifier}")
+                        
+                        # Add tool result to conversation
+                        messages.append({
+                            "role": "assistant",
+                            "content": [{"type": "tool_use", "tool_use": tool_input}]
+                        })
+                        
+                        messages.append({
+                            "role": "user",
+                            "content": [{"type": "tool_result", "tool_result": {"tool_use_id": None, "content": tool_result}}]
+                        })
+                        
+                        # Store in completed response
+                        completed_response["tool_use"].append({
+                            "input": tool_input,
+                            "output": tool_result
+                        })
+                        
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Error parsing tool input JSON: {e}")
+                        logger.error(f"Partial JSON: {partial_json}")
+                    
+                    # Reset partial JSON
+                    partial_json = ""
+                
+                # Add the completed block to response
+                if current_content_block:
+                    completed_response["content"].append(current_content_block)
+                current_content_block = None
+                
+            elif event.type == "message_delta":
+                if event.delta.thinking:
+                    logger.info("Received thinking content")
+                    completed_response["thinking"] = event.delta.thinking
+                    
+            elif event.type == "message_stop":
+                logger.info("Message completed")
+                
+    except Exception as e:
+        logger.error(f"Error in streaming: {e}")
+        raise
+        
+    # Save conversation if requested
+    if save_conversation:
+        try:
+            with open(conversation_path, "w") as f:
+                json.dump(messages, f, indent=2)
+        except Exception as e:
+            logger.error(f"Error saving conversation: {e}")
+    
+    return completed_response
+
+async def execute_tool(tool_input: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Execute the specified tool based on the input.
+    
+    Args:
+        tool_input: Tool input specification
+        
+    Returns:
+        Tool execution result
+    """
+    try:
+        # Import tool implementations
+        from tools import execute_bash_tool, execute_computer_tool, execute_edit_tool
+        
+        # Handle different tool types based on the updated format
+        tool_type = tool_input.get("type", "")
+        
+        if tool_type == "bash_20250124":
+            return await execute_bash_tool(tool_input)
+        elif tool_type == "computer_use_20250124":
+            return await execute_computer_tool(tool_input)
+        elif tool_type == "text_editor_20250124":
+            return await execute_edit_tool(tool_input)
+        else:
+            # Fallback to check name for backwards compatibility
+            tool_name = tool_input.get("name")
+            
+            if tool_name == "bash":
+                return await execute_bash_tool(tool_input)
+            elif tool_name == "computer":
+                return await execute_computer_tool(tool_input)
+            elif tool_name == "edit":
+                return await execute_edit_tool(tool_input)
+            else:
+                return {"error": f"Unknown tool type: {tool_type} or name: {tool_name}"}
+    except ImportError:
+        logger.error("Tool implementation modules not found")
+        return {"error": "Tool implementation not available"}
+    except Exception as e:
+        logger.error(f"Error executing tool: {e}")
+        return {"error": f"Tool execution failed: {str(e)}"}
+
+async def chat_with_claude(
+    user_input: str,
+    conversation_history: List[Dict[str, Any]] = None,
+    model: str = "claude-3-7-sonnet-20250219",
+    thinking_enabled: bool = True,
+    thinking_budget: int = 1024
+) -> Dict[str, Any]:
+    """
+    Simple function to chat with Claude with thinking enabled.
+    
+    Args:
+        user_input: User's message
+        conversation_history: Previous conversation history
+        model: Claude model to use
+        thinking_enabled: Whether to enable thinking
+        thinking_budget: Token budget for thinking
+        
+    Returns:
+        Claude's response with full content and thinking
+    """
+    if not conversation_history:
         conversation_history = []
     
-    # Add the user query to the conversation
+    # Add user message to history
     conversation_history.append({
         "role": "user",
-        "content": query
+        "content": user_input
     })
     
-    # Set up output callback if not provided
-    if output_callback is None:
-        def default_output_callback(event):
-            if event["type"] == "text_delta":
-                print(event["text"], end="", flush=True)
-            elif event["type"] == "tool_use_start":
-                print(f"\n[Using tool: {event['name']}]")
-            elif event["type"] == "tool_executing":
-                print(f"\n[Executing {event['name']} with input: {event['input']}]")
-            elif event["type"] == "tool_result":
-                print(f"\n[Tool result: {event['result']}]")
-            elif event["type"] == "error":
-                print(f"\n[Error: {event['message']}]")
-            elif event["type"] == "message_stop":
-                print("\n[Message complete]")
-        
-        output_callback = default_output_callback
+    # Set up thinking parameter if enabled
+    thinking = None
+    if thinking_enabled:
+        thinking = {"type": "enabled", "budget_tokens": thinking_budget}
     
-    # Run the agent loop
-    try:
-        updated_history = await agent_loop(
-            model=model,
-            messages=conversation_history,
-            output_callback=output_callback,
-            max_tokens=max_tokens,
-            thinking_budget=thinking_budget,
-            api_key=api_key,
-            enable_prompt_caching=enable_prompt_caching,
-            enable_extended_output=enable_extended_output,
-            debug=debug
-        )
-        
-        return updated_history
-        
-    except Exception as e:
-        logger.error(f"Error in chat_with_claude: {str(e)}")
-        return conversation_history
-
-async def main():
-    """
-    Simple CLI demo of the agent loop.
-    """
+    # Create async client 
     api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        print("Please set the ANTHROPIC_API_KEY environment variable.")
-        sys.exit(1)
+    client = AsyncAnthropic(
+        api_key=api_key,
+        default_headers={"anthropic-beta": f"{BETA_FLAGS['tools']},{BETA_FLAGS['output_128k']}"}
+    )
     
-    print("\nClaude Computer Use Agent\n")
-    print("Enter your message (or 'exit' to quit):")
+    # Call agent loop
+    response = await agent_loop(
+        client=client,
+        messages=conversation_history,
+        model=model,
+        thinking=thinking
+    )
     
-    # Initialize conversation history
-    conversation_history = []
+    # Get text content from response
+    text_content = ""
+    for block in response["content"]:
+        if block["type"] == "text" and block["text"]:
+            text_content += block["text"]
     
-    while True:
-        # Get user input
-        user_input = input("\nYou: ")
-        
-        # Check for exit command
-        if user_input.lower() in ["exit", "quit", "bye"]:
-            print("Goodbye!")
-            break
-        
-        print("\nClaude:", end="", flush=True)
-        
-        # Process user input
-        conversation_history = await chat_with_claude(
-            query=user_input,
-            conversation_history=conversation_history,
-            debug=False
-        )
+    # Add assistant response to history
+    conversation_history.append({
+        "role": "assistant",
+        "content": text_content
+    })
+    
+    return response
 
-if __name__ == "__main__":
+# Added for backwards compatibility with streamlit.py
+async def sampling_loop(
+    system_prompt_suffix: str = "",
+    model: str = "claude-3-7-sonnet-20250219",
+    provider: str = "anthropic",
+    messages: List[Dict[str, Any]] = None,
+    output_callback: Optional[Callable] = None,
+    tool_output_callback: Optional[Callable] = None,
+    api_response_callback: Optional[Callable] = None,
+    api_key: str = None,
+    only_n_most_recent_images: int = 0,
+    tool_version: str = "computer_use_20250124",
+    max_tokens: int = 4096,
+    thinking_budget: Optional[int] = None,
+    token_efficient_tools_beta: bool = False,
+) -> List[Dict[str, Any]]:
+    """
+    Compatibility function for older streamlit.py integrations.
+    Implements the sampling loop with Claude for streaming responses.
+    
+    Args:
+        Various parameters for configuration and callbacks
+        
+    Returns:
+        Updated messages list
+    """
+    # Create API client
+    client = AsyncAnthropic(
+        api_key=api_key or os.environ.get("ANTHROPIC_API_KEY"),
+        default_headers={"anthropic-beta": f"{BETA_FLAGS['tools']},{BETA_FLAGS['output_128k']}"}
+    )
+    
+    # Set up thinking parameter if enabled
+    thinking = None
+    if thinking_budget is not None:
+        thinking = {"type": "enabled", "budget_tokens": thinking_budget}
+    
+    # Call agent loop with appropriate callbacks
     try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print("\nExiting...")
+        response = await agent_loop(
+            client=client,
+            messages=messages,
+            model=model,
+            max_tokens=max_tokens,
+            thinking=thinking,
+            tools=AVAILABLE_TOOLS
+        )
+        
+        # Get text content from response
+        text_content = ""
+        for block in response["content"]:
+            if block["type"] == "text" and block["text"]:
+                text_content += block["text"]
+        
+        # Add assistant response to history
+        messages.append({
+            "role": "assistant",
+            "content": text_content
+        })
+        
+        return messages
     except Exception as e:
-        print(f"\nUnexpected error: {e}")
+        logger.error(f"Error in sampling loop: {e}")
+        if api_response_callback:
+            api_response_callback(None, None, e)
+        raise
+    
+if __name__ == "__main__":
+    # Simple test of the agent loop
+    import nest_asyncio
+    nest_asyncio.apply()
+    
+    async def test_agent():
+        response = await chat_with_claude("Tell me about the Claude DC system")
+        print("\nResponse:", response)
+        
+        text_content = ""
+        for block in response["content"]:
+            if block["type"] == "text":
+                text_content += block["text"]
+        
+        print("\nText content:", text_content)
+        
+        if response["thinking"]:
+            print("\nThinking:", response["thinking"])
+    
+    asyncio.run(test_agent())
