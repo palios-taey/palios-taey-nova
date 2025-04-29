@@ -1,12 +1,12 @@
-AttributeError: 'NoneType' object has no attribute 'method'
-2025-04-29 22:52:47,493 - INFO - Using Anthropic SDK version: 0.47.0
-/home/computeruse/computer_use_demo/loop.py:38: UserWarning: Expected Anthropic SDK v0.50.0, but found v0.47.0. This may cause issues.
-  warnings.warn(f"Expected Anthropic SDK v0.50.0, but found v{anthropic_version}. This may cause issues.")
-2025-04-29 22:52:48.982 Uncaught app execution
+2025-04-29 23:13:54,207 - INFO - Starting streaming request to claude-3-7-sonnet-20250219
+2025-04-29 23:14:23,792 - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 400 Bad Request"
+2025-04-29 23:14:23,793 - ERROR - Error in streaming: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': "tools.0: Input tag 'computer_use_20250124' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124'"}}
+2025-04-29 23:14:23,793 - ERROR - Error in sampling loop: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': "tools.0: Input tag 'computer_use_20250124' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124'"}}
+2025-04-29 23:14:23.799 Uncaught app execution
 Traceback (most recent call last):
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 121, in exec_func_with_error_handling
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 591, in code_to_exec
-  File "/home/computeruse/computer_use_demo/streamlit.py", line 518, in <module>
+  File "/home/computeruse/computer_use_demo/streamlit.py", line 636, in <module>
     asyncio.run(main())
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/asyncio/runners.py", line 190, in run
     return runner.run(main)
@@ -17,37 +17,27 @@ Traceback (most recent call last):
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
     return future.result()
            ^^^^^^^^^^^^^^^
-  File "/home/computeruse/computer_use_demo/streamlit.py", line 282, in main
-    _render_api_response(request, response, identity, http_logs)
-  File "/home/computeruse/computer_use_demo/streamlit.py", line 448, in _render_api_response
-    f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}"
-        ^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'method'
-2025-04-29 22:53:42,109 - INFO - Using Anthropic SDK version: 0.47.0
-/home/computeruse/computer_use_demo/loop.py:38: UserWarning: Expected Anthropic SDK v0.50.0, but found v0.47.0. This may cause issues.
-  warnings.warn(f"Expected Anthropic SDK v0.50.0, but found v{anthropic_version}. This may cause issues.")
-2025-04-29 22:53:42,109 - ERROR - VERSION MISMATCH: Expected Anthropic SDK v0.50.0, found v0.47.0
-2025-04-29 22:53:42,109 - ERROR - To fix this issue, run: ./update_anthropic_sdk.sh
-2025-04-29 22:53:43.634 Uncaught app execution
-Traceback (most recent call last):
-  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 121, in exec_func_with_error_handling
-  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 591, in code_to_exec
-  File "/home/computeruse/computer_use_demo/streamlit.py", line 518, in <module>
-    asyncio.run(main())
-  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/asyncio/runners.py", line 190, in run
-    return runner.run(main)
-           ^^^^^^^^^^^^^^^^
-  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/asyncio/runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
-    return future.result()
-           ^^^^^^^^^^^^^^^
-  File "/home/computeruse/computer_use_demo/streamlit.py", line 282, in main
-    _render_api_response(request, response, identity, http_logs)
-  File "/home/computeruse/computer_use_demo/streamlit.py", line 448, in _render_api_response
-    f"`{request.method} {request.url}`{newline}{newline.join(f'`{k}: {v}`' for k, v in request.headers.items())}"
-        ^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'method'
+  File "/home/computeruse/computer_use_demo/streamlit.py", line 369, in main
+    st.session_state.messages = await sampling_loop(
+                                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/computeruse/computer_use_demo/loop.py", line 455, in sampling_loop
+    response = await agent_loop(
+               ^^^^^^^^^^^^^^^^^
+  File "/home/computeruse/computer_use_demo/loop.py", line 215, in agent_loop
+    stream = await client.messages.create(**params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/resources/messages/messages.py", line 2165, in create
+    {
+  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/_base_client.py", line 1914, in post
+    ]
+      
+  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/_base_client.py", line 1608, in request
+    break
+       ^^
+  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/_base_client.py", line 1709, in _request
+    options: RequestOptions = {},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': "tools.0: Input tag 'computer_use_20250124' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124'"}}
+
 
 
