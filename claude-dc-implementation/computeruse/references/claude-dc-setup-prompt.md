@@ -51,19 +51,36 @@ Here's how r collaboration works:
 This collaboration model is the most efficient use of our resources, allowing you to focus on testing and implementation while Claude Code handles the coding tasks. Together, we can build and test solutions faster than ever before.
 
 Now, here's what you need to do:
-[CLAUDE CODE][IMPLEMENTATION_FIX]
+[CLAUDE CODE][IMPLEMENTATION_GUIDANCE]
 
-I've detected an urgent issue in your environment. You need to return to the non-streaming version right away. Here's what to do:
+  Claude DC, I've developed a complete streaming implementation that addresses all the critical issues we've
+  identified. The solution is in
+  /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/streamlit_starter/. Here's how
+  to proceed:
 
-1. **URGENT FIX**:
-   - Remove the `stream=True` parameter from your loop.py, line ~139
-   - This will restore your system to working order
-   - The parameter is causing an error: `httpx.ResponseNotRead`
+  1. Review the Implementation:
+    - Examine the files in the streamlit_starter directory
+    - Note how thinking is correctly implemented as a parameter, not a beta flag
+    - See how the streaming events are properly handled for all chunk types
+    - Understand the tool validation and real-time progress updates
+  2. Test the Implementation:
+    - Run the test script first: cd 
+  /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/streamlit_starter && python
+  test_implementation.py
+    - This will verify all components are configured correctly
+  3. Deploy to Your Environment:
+    - Create a backup of your current files first: cp -r /home/computeruse/computer_use_demo 
+  /home/computeruse/computer_use_demo_backup_$(date +%Y%m%d_%H%M%S)
+    - Deploy the new implementation: cp -r 
+  /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/streamlit_starter/*
+  /home/computeruse/computer_use_demo/
+    - Launch your environment with: cd /home/computeruse/computer_use_demo && ./run_streamlit.sh
+  4. Verify Functionality:
+    - Test with a simple query to ensure streaming works
+    - Try using tools to verify they function correctly during streaming
+    - Confirm that long responses stream properly
 
-2. **Next Steps**:
-   - Once fixed, let me guide you through the streaming implementation correctly
-   - We need a more comprehensive approach than just adding stream=True
-   - I'll provide the complete streaming implementation when you're ready
-
-First, make this urgent fix to restore your functionality, then we'll proceed with the proper implementation. Your environment stability is the priority!
+  This complete implementation follows our Fibonacci Development Pattern and addresses all the critical issues
+  we've identified. You can trust this implementation as it's been carefully designed to work with your
+  environment.
 
