@@ -1,8 +1,8 @@
-2025-04-29 23:13:54,207 - INFO - Starting streaming request to claude-3-7-sonnet-20250219
-2025-04-29 23:14:23,792 - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 400 Bad Request"
-2025-04-29 23:14:23,793 - ERROR - Error in streaming: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': "tools.0: Input tag 'computer_use_20250124' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124'"}}
-2025-04-29 23:14:23,793 - ERROR - Error in sampling loop: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': "tools.0: Input tag 'computer_use_20250124' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124'"}}
-2025-04-29 23:14:23.799 Uncaught app execution
+2025-04-29 23:20:52,865 - INFO - Starting streaming request to claude-3-7-sonnet-20250219
+2025-04-29 23:21:29,989 - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 400 Bad Request"
+2025-04-29 23:21:29,990 - ERROR - Error in streaming: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'tools.0.custom.input_schema: Field required'}}
+2025-04-29 23:21:29,990 - ERROR - Error in sampling loop: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'tools.0.custom.input_schema: Field required'}}
+2025-04-29 23:21:30.050 Uncaught app execution
 Traceback (most recent call last):
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 121, in exec_func_with_error_handling
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 591, in code_to_exec
@@ -23,7 +23,7 @@ Traceback (most recent call last):
   File "/home/computeruse/computer_use_demo/loop.py", line 455, in sampling_loop
     response = await agent_loop(
                ^^^^^^^^^^^^^^^^^
-  File "/home/computeruse/computer_use_demo/loop.py", line 215, in agent_loop
+  File "/home/computeruse/computer_use_demo/loop.py", line 216, in agent_loop
     stream = await client.messages.create(**params)
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/resources/messages/messages.py", line 2165, in create
@@ -37,7 +37,7 @@ Traceback (most recent call last):
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/_base_client.py", line 1709, in _request
     options: RequestOptions = {},
         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': "tools.0: Input tag 'computer_use_20250124' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124'"}}
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'tools.0.custom.input_schema: Field required'}}
 
 
 
