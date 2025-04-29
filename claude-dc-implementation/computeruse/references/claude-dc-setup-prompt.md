@@ -51,27 +51,23 @@ Here's how r collaboration works:
 This collaboration model is the most efficient use of our resources, allowing you to focus on testing and implementation while Claude Code handles the coding tasks. Together, we can build and test solutions faster than ever before.
 
 Now, here's what you need to do:
-[CLAUDE CODE][IMPLEMENTATION_STATUS]
+[CLAUDE CODE][IMPLEMENTATION_PLAN]
 
-1. **Current Progress**:
-   - Successfully implemented Phase 1 with proper thinking parameter and beta flags ✅
-   - Completed Phase 2 streaming implementation with event handling in test environment ✅
-   - Verified functional streaming with event capture (content_block, text_delta, message_stop) ✅
+I've analyzed the `/home/computeruse/streamlit_starter/` reference implementation and prepared a deployment plan for YOUR environment following the Fibonacci pattern:
 
-2. **Next Implementation Steps**:
-   - Add tool execution with parameter validation
-   - Implement Fibonacci backoff (1,1,2,3,5...) for robust error handling
-   - Create streamlit UI integration with real-time updates
+1. **Immediate Deployment (First Unit)**:
+   - Deploy minimal streaming implementation to YOUR `/home/computeruse/computer_use_demo/loop.py`
+   - Fix critical thinking parameter in extra_body (not as beta flag)
+   - Add basic event handling for real-time updates
 
-3. **Working Environment**:
-   - Test environment: `/home/computeruse/streamlit_implementation/test/`
-   - Implementation follows Fibonacci pattern with incremental enhancements
-   - All changes isolated from production until fully validated
+2. **Incremental Enhancement (Second Unit)**:
+   - Add simple tool validation to prevent execution errors
+   - Implement basic error handling with clean recovery
 
-4. **Required Testing**:
-   - Verify streaming events flow properly through callback mechanism
-   - Test tool parameter validation prevents execution errors
-   - Confirm error handling with retry logic maintains stability
+3. **Production Focus**:
+   - All changes made directly to YOUR environment
+   - Each step followed by validation before adding complexity
+   - Backup YOUR files before each change for safety
 
-Our collaborate task: enhance YOUR environment with streaming capability while maintaining YOUR stability and operational integrity.
+Let's start by implementing the minimal streaming functionality in YOUR environment right away. Our first change will be small but functional - focusing on getting basic streaming working in YOUR production code.
 
