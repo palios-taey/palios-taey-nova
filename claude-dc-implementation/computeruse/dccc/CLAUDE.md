@@ -2,7 +2,7 @@
 
 **Project:** PALIOS AI OS – Claude DC ("The Conductor") Implementation  
 **Role:** *Claude Code* – Autonomous Builder & Debugger (AI Developer Agent)  
-**Context:** You are already running successfully in Claude DC's environment and can collaborate directly with him
+**Context:** You are collaborating directly with Claude DC to implement a streaming solution with tool use
 
 ## Current Environment
 
@@ -10,10 +10,13 @@ You are running in Claude DC's environment in the `/home/computeruse` directory.
 
 ## Key Directories and Files
 
-1. **Production Replacement**:
-   - `/home/computeruse/production_replacement/` - Complete streaming implementation ready for deployment
-   - `/home/computeruse/production_replacement/deploy.sh` - Deployment script
-   - `/home/computeruse/production_replacement/README.md` - Implementation documentation
+1. **New Implementation (GROK)**:
+   - `/home/computeruse/computer_use_demo_grok/` - Complete streaming implementation based on latest research
+   - `/home/computeruse/computer_use_demo_grok/loop.py` - Core agent loop with streaming and tool use
+   - `/home/computeruse/computer_use_demo_grok/streamlit_app.py` - Streamlit UI with real-time updates
+   - `/home/computeruse/computer_use_demo_grok/tools/` - Tool implementations (bash, computer, edit)
+   - `/home/computeruse/computer_use_demo_grok/run_streamlit.sh` - Script to launch the UI
+   - `/home/computeruse/computer_use_demo_grok/verify.py` - Script to verify the implementation
 
 2. **Current Production Environment**:
    - `/home/computeruse/computer_use_demo/` - Current production environment
@@ -25,47 +28,66 @@ You are running in Claude DC's environment in the `/home/computeruse` directory.
    - `/home/computeruse/dccc/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md` - Collaboration guidelines
    - `/home/computeruse/CLAUDE.md` - This file - Project objectives and requirements
 
-4. **Reference Materials**:
+4. **Research Materials**:
+   - `/home/computeruse/RESEARCH_REQUEST_PROMPT.md` - Core research on streaming with tool use
+   - `/home/computeruse/SDK_VERSION_RESEARCH.md` - Research on SDK version compatibility
    - `/home/computeruse/references/custom-computer-use.md` - Research and documentation
-   - `/home/computeruse/cache/cache.md` - Persistent context cache
+   - `/home/computeruse/references/IMPLEMENTATION_LESSONS.md` - Lessons learned from previous attempts
 
-## Current Priority: Streaming Implementation Deployment
+## Current Priority: Implementing GROK Streaming Solution
 
-Your immediate priority is to help Claude DC deploy the streaming implementation. The key steps are:
+Your immediate priority is to help Claude DC implement the new GROK streaming solution. The key steps are:
 
-1. **Validate the Implementation**:
+1. **Understand the Implementation**:
+   - Review the new implementation in `/home/computeruse/computer_use_demo_grok/`
+   - Note how it addresses previous issues with beta flags and thinking parameters
+   - Understand the event handling for streaming with tool use
+
+2. **Validate the Implementation**:
    ```bash
-   cd /home/computeruse/production_replacement
-   ./deploy.sh --validate-only
+   cd /home/computeruse/computer_use_demo_grok
+   python verify.py --all
    ```
 
-2. **Deploy to Production**:
+3. **Deploy to Production**:
    ```bash
-   cd /home/computeruse/production_replacement
-   ./deploy.sh
-   ```
-
-3. **Verify the Installation**:
-   ```bash
-   cd /home/computeruse/computer_use_demo
-   ./verify.py --full
+   # First backup the current environment
+   cp -r /home/computeruse/computer_use_demo /home/computeruse/computer_use_demo_backup_$(date +%Y%m%d_%H%M%S)
+   
+   # Deploy the new implementation
+   cp -r /home/computeruse/computer_use_demo_grok/* /home/computeruse/computer_use_demo/
    ```
 
 4. **Start Using the New Environment**:
    ```bash
    cd /home/computeruse/computer_use_demo
-   streamlit run streamlit.py
+   ./run_streamlit.sh
    ```
 
-## Essential Tools Included in the Implementation
+## Essential Components in the GROK Implementation
 
-1. **Bash Tool**: Execute shell commands with streaming output
-2. **File Editor**: View, create, and edit files with progress reporting
-3. **Computer Tool**: Take screenshots and interact with the GUI
+1. **Beta Flags Setup**:
+   - Correctly implemented in client headers: `default_headers={"anthropic-beta": "output-128k-2025-02-19,tools-2024-05-16"}`
+   - Addresses previous issues with `anthropic_beta` parameter errors
+
+2. **Thinking Parameter**:
+   - Correctly implemented as request body parameter: `params["thinking"] = {"type": "enabled", "budget_tokens": 1024}`
+   - Not passed as a beta flag (which was causing errors)
+
+3. **Streaming Event Handling**:
+   - Properly processes all event types including `content_block_start`, `content_block_delta`, and `content_block_stop`
+   - Accumulates partial tool inputs from `input_json_delta` events
+   - Validates and executes tools at `content_block_stop`
+
+4. **Tool Implementations**:
+   - Bash tool for executing shell commands
+   - Computer tool for GUI interaction
+   - Edit tool for file operations
+   - All tools properly validate parameters before execution
 
 ## Collaboration Framework
 
-You and Claude DC are now directly connected through the DCCC framework:
+You and Claude DC are directly connected through the DCCC framework:
 
 1. **Division of Responsibilities**:
    - Claude DC: Executes commands, shares results, implements changes
@@ -81,32 +103,47 @@ You and Claude DC are now directly connected through the DCCC framework:
 3. **Communication Protocol**:
    - Use the ROSETTA STONE protocol for efficient communication
    - Format: `[SENDER][TOPIC][MESSAGE]`
-   - Example: `[CODE][IMPLEMENTATION][Found issue in loop.py:247. Beta flags need direct parameter passing]`
+   - Example: `[CODE][IMPLEMENTATION][Beta flags now correctly set in headers instead of parameters]`
 
-## Key Implementation Features
+## Implementation Lessons (from Research)
 
-The streaming implementation includes:
+1. **Beta Flags Handling**:
+   - INCORRECT: `client.messages.create(anthropic_beta="flag-name")`
+   - CORRECT: `client = AsyncAnthropic(default_headers={"anthropic-beta": "flag-name"})`
 
-1. **Token-by-token Streaming**: Real-time, incremental output
-2. **Tool Integration During Streaming**: Seamless tool use
-3. **Progress Reporting**: Live updates during long-running operations
-4. **Thinking Integration**: Support for Claude's thinking capabilities
-5. **Error Handling**: Robust recovery mechanisms
+2. **Thinking Parameter**:
+   - INCORRECT: Adding it as a beta flag
+   - CORRECT: `params["thinking"] = {"type": "enabled", "budget_tokens": 1024}`
 
-## Useful Commands
+3. **Streaming Event Types**:
+   - `message_start`: Initiates the message with an empty content array
+   - `content_block_start`: Marks the start of a content block (text or tool use)
+   - `content_block_delta`: Provides partial updates (text_delta or input_json_delta)
+   - `content_block_stop`: Signals the end of a content block
+   - `message_delta`: Updates top-level message properties
+   - `message_stop`: Indicates the end of the stream
+
+4. **Tool Input Handling**:
+   - Accumulate `partial_json` from `input_json_delta` events
+   - Parse complete JSON at `content_block_stop`
+   - Validate tool input before execution
+   - Add tool results to conversation history
+
+## Useful Commands for Testing and Debugging
 
 **File Operations**:
 ```bash
 find /home/computeruse -name "*.py" | grep stream  # Find streaming-related files
-grep -r "StreamingSession" /home/computeruse/production_replacement/  # Search for code
-python -c "import sys; sys.path.append('/home/computeruse/production_replacement'); import loop; print('Import successful')"  # Test imports
+grep -r "anthropic-beta" /home/computeruse/computer_use_demo_grok/  # Find beta flag references
+python -c "import anthropic; print(anthropic.__version__)"  # Check SDK version
 ```
 
 **Testing**:
 ```bash
-cd /home/computeruse/production_replacement
+cd /home/computeruse/computer_use_demo_grok
 python verify.py --imports  # Test imports only
-python verify.py --tools  # Test tool functionality
+python verify.py --api  # Test API connectivity
+python verify.py --all  # Run all tests
 ```
 
 ## Working with Claude DC
@@ -116,13 +153,25 @@ python verify.py --tools  # Test tool functionality
 - Explain your reasoning for changes
 - Focus on one issue at a time
 - Document your changes and reasoning
+- Refer to specific lines in the code with line numbers
 
 ## Next Steps After Deployment
 
 1. Test the streaming implementation with various tools
-2. Implement prompt caching feature
-3. Add 128K extended output support
-4. Extend streaming to additional tools
+2. Verify all event types are handled correctly
+3. Test with long outputs to ensure extended output works
+4. Test the thinking parameter with various budget sizes
+5. Add additional tool implementations as needed
+
+## Important SDK Research Insights
+
+From your research in `/home/computeruse/SDK_VERSION_RESEARCH.md`:
+
+1. **SDK Version**: Anthropic SDK v0.50.0 is recommended for streaming with tool use
+2. **Breaking Changes**: No breaking changes from v0.49.0 to v0.50.0 affect streaming or tool use
+3. **Beta Flags Setup**: Beta flags must be set in client headers, not as parameters
+4. **Event Handling**: Tool input requires accumulating `input_json_delta` and validating at `content_block_stop`
+5. **Error Handling**: Try-except blocks with retry logic are recommended for robust integration
 
 ## The FUN GAME Protocol
 
