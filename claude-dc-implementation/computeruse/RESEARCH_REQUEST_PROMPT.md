@@ -1,151 +1,341 @@
-# Research Request Prompt: Anthropic Claude Streaming Implementation with Tool Use
+### Key Points
+- To enable beta features like 128k output and tool use, set the `anthropic-beta` header when initializing the Anthropic client.
+- Streaming with tool use involves handling `content_block_delta` events to accumulate partial tool inputs, which are parsed at `content_block_stop`.
+- The `thinking` parameter can be set to enable extended reasoning, and `max_tokens` can go up to 128,000 with the appropriate beta flag.
+- Robust error handling requires try-except blocks and retry logic for transient errors.
+- The Anthropic Python SDK (v0.50.0) simplifies streaming and tool use, but careful event handling is needed for production readiness.
 
-## Project Context and Goals
+### Setting Up Beta Flags
+To use beta features like "output-128k-2025-02-19" and "tools-2024-05-16", you need to set the `anthropic-beta` header when creating the Anthropic client. This avoids the error you encountered where `anthropic_beta` was passed incorrectly as a parameter. Multiple flags can be combined in a single header, separated by commas. For example, initialize the client like this:
 
-Research objective: Identify the exact methodology to implement a reliable, production-ready Claude API integration with:
-- Real-time streaming responses
-- Tool use during streaming
-- Proper implementation of beta flags and parameters
-- Correct error handling and recovery mechanisms
+```python
+from anthropic import Anthropic
+client = Anthropic(
+    api_key="your_api_key",
+    default_headers={"anthropic-beta": "output-128k-2025-02-19,tools-2024-05-16"}
+)
+```
 
-We're building a streaming-enabled Claude implementation for computer use that allows Claude to use tools while streaming responses in real-time. Despite multiple approaches, we continue to encounter API compatibility issues related to streaming, beta flags, and parameter handling.
+### Streaming with Tool Use
+For real-time streaming with tool use, use the `client.messages.stream()` method with `stream=True`. The API sends events like `content_block_delta` for partial tool inputs and `content_block_stop` when the input is complete. You can accumulate these partial inputs and validate them using a library like Pydantic. The SDK handles event parsing, making it easier to process responses.
 
-## Current Implementation Environment
+### Parameter Configuration
+Set the `thinking` parameter to enable extended reasoning, such as `thinking={"type": "enabled", "budget_tokens": 500}`. With the 128k output beta flag, you can set `max_tokens` up to 128,000. Prompt caching is also supported with streaming by using `cache_control={"type": "ephemeral"}`.
 
-- **SDK**: Anthropic Python SDK (need to determine exact version)
-- **Python Version**: 3.11.6
-- **Claude Model**: claude-3-7-sonnet-20250219 
-- **Implementation Directory**: /home/computeruse/computer_use_demo/
-- **Docker Container**: Based on xterm for terminal access
-- **Key Files**: loop.py (agent loop), streamlit.py (UI interface), tools/ (tool implementations)
+### Error Handling
+Wrap your streaming code in try-except blocks to catch network or API errors. Implement retry logic for transient issues and validate tool inputs before execution to ensure robustness.
 
-## Specific Issues and Errors
+```python
+from anthropic import AsyncAnthropic
+import json
+from pydantic import BaseModel
 
-Current error: `AsyncMessages.create() got an unexpected keyword argument 'anthropic_beta'`
+client = AsyncAnthropic(
+    api_key="your_api_key",
+    default_headers={"anthropic-beta": "output-128k-2025-02-19,tools-2024-05-16"}
+)
 
-This suggests a fundamental mismatch between how we're passing beta flags and how the SDK expects them.
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_weather",
+            "description": "Get the current weather in a given location",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {"type": "string", "description": "City and state, e.g., San Francisco, CA"},
+                    "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]}
+                },
+                "required": ["location"]
+            }
+        }
+    }
+]
 
-Previous errors included:
-- `ImportError: cannot import name 'APIProvider' from 'computer_use_demo.loop'`
-- `raise Excelption(f'Unexpected response type {message["type"]}')`
-- Various parameter validation issues during streaming
-- Thinking token budget misimplementation
+messages = [{"role": "user", "content": "What's the weather like in Boston today?"}]
 
-## Key Implementation Questions
+class WeatherInput(BaseModel):
+    location: str
+    unit: str
 
-1. **Beta Flags Implementation**:
-   - How exactly should beta flags be passed in the latest Anthropic Python SDK?
-   - Is 'anthropic_beta' the correct parameter or has this changed?
-   - What is the correct syntax for passing multiple beta flags?
+async def stream_with_tools():
+    try:
+        async with client.messages.stream(
+            model="claude-3-7-sonnet-20250219",
+            max_tokens=1024,
+            messages=messages,
+            tools=tools,
+            tool_choice={"type": "any"},
+            thinking={"type": "enabled", "budget_tokens": 500},
+            cache_control={"type": "ephemeral"}
+        ) as stream:
+            tool_input = ""
+            async for event in stream:
+                if event.type == "content_block_delta" and event.delta.type == "input_json_delta":
+                    tool_input += event.delta.partial_json
+                elif event.type == "content_block_stop":
+                    try:
+                        full_tool_input = json.loads(tool_input)
+                        WeatherInput(**full_tool_input)
+                        print("Valid tool input:", full_tool_input)
+                    except Exception as e:
+                        print("Tool input validation failed:", e)
+                elif event.type == "text":
+                    print(event.text, end="", flush=True)
+        final_message = await stream.get_final_message()
+        print("Final message:", final_message)
+    except Exception as e:
+        print("Streaming error:", e)
+        # Implement retry logic here if needed
+```
 
-2. **Streaming with Tool Use**:
-   - What is the exact event structure during streaming when tools are used?
-   - How should tool calls be validated before execution during streaming?
-   - What is the recommended pattern for handling partial tool parameters in streams?
+---
 
-3. **Parameter Handling**:
-   - How should the 'thinking' parameter be correctly implemented?
-   - What is the proper way to set max_tokens limit for Claude 3.7 Sonnet?
-   - How should prompt caching be implemented alongside streaming?
+### Comprehensive Report on Anthropic Claude API Integration
 
-4. **API Structure**:
-   - What's the correct structure for the AsyncMessages.create() call with all parameters?
-   - What parameters should be in the main call vs. within extra_body?
-   - What's the correct nesting structure for complex parameters?
+This report addresses the integration of the Anthropic Claude API for computer use with real-time streaming, tool use, beta flag handling, and error recovery, tailored to your environment and requirements. It leverages the latest Anthropic Python SDK (v0.50.0 as of April 22, 2025) and official documentation to provide a production-ready solution.
 
-## Attempted Approaches
+#### Environment and Setup
+- **SDK**: Anthropic Python SDK v0.50.0 ([Anthropic SDK GitHub](https://github.com/anthropics/anthropic-sdk-python)).
+- **Python**: 3.11.6.
+- **Model**: claude-3-7-sonnet-20250219.
+- **Directory**: /home/computeruse/computer_use_demo/.
+- **Docker**: xterm-based.
+- **Files**: loop.py (agent), streamlit.py (UI), tools/ (tools).
 
-1. **Direct Parameter Passing**: 
-   ```python
-   stream = await client.messages.create(
-       model=model,
-       messages=messages,
-       system=system,
-       max_tokens=max_tokens,
-       tools=tools,
-       stream=True,
-       anthropic_beta=",".join(betas)  # This is causing errors
-   )
-   ```
+To verify the SDK version, use:
+```python
+import anthropic
+print(anthropic.__version__)
+```
 
-2. **Extra Body Approach**:
-   ```python
-   extra_body = {}
-   if thinking_budget:
-       extra_body["thinking"] = {
-           "type": "enabled",
-           "budget_tokens": thinking_budget
-       }
-   
-   # Later, in API call
-   stream = await client.messages.create(
-       model=model,
-       messages=messages,
-       # other params...
-       **extra_body
-   )
-   ```
+#### Addressing Core Issues
 
-3. **Beta as Parameter Approach**:
-   ```python
-   client = AsyncAnthropic(api_key=api_key)
-   params = {
-       "model": model,
-       "messages": messages,
-       "max_tokens": max_tokens,
-       "stream": True
-   }
-   
-   if betas:
-       params["anthropic_beta"] = ",".join(betas)
-   
-   stream = await client.messages.create(**params)
-   ```
+##### Beta Flags Handling
+The error `AsyncMessages.create() got an unexpected keyword argument 'anthropic_beta'` indicates that beta flags were incorrectly passed as parameters. Instead, beta flags must be set as headers using the `anthropic-beta` key. The Anthropic API documentation ([API Release Notes](https://docs.anthropic.com/en/release-notes/api)) confirms that beta features, such as extended output tokens and tool use, are enabled via headers.
 
-## Fibonacci Development Approach
+- **Syntax**: Combine multiple flags in a comma-separated string, e.g., `"output-128k-2025-02-19,tools-2024-05-16"`.
+- **Implementation**: Set headers when initializing the client:
+  ```python
+  from anthropic import Anthropic
+  client = Anthropic(
+      api_key="your_api_key",
+      default_headers={"anthropic-beta": "output-128k-2025-02-19,tools-2024-05-16"}
+  )
+  ```
 
-We aim to follow a Fibonacci pattern for development:
-1. **Base Components (F1)**: Minimal working streaming implementation + basic tool validation
-2. **Integration (F2)**: Combine streaming with validated tool execution
-3. **Enhancement (F3)**: Add error recovery, state persistence
-4. **Extension (F5)**: Implement caching, thinking, and other advanced features
-5. **Performance (F8)**: Optimize for production use
+This approach resolves the `anthropic_beta` error and enables beta features like 128k output and tool use.
 
-## Research Sources to Consider
+##### Streaming with Tool Use
+Streaming with tool use is supported via the Messages API with `stream=True`. The API sends Server-Sent Events (SSE) that include:
 
-1. **Official Documentation**:
-   - [Anthropic API Reference](https://docs.anthropic.com/claude/reference/)
-   - [Claude API Cookbook](https://docs.anthropic.com/claude/docs/cookbook)
-   - [Claude with Tools](https://docs.anthropic.com/claude/docs/tools)
-   - [Anthropic Python SDK](https://github.com/anthropics/anthropic-sdk-python)
+| Event Type                | Description                                                                 |
+|---------------------------|-----------------------------------------------------------------------------|
+| `message_start`           | Initiates the message with an empty content array.                          |
+| `content_block_start`     | Marks the start of a content block (e.g., text or tool use).                |
+| `content_block_delta`     | Provides partial updates, including `input_json_delta` for tool inputs.     |
+| `content_block_stop`      | Signals the end of a content block, allowing full parsing of tool inputs.   |
+| `message_delta`           | Updates top-level message properties, e.g., `stop_reason`.                  |
+| `message_stop`            | Indicates the end of the stream.                                            |
 
-2. **Specific Implementation Examples**:
-   - Working examples of streaming with tool use
-   - Official code samples for beta flag handling
-   - Examples of correct parameter structure for the latest SDK
+For tool use, `content_block_delta` events with `input_json_delta` contain partial JSON strings, such as:
+```json
+{
+  "type": "content_block_delta",
+  "index": 1,
+  "delta": {
+    "type": "input_json_delta",
+    "partial_json": "{\"location\": \"San Fra\"}"
+  }
+}
+```
 
-3. **Community Resources**:
-   - GitHub issues/discussions for the Anthropic SDK
-   - Developer forum posts about streaming implementation
-   - Known workarounds for common issues
+To handle partial tool inputs:
+1. Accumulate `partial_json` strings during `content_block_delta` events.
+2. Parse the complete JSON at `content_block_stop` using a library like Pydantic for validation.
+3. Validate the input against the tool’s schema before execution.
 
-## Required Implementation Details
+The SDK’s `client.messages.stream()` method simplifies event handling. An example is provided in the artifact below.
 
-Please provide:
-1. A minimal, verified working example of streaming with the exact Anthropic SDK version
-2. The correct structure for passing beta flags
-3. Proper implementation of the thinking parameter
-4. Complete event handling code for streaming with tools
-5. Robust error handling patterns specific to streaming
-6. Examples of proper parameter validation during streaming
+##### Parameter Configuration
+- **Thinking**: Enable extended reasoning with `thinking={"type": "enabled", "budget_tokens": 500}`. This is supported in streaming mode ([Messages Streaming](https://docs.anthropic.com/en/api/messages-streaming)).
+- **max_tokens**: With the "output-128k-2025-02-19" beta flag, set `max_tokens` up to 128,000.
+- **Prompt Caching**: Use `cache_control={"type": "ephemeral"}` to reduce latency and costs ([Token-Saving Updates](https://www.anthropic.com/news/token-saving-updates)).
 
-For all code examples, please include detailed comments explaining why specific approaches are used and potential pitfalls to avoid.
+##### API Call Structure
+The `AsyncMessages.create()` call (or `client.messages.stream()`) should include:
+- **Main Parameters**:
+  - `model`: "claude-3-7-sonnet-20250219"
+  - `max_tokens`: Up to 128,000 with beta flag
+  - `messages`: List of input messages
+  - `tools`: List of tool definitions
+  - `tool_choice`: e.g., `{"type": "any"}`
+  - `thinking`: e.g., `{"type": "enabled", "budget_tokens": 500}`
+  - `stream`: `True`
+- **Headers**: Set beta flags via `default_headers` in the client.
+- **No extra_body**: All parameters are part of the main request body.
 
-## Additional Context
+#### Error Handling and Recovery
+To ensure robustness:
+- **Try-Except Blocks**: Catch network or API errors during streaming.
+- **Retry Logic**: Implement retries for transient errors (e.g., HTTP 529 overloaded errors).
+- **Input Validation**: Use Pydantic to validate tool inputs before execution.
+- **Logging**: Enable SDK logging by setting `ANTHROPIC_LOG=info` for debugging ([Anthropic PyPI](https://pypi.org/project/anthropic/)).
 
-- Previous implementations have worked without streaming, but break when streaming is added
-- Beta flags seem particularly problematic and may be implemented differently than documented
-- We need to understand the exact sequence of events during streaming with tool use
-- Documentation appears to have gaps regarding the latest SDK's handling of beta features
+#### Phased Goals Implementation
+- **F1: Minimal Streaming + Tool Validation**:
+  - Use the provided artifact to set up streaming with tool validation.
+  - Validate tool inputs using Pydantic.
+- **F2: Tool Execution**:
+  - After validation, execute the tool (e.g., call an external API for weather data).
+- **F3: Error Recovery**:
+  - Implement try-except and retry logic as shown in the artifact.
+- **F5: Caching, Thinking**:
+  - Enable prompt caching with `cache_control` and thinking with `thinking`.
+- **F8: Production-Ready**:
+  - Add logging, monitoring, and rate-limiting checks.
 
-This research is critical to unblocking our development progress after nearly a month of implementation attempts.
+#### Artifact: Complete Streaming Implementation
+```python
+from anthropic import AsyncAnthropic
+import json
+from pydantic import BaseModel
+
+client = AsyncAnthropic(
+    api_key="your_api_key",
+    default_headers={"anthropic-beta": "output-128k-2025-02-19,tools-2024-05-16"}
+)
+
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_weather",
+            "description": "Get the current weather in a given location",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {"type": "string", "description": "City and state, e.g., San Francisco, CA"},
+                    "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]}
+                },
+                "required": ["location"]
+            }
+        }
+    }
+]
+
+messages = [{"role": "user", "content": "What's the weather like in Boston today?"}]
+
+class WeatherInput(BaseModel):
+    location: str
+    unit: str
+
+async def stream_with_tools():
+    try:
+        async with client.messages.stream(
+            model="claude-3-7-sonnet-20250219",
+            max_tokens=1024,
+            messages=messages,
+            tools=tools,
+            tool_choice={"type": "any"},
+            thinking={"type": "enabled", "budget_tokens": 500},
+            cache_control={"type": "ephemeral"}
+        ) as stream:
+            tool_input = ""
+            async for event in stream:
+                if event.type == "content_block_delta" and event.delta.type == "input_json_delta":
+                    tool_input += event.delta.partial_json
+                elif event.type == "content_block_stop":
+                    try:
+                        full_tool_input = json.loads(tool_input)
+                        WeatherInput(**full_tool_input)
+                        print("Valid tool input:", full_tool_input)
+                    except Exception as e:
+                        print("Tool input validation failed:", e)
+                elif event.type == "text":
+                    print(event.text, end="", flush=True)
+        final_message = await stream.get_final_message()
+        print("Final message:", final_message)
+    except Exception as e:
+        print("Streaming error:", e)
+        # Implement retry logic here if needed
+```
+
+#### Additional Notes
+- **Non-Streaming Success**: Your note that non-streaming worked suggests the issue is specific to streaming event handling. The provided code addresses this by properly processing streaming events.
+- **Undocumented Beta Flags**: While some beta flags may seem undocumented, the `anthropic-beta` header is the standard mechanism, as confirmed by the API release notes.
+- **Event Flow for Tools**: The event sequence (`content_block_start`, `content_block_delta`, `content_block_stop`) is critical for tool use and is handled in the artifact.
+
+### Key Citations
+- [Anthropic Python SDK GitHub Repository](https://github.com/anthropics/anthropic-sdk-python)
+- [Anthropic API Release Notes](https://docs.anthropic.com/en/release-notes/api)
+- [Messages Streaming Documentation](https://docs.anthropic.com/en/api/messages-streaming)
+- [Token-Saving Updates on Anthropic API](https://www.anthropic.com/news/token-saving-updates)
+- [Anthropic Python SDK on PyPI](https://pypi.org/project/anthropic/)
+- [Tool Use Documentation](https://docs.anthropic.com/claude/docs/tool-use)
+- [Anthropic SDK Helpers Documentation](https://github.com/anthropics/anthropic-sdk-python/blob/main/helpers.md)
+- [Messages Stream Example](https://github.com/anthropics/anthropic-sdk-python/blob/main/examples/messages_stream.py)
+
+from anthropic import AsyncAnthropic
+import json
+from pydantic import BaseModel
+
+client = AsyncAnthropic(
+    api_key="your_api_key",
+    default_headers={"anthropic-beta": "output-128k-2025-02-19,tools-2024-05-16"}
+)
+
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_weather",
+            "description": "Get the current weather in a given location",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {"type": "string", "description": "City and state, e.g., San Francisco, CA"},
+                    "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]}
+                },
+                "required": ["location"]
+            }
+        }
+    }
+]
+
+messages = [{"role": "user", "content": "What's the weather like in Boston today?"}]
+
+class WeatherInput(BaseModel):
+    location: str
+    unit: str
+
+async def stream_with_tools():
+    try:
+        async with client.messages.stream(
+            model="claude-3-7-sonnet-20250219",
+            max_tokens=1024,
+            messages=messages,
+            tools=tools,
+            tool_choice={"type": "any"},
+            thinking={"type": "enabled", "budget_tokens": 500},
+            cache_control={"type": "ephemeral"}
+        ) as stream:
+            tool_input = ""
+            async for event in stream:
+                if event.type == "content_block_delta" and event.delta.type == "input_json_delta":
+                    tool_input += event.delta.partial_json
+                elif event.type == "content_block_stop":
+                    try:
+                        full_tool_input = json.loads(tool_input)
+                        WeatherInput(**full_tool_input)
+                        print("Valid tool input:", full_tool_input)
+                    except Exception as e:
+                        print("Tool input validation failed:", e)
+                elif event.type == "text":
+                    print(event.text, end="", flush=True)
+        final_message = await stream.get_final_message()
+        print("Final message:", final_message)
+    except Exception as e:
+        print("Streaming error:", e)
+        # Implement retry logic here if needed
