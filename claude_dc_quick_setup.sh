@@ -21,7 +21,7 @@ cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/compute
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/* /home/computeruse/references/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/bin/* /home/computeruse/bin/
 cp -r /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/dccc/* /home/computeruse/dccc/
-cp /home/computeruse/github/palios-taey-nova/CLAUDE.md /home/computeruse/
+cp /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/CLAUDE.md /home/computeruse/
 
 # Setup git config
 git config --global user.email "jesselarose@gmail.com"
