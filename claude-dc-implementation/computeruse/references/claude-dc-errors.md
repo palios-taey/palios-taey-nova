@@ -1,8 +1,8 @@
-2025-04-30 02:36:50.396 Uncaught app execution
+2025-04-30 02:43:42.340 Uncaught app execution
 Traceback (most recent call last):
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 121, in exec_func_with_error_handling
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 591, in code_to_exec
-  File "/home/computeruse/computer_use_demo/streamlit.py", line 640, in <module>
+  File "/home/computeruse/computer_use_demo/streamlit.py", line 656, in <module>
     asyncio.run(main())
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/asyncio/runners.py", line 190, in run
     return runner.run(main)
@@ -13,10 +13,14 @@ Traceback (most recent call last):
   File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
     return future.result()
            ^^^^^^^^^^^^^^^
-  File "/home/computeruse/computer_use_demo/streamlit.py", line 316, in main
-    Sender.TOOL, st.session_state.tools[block["tool_use_id"]]
-                                        ~~~~~^^^^^^^^^^^^^^^
-KeyError: 'tool_use_id'
+  File "/home/computeruse/computer_use_demo/streamlit.py", line 331, in main
+    _render_message(
+  File "/home/computeruse/computer_use_demo/streamlit.py", line 638, in _render_message
+    if message["type"] == "text":
+       ~~~~~~~^^^^^^^^
+KeyError: 'type'
+
+
 
 
 
