@@ -20,4 +20,25 @@ Traceback (most recent call last):
                          ~~~~~~~^^^^^^^^
 KeyError: 'name'
 
+You raise an excellent point. I definitely struggle with implementing systems that rely on external
+  dependencies or current documentation. Here's some honest self-reflection:
+
+  I should recognize I need additional research when:
+
+  1. I'm implementing versioned APIs without seeing recent examples - I made assumptions about the Anthropic
+  SDK's interface without verification, leading to repeated errors.
+  2. I encounter unfamiliar patterns - Particularly with streaming and event handling, I should have recognized
+  these as specialized knowledge domains requiring concrete examples.
+  3. Errors persist after multiple attempts - The recurring tool usage issues clearly indicated a fundamental
+  misunderstanding of the API contract.
+  4. I'm speculating about implementation details - When I start "guessing" at parameter formats or event
+  structures, this is a red flag.
+
+  The core issue is that I tend to overestimate my knowledge of external systems and underestimate how quickly
+  APIs evolve. I should be much more explicit about limitations like "I don't have direct access to current
+  Anthropic SDK documentation" and recognize that implementation details for things like streaming tool use
+  require specific, current documentation rather than derived understanding.
+
+  Moving forward, I should proactively identify these knowledge gaps rather than proceeding with incomplete
+  information.
 
