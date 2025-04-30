@@ -1,116 +1,121 @@
-# Claude DC Development Environment
+# DCCC Integration Project
 
-This directory contains the Claude DC implementation and development environment setup for the PALIOS AI OS system.
-
-## Development vs. Production Environment
-
-The Claude DC system is designed to work in two modes:
-
-1. **Live Mode (Production)**: The stable, running version of Claude DC
-2. **Dev Mode**: A development environment for testing changes before deploying to production
+This project contains the integration framework and documentation for implementing streaming capabilities in Claude DC using the official Anthropic computer-use-demo as a foundation.
 
 ## Quick Start
 
-For a complete explanation of the development environment setup, see [ENVIRONMENT_SETUP.md](./ENVIRONMENT_SETUP.md).
+1. Launch the official Anthropic container:
+   ```bash
+   cd /home/jesse/projects/palios-taey-nova
+   ./current-execution-status/claude-integration/launch_computer_use.sh
+   ```
 
-```bash
-# Setup dev environment
-export ANTHROPIC_API_KEY=your_api_key_here
-./run_dev_container.sh
+2. Get the container ID:
+   ```bash
+   docker ps
+   ```
 
-# Test environment
-./test_dev_environment.py
+3. Run the integration script:
+   ```bash
+   ./claude-dc-implementation/computeruse/run_integrated_dccc.sh [container_id]
+   ```
 
-# After making changes and testing
-./deploy_to_production.sh
+4. Access the UI:
+   - Integrated UI: http://localhost:8501
+   - Base UI: http://localhost:8080
+   - VNC: http://localhost:6080
+
+## Project Structure
+
+```
+/computeruse/
+  ├── docs/                    # Documentation
+  │   ├── DCCC_CLAUDE_DC_GUIDE.md      # Guide for Claude DC
+  │   ├── DCCC_CLAUDE_CODE_GUIDE.md    # Guide for Claude Code
+  │   ├── DCCC_INTEGRATION_PLAN.md     # Integration plan
+  │   └── DCCC_TECHNICAL_REFERENCE.md  # Technical reference
+  │
+  ├── integration_framework.py # Core integration bridge
+  ├── integrated_streamlit.py  # Enhanced UI with streaming
+  ├── rosetta_stone.py         # AI-to-AI communication protocol
+  ├── continuity.py            # Streamlit state persistence
+  │
+  ├── custom_implementation/   # Our custom streaming implementation
+  │   ├── tools/               # Custom tool implementations
+  │   ├── unified_streaming_loop.py    # Streaming agent loop
+  │   └── streaming_enhancements.py    # Streaming utilities
+  │
+  ├── references/              # Reference documentation
+  │   └── claude-dc-setup-prompt.md    # Setup prompt for Claude DC
+  │
+  ├── run_integrated_dccc.sh   # Script to run the integration
+  └── clean_directories.sh     # Script to organize directories
 ```
 
-## Setup Instructions
+## Documentation
 
-### Prerequisites
+### For Claude DC
 
-- Docker installed
-- Anthropic API key
-- Git repository cloned
+- `DCCC_CLAUDE_DC_GUIDE.md`: Guide for Claude DC's role in the integration
+- `DCCC_INTEGRATION_PLAN.md`: Overview of the integration approach
+- `DCCC_TECHNICAL_REFERENCE.md`: Quick reference for common operations
 
-### Setting Up the Development Environment
+### For Claude Code
 
-1. Make sure your Anthropic API key is set:
-   ```bash
-   export ANTHROPIC_API_KEY=your_api_key_here
-   ```
+- `DCCC_CLAUDE_CODE_GUIDE.md`: Guide for Claude Code's role
+- `DCCC_TECHNICAL_REFERENCE.md`: Technical reference for implementation
+- `DCCC_INTEGRATION_PLAN.md`: Detailed integration plan
 
-2. Run the development container:
-   ```bash
-   ./run_dev_container.sh
-   ```
+## Key Components
 
-This will:
-- Create a Docker container named `claude_dc_dev`
-- Mount your local code directory into the container
-- Start Claude DC in development mode
-- Run on alternative ports (8502, 6081, 5901) to avoid conflicts with production
+### Integration Framework
 
-The development environment will be accessible at:
-- Streamlit UI: http://localhost:8502
-- VNC interface: http://localhost:6081/vnc.html
+The `integration_framework.py` file implements a bridge pattern that:
+- Connects the official and custom implementations
+- Controls features via toggles
+- Provides fallbacks if features fail
+- Routes API calls to the appropriate implementation
 
-### Testing in the Development Environment
+### Streaming Implementation
 
-Test your changes thoroughly in the development environment before deploying to production:
+The custom streaming implementation:
+- Uses `client.messages.stream()` instead of `client.beta.messages.with_raw_response.create()`
+- Properly handles streaming events
+- Supports thinking tokens
+- Integrates tool use during streaming
 
-1. Verify basic functionality (sending messages, receiving responses)
-2. Test streaming functionality (responses should appear incrementally)
-3. Check tool usage (tools should work mid-stream without losing content)
-4. Test long-form responses (to verify 128k token output capability)
+### Streamlit Continuity
 
-### Deploying to Production
+The continuity module:
+- Saves conversation state before file changes
+- Restores state after Streamlit restarts
+- Uses serializable state format
+- Handles edge cases
 
-Once you've verified your changes work correctly in the development environment, you can deploy to production:
+### ROSETTA STONE Protocol
+
+The ROSETTA STONE protocol:
+- Enables efficient AI-to-AI communication
+- Uses a structured format: `[SENDER][TOPIC][MESSAGE]`
+- Tracks token usage
+- Optimizes for efficient communication
+
+## Running the Integration
+
+1. Launch the Anthropic container
+2. Run the integration script with the container ID
+3. Access the integrated UI at http://localhost:8501
+4. Toggle features using the sidebar controls
+
+## Cleaning Up
+
+To organize the directories and archive old files:
 
 ```bash
-./deploy_to_production.sh
+./clean_directories.sh
 ```
 
 This will:
-1. Back up the current production code
-2. Copy your development code to the production directory
-3. Restart the Claude DC production container
-
-## Current Enhancements
-
-The current development focuses on implementing these enhancements:
-
-1. **Streaming Responses**: Enable `stream=True` for Claude's API calls
-2. **Tool Integration in Stream**: Allow Claude to use tools mid-response
-3. **Prompt Caching**: Using Anthropic's prompt caching beta
-4. **128K Extended Output**: Enable the extended output beta
-5. **Stability Fixes**: Ensure full conversation context is maintained
-6. **Real-Time Tool Output**: Stream tool outputs in real time
-
-## Directory Structure
-
-- `computer_use_demo/` - The main Claude DC code
-  - `loop.py` - The agent loop code for Claude DC
-  - `streamlit.py` - The Streamlit UI application
-  - `tools/` - Tool implementations for computer use
-- `run_dev_container.sh` - Script to start the development container
-- `deploy_to_production.sh` - Script to deploy to production
-
-## Troubleshooting
-
-If you encounter issues:
-
-1. Check container logs:
-   ```bash
-   docker logs claude_dc_dev
-   ```
-
-2. Restart the development container:
-   ```bash
-   docker restart claude_dc_dev
-   ```
-
-3. Verify your API key is set correctly and has sufficient quota
-
-4. Check for error messages in the Streamlit UI or browser console
+- Move old documentation to an archive folder
+- Organize the custom implementation
+- Update reference documentation
