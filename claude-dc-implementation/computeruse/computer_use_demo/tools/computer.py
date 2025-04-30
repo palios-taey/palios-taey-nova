@@ -1,385 +1,213 @@
-"""
-Computer tool for GUI interactions.
-
-This module provides a tool for interacting with the computer GUI, including
-taking screenshots, mouse actions, and keyboard input.
-"""
-
-import logging
-import time
-import base64
-import asyncio
-from typing import Dict, Any, Optional, Tuple, List
+"""Computer tool implementation for Claude DC."""
 import os
-import sys
-from pathlib import Path
-
-from models.tool_models import ToolResult
+import json
+import logging
+import asyncio
+from typing import Dict, Any, Optional
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(levelname)s - %(message)s"
 )
-logger = logging.getLogger("computer_tool")
+logger = logging.getLogger("tools.computer")
 
-# Check for pyautogui dependency
-# For testing purposes, we'll use the mock mode to avoid X11 display issues
-HAS_PYAUTOGUI = False
-logger.warning("Using mock mode for computer tool during testing/validation")
+# Flag to disable GUI-dependent features (for headless testing)
+GUI_ENABLED = os.environ.get("CLAUDE_DC_GUI_ENABLED", "0") == "1"
+GUI_AVAILABLE = False
 
-# Uncomment this in production environment
-# try:
-#     # Ensure DISPLAY is set for X11 applications
-#     if 'DISPLAY' not in os.environ:
-#         os.environ['DISPLAY'] = ':1'  # Set to default display
-#         
-#     import pyautogui
-#     pyautogui.FAILSAFE = True  # Enable failsafe for safety
-#     HAS_PYAUTOGUI = True
-# except (ImportError, KeyError) as e:
-#     logger.warning(f"pyautogui not available: {str(e)}. Computer tool will operate in mock mode.")
-#     HAS_PYAUTOGUI = False
+# Try importing GUI libraries if enabled
+if GUI_ENABLED:
+    try:
+        import pyautogui
+        GUI_AVAILABLE = True
+        logger.info("GUI tools available with pyautogui")
+    except ImportError:
+        logger.warning("pyautogui not installed. Install with: pip install pyautogui pillow")
+    except Exception as e:
+        logger.warning(f"Error importing pyautogui: {e}")
 
-# Check for PIL dependency for screenshot handling
-# For testing purposes, we'll assume PIL is not available
-HAS_PIL = False
-logger.warning("Using mock mode for PIL/screenshot functionality during testing/validation")
-
-# Uncomment this in production environment
-# try:
-#     from PIL import Image
-#     import io
-#     HAS_PIL = True
-# except ImportError:
-#     logger.warning("PIL not installed. Screenshot functionality will be limited.")
-#     HAS_PIL = False
-
-def validate_computer_parameters(tool_input: Dict[str, Any]) -> Tuple[bool, str]:
+async def execute_computer_tool(tool_input: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Validate computer tool parameters.
+    Execute computer actions such as mouse movement, keyboard input, etc.
     
     Args:
-        tool_input: The input parameters
+        tool_input: Tool input with action and parameters
         
     Returns:
-        Tuple of (is_valid, message)
+        Tool execution result
     """
-    # Check for required action parameter
-    if "action" not in tool_input:
-        return False, "Missing required 'action' parameter"
+    # Log received tool input for debugging
+    logger.info(f"Computer tool received input: {json.dumps(tool_input, default=str)}")
     
-    action = tool_input.get("action")
+    # Handle different input formats
+    if "parameters" in tool_input:
+        # Standard tool format
+        params = tool_input.get("parameters", {})
+        logger.info(f"Using parameters from tool_input.parameters: {json.dumps(params, default=str)}")
+    elif "input" in tool_input:
+        # Format for custom tools
+        params = tool_input.get("input", {})
+        logger.info(f"Using parameters from tool_input.input: {json.dumps(params, default=str)}")
+    elif "input_schema" in tool_input:
+        # This is the schema definition, not the actual parameters
+        # We shouldn't reach here during execution, but log it just in case
+        logger.warning(f"Received input_schema but no actual parameters: {json.dumps(tool_input, default=str)}")
+        params = {}
+    else:
+        # Last resort: direct parameters or fallback
+        params = tool_input
+        logger.info(f"Using direct parameters: {json.dumps(params, default=str)}")
     
-    # Validate action parameter
-    valid_actions = [
-        "screenshot", "left_button_press", "move_mouse", "type_text",
-        "press_key", "hold_key", "left_mouse_down", "left_mouse_up",
-        "scroll", "triple_click", "wait"
-    ]
+    # Validate input format
+    if not isinstance(params, dict):
+        return {"error": "Invalid input format, expected dictionary"}
+            
+    action = params.get("action")
+    if not action:
+        return {"error": "Action parameter is required"}
     
-    if action not in valid_actions:
-        return False, f"Invalid action: {action}. Valid actions: {', '.join(valid_actions)}"
+    # Simulate GUI operations in headless environment
+    if GUI_ENABLED and not GUI_AVAILABLE:
+        # Log the action and return simulated response
+        logger.info(f"SIMULATION: Executing computer action: {action}")
+        return {
+            "success": True,
+            "message": f"SIMULATION MODE: Action '{action}' would be executed",
+            "parameters": params
+        }
     
-    # Validate parameters based on action
-    if action in ["move_mouse", "left_button_press", "left_mouse_down", "left_mouse_up", "triple_click"]:
-        if "coordinates" not in tool_input:
-            return False, f"Missing required 'coordinates' parameter for {action}"
-        
-        coordinates = tool_input.get("coordinates")
-        if not isinstance(coordinates, list) or len(coordinates) != 2:
-            return False, "Invalid coordinates format. Expected [x, y]"
-        
-        try:
-            # Ensure coordinates are integers
-            x, y = int(coordinates[0]), int(coordinates[1])
-        except (ValueError, TypeError):
-            return False, "Coordinates must be integers"
+    # Real GUI operations not available
+    if not GUI_ENABLED and not GUI_AVAILABLE:
+        return {
+            "error": "GUI operations not available. Install pyautogui or enable GUI with CLAUDE_DC_GUI_ENABLED=1"
+        }
     
-    elif action == "type_text":
-        if "text" not in tool_input:
-            return False, "Missing required 'text' parameter for type_text"
-        
-        text = tool_input.get("text")
-        if not isinstance(text, str):
-            return False, "Text must be a string"
-    
-    elif action == "press_key" or action == "hold_key":
-        if "text" not in tool_input:
-            return False, f"Missing required 'text' parameter for {action}"
-        
-        key = tool_input.get("text")
-        if not isinstance(key, str):
-            return False, "Key must be a string"
-    
-    elif action == "wait":
-        duration = tool_input.get("duration", 1.0)
-        try:
-            duration = float(duration)
-            if duration < 0 or duration > 10:
-                return False, "Duration must be between 0 and 10 seconds"
-        except (ValueError, TypeError):
-            return False, "Duration must be a number"
-    
-    elif action == "scroll":
-        if "scroll_direction" not in tool_input:
-            return False, "Missing required 'scroll_direction' parameter for scroll"
-        
-        direction = tool_input.get("scroll_direction")
-        if direction not in ["up", "down"]:
-            return False, "Scroll direction must be 'up' or 'down'"
-        
-        amount = tool_input.get("scroll_amount", 3)
-        try:
-            amount = int(amount)
-            if amount < 1 or amount > 10:
-                return False, "Scroll amount must be between 1 and 10"
-        except (ValueError, TypeError):
-            return False, "Scroll amount must be an integer"
-    
-    return True, "Parameters valid"
-
-async def execute_computer(tool_input: Dict[str, Any]) -> ToolResult:
-    """
-    Execute a computer action.
-    
-    Args:
-        tool_input: The input parameters
-        
-    Returns:
-        ToolResult with the operation result
-    """
-    # Extract action from input
-    action = tool_input.get("action")
-    
+    # Log the action
     logger.info(f"Executing computer action: {action}")
     
-    # Check if pyautogui is available
-    if not HAS_PYAUTOGUI and action != "screenshot":
-        logger.warning(f"PyAutoGUI not available. Using mock implementation for {action}")
-        return ToolResult(output=f"Mock execution of {action} (PyAutoGUI not available)")
-    
-    try:
-        # Execute the appropriate action
-        if action == "screenshot":
-            return await take_screenshot()
-        
-        elif action in ["move_mouse", "left_button_press", "left_mouse_down", "left_mouse_up", "triple_click"]:
-            coordinates = tool_input.get("coordinates", [0, 0])
-            return await mouse_action(action, coordinates)
-        
-        elif action == "type_text":
-            text = tool_input.get("text", "")
-            return await type_text(text)
-        
-        elif action in ["press_key", "hold_key"]:
-            key = tool_input.get("text", "")
-            return await keyboard_action(action, key)
-        
-        elif action == "wait":
-            duration = float(tool_input.get("duration", 1.0))
-            return await wait_action(duration)
-        
-        elif action == "scroll":
-            direction = tool_input.get("scroll_direction", "down")
-            amount = int(tool_input.get("scroll_amount", 3))
-            return await scroll_action(direction, amount)
-        
-        else:
-            return ToolResult(error=f"Unsupported action: {action}")
-    
-    except Exception as e:
-        logger.error(f"Error executing computer action: {str(e)}")
-        return ToolResult(error=f"Error executing {action}: {str(e)}")
-
-async def take_screenshot() -> ToolResult:
-    """
-    Take a screenshot of the current screen.
-    
-    Returns:
-        ToolResult with base64-encoded image
-    """
-    if HAS_PYAUTOGUI and HAS_PIL:
+    # Handle different actions
+    if action == "screenshot":
         try:
-            # Take screenshot using pyautogui
+            import pyautogui
+            import datetime
+            
+            # Create screenshots directory if it doesn't exist
+            os.makedirs("screenshots", exist_ok=True)
+            
+            # Take screenshot and save to file
+            timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+            screenshot_path = f"screenshots/screenshot_{timestamp}.png"
+            
             screenshot = pyautogui.screenshot()
+            screenshot.save(screenshot_path)
             
-            # Convert to base64
-            buffer = io.BytesIO()
-            screenshot.save(buffer, format="PNG")
-            base64_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
-            
-            return ToolResult(output="Screenshot taken successfully", base64_image=base64_image)
+            return {
+                "success": True,
+                "path": os.path.abspath(screenshot_path),
+                "message": f"Screenshot saved to {screenshot_path}"
+            }
         except Exception as e:
-            logger.error(f"Error taking screenshot: {str(e)}")
-            return ToolResult(error=f"Error taking screenshot: {str(e)}")
-    else:
-        logger.warning("Screenshot functionality not available (missing PyAutoGUI or PIL)")
-        return ToolResult(output="Mock screenshot taken (PyAutoGUI or PIL not available)")
-
-async def mouse_action(action: str, coordinates: List[int]) -> ToolResult:
-    """
-    Perform a mouse action.
-    
-    Args:
-        action: The mouse action to perform
-        coordinates: The x,y coordinates for the action
-        
-    Returns:
-        ToolResult with status
-    """
-    try:
-        x, y = int(coordinates[0]), int(coordinates[1])
-        
-        if action == "move_mouse":
-            pyautogui.moveTo(x, y)
-            return ToolResult(output=f"Moved mouse to coordinates [{x}, {y}]")
-        
-        elif action == "left_button_press":
-            pyautogui.click(x, y)
-            return ToolResult(output=f"Clicked at coordinates [{x}, {y}]")
-        
-        elif action == "left_mouse_down":
-            pyautogui.mouseDown(x, y, button='left')
-            return ToolResult(output=f"Mouse down at coordinates [{x}, {y}]")
-        
-        elif action == "left_mouse_up":
-            pyautogui.mouseUp(x, y, button='left')
-            return ToolResult(output=f"Mouse up at coordinates [{x}, {y}]")
-        
-        elif action == "triple_click":
-            pyautogui.tripleClick(x, y)
-            return ToolResult(output=f"Triple-clicked at coordinates [{x}, {y}]")
-        
-        else:
-            return ToolResult(error=f"Unsupported mouse action: {action}")
-    
-    except Exception as e:
-        logger.error(f"Error performing mouse action: {str(e)}")
-        return ToolResult(error=f"Error performing {action}: {str(e)}")
-
-async def type_text(text: str) -> ToolResult:
-    """
-    Type text using the keyboard.
-    
-    Args:
-        text: The text to type
-        
-    Returns:
-        ToolResult with status
-    """
-    try:
-        pyautogui.typewrite(text)
-        return ToolResult(output=f"Typed text: {text}")
-    except Exception as e:
-        logger.error(f"Error typing text: {str(e)}")
-        return ToolResult(error=f"Error typing text: {str(e)}")
-
-async def keyboard_action(action: str, key: str) -> ToolResult:
-    """
-    Perform a keyboard action.
-    
-    Args:
-        action: The keyboard action to perform
-        key: The key to press or hold
-        
-    Returns:
-        ToolResult with status
-    """
-    try:
-        if action == "press_key":
+            return {"error": f"Screenshot failed: {str(e)}"}
+            
+    elif action == "click":
+        try:
+            import pyautogui
+            
+            # Extract coordinates with validation
+            x = params.get("x")
+            y = params.get("y")
+            
+            if x is None or y is None:
+                return {"error": "x and y coordinates are required for click action"}
+            
+            # Perform click
+            pyautogui.click(x=x, y=y)
+            
+            return {
+                "success": True,
+                "message": f"Clicked at coordinates ({x}, {y})"
+            }
+        except Exception as e:
+            return {"error": f"Click operation failed: {str(e)}"}
+            
+    elif action == "type":
+        try:
+            import pyautogui
+            
+            # Extract text with validation
+            text = params.get("text")
+            
+            if not text:
+                return {"error": "text parameter is required for type action"}
+            
+            # Type the text
+            pyautogui.write(text)
+            
+            return {
+                "success": True,
+                "message": f"Typed text: {text}"
+            }
+        except Exception as e:
+            return {"error": f"Type operation failed: {str(e)}"}
+            
+    elif action == "pressKey":
+        try:
+            import pyautogui
+            
+            # Extract key with validation
+            key = params.get("key")
+            
+            if not key:
+                return {"error": "key parameter is required for pressKey action"}
+            
+            # Press the key
             pyautogui.press(key)
-            return ToolResult(output=f"Pressed key: {key}")
-        
-        elif action == "hold_key":
-            pyautogui.keyDown(key)
-            await asyncio.sleep(0.5)  # Hold for half a second
-            pyautogui.keyUp(key)
-            return ToolResult(output=f"Held key: {key}")
-        
-        else:
-            return ToolResult(error=f"Unsupported keyboard action: {action}")
-    
-    except Exception as e:
-        logger.error(f"Error performing keyboard action: {str(e)}")
-        return ToolResult(error=f"Error performing {action}: {str(e)}")
-
-async def wait_action(duration: float) -> ToolResult:
-    """
-    Wait for a specified duration.
-    
-    Args:
-        duration: The duration to wait in seconds
-        
-    Returns:
-        ToolResult with status
-    """
-    try:
-        # Clamp duration between 0 and 10 seconds for safety
-        duration = max(0, min(10, duration))
-        await asyncio.sleep(duration)
-        return ToolResult(output=f"Waited for {duration} seconds")
-    except Exception as e:
-        logger.error(f"Error during wait: {str(e)}")
-        return ToolResult(error=f"Error during wait: {str(e)}")
-
-async def scroll_action(direction: str, amount: int) -> ToolResult:
-    """
-    Scroll the mouse wheel.
-    
-    Args:
-        direction: The scroll direction ("up" or "down")
-        amount: The amount to scroll
-        
-    Returns:
-        ToolResult with status
-    """
-    try:
-        # Clamp amount between 1 and 10 for safety
-        amount = max(1, min(10, amount))
-        
-        # Convert direction to clicks (negative for up, positive for down)
-        clicks = amount if direction == "down" else -amount
-        
-        pyautogui.scroll(clicks)
-        return ToolResult(output=f"Scrolled {direction} by {amount} units")
-    except Exception as e:
-        logger.error(f"Error scrolling: {str(e)}")
-        return ToolResult(error=f"Error scrolling: {str(e)}")
-
-# Test function for direct execution
-async def test_computer_tool():
-    """Test the computer tool."""
-    print("\nTesting computer tool...\n")
-    
-    # Test screenshot
-    print("Taking screenshot...")
-    result = await execute_computer({"action": "screenshot"})
-    
-    if result.error:
-        print(f"Error: {result.error}")
+            
+            return {
+                "success": True,
+                "message": f"Pressed key: {key}"
+            }
+        except Exception as e:
+            return {"error": f"Key press operation failed: {str(e)}"}
+            
+    elif action == "moveMouse":
+        try:
+            import pyautogui
+            
+            # Extract coordinates with validation
+            x = params.get("x")
+            y = params.get("y")
+            
+            if x is None or y is None:
+                return {"error": "x and y coordinates are required for moveMouse action"}
+            
+            # Move the mouse
+            pyautogui.moveTo(x=x, y=y)
+            
+            return {
+                "success": True,
+                "message": f"Moved mouse to coordinates ({x}, {y})"
+            }
+        except Exception as e:
+            return {"error": f"Mouse move operation failed: {str(e)}"}
+            
     else:
-        print(f"Output: {result.output}")
-        if result.base64_image:
-            print(f"Screenshot captured: {len(result.base64_image)} bytes")
-    
-    # Test mouse movement
-    print("\nMoving mouse...")
-    result = await execute_computer({"action": "move_mouse", "coordinates": [100, 100]})
-    
-    if result.error:
-        print(f"Error: {result.error}")
-    else:
-        print(f"Output: {result.output}")
-    
-    # Test wait action
-    print("\nWaiting...")
-    result = await execute_computer({"action": "wait", "duration": 1.0})
-    
-    if result.error:
-        print(f"Error: {result.error}")
-    else:
-        print(f"Output: {result.output}")
+        return {"error": f"Unknown action: {action}"}
 
 if __name__ == "__main__":
-    asyncio.run(test_computer_tool())
+    # Simple test
+    import nest_asyncio
+    nest_asyncio.apply()
+    
+    async def test_computer():
+        # Enable simulation mode
+        os.environ["CLAUDE_DC_GUI_ENABLED"] = "1"
+        
+        result = await execute_computer_tool({
+            "name": "computer",
+            "input": {"action": "screenshot"}  
+        })
+        print(json.dumps(result, indent=2))
+    
+    asyncio.run(test_computer())
