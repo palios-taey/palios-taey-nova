@@ -1,6 +1,12 @@
 #!/bin/bash
 # Consolidated setup script for Claude DC environment
 
+# Enable debug mode if DEBUG=1 is set
+if [ "$DEBUG" = "1" ]; then
+    set -x
+    echo "Debug mode enabled"
+fi
+
 # Run the main setup script
 echo "Running main setup script..."
 /home/computeruse/github/palios-taey-nova/scripts/setup.sh
@@ -100,6 +106,35 @@ echo "Claude-Code version: $(claude --version 2>/dev/null || echo 'Not installed
 echo 'export NVM_DIR="$HOME/.nvm"' >> $HOME/.bashrc
 echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $HOME/.bashrc
 
+# Set up Claude Code API key from secrets
+echo "Setting up Claude Code API key..."
+# Create Claude Code config directory
+mkdir -p /home/computeruse/.claude
+
+# Extract Claude Code API key from secrets file
+if [ -f "/home/computeruse/secrets/palios-taey-secrets.json" ]; then
+    CLAUDE_CODE_API_KEY=$(grep -o '"claude_code"[[:space:]]*:[[:space:]]*"[^"]*"' /home/computeruse/secrets/palios-taey-secrets.json | sed 's/.*"claude_code"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
+    
+    if [ ! -z "$CLAUDE_CODE_API_KEY" ]; then
+        echo "Claude Code API key found in secrets"
+        
+        # Create config file with API key
+        cat > /home/computeruse/.claude/config.json << EOF
+{
+  "apiKey": "$CLAUDE_CODE_API_KEY"
+}
+EOF
+        chmod 600 /home/computeruse/.claude/config.json
+        
+        # Export API key as environment variable
+        export ANTHROPIC_API_KEY="$CLAUDE_CODE_API_KEY"
+    else
+        echo "Error: Claude Code API key not found in secrets file"
+    fi
+else
+    echo "Error: Secrets file not found"
+fi
+
 # Set proper encoding environment variables (these are crucial)
 export LANG=C.UTF-8
 export LC_ALL=C.UTF-8
@@ -107,7 +142,13 @@ export TERM=xterm-256color
 
 # Launch Claude Code with the EXACT command that worked before, only changing font size to 6
 echo "Launching Claude Code with xterm..."
-xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
+if [ ! -z "$CLAUDE_CODE_API_KEY" ]; then
+    echo "Using API key from secrets for Claude Code"
+    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 ANTHROPIC_API_KEY=\"$CLAUDE_CODE_API_KEY\" /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
+else
+    echo "WARNING: No API key found, Claude Code will prompt for key on first run"
+    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
+fi
 
 # Set Claude options
 echo "Please set the following Claude options manually:"
