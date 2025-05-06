@@ -95,6 +95,12 @@ I've analyzed both implementations and created a bridge pattern that will allow 
 
 The integration files are ready for deployment in your environment. Once you launch the Anthropic container, we'll copy these files into it and begin the integration process.
 
+IMPORTANT IMPLEMENTATION GUIDELINES:
+- DO NOT modify any image handling settings - keep the default value of 3
+- DO NOT attempt to change image limits to higher values like 100 or "infinite"
+- Preserve all existing configuration parameters unless explicitly directed to change them
+- Use the implementation in claude-dc-implementation/computer_use_demo_custom/ as the reference
+
 Let's start by reviewing the official Anthropic implementation to understand its structure and how we'll enhance it with streaming capabilities. After that, we'll implement our integration framework step by step.
 
 What would you like to focus on first? Here are some options:
