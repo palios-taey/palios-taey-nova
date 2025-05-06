@@ -106,33 +106,43 @@ echo "Claude-Code version: $(claude --version 2>/dev/null || echo 'Not installed
 echo 'export NVM_DIR="$HOME/.nvm"' >> $HOME/.bashrc
 echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $HOME/.bashrc
 
-# Set up Claude Code API key from secrets
-echo "Setting up Claude Code API key..."
-# Extract Claude Code API key from secrets file
-if [ -f "/home/computeruse/secrets/palios-taey-secrets.json" ]; then
-    CLAUDE_CODE_API_KEY=$(grep -o '"claude_code"[[:space:]]*:[[:space:]]*"[^"]*"' /home/computeruse/secrets/palios-taey-secrets.json | sed 's/.*"claude_code"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
+# Set up browser environment for Claude Code
+echo "Setting up browser environment for Claude Code..."
+
+# Check and set default browser if not set
+if ! which xdg-settings &>/dev/null; then
+    echo "Installing xdg-utils for browser configuration..."
+    apt-get update && apt-get install -y xdg-utils
+fi
+
+if which xdg-settings &>/dev/null; then
+    # Get current default browser
+    CURRENT_BROWSER=$(xdg-settings get default-web-browser 2>/dev/null || echo "none")
+    echo "Current default browser: $CURRENT_BROWSER"
     
-    if [ ! -z "$CLAUDE_CODE_API_KEY" ]; then
-        echo "Claude Code API key found in secrets"
-        
-        # Create the correct config file with API key - using ~/.claude.json format
-        cat > /home/computeruse/.claude.json << EOF
-{
-  "env": {
-    "ANTHROPIC_API_KEY": "$CLAUDE_CODE_API_KEY",
-    "ANTHROPIC_MODEL": "claude-3-7-sonnet-20250219"
-  }
-}
-EOF
-        chmod 600 /home/computeruse/.claude.json
-        
-        # Export API key as environment variable as a backup method
-        export ANTHROPIC_API_KEY="$CLAUDE_CODE_API_KEY"
-    else
-        echo "Error: Claude Code API key not found in secrets file"
+    # Set Firefox as default if not already set
+    if [ "$CURRENT_BROWSER" = "none" ] || [ -z "$CURRENT_BROWSER" ]; then
+        echo "Setting Firefox as default browser..."
+        # Check if Firefox is installed
+        if [ -f "/usr/bin/firefox" ]; then
+            xdg-settings set default-web-browser firefox.desktop
+        elif [ -f "/usr/bin/firefox-esr" ]; then
+            xdg-settings set default-web-browser firefox-esr.desktop
+        else
+            echo "Firefox not found, cannot set as default"
+        fi
     fi
-else
-    echo "Error: Secrets file not found"
+fi
+
+# Ensure X11 permissions for browser
+echo "Setting X11 permissions for browser access..."
+xhost +local: || echo "xhost command failed - X server may not be running or permissions issue"
+
+# Verify DISPLAY variable
+echo "Current DISPLAY variable: $DISPLAY"
+if [ -z "$DISPLAY" ]; then
+    echo "Setting DISPLAY variable to :0"
+    export DISPLAY=:0
 fi
 
 # Set proper encoding environment variables (these are crucial)
@@ -140,25 +150,14 @@ export LANG=C.UTF-8
 export LC_ALL=C.UTF-8
 export TERM=xterm-256color
 
-# Launch Claude Code with enhanced xterm configuration
-echo "Launching Claude Code with xterm..."
-if [ ! -z "$CLAUDE_CODE_API_KEY" ]; then
-    echo "Using API key from secrets for Claude Code"
-    xterm -fa 'Monospace' -fs 6 \
-        -xrm 'XTerm*selectToClipboard: true' \
-        -xrm 'XTerm*VT100.translations: #override \n\
-            Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
-            Ctrl Shift <Key>V: insert-selection(CLIPBOARD)' \
-        -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 ANTHROPIC_API_KEY=\"$CLAUDE_CODE_API_KEY\" /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --no-browser"
-else
-    echo "WARNING: No API key found, Claude Code will prompt for key on first run"
-    xterm -fa 'Monospace' -fs 6 \
-        -xrm 'XTerm*selectToClipboard: true' \
-        -xrm 'XTerm*VT100.translations: #override \n\
-            Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
-            Ctrl Shift <Key>V: insert-selection(CLIPBOARD)' \
-        -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --no-browser"
-fi
+# Launch Claude Code with enhanced xterm configuration and browser support
+echo "Launching Claude Code with xterm and browser authentication..."
+xterm -fa 'Monospace' -fs 6 \
+    -xrm 'XTerm*selectToClipboard: true' \
+    -xrm 'XTerm*VT100.translations: #override \n\
+        Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
+        Ctrl Shift <Key>V: insert-selection(CLIPBOARD)' \
+    -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 DISPLAY=$DISPLAY /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
 
 # Set Claude options
 echo "Please set the following Claude options manually:"
