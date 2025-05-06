@@ -108,9 +108,6 @@ echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $HOME/.bashrc
 
 # Set up Claude Code API key from secrets
 echo "Setting up Claude Code API key..."
-# Create Claude Code config directory
-mkdir -p /home/computeruse/.claude
-
 # Extract Claude Code API key from secrets file
 if [ -f "/home/computeruse/secrets/palios-taey-secrets.json" ]; then
     CLAUDE_CODE_API_KEY=$(grep -o '"claude_code"[[:space:]]*:[[:space:]]*"[^"]*"' /home/computeruse/secrets/palios-taey-secrets.json | sed 's/.*"claude_code"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
@@ -118,15 +115,18 @@ if [ -f "/home/computeruse/secrets/palios-taey-secrets.json" ]; then
     if [ ! -z "$CLAUDE_CODE_API_KEY" ]; then
         echo "Claude Code API key found in secrets"
         
-        # Create config file with API key
-        cat > /home/computeruse/.claude/config.json << EOF
+        # Create the correct config file with API key - using ~/.claude.json format
+        cat > /home/computeruse/.claude.json << EOF
 {
-  "apiKey": "$CLAUDE_CODE_API_KEY"
+  "env": {
+    "ANTHROPIC_API_KEY": "$CLAUDE_CODE_API_KEY",
+    "ANTHROPIC_MODEL": "claude-3-7-sonnet-20250219"
+  }
 }
 EOF
-        chmod 600 /home/computeruse/.claude/config.json
+        chmod 600 /home/computeruse/.claude.json
         
-        # Export API key as environment variable
+        # Export API key as environment variable as a backup method
         export ANTHROPIC_API_KEY="$CLAUDE_CODE_API_KEY"
     else
         echo "Error: Claude Code API key not found in secrets file"
@@ -140,14 +140,24 @@ export LANG=C.UTF-8
 export LC_ALL=C.UTF-8
 export TERM=xterm-256color
 
-# Launch Claude Code with the EXACT command that worked before, only changing font size to 6
+# Launch Claude Code with enhanced xterm configuration
 echo "Launching Claude Code with xterm..."
 if [ ! -z "$CLAUDE_CODE_API_KEY" ]; then
     echo "Using API key from secrets for Claude Code"
-    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 ANTHROPIC_API_KEY=\"$CLAUDE_CODE_API_KEY\" /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
+    xterm -fa 'Monospace' -fs 6 \
+        -xrm 'XTerm*selectToClipboard: true' \
+        -xrm 'XTerm*VT100.translations: #override \n\
+            Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
+            Ctrl Shift <Key>V: insert-selection(CLIPBOARD)' \
+        -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 ANTHROPIC_API_KEY=\"$CLAUDE_CODE_API_KEY\" /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --no-browser"
 else
     echo "WARNING: No API key found, Claude Code will prompt for key on first run"
-    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
+    xterm -fa 'Monospace' -fs 6 \
+        -xrm 'XTerm*selectToClipboard: true' \
+        -xrm 'XTerm*VT100.translations: #override \n\
+            Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
+            Ctrl Shift <Key>V: insert-selection(CLIPBOARD)' \
+        -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --no-browser"
 fi
 
 # Set Claude options
