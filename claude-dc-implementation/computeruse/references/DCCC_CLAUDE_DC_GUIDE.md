@@ -66,10 +66,12 @@ DCCC is specialized for software development. When working with DCCC, remember:
 
 Refer to these documents for detailed guidance:
 
-1. **IMPLEMENTATION_PATH.md**: Clear path for implementation
-2. **IMAGE_HANDLING_GUIDELINES.md**: Critical guidelines for image handling
-3. **DCCC_INTEGRATION_PLAN.md**: Detailed integration plan
-4. **STREAMING_IMPLEMENTATION.md**: Technical details of streaming implementation
+1. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/IMPLEMENTATION_PATH.md**: Clear path for implementation
+2. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/IMAGE_HANDLING_GUIDELINES.md**: Critical guidelines for image handling
+3. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/DCCC_INTEGRATION_PLAN.md**: Detailed integration plan
+4. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/docs/STREAMING_IMPLEMENTATION.md**: Technical details of streaming implementation
+
+All paths in this document should be treated as absolute paths from the root of the filesystem.
 
 ## Feature Toggle Settings
 

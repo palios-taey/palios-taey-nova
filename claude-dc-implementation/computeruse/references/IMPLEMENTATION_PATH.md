@@ -10,6 +10,8 @@ The preferred implementation is located in:
 /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computer_use_demo_custom/
 ```
 
+All paths in this document should be treated as absolute paths from the root of the filesystem.
+
 This implementation includes:
 - Robust streaming capabilities
 - Tool use during streaming

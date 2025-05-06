@@ -134,6 +134,8 @@ The reference implementation is located in:
 /home/computeruse/github/palios-taey-nova/claude-dc-implementation/computer_use_demo_custom/
 ```
 
+All paths in this document should be treated as absolute paths from the root of the filesystem.
+
 Key files include:
 
 1. **unified_streaming_loop.py** - Main agent loop

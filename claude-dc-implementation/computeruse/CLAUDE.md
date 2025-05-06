@@ -102,35 +102,29 @@ Important resources for the custom computer use implementation:
 ## Key Files and Directories
 
 1. **Agent Loop & Streamlit UI**:
-   - `claude-dc-implementation/computeruse/computer_use_demo/loop.py`
-   - `claude-dc-implementation/computeruse/computer_use_demo/streamlit.py`
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/loop.py`
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/computer_use_demo/streamlit.py`
 
-2. **Current Experiment & Implementation**:
-   - `claude-dc-implementation/computeruse/current_experiment/minimal_test.py` - Basic streaming test
-   - `claude-dc-implementation/computeruse/current_experiment/production_ready_loop.py` - Full streaming implementation
-   - `claude-dc-implementation/computeruse/current_experiment/integrate_streaming.py` - Integration helper
-   - `claude-dc-implementation/computeruse/current_experiment/STREAMLIT_CONTINUITY_PROPOSAL.md` - Continuity solution specs
+2. **Preferred Implementation (Use This)**:
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computer_use_demo_custom/unified_streaming_loop.py` - Main agent loop with streaming
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computer_use_demo_custom/streaming_enhancements.py` - Enhanced streaming session
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computer_use_demo_custom/tools/dc_bash.py` - Streaming bash tool
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computer_use_demo_custom/tools/dc_file.py` - Streaming file tool
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computer_use_demo_custom/feature_toggles.json` - Feature toggle configuration
 
-3. **Streamlit Continuity Solution**:
-   - `claude-dc-implementation/computeruse/bin/continuity/save_conversation_state.py` - Script to save Streamlit state
-   - `claude-dc-implementation/computeruse/bin/continuity/restore_conversation_state.py` - Script to restore state
-   - `claude-dc-implementation/computeruse/bin/continuity/restart_with_continuity.sh` - Orchestration script
-   - `claude-dc-implementation/computeruse/bin/continuity/json_utils.py` - JSON serialization utilities
-   - `claude-dc-implementation/computeruse/bin/continuity/transition_prompt_template.md` - Context preservation template
+3. **Critical Reference Documentation**:
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/IMPLEMENTATION_PATH.md` - Clear path for implementation
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/IMAGE_HANDLING_GUIDELINES.md` - IMPORTANT: Image handling rules
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/DCCC_INTEGRATION_PLAN.md` - Detailed integration plan
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/DCCC_CLAUDE_CODE_GUIDE.md` - Your specific guide
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/docs/STREAMING_IMPLEMENTATION.md` - Streaming implementation details
 
-4. **Collaboration Framework**:
-   - `claude-dc-implementation/computeruse/dccc/CLAUDE_DC_CLAUDE_CODE_COLLABORATION.md` - Collaboration framework
-   - `claude-dc-implementation/computeruse/START_DCCC_PROMPT.md` - Collaboration kickoff
+4. **Additional Documentation**:
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/docs/STREAMLIT_CONTINUITY.md` - Streamlit continuity solution
+   - `/home/computeruse/github/palios-taey-nova/claude-dc-implementation/docs/IMPLEMENTATION_LESSONS.md` - Implementation lessons learned
 
-5. **Documentation**:
-   - `claude-dc-implementation/CLAUDE.md` - Project guidelines
-   - `claude-dc-implementation/CHANGES.md` - Implementation changelog
-   - `claude-dc-implementation/STREAMING_TOOL_USE.md` - Streaming documentation 
-   - `claude-dc-implementation/computeruse/references/STREAMLIT_CONTINUITY.md` - Continuity solution docs
-   - `claude-dc-implementation/computeruse/references/IMPLEMENTATION_LESSONS.md` - Implementation lessons
-
-6. **Cache and Context**:
-   - `/computeruse/cache/cache.md` - Used as prompt-cache for efficient context
+5. **Cache and Context**:
+   - `/home/computeruse/cache/cache.md` - Will be used for prompt-cache (future implementation)
 
 ## Communication Guidelines
 

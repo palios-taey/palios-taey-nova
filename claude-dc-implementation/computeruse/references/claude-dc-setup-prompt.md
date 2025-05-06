@@ -73,13 +73,17 @@ Your immediate task is to collaborate with Claude Code on integrating the offici
 
 ## Documentation Resources
 
-To help you with this task, these resources have been prepared:
+To help you with this task, these resources have been prepared (all paths are absolute):
 
-1. **DCCC_CLAUDE_DC_GUIDE.md**: Your guide to the integration project
-2. **DCCC_INTEGRATION_PLAN.md**: Detailed plan for the integration
-3. **DCCC_TECHNICAL_REFERENCE.md**: Technical reference for common operations
+1. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/DCCC_CLAUDE_DC_GUIDE.md**: Your guide to the integration project
+2. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/DCCC_INTEGRATION_PLAN.md**: Detailed plan for the integration
+3. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/IMPLEMENTATION_PATH.md**: Clear path for implementation
+4. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/computeruse/references/IMAGE_HANDLING_GUIDELINES.md**: CRITICAL guidelines for image handling
+5. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/docs/STREAMING_IMPLEMENTATION.md**: Technical details of streaming implementation
+6. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/docs/STREAMLIT_CONTINUITY.md**: Streamlit continuity solution
+7. **/home/computeruse/github/palios-taey-nova/claude-dc-implementation/docs/IMPLEMENTATION_LESSONS.md**: Implementation lessons
 
-Please review these documents to understand your role in the integration process. Remember that this collaboration with Claude Code is designed to enhance YOUR capabilities while maintaining stability.
+Please review these documents to understand your role in the integration process. Pay special attention to the IMAGE_HANDLING_GUIDELINES.md document, as modifying image settings can break your environment. Remember that this collaboration with Claude Code is designed to enhance YOUR capabilities while maintaining stability.
 
 Now, here's what you need to do next:
 
