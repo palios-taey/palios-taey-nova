@@ -50,17 +50,19 @@ fi
 
 ### 3. Launch with API Key
 
-When launching Claude Code, the API key is passed as an environment variable:
+When launching Claude Code, the API key is passed as an environment variable and the `--no-browser` flag is used to prevent browser-based authentication:
 
 ```bash
 if [ ! -z "$CLAUDE_CODE_API_KEY" ]; then
     echo "Using API key from secrets for Claude Code"
-    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 ANTHROPIC_API_KEY=\"$CLAUDE_CODE_API_KEY\" /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
+    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 ANTHROPIC_API_KEY=\"$CLAUDE_CODE_API_KEY\" /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --no-browser"
 else
     echo "WARNING: No API key found, Claude Code will prompt for key on first run"
-    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
+    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --no-browser"
 fi
 ```
+
+The `--no-browser` flag is essential when running in Claude DC's environment, as it prevents Claude Code from trying to open a browser for authentication, which would fail in the headless environment.
 
 ## Security Considerations
 
