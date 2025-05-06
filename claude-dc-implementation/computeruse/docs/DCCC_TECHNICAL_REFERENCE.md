@@ -71,8 +71,14 @@ chmod +x /path/to/script.sh
 
 ## API Reference
 
-### Anthropic SDK
+### Anthropic SDK v0.50.0
 ```python
+# Check SDK parameters
+import anthropic
+import inspect
+print(inspect.signature(anthropic.Anthropic().messages.create))
+print(inspect.signature(anthropic.Anthropic().messages.stream))
+
 # Non-streaming API (original)
 client.beta.messages.with_raw_response.create(
     max_tokens=max_tokens,
@@ -80,22 +86,50 @@ client.beta.messages.with_raw_response.create(
     model=model,
     system=[system],
     tools=tool_collection.to_params(),
-    betas=betas,
+    # Use individual parameters instead of 'betas'
     extra_body=extra_body,
 )
 
-# Streaming API (our implementation)
-async with client.messages.stream(
+# Streaming API (SDK v0.50.0)
+# For SDK 0.50.0, use client.messages.stream
+stream = await client.messages.create(
     model=model,
     max_tokens=max_tokens,
     messages=messages,
     tools=tools,
-    anthropic_beta=",".join(betas) if betas else None,
-    thinking=thinking_param,
-    stream=True,
-) as stream:
-    async for event in stream:
-        # Process events
+    stream=True,  # This enables streaming
+    # Use individual parameters instead of betas or anthropic_beta
+    # For thinking, the correct format is:
+    thinking={
+        "enabled": {
+            "budget_tokens": thinking_budget
+        }
+    },
+)
+
+# Process streaming events
+async for chunk in stream:
+    if hasattr(chunk, "type"):
+        chunk_type = chunk.type
+        
+        # Content block delta (text chunks)
+        if chunk_type == "content_block_delta":
+            if hasattr(chunk.delta, "text") and chunk.delta.text:
+                # Process text content
+                print(chunk.delta.text, end="", flush=True)
+                
+        # Thinking tokens
+        elif chunk_type == "thinking":
+            thinking_text = getattr(chunk, "thinking", "")
+            # Process thinking content
+            print(f"Thinking: {thinking_text}")
+            
+        # Tool use blocks
+        elif chunk_type == "content_block_start" and getattr(block, "type", None) == "tool_use":
+            tool_name = block.name
+            tool_input = block.input
+            tool_id = getattr(block, "id", "tool_1")
+            # Execute tool
 ```
 
 ### Integration Bridge
@@ -150,6 +184,15 @@ await bridge.sampling_loop(
 - Check `stream=True` is set in API call
 - Verify proper event handling for streaming events
 - Check Anthropic SDK version (should be ≥0.50.0)
+- For SDK 0.50.0, don't use the `betas` parameter (use individual parameters instead)
+- Verify the thinking parameter format is correct for your SDK version
+
+### Handling Streaming Events
+- Different event types require specific handling
+- Content blocks should be processed incrementally
+- Tool use during streaming requires special attention
+- Thinking tokens may appear between content blocks
+- Ensure event handlers account for all possible event types
 
 ### Tool Use Errors
 - Ensure tool definitions match expected format
@@ -165,3 +208,9 @@ await bridge.sampling_loop(
 - Verify ports are properly mapped
 - Check container is running
 - Ensure API key is properly set
+
+### SDK Version Compatibility
+- SDK 0.50.0+ uses different parameter formats
+- `betas` parameter is no longer used (replaced with individual parameters)
+- Thinking parameter format changed to `thinking={"enabled": {"budget_tokens": 4000}}`
+- Check API parameters using `inspect.signature()` on SDK functions

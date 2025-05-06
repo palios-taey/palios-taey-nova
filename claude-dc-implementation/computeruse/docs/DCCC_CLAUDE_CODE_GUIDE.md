@@ -94,25 +94,125 @@ Your task is to:
 
 ## Key Code Examples
 
-### Streaming Implementation
+### Streaming Implementation for SDK v0.50.0
 
 ```python
-async with client.messages.stream(
+# For SDK 0.50.0, use client.messages.create with stream=True
+stream = await client.messages.create(
     model="claude-3-7-sonnet-20250219",
     max_tokens=4096,
     messages=messages,
     tools=tools,
-    thinking={"type": "enabled", "budget_tokens": 4000},
+    # Important: Don't use 'betas' parameter with SDK 0.50.0
+    # Use direct parameters instead
     stream=True,
-) as stream:
-    async for event in stream:
-        if event.type == "content_block_delta":
-            if hasattr(event.delta, "text") and event.delta.text:
+    # For thinking tokens, use this format:
+    thinking={
+        "enabled": {
+            "budget_tokens": 4000
+        }
+    },
+)
+
+# Process streaming events
+async for chunk in stream:
+    if hasattr(chunk, "type"):
+        chunk_type = chunk.type
+        
+        # Content block delta (text chunks)
+        if chunk_type == "content_block_delta":
+            if hasattr(chunk.delta, "text") and chunk.delta.text:
                 # Process text content
-                print(event.delta.text, end="", flush=True)
-        elif event.type == "thinking":
+                print(chunk.delta.text, end="", flush=True)
+                
+        # Thinking tokens
+        elif chunk_type == "thinking":
+            thinking_text = getattr(chunk, "thinking", "")
             # Process thinking content
-            print(f"Thinking: {event.thinking}")
+            print(f"Thinking: {thinking_text}")
+```
+
+### Handling Tool Use During Streaming
+
+```python
+# Example of processing a tool use event during streaming
+async def handle_tool_use_during_streaming(tool_name, tool_input, tool_id, stream_session):
+    """
+    Handle a tool use event during streaming.
+    
+    Args:
+        tool_name: The name of the tool to execute
+        tool_input: The input parameters for the tool
+        tool_id: The unique ID for this tool use
+        stream_session: The current streaming session state
+        
+    Returns:
+        Tool result content to be sent back to Claude
+    """
+    # Notify the user that a tool is being executed
+    stream_session.notify_tool_start(tool_name, tool_input)
+    
+    try:
+        # Execute the tool
+        tool_result = await execute_tool(tool_name, tool_input)
+        
+        # Format the tool result for the API
+        if tool_result.error:
+            tool_result_content = [{
+                "type": "text", 
+                "text": tool_result.error
+            }]
+        else:
+            tool_result_content = []
+            
+            # Add text output if available
+            if tool_result.output:
+                tool_result_content.append({
+                    "type": "text",
+                    "text": tool_result.output
+                })
+                
+            # Add image output if available
+            if tool_result.base64_image:
+                tool_result_content.append({
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": "image/png",
+                        "data": tool_result.base64_image
+                    }
+                })
+        
+        # Notify the user that the tool execution is complete
+        stream_session.notify_tool_complete(tool_result)
+        
+        # Return the tool result content
+        return {
+            "role": "user",
+            "content": [{
+                "type": "tool_result",
+                "tool_use_id": tool_id,
+                "content": tool_result_content
+            }]
+        }
+    
+    except Exception as e:
+        # Handle errors
+        error_message = f"Error executing {tool_name}: {str(e)}"
+        stream_session.notify_error(error_message)
+        
+        return {
+            "role": "user",
+            "content": [{
+                "type": "tool_result",
+                "tool_use_id": tool_id,
+                "content": [{
+                    "type": "text",
+                    "text": error_message
+                }],
+                "is_error": True
+            }]
+        }
 ```
 
 ### Feature Toggle
@@ -130,9 +230,35 @@ else:
     # Use non-streaming implementation
 ```
 
+## Key Challenges and Solutions
+
+### 1. SDK Version Compatibility
+- **Challenge**: Anthropic SDK v0.50.0 uses different parameter formats than older versions
+- **Solution**: 
+  - Remove `betas` parameter and use individual parameters
+  - Use correct thinking parameter format for SDK v0.50.0
+  - Create parameter compatibility layer in integration_framework.py
+
+### 2. Streaming Tool Integration
+- **Challenge**: Proper handling of tool use during streaming responses
+- **Solution**:
+  - Implement tool execution during streaming
+  - Resume streaming after tool execution
+  - Handle tool results appropriately
+  - Provide real-time UI feedback during tool execution
+
+### 3. Thinking Parameter Format
+- **Challenge**: The thinking parameter format changed in SDK v0.50.0
+- **Solution**:
+  - Update from `thinking={"type": "enabled", "budget_tokens": 4000}` 
+  - To `thinking={"enabled": {"budget_tokens": 4000}}`
+  - Temporarily disable thinking to get basic streaming working
+
 ## Remember
 
 - Focus on integration, not reinvention
 - Prioritize stability and error handling
 - Use incremental changes and proper testing
 - Document your approach and any issues encountered
+- Monitor image count to prevent "Too much media" errors
+- Check API parameter compatibility when upgrading SDKs

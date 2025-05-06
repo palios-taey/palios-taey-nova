@@ -92,6 +92,25 @@ The integration uses a feature toggle system to control which capabilities are a
 | `USE_THINKING` | Enable thinking token management | True |
 | `USE_ROSETTA_STONE` | Enable AI-to-AI communication protocol | False |
 | `USE_STREAMLIT_CONTINUITY` | Enable state persistence | True |
+| `USE_STREAMING_THINKING` | Enable thinking during streaming | False |
+| `USE_STREAMING_TOOLS` | Enable tool use during streaming | True |
+| `USE_ERROR_RECOVERY` | Enable error recovery mechanisms | True |
+
+The feature toggles are stored in a JSON file at:
+```
+/home/computeruse/computer_use_demo_custom/dc_impl/feature_toggles.json
+```
+
+Example toggle configuration:
+```json
+{
+    "use_streaming": true,
+    "use_streaming_thinking": false,
+    "use_streaming_tools": true,
+    "use_feature_toggles_ui": true,
+    "use_error_recovery": true
+}
+```
 
 ## Implementation Details
 
@@ -132,18 +151,29 @@ The protocol enables efficient AI-to-AI communication through:
 1. **SDK Version Compatibility**
    - Ensuring compatibility with Anthropic SDK v0.50.0
    - Handling API parameter differences
+   - Using correct parameter formats (`betas` parameter no longer used)
+   - Proper thinking parameter format for SDK 0.50.0
 
-2. **Response Processing**
+2. **Streaming Implementation**
+   - Implementing real-time text generation with SDK v0.50.0
+   - Handling different types of streaming events
+   - Processing content blocks efficiently
+   - Ensuring reliable event handling
+
+3. **Response Processing**
    - Converting between streaming and non-streaming formats
    - Handling tool results during streaming
+   - Processing different event types (content_block_delta, thinking, etc.)
 
-3. **State Management**
+4. **State Management**
    - Maintaining conversation context across runs
    - Serializing complex state objects
+   - Preserving important information while managing size
 
-4. **Error Handling**
+5. **Error Handling**
    - Graceful fallbacks if features fail
    - Comprehensive logging and diagnostics
+   - Recovery from API errors like "Too much media"
 
 ## Success Criteria
 

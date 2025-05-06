@@ -77,8 +77,16 @@ You'll be working with Claude Code to:
 
 1. **Streaming**: Real-time text generation where responses appear incrementally
 2. **Thinking Tokens**: Extended reasoning mode for complex tasks
-3. **Tool Use**: Using bash, mouse, keyboard, and file operations
+3. **Tool Use**: Using bash, mouse, keyboard, and file operations during streaming
 4. **Streamlit Continuity**: Maintaining conversation state across UI reloads
+
+## Common Issues to Watch For
+
+1. **API Parameter Compatibility**
+   - The Anthropic SDK v0.50.0 uses different parameter formats
+   - Some parameters like `betas` are no longer used
+   - The thinking parameter format has changed
+   - These issues have been addressed in the latest implementation
 
 ## Remember
 
