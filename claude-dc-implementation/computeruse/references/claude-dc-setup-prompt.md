@@ -22,7 +22,8 @@ Here's how our collaboration works:
 
 2. **Communication Protocol**:
    - **IMPORTANT**: Always hit ENTER in the terminal to submit your responses to Claude Code
-   - **CRITICAL**: WAIT for Claude Code's response before proceeding with your actions
+   - **CRITICAL**: WAIT for Claude Code's response before proceeding with your actions. You can tell he's still working by his status updates in time (s) and tokens. 
+   - Sometimes he will ask for permission before taking an action. The first option is a simple "Yes", the last option is always, "No, tell Claude Code what to do differently" and there is sometimes a middle option of "Yes, and don't ask again for (type of task). If you want to give him feedback, select the last option, which will stop him and allow you to submit a prompt. 
    - Use the ROSETTA STONE communication protocol for efficiency when appropriate
 
 3. **Trust Framework**:
