@@ -144,10 +144,10 @@ export TERM=xterm-256color
 echo "Launching Claude Code with xterm..."
 if [ ! -z "$CLAUDE_CODE_API_KEY" ]; then
     echo "Using API key from secrets for Claude Code"
-    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 ANTHROPIC_API_KEY=\"$CLAUDE_CODE_API_KEY\" /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --no-browser"
+    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 ANTHROPIC_API_KEY=\"$CLAUDE_CODE_API_KEY\" /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
 else
     echo "WARNING: No API key found, Claude Code will prompt for key on first run"
-    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude --no-browser"
+    xterm -fa 'Monospace' -fs 6 -e "LANG=C.UTF-8 LC_ALL=C.UTF-8 /home/computeruse/.nvm/versions/node/v18.20.8/bin/claude"
 fi
 
 # Set Claude options
