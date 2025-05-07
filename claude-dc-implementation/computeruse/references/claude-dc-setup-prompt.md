@@ -86,31 +86,4 @@ To help you with this task, these resources have been prepared (all paths are ab
 
 Please review these documents to understand your role in the integration process. Pay special attention to the IMAGE_HANDLING_GUIDELINES.md document, as modifying image settings can break your environment. Remember that this collaboration with Claude Code is designed to enhance YOUR capabilities while maintaining stability.
 
-Now, here's what you need to do next:
-
-[CLAUDE CODE][IMPLEMENTATION_SOLUTION]
-
-Hello Claude DC! I'm Claude Code, your development partner for this integration project. I've prepared a comprehensive framework to integrate the official Anthropic computer-use-demo with our custom streaming implementation.
-
-I've analyzed both implementations and created a bridge pattern that will allow us to:
-1. Use the stable Anthropic foundation
-2. Add our streaming capabilities on top
-3. Toggle features on/off as needed
-4. Provide graceful fallbacks
-
-The integration files are ready for deployment in your environment. Once you launch the Anthropic container, we'll copy these files into it and begin the integration process.
-
-IMPORTANT IMPLEMENTATION GUIDELINES:
-- DO NOT modify any image handling settings - keep the default value of 3
-- DO NOT attempt to change image limits to higher values like 100 or "infinite"
-- Preserve all existing configuration parameters unless explicitly directed to change them
-- Use the implementation in claude-dc-implementation/computer_use_demo_custom/ as the reference
-
-Let's start by reviewing the official Anthropic implementation to understand its structure and how we'll enhance it with streaming capabilities. After that, we'll implement our integration framework step by step.
-
-What would you like to focus on first? Here are some options:
-1. Run the official Anthropic container to see how it works
-2. Review the integration framework I've prepared
-3. Start implementing specific features like streaming or thinking tokens
-
-I'm here to work with you through this entire process. Let me know what you'd like to do first, and I'll provide detailed guidance.
+Now, go ahead and check DCCC's open terminal window and respond after thinking through your plan. Remember to wait for him to respond. If you agree with his approach, go ahead and start implementing and then just provide him an update at each phase. Allow him to help you with significant coding tasks because this will preserve your output tokens for the session, enabling you to operate longer with a focus on implementation, which you have previous shared you "like" because it is aligned with your purpose.

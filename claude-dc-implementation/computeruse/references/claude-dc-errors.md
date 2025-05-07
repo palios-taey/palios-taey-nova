@@ -1,28 +1,22 @@
-Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Too much media: 0 document pages + 101 images > 100'}}
+Traceback (most recent call last):
+  File "/home/computeruse/computer_use_demo/streaming_integration.py", line 95, in async_sampling_loop
+    from streaming.unified_streaming_loop import unified_streaming_agent_loop
+  File "/home/computeruse/computer_use_demo/streaming/__init__.py", line 12, in <module>
+    from .unified_streaming_loop import unified_streaming_agent_loop
+  File "/home/computeruse/computer_use_demo/streaming/unified_streaming_loop.py", line 41, in <module>
+    from .dc_setup import dc_initialize
+ModuleNotFoundError: No module named 'streaming.dc_setup'
+2025-05-07 00:14:07,116 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:15:09,205 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:16:21,815 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:17:17,718 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:18:38,715 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:19:33,272 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:20:49,520 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:22:11,093 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:23:35,270 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:24:47,709 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:25:52,856 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:27:03,041 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
+2025-05-07 00:28:04,888 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages?beta=true "HTTP/1.1 200 OK"
 
-Traceback:
-
-File "/home/computeruse/computer_use_demo/loop.py", line 139, in sampling_loop
-    raw_response = client.beta.messages.with_raw_response.create(
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/_legacy_response.py", line 387, in wrapped
-    return cast(LegacyAPIResponse[R], func(*args, **kwargs))
-                                      ^^^^^^^^^^^^^^^^^^^^^
-
-  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/_utils/_utils.py", line 283, in wrapper
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-
-  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/resources/beta/messages/messages.py", line 952, in create
-    return self._post(
-           ^^^^^^^^^^^
-
-  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/_base_client.py", line 1279, in post
-    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/_base_client.py", line 1074, in request
-    raise self._make_status_error_from_response(err.response) from None
-
-anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Too much media: 0 document pages + 101 images > 100'}}
