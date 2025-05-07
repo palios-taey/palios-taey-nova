@@ -20,19 +20,21 @@ After exploring different options, we implemented a parallel approach that doesn
 ## Key Components
 
 1. **Unified Streaming Loop**:
-   - `/home/computeruse/computer_use_demo/streaming/unified_streaming_loop.py`
+   - `/home/computeruse/computer_use_demo/streaming/unified_streaming_loop.py` - Original implementation
+   - `/home/computeruse/computer_use_demo/streaming/unified_streaming_loop_fixed.py` - Enhanced implementation with parameter extraction
    - Main agent loop with streaming capability
-   - Handles API communication and event processing
+   - Handles API communication, parameter extraction, and event processing
 
 2. **Streaming Enhancements**:
    - `/home/computeruse/computer_use_demo/streaming/streaming_enhancements.py`
    - Provides session management and callbacks
    - Handles error recovery and stream interruptions
 
-3. **Tool Adaptation**:
-   - `/home/computeruse/computer_use_demo/streaming/tool_adapter.py`
-   - Adapts existing tools for streaming use
-   - Provides parameter validation and execution
+3. **Tool Implementations**:
+   - `/home/computeruse/computer_use_demo/streaming/tools/dc_bash_fixed.py` - Enhanced bash tool with robust validation
+   - `/home/computeruse/computer_use_demo/streaming/tool_adapter.py` - General tool adapter
+   - Provides comprehensive parameter validation and execution
+   - Includes intelligent command extraction and fallbacks
 
 4. **Feature Toggles**:
    - `/home/computeruse/computer_use_demo/streaming/feature_toggles.json`
@@ -50,11 +52,14 @@ After exploring different options, we implemented a parallel approach that doesn
    - Updated to use the new Claude-3-7-Sonnet model
    - Removed deprecated beta flags that were causing errors
    - Implemented proper error handling for API responses
+   - Resolved thinking mode conflicts with tool use
 
 2. **Seamless Tool Integration**:
    - Created tool adapters that work with streaming
    - Maintained backward compatibility with existing tools
-   - Implemented parameter validation to prevent errors
+   - Implemented comprehensive parameter validation to prevent errors
+   - Added intelligent parameter extraction from user messages
+   - Enhanced system prompt for clearer tool usage guidance
 
 3. **Streamlit Limitations**:
    - Implemented debouncing for UI updates to avoid overloading
@@ -73,15 +78,38 @@ After exploring different options, we implemented a parallel approach that doesn
    - Created fallback mechanisms for error recovery
    - Implemented graceful degradation when issues occur
    - Added detailed token logging for troubleshooting
+   - Provided clear, actionable error messages for parameter validation failures
 
 ## Using the Implementation
 
-To use the streaming implementation:
+### Standard Streaming Implementation
+
+To use the regular streaming implementation:
 
 ```bash
 cd /home/computeruse/computer_use_demo
 ./run_claude_dc.sh --streaming
 ```
+
+### Enhanced Streaming Implementation
+
+To use the enhanced streaming implementation with improved parameter validation and extraction:
+
+```bash
+cd /home/computeruse/computer_use_demo
+export ANTHROPIC_API_KEY=your-api-key-here
+python -m streaming.unified_streaming_loop_fixed
+```
+
+To test the enhanced implementation thoroughly:
+
+```bash
+cd /home/computeruse/computer_use_demo
+export ANTHROPIC_API_KEY=your-api-key-here
+./test_enhanced_streaming.py
+```
+
+### Original Non-Streaming Implementation
 
 To use the original non-streaming implementation:
 
@@ -111,28 +139,75 @@ You can configure the streaming implementation by editing the feature toggles in
 
 We've created several test scripts to verify the implementation:
 
-1. `check_api_key.py` - Verifies that the API key is valid
-2. `test_unified_simple.py` - Tests the unified streaming loop directly
-3. `direct_api_test.py` - Tests the Anthropic API directly
+1. `test_enhanced_streaming.py` - Tests the enhanced implementation with parameter validation and extraction
+2. `test_fixed_streaming.py` - Tests the fixed streaming implementation with tool usage
+3. `test_bash_tool_direct.py` - Tests the bash tool implementation directly
+4. `check_api_key.py` - Verifies that the API key is valid
+5. `test_unified_simple.py` - Tests the unified streaming loop directly
+6. `direct_api_test.py` - Tests the Anthropic API directly
 
 ## Next Steps
 
-1. **Refinement**:
+1. **Tool Enhancement**:
+   - Apply enhanced parameter validation to all tools
+   - Extend intelligent parameter extraction to all tools
+   - Implement more sophisticated command suggestion system
+   - Create unified tool validation framework
+
+2. **Thinking Mode Integration**:
+   - Properly integrate thinking with tool use
+   - Resolve API conflicts while preserving thinking functionality
+   - Implement structured thinking extraction and display
+   - Add thinking toggle during streaming
+
+3. **Context Preservation**:
+   - Implement state persistence solution for preserving context across restarts
+   - Enhance conversation history management
+   - Create robust serialization for complex state objects
+   - Implement structured JSON state storage
+
+4. **UI Improvements**:
+   - Enhance error messages for end users
+   - Improve progress indicators for long-running tools
    - Optimize UI updates for smoother experience
-   - Improve error handling and recovery
-   - Add more detailed progress reporting
+   - Add tool usage suggestions based on user history
 
-2. **Tool Expansion**:
-   - Add streaming capabilities to additional tools
-   - Implement more sophisticated tool parameter validation
-   - Create unified tool adapter interface
+5. **Documentation & Testing**:
+   - Add comprehensive inline documentation
+   - Create detailed guides for each enhancement
+   - Expand test coverage for edge cases
+   - Implement continuous testing framework
 
-3. **Performance Optimization**:
-   - Implement caching for API responses
-   - Optimize UI updates to reduce Streamlit redraws
-   - Improve message history management
+## Latest Enhancements (2025-05-07)
 
-4. **Documentation**:
-   - Add inline documentation for all components
-   - Create user guides for different streaming features
-   - Document API response formats and error handling
+We've made significant improvements to address tool usage reliability during streaming:
+
+1. **Enhanced System Prompt**:
+   - Added visual indicators (⚠️) for critical instructions
+   - Provided clear examples of correct parameter formats
+   - Added explicit warnings about incorrect formats
+   - Enhanced clarity of required parameters and formats
+
+2. **Robust Parameter Validation**:
+   - Implemented comprehensive validation for all input types
+   - Added detection of incorrect parameter names
+   - Enhanced error messages with specific guidance
+   - Added extensive logging for easier debugging
+
+3. **Intelligent Parameter Extraction**:
+   - Extracts commands from quoted text in user messages
+   - Recognizes commands after action phrases like "run", "execute", "use"
+   - Detects common command patterns like "ls -la", "grep pattern file"
+   - Provides graceful fallbacks when parameters are missing
+
+4. **API Conflict Resolution**:
+   - Resolved thinking mode conflicts with tool usage
+   - Implemented proper API parameter handling
+   - Added automatic disabling of thinking mode during tool usage
+   - Fixed tool_use_id tracking for conversation history
+
+5. **New Testing Framework**:
+   - Added `test_enhanced_streaming.py` for comprehensive testing
+   - Implemented specific test cases for parameter extraction
+   - Added validation tests for error handling
+   - Created menu-driven test interface for easy verification

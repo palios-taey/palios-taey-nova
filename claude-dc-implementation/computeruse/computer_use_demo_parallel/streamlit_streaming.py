@@ -28,7 +28,16 @@ logger = logging.getLogger("streamlit_streaming")
 
 # Import streaming implementation
 try:
-    from streaming.unified_streaming_loop import unified_streaming_agent_loop
+    # Try to import the fixed implementation first
+    try:
+        from streaming.unified_streaming_loop_fixed import unified_streaming_agent_loop
+        logger.info("Fixed streaming implementation loaded successfully")
+        FIXED_STREAMING_AVAILABLE = True
+    except ImportError:
+        logger.warning("Fixed streaming implementation not available, falling back to original")
+        from streaming.unified_streaming_loop import unified_streaming_agent_loop
+        FIXED_STREAMING_AVAILABLE = False
+        
     from streaming.tools.dc_adapters import (
         dc_validate_computer_parameters,
         dc_validate_bash_parameters
@@ -42,6 +51,7 @@ try:
 except Exception as e:
     logger.error(f"Error loading streaming implementation: {str(e)}")
     STREAMING_AVAILABLE = False
+    FIXED_STREAMING_AVAILABLE = False
 
 # Initialize session state
 if "messages" not in st.session_state:
@@ -295,22 +305,46 @@ if prompt:
                     
                     # Get budget values from session state
                     output_budget = st.session_state.output_budget
-                    thinking_budget = st.session_state.thinking_budget if st.session_state.thinking_enabled else None
                     
-                    logger.info(f"Using output budget: {output_budget}, thinking budget: {thinking_budget}")
+                    # IMPORTANT: ALWAYS disable thinking for tool streaming to avoid API errors
+                    thinking_budget = None  # Force thinking to be disabled for tool streaming
+                    st.session_state.thinking_enabled = False  # Update the UI state
                     
-                    _ = asyncio.run(unified_streaming_agent_loop(
-                        user_input=prompt,
-                        conversation_history=st.session_state.messages,
-                        api_key=api_key,
-                        model="claude-3-7-sonnet-20250219",
-                        max_tokens=output_budget,
-                        thinking_budget=thinking_budget,
-                        callbacks={
-                            "on_text": log_process_stream,
-                            "on_thinking": update_thinking
-                        }
-                    ))
+                    logger.info(f"Using output budget: {output_budget}, thinking budget: {thinking_budget} (disabled for tool streaming)")
+                    
+                    # Check if we should use the fixed implementation
+                    if FIXED_STREAMING_AVAILABLE:
+                        logger.info("Using fixed streaming implementation")
+                        from streaming.unified_streaming_loop_fixed import unified_streaming_agent_loop as fixed_loop
+                        
+                        # Use fixed implementation
+                        _ = asyncio.run(fixed_loop(
+                            user_input=prompt,
+                            conversation_history=st.session_state.messages,
+                            api_key=api_key,
+                            model="claude-3-7-sonnet-20250219",
+                            max_tokens=output_budget,
+                            thinking_budget=thinking_budget,
+                            callbacks={
+                                "on_text": log_process_stream,
+                                "on_thinking": update_thinking
+                            }
+                        ))
+                    else:
+                        logger.info("Using original streaming implementation")
+                        # Fall back to original implementation
+                        _ = asyncio.run(unified_streaming_agent_loop(
+                            user_input=prompt,
+                            conversation_history=st.session_state.messages,
+                            api_key=api_key,
+                            model="claude-3-7-sonnet-20250219",
+                            max_tokens=output_budget,
+                            thinking_budget=thinking_budget,
+                            callbacks={
+                                "on_text": log_process_stream,
+                                "on_thinking": update_thinking
+                            }
+                        ))
                     logger.info(f"Streaming completed successfully")
                     
                     # Get the actual streamed response from session state
