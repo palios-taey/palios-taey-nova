@@ -1,0 +1,10 @@
+{
+  "use_streaming_bash": true,
+  "use_streaming_file": true,
+  "use_streaming_screenshot": false,
+  "use_unified_streaming": true,
+  "use_streaming_thinking": true,
+  "max_thinking_tokens": 4000,
+  "log_level": "INFO",
+  "api_model": "claude-3-7-sonnet-20250219"
+}
