@@ -1,10 +1,11 @@
 {
-  "use_streaming_bash": true,
-  "use_streaming_file": true,
-  "use_streaming_screenshot": false,
-  "use_unified_streaming": true,
-  "use_streaming_thinking": true,
-  "max_thinking_tokens": 4000,
-  "log_level": "INFO",
-  "api_model": "claude-3-7-sonnet-20250219"
+  "use_streaming_thinking": false,
+  "api_model": "claude-3-7-sonnet-20250219",
+  "use_xml_prompts": true,
+  "enable_buffer_delay": true,
+  "buffer_delay_ms": 500,
+  "max_tokens": 64000,
+  "enable_tool_buffer": true,
+  "debug_logging": true,
+  "use_response_chunking": true
 }

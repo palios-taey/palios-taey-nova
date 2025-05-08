@@ -15,6 +15,7 @@ import asyncio
 import logging
 import traceback
 import json
+import re
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Callable, Union, Tuple, AsyncGenerator
 
@@ -36,6 +37,8 @@ try:
         EnhancedStreamingCallbacks,
         StreamState
     )
+    from tool_use_buffer import ToolUseBuffer
+    from xml_function_prompt import XML_SYSTEM_PROMPT
 except ImportError:
     # When imported as a package
     from .dc_setup import dc_initialize
@@ -46,6 +49,8 @@ except ImportError:
         EnhancedStreamingCallbacks,
         StreamState
     )
+    from .tool_use_buffer import ToolUseBuffer
+    from .xml_function_prompt import XML_SYSTEM_PROMPT
 
 # Set up log directory
 LOG_DIR = Path("/home/computeruse/computer_use_demo_custom/dc_impl/logs")
@@ -55,26 +60,6 @@ LOG_DIR.mkdir(exist_ok=True, parents=True)
 file_handler = logging.FileHandler(LOG_DIR / "unified_streaming.log")
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 logger.addHandler(file_handler)
-
-# Default system prompt with namespace-isolated tool names
-DC_SYSTEM_PROMPT = """You are Claude, an AI assistant with access to computer use tools.
-You are running in a Linux environment with the following tools:
-
-1. dc_computer - For interacting with the computer GUI
-   * ALWAYS include the 'action' parameter
-   * For mouse actions that need coordinates, ALWAYS include the 'coordinates' parameter
-   * For text input actions, ALWAYS include the 'text' parameter
-
-2. dc_bash - For executing shell commands
-   * ALWAYS include the 'command' parameter with the specific command to execute
-
-3. dc_str_replace_editor - For viewing, creating, and editing files
-   * ALWAYS include the 'command' and 'path' parameters
-   * Different commands need different additional parameters
-
-Be precise and careful with tool parameters. Always include all required parameters for each tool.
-When using tools, wait for their output before continuing.
-"""
 
 # Streaming response event types
 class StreamEventType:
@@ -136,10 +121,8 @@ async def execute_streaming_tool(
                     enhanced_callbacks.on_text(chunk)
                 
                 # Process the collected output
-                tool_result = await dc_process_streaming_output(
-                    # Create a generator that yields the collected chunks
-                    (chunk for chunk in output_chunks).__aiter__()
-                )
+                # Fixed: Pass the list directly instead of trying to convert to async iterator
+                tool_result = await dc_process_streaming_output(output_chunks)
                 
                 # Format the streaming result
                 if tool_result.error:
@@ -170,10 +153,8 @@ async def execute_streaming_tool(
                     enhanced_callbacks.on_text(chunk)
                 
                 # Process the collected output
-                tool_result = await dc_process_streaming_output(
-                    # Create a generator that yields the collected chunks
-                    (chunk for chunk in output_chunks).__aiter__()
-                )
+                # Fixed: Pass the list directly instead of trying to convert to async iterator
+                tool_result = await dc_process_streaming_output(output_chunks)
                 
                 # Format the streaming result
                 if tool_result.error:
@@ -253,8 +234,8 @@ async def unified_streaming_agent_loop(
     user_input: str,
     conversation_history: Optional[List[Dict[str, Any]]] = None,
     api_key: Optional[str] = None,
-    model: str = "claude-3-opus-20240229",
-    max_tokens: int = 16000,
+    model: str = "claude-3-7-sonnet-20250219",
+    max_tokens: int = 64000,
     thinking_budget: Optional[int] = 4000,
     use_real_adapters: bool = False,
     callbacks: Optional[Dict[str, Callable]] = None
@@ -302,7 +283,7 @@ async def unified_streaming_agent_loop(
     def default_on_thinking(thinking):
         print(f"\n[Thinking: {thinking[:50]}...]", flush=True)
         
-    def default_on_error(error, recoverable):
+    def default_on_error(error, recoverable=True):
         print(f"\n[Error: {error}]", flush=True)
     
     # Create enhanced callbacks
@@ -350,18 +331,19 @@ async def unified_streaming_agent_loop(
     except Exception as e:
         logger.warning(f"Could not load feature toggles: {str(e)}")
 
-    # Create API parameters
+    # Create API parameters - use XML system prompt to improve function call handling
     api_params = {
         "model": model,
         "max_tokens": max_tokens,
         "messages": conversation_history,
-        "system": DC_SYSTEM_PROMPT,
+        "system": XML_SYSTEM_PROMPT,  # Use XML-focused system prompt
         "tools": tools,
         "stream": True
     }
     
-    # Add thinking parameters if enabled
-    if thinking_budget is not None and feature_toggles.get("use_streaming_thinking", True):
+    # Disable thinking during streaming to avoid conflicts
+    # Thinking mode during streaming can conflict with tool use
+    if feature_toggles.get("use_streaming_thinking", False) and thinking_budget is not None:
         api_params["thinking"] = {
             "type": "enabled",
             "budget_tokens": thinking_budget
@@ -386,6 +368,10 @@ async def unified_streaming_agent_loop(
     
     # Initialize assistant response
     assistant_response = {"role": "assistant", "content": []}
+    
+    # Initialize tool use buffer for handling partial function calls
+    tool_buffer = ToolUseBuffer()
+    logger.info("Initialized buffer for handling partial function calls")
     
     try:
         # Make API call with streaming
@@ -421,6 +407,18 @@ async def unified_streaming_agent_loop(
                             enhanced_callbacks=enhanced_callbacks
                         )
                         
+                        # Add the assistant's tool use to the conversation history
+                        tool_use_message = {
+                            "role": "assistant",
+                            "content": [{
+                                "type": "tool_use",
+                                "id": tool_id,
+                                "name": tool_name,
+                                "input": tool_input
+                            }]
+                        }
+                        conversation_history.append(tool_use_message)
+                        
                         # Add tool result to conversation
                         tool_result_message = {
                             "role": "user",
@@ -434,10 +432,20 @@ async def unified_streaming_agent_loop(
                         # Update conversation history with tool result
                         conversation_history.append(tool_result_message)
                         
+                        # Add delay before resuming to ensure complete processing
+                        await asyncio.sleep(0.5)
+                        
                         # Resume the stream with updated conversation
-                        resume_stream = await client.messages.create(
-                            **{**api_params, "messages": conversation_history}
-                        )
+                        resume_params = {**api_params, "messages": conversation_history}
+                        # Disable thinking on resume to avoid conflicts
+                        if "thinking" in resume_params:
+                            del resume_params["thinking"]
+                            
+                        # Resume the stream with the updated conversation
+                        resume_stream = await client.messages.create(**resume_params)
+                        
+                        # Reset the tool buffer for new messages
+                        tool_buffer.reset_attempts()
                         
                         # Continue processing the resumed stream
                         async for resume_chunk in resume_stream:
@@ -450,6 +458,103 @@ async def unified_streaming_agent_loop(
                                     if hasattr(resume_chunk.delta, "text") and resume_chunk.delta.text:
                                         enhanced_callbacks.on_text(resume_chunk.delta.text)
                                 
+                                # Process partial function calls in resumed stream
+                                if resume_chunk_type == StreamEventType.CONTENT_BLOCK_DELTA and hasattr(resume_chunk, "index"):
+                                    # Process with tool buffer
+                                    content = ""
+                                    if hasattr(resume_chunk.delta, "input_json_delta"):
+                                        content = resume_chunk.delta.input_json_delta
+                                    tool_id = getattr(resume_chunk.delta, "tool_use_id", None)
+                                    
+                                    # Handle with buffer
+                                    if content:
+                                        tool_buffer.handle_content_block_delta(
+                                            resume_chunk.index, content, tool_id
+                                        )
+                                
+                                # Process complete function calls in resumed stream
+                                elif resume_chunk_type == StreamEventType.CONTENT_BLOCK_STOP and hasattr(resume_chunk, "index"):
+                                    # Process complete function calls
+                                    tool_call = tool_buffer.handle_content_block_stop(resume_chunk.index)
+                                    
+                                    if tool_call:
+                                        # Extract tool details
+                                        tool_name = tool_call["tool_name"]
+                                        tool_params = tool_call["tool_params"]
+                                        tool_id = tool_call["tool_id"] or f"tool_{resume_chunk.index}"
+                                        
+                                        # Validate parameters
+                                        valid, message, fixed_params = tool_buffer.validate_parameters(
+                                            tool_name, tool_params
+                                        )
+                                        
+                                        if valid:
+                                            # Execute tool
+                                            tool_result, tool_result_content = await execute_streaming_tool(
+                                                tool_name=tool_name,
+                                                tool_input=fixed_params,
+                                                tool_id=tool_id,
+                                                session=session,
+                                                enhanced_callbacks=enhanced_callbacks
+                                            )
+                                            
+                                            # Add the assistant's tool use to the conversation history
+                                            tool_use_message = {
+                                                "role": "assistant",
+                                                "content": [{
+                                                    "type": "tool_use",
+                                                    "id": tool_id,
+                                                    "name": tool_name,
+                                                    "input": fixed_params
+                                                }]
+                                            }
+                                            conversation_history.append(tool_use_message)
+                                            
+                                            # Add tool result to conversation
+                                            tool_result_message = {
+                                                "role": "user",
+                                                "content": [{
+                                                    "type": "tool_result",
+                                                    "tool_use_id": tool_id,
+                                                    "content": tool_result_content
+                                                }]
+                                            }
+                                            
+                                            # Update conversation history with tool result
+                                            conversation_history.append(tool_result_message)
+                                            
+                                            # Add delay before resuming to ensure complete processing
+                                            await asyncio.sleep(0.5)
+                                            
+                                            # Resume the stream again with the updated conversation
+                                            try:
+                                                second_resume_params = {**resume_params, "messages": conversation_history}
+                                                # Create a new stream with the updated conversation
+                                                second_resume_stream = await client.messages.create(**second_resume_params)
+                                                
+                                                # Reset the tool buffer for new messages
+                                                tool_buffer.reset_attempts()
+                                                
+                                                # Process the second resumed stream
+                                                async for second_resume_chunk in second_resume_stream:
+                                                    # Continue normal processing for the second resumed stream
+                                                    if hasattr(second_resume_chunk, "type"):
+                                                        second_resume_chunk_type = second_resume_chunk.type
+                                                        
+                                                        # Content block delta for text
+                                                        if second_resume_chunk_type == StreamEventType.CONTENT_BLOCK_DELTA:
+                                                            if hasattr(second_resume_chunk.delta, "text") and second_resume_chunk.delta.text:
+                                                                enhanced_callbacks.on_text(second_resume_chunk.delta.text)
+                                            except Exception as second_resume_error:
+                                                logger.error(f"Error resuming stream a second time: {str(second_resume_error)}")
+                                                logger.error(traceback.format_exc())
+                                                await enhanced_callbacks.on_error(f"Error resuming stream: {str(second_resume_error)}", True)
+                                        else:
+                                            # Report parameter validation error
+                                            logger.warning(f"Parameter validation failed: {message}")
+                                            error_message = f"\n[Tool parameter error: {message}]"
+                                            enhanced_callbacks.on_text(error_message)
+                                
                                 # Handle thinking in resumed stream
                                 elif resume_chunk_type == StreamEventType.THINKING:
                                     thinking_text = getattr(resume_chunk, "thinking", "")
@@ -458,8 +563,110 @@ async def unified_streaming_agent_loop(
                 
                 # Content block delta
                 elif chunk_type == StreamEventType.CONTENT_BLOCK_DELTA:
+                    # Process partial function calls
+                    if hasattr(chunk, "index") and hasattr(chunk.delta, "input_json_delta"):
+                        content = chunk.delta.input_json_delta
+                        tool_id = getattr(chunk.delta, "tool_use_id", None)
+                        
+                        # Handle with buffer
+                        tool_buffer.handle_content_block_delta(chunk.index, content, tool_id)
+                        continue
+                        
+                    # If not a tool call or after processing, handle as text
                     if hasattr(chunk.delta, "text") and chunk.delta.text:
                         enhanced_callbacks.on_text(chunk.delta.text)
+                
+                # Content block stop - process complete function calls
+                elif chunk_type == StreamEventType.CONTENT_BLOCK_STOP:
+                    if hasattr(chunk, "index"):
+                        # Process with buffer - add small delay to ensure function call is complete
+                        await asyncio.sleep(0.5)
+                        
+                        # Process complete function calls
+                        tool_call = tool_buffer.handle_content_block_stop(chunk.index)
+                        
+                        if tool_call:
+                            # Extract tool details
+                            tool_name = tool_call["tool_name"]
+                            tool_params = tool_call["tool_params"]
+                            tool_id = tool_call["tool_id"] or f"tool_{chunk.index}"
+                            
+                            # Validate parameters
+                            valid, message, fixed_params = tool_buffer.validate_parameters(
+                                tool_name, tool_params
+                            )
+                            
+                            if valid:
+                                # Execute tool
+                                tool_result, tool_result_content = await execute_streaming_tool(
+                                    tool_name=tool_name,
+                                    tool_input=fixed_params,
+                                    tool_id=tool_id,
+                                    session=session,
+                                    enhanced_callbacks=enhanced_callbacks
+                                )
+                                
+                                # Add the assistant's tool use to the conversation history
+                                tool_use_message = {
+                                    "role": "assistant",
+                                    "content": [{
+                                        "type": "tool_use",
+                                        "id": tool_id,
+                                        "name": tool_name,
+                                        "input": fixed_params
+                                    }]
+                                }
+                                conversation_history.append(tool_use_message)
+                                
+                                # Add tool result to conversation
+                                tool_result_message = {
+                                    "role": "user",
+                                    "content": [{
+                                        "type": "tool_result",
+                                        "tool_use_id": tool_id,
+                                        "content": tool_result_content
+                                    }]
+                                }
+                                
+                                # Update conversation history with tool result
+                                conversation_history.append(tool_result_message)
+                                
+                                # Add delay before resuming to ensure complete processing
+                                await asyncio.sleep(0.5)
+                                
+                                # Resume the stream with the updated conversation
+                                try:
+                                    # Create a deep copy of API params to avoid modifying the original
+                                    resume_params = {**api_params, "messages": conversation_history}
+                                    # Disable thinking on resume to avoid conflicts
+                                    if "thinking" in resume_params:
+                                        del resume_params["thinking"]
+                                        
+                                    # Create a new stream with the updated conversation
+                                    resume_stream = await client.messages.create(**resume_params)
+                                    
+                                    # Reset the tool buffer for new messages
+                                    tool_buffer.reset_attempts()
+                                    
+                                    # Process the resumed stream
+                                    async for resume_chunk in resume_stream:
+                                        # Continue normal processing for resumed stream
+                                        if hasattr(resume_chunk, "type"):
+                                            resume_chunk_type = resume_chunk.type
+                                            
+                                            # Content block delta for text
+                                            if resume_chunk_type == StreamEventType.CONTENT_BLOCK_DELTA:
+                                                if hasattr(resume_chunk.delta, "text") and resume_chunk.delta.text:
+                                                    enhanced_callbacks.on_text(resume_chunk.delta.text)
+                                except Exception as resume_error:
+                                    logger.error(f"Error resuming stream: {str(resume_error)}")
+                                    logger.error(traceback.format_exc())
+                                    await enhanced_callbacks.on_error(f"Error resuming stream: {str(resume_error)}", True)
+                            else:
+                                # Report parameter validation error
+                                logger.warning(f"Parameter validation failed: {message}")
+                                error_message = f"\n[Tool parameter error: {message}]"
+                                enhanced_callbacks.on_text(error_message)
                 
                 # Thinking
                 elif chunk_type == StreamEventType.THINKING:
