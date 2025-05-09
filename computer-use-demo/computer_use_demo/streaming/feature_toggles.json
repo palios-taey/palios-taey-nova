@@ -1,0 +1,13 @@
+{
+  "use_streaming_thinking": true,
+  "enable_tool_thinking": true,
+  "tool_thinking_budget": 2000,
+  "api_model": "claude-3-7-sonnet-20250219",
+  "use_xml_prompts": true,
+  "enable_buffer_delay": true,
+  "buffer_delay_ms": 1000,
+  "max_tokens": 64000,
+  "enable_tool_buffer": true,
+  "debug_logging": true,
+  "use_response_chunking": true
+}
