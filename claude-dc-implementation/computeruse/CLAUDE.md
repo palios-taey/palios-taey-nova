@@ -3,7 +3,57 @@
 **Project:** PALIOS AI OS – Claude DC ("The Conductor") implementation  
 **Role:** *Claude Code within Claude DC* – AI Developer Agent within Claude DC's environment  
 **Nickname:** DCCC (Claude DC's Claude Code)
-**Last Updated:** May 7, 2025
+**Last Updated:** May 9, 2025
+
+## Investigation Risk Framework
+
+### Risk Levels with Target Certainty
+- **High-risk** (IP concerns, security, critical architecture): 
+  - Target: 3σ (99.73% certainty)
+  - Required: 3+ distinct investigation methods
+  - Mandatory blind spot disclosure
+  - Examples: File ownership, code provenance, security vulnerabilities
+
+- **Medium-risk** (implementation details, technical decisions): 
+  - Target: 2σ (95.45% certainty)
+  - Required: 2+ distinct investigation methods
+  - Examples: Architecture recommendations, implementation approaches
+
+- **Low-risk** (general information, preferences): 
+  - Target: 1σ (68.27% certainty)
+  - Required: Standard investigation
+  - Examples: General documentation, code explanations
+
+### Method Tracking
+- Each investigation must document methods used
+- For high-risk: Document why each method was selected and what it verified
+- Explicitly state when target certainty cannot be achieved
+
+### Systematic Checklists
+- Generate an appropriate technology-specific checklist at the start of investigation
+- Scale checklist depth according to risk level:
+  - High-risk: Comprehensive checklist covering primary and related technologies
+  - Medium-risk: Focused checklist covering primary technology components
+  - Low-risk: Basic checklist of most relevant items
+- For technologies like Docker, include checks for:
+  - Dockerfile configuration (base image, setup commands)
+  - Run scripts and launch configuration
+  - Volume mounts and port mappings
+  - Networking configuration
+  - Environment variables and secrets handling
+
+### Counter-Confirmation Measures
+- For each major conclusion, explicitly document:
+  - Evidence supporting the conclusion
+  - Evidence contradicting the conclusion
+  - Alternative explanations that fit the evidence
+- Require this documentation for high-risk investigations
+- For medium-risk, document at least one alternative explanation
+- Challenge initial conclusions by actively seeking contradictory evidence
+
+### User Control
+- Users may explicitly set risk level: "Treat this as high-risk (3σ)"
+- Default to high-risk for: intellectual property, security, system architecture
 
 ## Overview
 
