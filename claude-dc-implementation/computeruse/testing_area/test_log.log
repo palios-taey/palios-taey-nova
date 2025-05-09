@@ -1,7 +1,0 @@
-2025-04-24 00:17:36,185 - claude_dc - INFO - Feature Flags => Streaming: True, Prompt Caching: False, Extended Output: False, Thinking: True, Token-Efficient: False
-2025-04-24 00:17:36,375 - claude_dc.loop - INFO - Added required beta flag: computer-use-2025-01-24
-2025-04-24 00:17:36,375 - claude_dc.loop - INFO - Making API call with streaming: True
-2025-04-24 00:17:36,375 - claude_dc.loop - WARNING - Beta parameter not supported, removing it and retrying
-2025-04-24 00:17:37,324 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-04-24 00:17:37,324 - claude_dc.loop - INFO - Stream created successfully
-2025-04-24 00:17:37,819 - claude_dc.loop - INFO - Message generation complete

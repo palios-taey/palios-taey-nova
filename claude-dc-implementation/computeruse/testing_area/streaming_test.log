@@ -1,6 +1,0 @@
-2025-04-23 19:24:40,719 - claude_dc.test.streaming - INFO - Starting basic streaming test...
-2025-04-23 19:24:40,744 - claude_dc.test.streaming - INFO - Created Anthropic client
-2025-04-23 19:24:40,744 - claude_dc.test.streaming - INFO - Making API call with streaming enabled
-2025-04-23 19:24:41,320 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-04-23 19:24:41,320 - claude_dc.test.streaming - INFO - Stream created successfully
-2025-04-23 19:24:42,849 - claude_dc.test.streaming - INFO - Basic streaming test completed successfully

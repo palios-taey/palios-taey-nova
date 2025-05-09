@@ -1,0 +1,339 @@
+2025-05-07 12:57:54,509 - test_fixed_streaming - INFO - Fixed streaming implementation loaded successfully
+2025-05-07 12:57:54,509 - test_fixed_streaming - INFO - Loaded API key from /home/computeruse/secrets/palios-taey-secrets.json
+2025-05-07 12:57:54,511 - test_fixed_streaming - INFO - Running single test #2: Run the 'ls -la' command and explain what each part of the output means.
+2025-05-07 12:57:54,511 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-05-07 12:57:54,511 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-05-07 12:57:54,511 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-05-07 12:57:54,511 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 12:57:54,685 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 12:57:54,685 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 12:57:54,685 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 12:57:56,585 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 12:57:59,931 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 12:57:59,931 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 12:57:59,932 - root - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 12:57:59,932 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 12:57:59,933 - unified_streaming - INFO - Resuming stream with 3 messages
+2025-05-07 12:57:59,933 - unified_streaming - INFO - Last message role: user
+2025-05-07 12:58:00,182 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 400 Bad Request"
+2025-05-07 12:58:00,183 - unified_streaming - ERROR - Error resuming stream: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.1.content.0.type: Expected `thinking` or `redacted_thinking`, but found `tool_use`. When `thinking` is enabled, a final `assistant` message must start with a thinking block (preceeding the lastmost set of `tool_use` and `tool_result` blocks). We recommend you include thinking blocks from previous turns. To avoid this requirement, disable `thinking`. Please consult our documentation at https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking'}}
+2025-05-07 12:58:00,184 - unified_streaming - ERROR - Traceback (most recent call last):
+  File "/home/computeruse/computer_use_demo/streaming/unified_streaming_loop_fixed.py", line 449, in unified_streaming_agent_loop
+    resume_stream = await client.messages.create(**resume_params)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/resources/messages/messages.py", line 2162, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/_base_client.py", line 1799, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/computeruse/.pyenv/versions/3.11.6/lib/python3.11/site-packages/anthropic/_base_client.py", line 1606, in request
+    raise self._make_status_error_from_response(err.response) from None
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.1.content.0.type: Expected `thinking` or `redacted_thinking`, but found `tool_use`. When `thinking` is enabled, a final `assistant` message must start with a thinking block (preceeding the lastmost set of `tool_use` and `tool_result` blocks). We recommend you include thinking blocks from previous turns. To avoid this requirement, disable `thinking`. Please consult our documentation at https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking'}}
+
+2025-05-07 12:58:00,185 - streaming_enhancements - INFO - Completed streaming session in 5.50s
+2025-05-07 12:58:00,185 - test_fixed_streaming - INFO - Test 2 completed successfully
+2025-05-07 12:58:00,185 - test_fixed_streaming - INFO - Test summary: {"test_number": 2, "prompt": "Run the 'ls -la' command and explain what each part of the output means.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": 2000, "fixed_implementation": true}
+2025-05-07 12:58:26,318 - test_fixed_streaming - INFO - Fixed streaming implementation loaded successfully
+2025-05-07 12:58:26,318 - test_fixed_streaming - INFO - Loaded API key from /home/computeruse/secrets/palios-taey-secrets.json
+2025-05-07 12:58:26,319 - test_fixed_streaming - INFO - Running single test #2: Run the 'ls -la' command and explain what each part of the output means.
+2025-05-07 12:58:26,320 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-05-07 12:58:26,320 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-05-07 12:58:26,320 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-05-07 12:58:26,320 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 12:58:26,481 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 12:58:26,481 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 12:58:26,481 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 12:58:28,330 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 12:58:28,385 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 12:58:28,385 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 12:58:28,386 - root - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 12:58:28,386 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 12:58:28,386 - unified_streaming - INFO - Resuming stream with 3 messages
+2025-05-07 12:58:28,386 - unified_streaming - INFO - Last message role: user
+2025-05-07 12:58:30,390 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 12:58:31,473 - streaming_enhancements - INFO - Completed streaming session in 4.99s
+2025-05-07 12:58:31,473 - test_fixed_streaming - INFO - Test 2 completed successfully
+2025-05-07 12:58:31,473 - test_fixed_streaming - INFO - Test summary: {"test_number": 2, "prompt": "Run the 'ls -la' command and explain what each part of the output means.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 12:59:10,502 - test_fixed_streaming - INFO - Fixed streaming implementation loaded successfully
+2025-05-07 12:59:10,502 - test_fixed_streaming - INFO - Loaded API key from /home/computeruse/secrets/palios-taey-secrets.json
+2025-05-07 12:59:10,504 - test_fixed_streaming - INFO - Running single test #2: Run the 'ls -la' command and explain what each part of the output means.
+2025-05-07 12:59:10,504 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-05-07 12:59:10,504 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-05-07 12:59:10,504 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-05-07 12:59:10,504 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 12:59:10,666 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 12:59:10,667 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 12:59:10,667 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 12:59:11,490 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 12:59:12,100 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 12:59:12,100 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 12:59:12,100 - root - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 12:59:12,101 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 12:59:12,101 - unified_streaming - INFO - Resuming stream with 3 messages
+2025-05-07 12:59:12,101 - unified_streaming - INFO - Last message role: user
+2025-05-07 12:59:13,251 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 12:59:14,455 - streaming_enhancements - INFO - Completed streaming session in 3.79s
+2025-05-07 12:59:14,455 - test_fixed_streaming - INFO - Test 2 completed successfully
+2025-05-07 12:59:14,455 - test_fixed_streaming - INFO - Test summary: {"test_number": 2, "prompt": "Run the 'ls -la' command and explain what each part of the output means.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 12:59:25,047 - test_fixed_streaming - INFO - Fixed streaming implementation loaded successfully
+2025-05-07 12:59:25,047 - test_fixed_streaming - INFO - Loaded API key from /home/computeruse/secrets/palios-taey-secrets.json
+2025-05-07 12:59:25,049 - test_fixed_streaming - INFO - Running single test #2: Run the 'ls -la' command and explain what each part of the output means.
+2025-05-07 12:59:25,049 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=False)
+2025-05-07 12:59:25,049 - dc_setup - INFO - Registered DC computer tool with mock implementation
+2025-05-07 12:59:25,049 - dc_setup - INFO - Registered DC bash tool with mock implementation
+2025-05-07 12:59:25,049 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 12:59:25,205 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 12:59:25,206 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 12:59:25,206 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 12:59:25,902 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 12:59:26,679 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 12:59:26,679 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 12:59:26,681 - root - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 12:59:26,681 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 12:59:26,682 - unified_streaming - INFO - Resuming stream with 3 messages
+2025-05-07 12:59:26,682 - unified_streaming - INFO - Last message role: user
+2025-05-07 12:59:27,913 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 12:59:28,710 - streaming_enhancements - INFO - Completed streaming session in 3.50s
+2025-05-07 12:59:28,710 - test_fixed_streaming - INFO - Test 2 completed successfully
+2025-05-07 12:59:28,710 - test_fixed_streaming - INFO - Test summary: {"test_number": 2, "prompt": "Run the 'ls -la' command and explain what each part of the output means.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 12:59:46,077 - test_fixed_streaming - INFO - Fixed streaming implementation loaded successfully
+2025-05-07 12:59:46,078 - test_fixed_streaming - INFO - Loaded API key from /home/computeruse/secrets/palios-taey-secrets.json
+2025-05-07 12:59:46,079 - test_fixed_streaming - INFO - Running single test #2: Run the 'ls -la' command and explain what each part of the output means.
+2025-05-07 12:59:46,079 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=True)
+2025-05-07 12:59:46,079 - dc_setup - INFO - Registered DC computer tool with real implementation
+2025-05-07 12:59:46,079 - dc_setup - INFO - Registered DC bash tool with real implementation
+2025-05-07 12:59:46,079 - dc_setup - INFO - Registered DC edit tool with real implementation
+2025-05-07 12:59:46,079 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 12:59:46,235 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 12:59:46,235 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 12:59:46,235 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 12:59:47,136 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 12:59:47,746 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 12:59:47,746 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 12:59:47,747 - root - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 12:59:47,747 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 12:59:47,747 - unified_streaming - INFO - Resuming stream with 3 messages
+2025-05-07 12:59:47,747 - unified_streaming - INFO - Last message role: user
+2025-05-07 12:59:50,189 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 12:59:51,095 - streaming_enhancements - INFO - Completed streaming session in 4.86s
+2025-05-07 12:59:51,096 - test_fixed_streaming - INFO - Test 2 completed successfully
+2025-05-07 12:59:51,096 - test_fixed_streaming - INFO - Test summary: {"test_number": 2, "prompt": "Run the 'ls -la' command and explain what each part of the output means.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 13:00:01,372 - test_fixed_streaming - INFO - Fixed streaming implementation loaded successfully
+2025-05-07 13:00:01,372 - test_fixed_streaming - INFO - Loaded API key from /home/computeruse/secrets/palios-taey-secrets.json
+2025-05-07 13:00:01,374 - test_fixed_streaming - INFO - Running single test #2: Run the 'ls -la' command and explain what each part of the output means. IMPORTANT: When using the dc_bash tool, make sure to include the command parameter with the exact command like this: {"command": "ls -la"}
+2025-05-07 13:00:01,374 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=True)
+2025-05-07 13:00:01,374 - dc_setup - INFO - Registered DC computer tool with real implementation
+2025-05-07 13:00:01,374 - dc_setup - INFO - Registered DC bash tool with real implementation
+2025-05-07 13:00:01,374 - dc_setup - INFO - Registered DC edit tool with real implementation
+2025-05-07 13:00:01,374 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 13:00:01,533 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:00:01,534 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 13:00:01,534 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 13:00:03,179 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:00:03,673 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 13:00:03,673 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 13:00:03,674 - root - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:00:03,674 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 13:00:03,674 - unified_streaming - INFO - Resuming stream with 3 messages
+2025-05-07 13:00:03,674 - unified_streaming - INFO - Last message role: user
+2025-05-07 13:00:05,371 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:00:06,261 - streaming_enhancements - INFO - Completed streaming session in 4.73s
+2025-05-07 13:00:06,261 - test_fixed_streaming - INFO - Test 2 completed successfully
+2025-05-07 13:00:06,261 - test_fixed_streaming - INFO - Test summary: {"test_number": 2, "prompt": "Run the 'ls -la' command and explain what each part of the output means. IMPORTANT: When using the dc_bash tool, make sure to include the command parameter with the exact command like this: {\"command\": \"ls -la\"}", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 13:00:43,601 - test_fixed_streaming - INFO - Fixed streaming implementation loaded successfully
+2025-05-07 13:00:43,602 - test_fixed_streaming - INFO - Loaded API key from /home/computeruse/secrets/palios-taey-secrets.json
+2025-05-07 13:00:43,603 - test_fixed_streaming - INFO - Running single test #2: Run the 'ls -la' command and explain what each part of the output means.
+2025-05-07 13:00:43,603 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=True)
+2025-05-07 13:00:43,603 - dc_setup - INFO - Registered DC computer tool with real implementation
+2025-05-07 13:00:43,603 - dc_setup - INFO - Registered DC bash tool with real implementation
+2025-05-07 13:00:43,603 - dc_setup - INFO - Registered DC edit tool with real implementation
+2025-05-07 13:00:43,603 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 13:00:43,762 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:00:43,762 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 13:00:43,762 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 13:00:45,540 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:00:46,216 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 13:00:46,216 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 13:00:46,217 - root - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:00:46,217 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 13:00:46,217 - unified_streaming - INFO - Tool input after default parameters: {'command': "echo 'Please specify a command to execute'"}
+2025-05-07 13:00:46,217 - dc_bash - INFO - Executing bash command with streaming: echo 'Please specify a command to execute' (mode: read_only)
+2025-05-07 13:00:46,217 - dc_bash - INFO - Validating command: echo (mode: read_only)
+2025-05-07 13:00:46,219 - dc_bash - INFO - Command completed in 0.00s with return code 0
+2025-05-07 13:00:46,219 - unified_streaming - INFO - Resuming stream with 3 messages
+2025-05-07 13:00:46,219 - unified_streaming - INFO - Last message role: user
+2025-05-07 13:00:49,219 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:00:50,104 - streaming_enhancements - INFO - Completed streaming session in 6.34s
+2025-05-07 13:00:50,104 - test_fixed_streaming - INFO - Test 2 completed successfully
+2025-05-07 13:00:50,104 - test_fixed_streaming - INFO - Test summary: {"test_number": 2, "prompt": "Run the 'ls -la' command and explain what each part of the output means.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 13:04:44,951 - test_fixed_streaming - INFO - Fixed streaming implementation loaded successfully
+2025-05-07 13:04:44,951 - test_fixed_streaming - INFO - Loaded API key from /home/computeruse/secrets/palios-taey-secrets.json
+2025-05-07 13:04:44,952 - test_fixed_streaming - INFO - Running single test #3: Run the command 'ps aux | grep python' and explain the output.
+2025-05-07 13:04:44,952 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=True)
+2025-05-07 13:04:44,953 - dc_setup - INFO - Registered DC computer tool with real implementation
+2025-05-07 13:04:44,953 - dc_setup - INFO - Registered DC bash tool with real implementation
+2025-05-07 13:04:44,953 - dc_setup - INFO - Registered DC edit tool with real implementation
+2025-05-07 13:04:44,953 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 13:04:45,124 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:04:45,124 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 13:04:45,124 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 13:04:46,698 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:04:47,481 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 13:04:47,481 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 13:04:47,482 - root - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:04:47,482 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 13:04:47,482 - unified_streaming - INFO - Tool input after default parameters: {'command': "echo 'Please specify a command to execute'"}
+2025-05-07 13:04:47,482 - dc_bash - INFO - Executing bash command with streaming: echo 'Please specify a command to execute' (mode: read_only)
+2025-05-07 13:04:47,482 - dc_bash - INFO - Validating command: echo (mode: read_only)
+2025-05-07 13:04:47,483 - dc_bash - INFO - Command completed in 0.00s with return code 0
+2025-05-07 13:04:47,483 - unified_streaming - INFO - Resuming stream with 3 messages
+2025-05-07 13:04:47,483 - unified_streaming - INFO - Last message role: user
+2025-05-07 13:04:52,496 - anthropic._base_client - INFO - Retrying request to /v1/messages in 0.498619 seconds
+2025-05-07 13:04:58,023 - anthropic._base_client - INFO - Retrying request to /v1/messages in 0.870206 seconds
+2025-05-07 13:04:59,909 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:05:00,815 - streaming_enhancements - INFO - Completed streaming session in 15.69s
+2025-05-07 13:05:00,815 - test_fixed_streaming - INFO - Test 3 completed successfully
+2025-05-07 13:05:00,815 - test_fixed_streaming - INFO - Test summary: {"test_number": 3, "prompt": "Run the command 'ps aux | grep python' and explain the output.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 13:05:55,307 - test_fixed_streaming - INFO - Fixed streaming implementation loaded successfully
+2025-05-07 13:05:55,307 - test_fixed_streaming - INFO - Loaded API key from /home/computeruse/secrets/palios-taey-secrets.json
+2025-05-07 13:05:55,309 - test_fixed_streaming - INFO - Running single test #3: Run the command 'ps aux | grep python' and explain the output.
+2025-05-07 13:05:55,309 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=True)
+2025-05-07 13:05:55,309 - dc_setup - INFO - Registered DC computer tool with real implementation
+2025-05-07 13:05:55,309 - dc_setup - INFO - Registered DC bash tool with real implementation
+2025-05-07 13:05:55,309 - dc_setup - INFO - Registered DC edit tool with real implementation
+2025-05-07 13:05:55,309 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 13:05:55,469 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:05:55,469 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 13:05:55,469 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 13:05:57,091 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:05:57,829 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 13:05:57,829 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 13:05:57,829 - unified_streaming - INFO - Extracted command from quotes: ps aux | grep python
+2025-05-07 13:05:57,829 - root - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:05:57,830 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 13:05:57,830 - unified_streaming - INFO - Tool input after default parameters: {'command': 'ps aux | grep python'}
+2025-05-07 13:05:57,830 - dc_bash - INFO - Executing bash command with streaming: ps aux | grep python (mode: read_only)
+2025-05-07 13:05:57,830 - dc_bash - INFO - Validating command: ps (mode: read_only)
+2025-05-07 13:05:57,834 - dc_bash - INFO - Command completed in 0.00s with return code 0
+2025-05-07 13:05:57,834 - unified_streaming - INFO - Resuming stream with 3 messages
+2025-05-07 13:05:57,834 - unified_streaming - INFO - Last message role: user
+2025-05-07 13:05:59,691 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:06:06,143 - streaming_enhancements - INFO - Completed streaming session in 10.67s
+2025-05-07 13:06:06,143 - test_fixed_streaming - INFO - Test 3 completed successfully
+2025-05-07 13:06:06,143 - test_fixed_streaming - INFO - Test summary: {"test_number": 3, "prompt": "Run the command 'ps aux | grep python' and explain the output.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 13:06:34,566 - test_fixed_streaming - INFO - Fixed streaming implementation loaded successfully
+2025-05-07 13:06:34,567 - test_fixed_streaming - INFO - Loaded API key from /home/computeruse/secrets/palios-taey-secrets.json
+2025-05-07 13:06:34,568 - test_fixed_streaming - INFO - Running all 5 tests
+2025-05-07 13:06:34,568 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=True)
+2025-05-07 13:06:34,568 - dc_setup - INFO - Registered DC computer tool with real implementation
+2025-05-07 13:06:34,568 - dc_setup - INFO - Registered DC bash tool with real implementation
+2025-05-07 13:06:34,568 - dc_setup - INFO - Registered DC edit tool with real implementation
+2025-05-07 13:06:34,569 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 13:06:34,737 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:06:34,737 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 13:06:34,737 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 13:06:36,656 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:06:37,734 - unified_streaming - INFO - Executing streaming tool: dc_computer
+2025-05-07 13:06:37,734 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_computer
+2025-05-07 13:06:37,734 - unified_streaming - INFO - Using standard implementation for tool: dc_computer
+2025-05-07 13:06:37,734 - dc_executor - INFO - DC Execute Tool - Tool: dc_computer
+2025-05-07 13:06:37,734 - unified_streaming - INFO - Resuming stream with 3 messages
+2025-05-07 13:06:37,734 - unified_streaming - INFO - Last message role: user
+2025-05-07 13:06:38,362 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:06:39,200 - streaming_enhancements - INFO - Completed streaming session in 4.46s
+2025-05-07 13:06:39,200 - test_fixed_streaming - INFO - Test 1 completed successfully
+2025-05-07 13:06:39,200 - test_fixed_streaming - INFO - Test summary: {"test_number": 1, "prompt": "Tell me a brief overview of what Claude DC is.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 13:06:39,200 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=True)
+2025-05-07 13:06:39,200 - dc_setup - INFO - Registered DC computer tool with real implementation
+2025-05-07 13:06:39,200 - dc_setup - INFO - Registered DC bash tool with real implementation
+2025-05-07 13:06:39,200 - dc_setup - INFO - Registered DC edit tool with real implementation
+2025-05-07 13:06:39,200 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 13:06:39,200 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:06:39,200 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 13:06:39,200 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 13:06:40,399 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:06:41,138 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 13:06:41,138 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 13:06:41,138 - unified_streaming - INFO - Extracted command from quotes: ls -la
+2025-05-07 13:06:41,139 - root - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:06:41,139 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 13:06:41,139 - unified_streaming - INFO - Tool input after default parameters: {'command': 'ls -la'}
+2025-05-07 13:06:41,139 - dc_bash - INFO - Executing bash command with streaming: ls -la (mode: read_only)
+2025-05-07 13:06:41,139 - dc_bash - INFO - Validating command: ls (mode: read_only)
+2025-05-07 13:06:41,141 - dc_bash - INFO - Command completed in 0.00s with return code 0
+2025-05-07 13:06:41,142 - unified_streaming - INFO - Resuming stream with 7 messages
+2025-05-07 13:06:41,142 - unified_streaming - INFO - Last message role: user
+2025-05-07 13:06:42,984 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:06:50,947 - streaming_enhancements - INFO - Completed streaming session in 11.75s
+2025-05-07 13:06:50,948 - test_fixed_streaming - INFO - Test 2 completed successfully
+2025-05-07 13:06:50,948 - test_fixed_streaming - INFO - Test summary: {"test_number": 2, "prompt": "Run the 'ls -la' command and explain what each part of the output means.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 13:06:50,948 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=True)
+2025-05-07 13:06:50,948 - dc_setup - INFO - Registered DC computer tool with real implementation
+2025-05-07 13:06:50,948 - dc_setup - INFO - Registered DC bash tool with real implementation
+2025-05-07 13:06:50,948 - dc_setup - INFO - Registered DC edit tool with real implementation
+2025-05-07 13:06:50,948 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 13:06:50,948 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:06:50,948 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 13:06:50,948 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 13:06:55,607 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:06:56,134 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 13:06:56,134 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 13:06:56,134 - unified_streaming - INFO - Extracted command from quotes: ps aux | grep python
+2025-05-07 13:06:56,134 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 13:06:56,134 - unified_streaming - INFO - Tool input after default parameters: {'command': 'ps aux | grep python'}
+2025-05-07 13:06:56,134 - dc_bash - INFO - Executing bash command with streaming: ps aux | grep python (mode: read_only)
+2025-05-07 13:06:56,134 - dc_bash - INFO - Validating command: ps (mode: read_only)
+2025-05-07 13:06:56,138 - dc_bash - INFO - Command completed in 0.00s with return code 0
+2025-05-07 13:06:56,138 - unified_streaming - INFO - Resuming stream with 11 messages
+2025-05-07 13:06:56,138 - unified_streaming - INFO - Last message role: user
+2025-05-07 13:06:57,423 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:06:58,528 - streaming_enhancements - INFO - Completed streaming session in 7.58s
+2025-05-07 13:06:58,528 - test_fixed_streaming - INFO - Test 3 completed successfully
+2025-05-07 13:06:58,528 - test_fixed_streaming - INFO - Test summary: {"test_number": 3, "prompt": "Run the command 'ps aux | grep python' and explain the output.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 13:06:58,528 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=True)
+2025-05-07 13:06:58,528 - dc_setup - INFO - Registered DC computer tool with real implementation
+2025-05-07 13:06:58,528 - dc_setup - INFO - Registered DC bash tool with real implementation
+2025-05-07 13:06:58,528 - dc_setup - INFO - Registered DC edit tool with real implementation
+2025-05-07 13:06:58,528 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 13:06:58,528 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:06:58,528 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 13:06:58,528 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 13:06:59,366 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:07:00,021 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 13:07:00,021 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 13:07:00,021 - unified_streaming - INFO - Extracted command from quotes: find
+2025-05-07 13:07:00,021 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 13:07:00,021 - unified_streaming - INFO - Tool input after default parameters: {'command': 'find'}
+2025-05-07 13:07:00,022 - dc_bash - INFO - Executing bash command with streaming: find (mode: read_only)
+2025-05-07 13:07:00,022 - dc_bash - INFO - Validating command: find (mode: read_only)
+2025-05-07 13:07:00,024 - dc_bash - INFO - Command completed in 0.00s with return code 0
+2025-05-07 13:07:00,024 - unified_streaming - INFO - Resuming stream with 15 messages
+2025-05-07 13:07:00,024 - unified_streaming - INFO - Last message role: user
+2025-05-07 13:07:02,235 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:07:02,877 - streaming_enhancements - INFO - Completed streaming session in 4.35s
+2025-05-07 13:07:02,878 - test_fixed_streaming - INFO - Test 4 completed successfully
+2025-05-07 13:07:02,878 - test_fixed_streaming - INFO - Test summary: {"test_number": 4, "prompt": "Use the 'find' command to locate all Python files in the current directory, then explain what each file might be for based on its name.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}
+2025-05-07 13:07:02,878 - dc_setup - INFO - Initializing DC implementation (use_real_adapters=True)
+2025-05-07 13:07:02,878 - dc_setup - INFO - Registered DC computer tool with real implementation
+2025-05-07 13:07:02,878 - dc_setup - INFO - Registered DC bash tool with real implementation
+2025-05-07 13:07:02,878 - dc_setup - INFO - Registered DC edit tool with real implementation
+2025-05-07 13:07:02,878 - dc_setup - INFO - DC implementation initialized successfully
+2025-05-07 13:07:02,878 - unified_streaming - INFO - Loaded feature toggles from /home/computeruse/computer_use_demo/streaming/feature_toggles.json
+2025-05-07 13:07:02,878 - unified_streaming - INFO - Starting unified streaming session with model: claude-3-7-sonnet-20250219
+2025-05-07 13:07:02,878 - streaming_enhancements - INFO - Starting enhanced streaming session
+2025-05-07 13:07:05,100 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:07:05,898 - unified_streaming - INFO - Executing streaming tool: dc_bash
+2025-05-07 13:07:05,898 - streaming_enhancements - INFO - Stream interrupted: Executing tool: dc_bash
+2025-05-07 13:07:05,898 - unified_streaming - INFO - Extracted command from quotes: cat /etc/passwd | grep -v nologin | sort
+2025-05-07 13:07:05,898 - unified_streaming - INFO - Using fixed streaming bash implementation
+2025-05-07 13:07:05,898 - unified_streaming - INFO - Tool input after default parameters: {'command': 'cat /etc/passwd | grep -v nologin | sort'}
+2025-05-07 13:07:05,898 - dc_bash - INFO - Executing bash command with streaming: cat /etc/passwd | grep -v nologin | sort (mode: read_only)
+2025-05-07 13:07:05,898 - dc_bash - INFO - Validating command: cat (mode: read_only)
+2025-05-07 13:07:05,898 - dc_bash - WARNING - Command validation failed: Command contains potentially dangerous pattern: \s+(/etc/(passwd|shadow|crontab|sudoers)|/var/log/auth.log)
+2025-05-07 13:07:05,898 - unified_streaming - INFO - Resuming stream with 19 messages
+2025-05-07 13:07:05,898 - unified_streaming - INFO - Last message role: user
+2025-05-07 13:07:07,457 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-05-07 13:07:09,190 - streaming_enhancements - INFO - Completed streaming session in 6.31s
+2025-05-07 13:07:09,190 - test_fixed_streaming - INFO - Test 5 completed successfully
+2025-05-07 13:07:09,190 - test_fixed_streaming - INFO - Test summary: {"test_number": 5, "prompt": "Run 'cat /etc/passwd | grep -v nologin | sort' and explain what each user account is for.", "status": "SUCCESS", "model": "claude-3-7-sonnet-20250219", "max_tokens": 4000, "thinking_budget": null, "fixed_implementation": true}

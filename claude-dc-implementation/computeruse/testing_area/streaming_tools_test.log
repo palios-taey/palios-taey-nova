@@ -1,8 +1,0 @@
-2025-04-23 19:24:53,015 - claude_dc.test.streaming_tools - INFO - Successfully imported required modules
-2025-04-23 19:24:53,015 - claude_dc.test.streaming_tools - INFO - Starting streaming with tools test...
-2025-04-23 19:24:53,039 - claude_dc.test.streaming_tools - INFO - Created Anthropic client
-2025-04-23 19:24:53,039 - claude_dc.test.streaming_tools - INFO - Created tool collection with 3 tools
-2025-04-23 19:24:53,039 - claude_dc.test.streaming_tools - INFO - Making API call with streaming enabled
-2025-04-23 19:24:53,039 - claude_dc.test.streaming_tools - WARNING - Beta parameter not supported, removing it and retrying
-2025-04-23 19:24:53,239 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 400 Bad Request"
-2025-04-23 19:24:53,239 - claude_dc.test.streaming_tools - ERROR - Error in streaming with tools test: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': "tools.0: Input tag 'computer_20250124' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124'"}}
